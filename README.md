@@ -24,9 +24,18 @@
 
 ✅ 消息转化:HttpMessageConverters
 
-✅ hock（InitializingBean,DisposableBean,BeanFactoryAware,ApplicationContextAware,
-FactoryBean,ApplicationListener,BeanDefinitionRegistryPostProcessor,
-BeanPostProcessor,BeanFactoryPostProcessor,ImportBeanDefinitionRegistrar）
+✅ hock 
+
+- InitializingBean,
+- DisposableBean,
+- BeanFactoryAware,
+- ApplicationContextAware,
+- FactoryBean,
+- ApplicationListener,
+- BeanDefinitionRegistryPostProcessor,
+- BeanPostProcessor,
+- BeanFactoryPostProcessor,
+- ImportBeanDefinitionRegistrar
 
 ✅ mybatis
 
