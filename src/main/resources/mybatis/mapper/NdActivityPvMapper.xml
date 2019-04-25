@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nivelle.programming.springboot.mapper.NdActivityPvMapper" >
+
+    <resultMap id="BaseResultMap" type="com.nivelle.programming.springboot.entity.NdActivityPvEntity" >
+        <id column="id" property="id"/>
+        <result column="activity_id" property="activityId"/>
+        <result column="positionType" property="positionType"/>
+        <result column="ip" property="ip"/>
+        <result column="device_type" property="deviceType"/>
+        <result column="device_no" property="deviceNo"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, activity_id, positionType, ip, device_type,device_no,create_time,update_time
+    </sql>
+
+    <select id="getAll" resultMap="BaseResultMap"  >
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM nd_activity_pv
+    </select>
+
+    <insert id="insert" parameterType="com.nivelle.programming.springboot.entity.NdActivityPvEntity" >
+        INSERT INTO
+        nd_activity_pv
+        (activity_id,positionType,ip,device_type,device_no)
+        VALUES
+        (#{activityId}, #{positionType}, #{ip},#{deviceType},#{deviceNo})
+    </insert>
+
+</mapper>
