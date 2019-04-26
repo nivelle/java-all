@@ -85,3 +85,5 @@
 
 ## hbase实践
 
+## Redis
+
