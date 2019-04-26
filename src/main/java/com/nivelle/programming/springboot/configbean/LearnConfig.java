@@ -1,5 +1,6 @@
 package com.nivelle.programming.springboot.configbean;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -8,7 +9,7 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "springboot.learn")
 public class LearnConfig {
 
-    //@Value("${springboot.learn.desc}")
+    @Value("${springboot.learn.desc}")
     private String desc;
 
     public String getDesc() {
