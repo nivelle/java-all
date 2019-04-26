@@ -1,4 +1,4 @@
-package com.jianlc.mgmt.util.selfLearn.instance;
+package com.nivelle.programming.jvm.instance;
 
 public class InstanceVariableInitializer {
 

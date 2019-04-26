@@ -1,4 +1,5 @@
-package com.jianlc.mgmt.util.selfLearn.instance;
+package com.nivelle.programming.jvm.instance;
+
 
 import java.io.*;
 import java.lang.reflect.Constructor;
