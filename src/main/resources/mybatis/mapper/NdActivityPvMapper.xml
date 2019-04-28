@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.nivelle.programming.springboot.mapper.NdActivityPvMapper" >
+<mapper namespace="com.nivelle.guide.springboot.mapper.NdActivityPvMapper" >
 
-    <resultMap id="BaseResultMap" type="com.nivelle.programming.springboot.entity.NdActivityPvEntity" >
+    <resultMap id="BaseResultMap" type="com.nivelle.guide.springboot.entity.NdActivityPvEntity" >
         <id column="id" property="id"/>
         <result column="activity_id" property="activityId"/>
         <result column="positionType" property="positionType"/>
@@ -24,7 +24,7 @@
         FROM nd_activity_pv
     </select>
 
-    <insert id="insert" parameterType="com.nivelle.programming.springboot.entity.NdActivityPvEntity" >
+    <insert id="insert" parameterType="com.nivelle.guide.springboot.entity.NdActivityPvEntity" >
         INSERT INTO
         nd_activity_pv
         (activity_id,positionType,ip,device_type,device_no)
