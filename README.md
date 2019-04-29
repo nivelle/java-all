@@ -23,8 +23,6 @@
 
 ✅ 消息转化:HttpMessageConverters
 
-
-
 ## 设计模式实践
 
 ✅ 迭代器模式
@@ -73,25 +71,24 @@
 
 ✅ 自己实现RPC
 
-## Mybatis
+## Mybatis实践
 
 ✅ mybatis 整合到springBoot
 
 ## tomcat实践
 
-
 ## HBase实践
 
-## Redis
+## Redis实践
 
-## spring
+## spring实践
 
 ✅ 生命周期学习
 
 ✅ hock （待实践:ImportBeanDefinitionRegistrar）
 
 
-## java2e
+## java2e实践
 
 ✅ 自定义注解
 
