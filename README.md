@@ -1,7 +1,7 @@
 ### java开发者需要知道的知识点,部分实例来之网上,拿来学习.
 ### 本项目针对的是实际开发百分百常见的用发,注重实战,对原理涉及较少,大神绕道。
 
-## springboot实践
+## springBoot实践
 
 ✅ docker整合
 
@@ -15,8 +15,6 @@
 
 ✅ starter,自定义starter
 
-✅ jdk8 Lambda表达式,Stream的使用
-
 ✅ xml 对xml格式参数的支持
 
 ✅ WebFlux 响应式编程
@@ -25,20 +23,7 @@
 
 ✅ 消息转化:HttpMessageConverters
 
-✅ hock 
 
-- InitializingBean,
-- DisposableBean,
-- BeanFactoryAware,
-- ApplicationContextAware,
-- FactoryBean,
-- ApplicationListener,
-- BeanDefinitionRegistryPostProcessor,
-- BeanPostProcessor,
-- BeanFactoryPostProcessor,
-- ImportBeanDefinitionRegistrar
-
-✅ mybatis
 
 ## 设计模式实践
 
@@ -78,17 +63,41 @@
 
 ## jvm实践
 
+✅ 自定义类加载器
+
+✅ 类实例化过程实例
+
 ## netty实践
 
 ## 分布式实践
 
+✅ 自己实现RPC
+
+## Mybatis
+
+✅ mybatis 整合到springBoot
+
 ## tomcat实践
 
-- 自定义tomcat
 
-## hbase实践
-
-
+## HBase实践
 
 ## Redis
+
+## spring
+
+✅ 生命周期学习
+
+✅ hock （待实践:ImportBeanDefinitionRegistrar）
+
+
+## java2e
+
+✅ 自定义注解
+
+✅ 动态代理
+
+✅ 多线程示例
+
+✅ jdk8 Lambda表达式,Stream的使用
 
