@@ -75,6 +75,8 @@
 
 ✅ mybatis 整合到springBoot
 
+✅ mybatis 使用redis做缓存组件
+
 ## tomcat实践
 
 ## HBase实践
