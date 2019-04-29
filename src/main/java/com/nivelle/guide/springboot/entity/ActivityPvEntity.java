@@ -10,10 +10,10 @@ import lombok.ToString;
 @Setter
 @Getter
 @ToString
-public class NdActivityPvEntity {
+public class ActivityPvEntity {
 
 
-    private int id;
+    private Integer id;
 
     private String activityId;
 
