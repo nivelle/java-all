@@ -4,7 +4,7 @@ import com.nivelle.guide.springboot.pojo.Compont;
 import com.nivelle.guide.springboot.pojo.Menu;
 
 /**
- * 使用模板方法模式实现
+ * 使用工程方法模式实现
  */
 public abstract class AbstractFactory {
 

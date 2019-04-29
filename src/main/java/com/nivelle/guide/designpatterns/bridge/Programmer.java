@@ -1,6 +1,6 @@
 package com.nivelle.guide.designpatterns.bridge;
 
-public class Programmer extends CompanUser {
+public class Programmer extends CompanyUser {
 
     public Programmer(AbstractCompanyUserWork abstractCompanyUserWork) {
         super(abstractCompanyUserWork);

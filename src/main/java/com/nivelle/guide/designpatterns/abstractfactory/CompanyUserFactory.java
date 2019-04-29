@@ -8,6 +8,6 @@ public interface CompanyUserFactory {
     String doWork(String  userName);
     //3.下班
     boolean afterWork(String userName);
-
-    public void oneDay(String userName);
+    //整合逻辑
+    void oneDay(String userName);
 }

@@ -9,10 +9,10 @@ public class Main {
     public static void main(String[] args) {
 
         AbstractCompanyUserWork abstractCompanyUserWork = new CompanyUserWorkImpl();
-        CompanUser companUser = new CompanUser(abstractCompanyUserWork);
+        CompanyUser companUser = new CompanyUser(abstractCompanyUserWork);
         companUser.oneDay("jessy");
 
-        CompanUser companUser1 = new Programmer(abstractCompanyUserWork);
+        CompanyUser companUser1 = new Programmer(abstractCompanyUserWork);
         companUser1.oneDay("nivelle");
         ((Programmer) companUser1).ondDayWork("nivelle");
     }

@@ -1,11 +1,11 @@
 package com.nivelle.guide.designpatterns.bridge;
 
-public class CompanUser {
+public class CompanyUser {
 
     private AbstractCompanyUserWork companyUserWork;
 
 
-    public CompanUser(AbstractCompanyUserWork companyUserWork){
+    public CompanyUser(AbstractCompanyUserWork companyUserWork){
         this.companyUserWork = companyUserWork;
     }
 

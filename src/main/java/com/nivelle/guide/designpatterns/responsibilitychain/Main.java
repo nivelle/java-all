@@ -1,5 +1,8 @@
 package com.nivelle.guide.designpatterns.responsibilitychain;
 
+/**
+ * 责任链模式
+ */
 public class Main {
 
     public static void main(String[] args) {

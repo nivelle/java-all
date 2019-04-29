@@ -1,5 +1,9 @@
 package com.nivelle.guide.designpatterns.build;
 
+
+/**
+ * 示例化构建模式，解决构造函数太多的问题。
+ */
 public class Main {
 
     public static void main(String[] args) {

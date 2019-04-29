@@ -1,5 +1,8 @@
 package com.nivelle.guide.designpatterns.strategy;
 
+/**
+ * 策略模式
+ */
 public class Main {
 
     public static void main(String[] args) {
