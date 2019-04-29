@@ -20,7 +20,7 @@
      <!--XML中只需resultType属性值为实体对象别名或全路径名。
      * mybatis会通过接口文件的返回值类型来判断返回的是集合还是对象。
      * 如果是对象，则按常规查询并返回；如果是List集合，mybatis则会将查询到的多条记录设置进集合中并返回 -->
-    <select id="getAll" resultType="com.nivelle.guide.springboot.entity.ActivityPvEntity"  >
+    <select id="getAll" resultMap="BaseResultMap" >
         SELECT
         <include refid="Base_Column_List" />
         FROM activity_pv
@@ -33,5 +33,15 @@
         VALUES
         (#{activityId}, #{positionType}, #{ip},#{deviceType},#{deviceNo})
     </insert>
+
+    <!--
+    使用resultType，直接映射到实体类，没有通过mabatis提供的 BaseResultMap，
+    使用_命名的字段会映射失败，将这里的resultType改成 resultMap="BaseResultMap"即可，使查询到的数据通过mabatis的内部实现完整的映射到实体类
+    -->
+    <select id="getActivityById" resultMap="BaseResultMap">
+        SELECT
+        *
+        FROM activity_pv where id =#{id};
+    </select>
 
 </mapper>

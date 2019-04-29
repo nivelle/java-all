@@ -14,13 +14,16 @@ public interface ActivityPvMapper {
      * XML中只需resultType属性值为实体对象别名或全路径名。
      * mybatis会通过接口文件的返回值类型来判断返回的是集合还是对象。
      * 如果是对象，则按常规查询并返回；如果是List集合，mybatis则会将查询到的多条记录设置进集合中并返回
+     *
      * @return
      */
-    List<ActivityPvEntity>getAll();
+    List<ActivityPvEntity> getAll();
 
     int insert(ActivityPvEntity activityPvEntity);
 
     int update(ActivityPvEntity activityPvEntity);
+
+    ActivityPvEntity getActivityById(Integer id);
 
 
 }
