@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.nivelle.guide.springboot.mapper.SysPermissionMapper" >
+<mapper namespace="com.nivelle.guide.springboot.mapper.SysPermissionMapper">
 
-    <resultMap id="BaseResultMap" type="com.nivelle.guide.springboot.entity.SysPermissionEntity" >
+    <resultMap id="BaseResultMap" type="com.nivelle.guide.springboot.entity.SysPermissionEntity">
         <id column="id" property="id"/>
         <result column="available" property="available"/>
         <result column="name" property="name"/>
@@ -13,6 +13,18 @@
         <result column="url" property="url"/>
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
+
+
+        <collection property="roles" ofType="com.nivelle.guide.springboot.entity.SysRoleEntity">
+            <id column="id" property="id"/>
+            <result column="available" property="available"/>
+            <result column="description" property="description"/>
+            <result column="role" property="role"/>
+            <result column="create_time" property="createTime"/>
+            <result column="update_time" property="updateTime"/>
+        </collection>
+
+
     </resultMap>
 
 

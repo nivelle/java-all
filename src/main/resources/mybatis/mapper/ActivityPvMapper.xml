@@ -38,10 +38,21 @@
     使用resultType，直接映射到实体类，没有通过mabatis提供的 BaseResultMap，
     使用_命名的字段会映射失败，将这里的resultType改成 resultMap="BaseResultMap"即可，使查询到的数据通过mabatis的内部实现完整的映射到实体类
     -->
+    <!--
+      resultType：将查询结果按照sql列名pojo属性名一致性映射到pojo中。
+      resultMap可以实现延迟加载，resultType无法实现延迟加载。
+     -->
     <select id="getActivityById" resultMap="BaseResultMap">
         SELECT
         *
         FROM activity_pv where id =#{id};
     </select>
+
+    <!--
+         association:用于映射关联查询单个对象的信息
+         collection:对关联查询到的多条记录映射到集合中
+         property:将关联查询到的多条记录映射到orders类的那个属性
+         ofType:指定映射的集合属性中pojo的类型
+    -->
 
 </mapper>
