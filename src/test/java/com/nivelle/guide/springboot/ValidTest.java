@@ -1,6 +1,8 @@
 package com.nivelle.guide.springboot;
 
 
+import com.nivelle.guide.springboot.entity.UserInfoEntity;
+import com.nivelle.guide.springboot.mapper.SysUserInfoMapper;
 import net.minidev.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,6 +27,9 @@ public class ValidTest {
 
     private MockMvc mockMvc; // 模拟MVC对象，通过MockMvcBuilders.webAppContextSetup(this.wac).build()初始化。
 
+
+    private SysUserInfoMapper sysUserInfoMapper;
+
     @Autowired
     private WebApplicationContext wac; // 注入WebApplicationContext
 
@@ -45,6 +50,17 @@ public class ValidTest {
                 .andReturn();// 返回执行请求的结果
 
         System.out.println(result.getResponse().getContentAsString());
+
+    }
+
+    @Test
+    public void testSysUser(){
+
+        String userName = "admin";
+
+        UserInfoEntity userInfoEntity = sysUserInfoMapper.getUserInfoByName(userName);
+
+        System.out.println(userInfoEntity);
 
     }
 

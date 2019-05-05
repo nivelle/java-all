@@ -16,14 +16,14 @@
         <result column="salt" property="salt"/>
         <result column="state" property="state"/>
 
-        <association property="roleList" javaType="com.nivelle.guide.springboot.entity.SysRoleEntity">
+        <collection property="roleList" ofType="com.nivelle.guide.springboot.entity.SysRoleEntity">
             <id column="id" property="id"/>
             <result column="available" property="available"/>
             <result column="description" property="description"/>
             <result column="role" property="role"/>
             <result column="create_time" property="createTime"/>
             <result column="update_time" property="updateTime"/>
-        </association>
+        </collection>
     </resultMap>
 
 
@@ -31,10 +31,7 @@
 
         SELECT
         u.*
-        FROM user_info u
-        LEFT JOIN sys_user_role ur on ur.uid = u.uid
-        LEFT JOIN sys_role sr on sr.id = ur.role_id
-        where username =#{name};
+        FROM user_info u where username =#{name};
     </select>
 
 

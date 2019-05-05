@@ -25,4 +25,7 @@ public class SysPermissionEntity implements Serializable {
     private Boolean available = Boolean.FALSE;
     private List<SysRoleEntity> roles;
 
+    private String createTime;
+    private String updateTime;
+
 }

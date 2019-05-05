@@ -23,6 +23,8 @@ public class UserInfoEntity {
 
 
     public String getCredentialsSalt() {
-        return username + salt;
+
+        return this.username + this.salt;
+
     }
 }

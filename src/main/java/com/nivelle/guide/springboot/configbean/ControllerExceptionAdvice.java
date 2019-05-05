@@ -2,6 +2,7 @@ package com.nivelle.guide.springboot.configbean;
 
 import com.nivelle.guide.springboot.pojo.vo.ResponseResult;
 import com.nivelle.guide.springboot.enums.ErrorStatus;
+import org.apache.shiro.authz.UnauthorizedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.TypeMismatchException;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -25,7 +27,7 @@ public class ControllerExceptionAdvice {
     @ExceptionHandler(value = {MissingServletRequestParameterException.class,
             ConstraintViolationException.class, TypeMismatchException.class, Throwable.class})
     @ResponseBody
-    ResponseResult<Object> handleControllerException(Exception ex) throws IOException {
+    Object handleControllerException(Exception ex) throws IOException {
         int code = 1;
         String message = "";
         if (ex != null) {
@@ -38,8 +40,8 @@ public class ControllerExceptionAdvice {
             String parameterName = e.getParameterName();
             message = parameterName + " is required";
             code = ErrorStatus.PARAMSMISS.getErrorCode();
-            logger.error("code={},message={}",code,message,ex);
-            System.out.println(code+message+ex);
+            logger.error("code={},message={}", code, message, ex);
+            System.out.println(code + message + ex);
 
         } else if (ex instanceof ConstraintViolationException) {
             ConstraintViolationException e = (ConstraintViolationException) ex;
@@ -49,24 +51,31 @@ public class ControllerExceptionAdvice {
                 message = constrain.get().getMessage();
                 code = errorCode;
             }
-            logger.error("code={},message={}",code,message,ex);
-            System.out.println(code+message+ex);
+            logger.error("code={},message={}", code, message, ex);
+            System.out.println(code + message + ex);
         } else if (ex instanceof TypeMismatchException) {
             TypeMismatchException e = (TypeMismatchException) ex;
             message = "parameter value " + e.getValue() + " is typeMismatch";
             code = errorCode;
-            logger.error("code={},message={}",code,message,ex);
-            System.out.println(code+message+ex);
+            logger.error("code={},message={}", code, message, ex);
+            System.out.println(code + message + ex);
         } else if (ex instanceof BindException) {
             BindException e = (BindException) ex;
             message = e.getAllErrors().get(0).getDefaultMessage();
             code = errorCode;
-            logger.error("code={},message={}",code,message,ex);
-            System.out.println(code+message+ex);
-        }else {
-            code = -1;
+            logger.error("code={},message={}", code, message, ex);
+            System.out.println(code + message + ex);
+        } else if (ex instanceof UnauthorizedException) {
+
+            ModelAndView modelAndView = new ModelAndView();
+            modelAndView.setViewName("403");
+
+           return modelAndView;
+
+        } else {
+            message = "未知异常";
         }
-        return ResponseResult.newResponseResult().setFail(code,message);
+        return message;
     }
 }
 
