@@ -18,7 +18,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.time.Duration;
 
-//@Configuration
+@Configuration
 public class RedisConfig {
 
     /**
@@ -28,7 +28,7 @@ public class RedisConfig {
      * @return
      */
 
-    //@Bean
+    @Bean
     public RedisTemplate<Object, ActivityPvEntity> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
         RedisTemplate<Object, ActivityPvEntity> template = new RedisTemplate();
         template.setConnectionFactory(redisConnectionFactory);
@@ -37,7 +37,7 @@ public class RedisConfig {
         return template;
     }
 
-    //@Bean
+    @Bean
     public CacheManager cacheManager(RedisConnectionFactory factory) {
         RedisSerializer<String> redisSerializer = new StringRedisSerializer();
         Jackson2JsonRedisSerializer jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer(Object.class);
