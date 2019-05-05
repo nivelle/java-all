@@ -1,4 +1,4 @@
-package com.nivelle.guide.springboot.configbean;
+package com.nivelle.guide.springboot.configbean.shiro;
 
 import com.nivelle.guide.springboot.entity.SysPermissionEntity;
 import com.nivelle.guide.springboot.entity.SysRoleEntity;
@@ -13,20 +13,27 @@ import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Resource;
 
 public class MyShiroRealm extends AuthorizingRealm {
+
+    private static final Logger logger = LoggerFactory.getLogger(MyShiroRealm.class);
+
+
     @Resource
     private UserInfoService userInfoService;
+
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
         System.out.println("权限配置-->MyShiroRealm.doGetAuthorizationInfo()");
         SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
-        UserInfoEntity userInfo  = (UserInfoEntity)principals.getPrimaryPrincipal();
-        for(SysRoleEntity role:userInfo.getRoleList()){
+        UserInfoEntity userInfo = (UserInfoEntity) principals.getPrimaryPrincipal();
+        for (SysRoleEntity role : userInfo.getRoleList()) {
             authorizationInfo.addRole(role.getRole());
-            for(SysPermissionEntity p:role.getPermissions()){
+            for (SysPermissionEntity p : role.getPermissions()) {
                 authorizationInfo.addStringPermission(p.getPermission());
             }
         }
@@ -37,15 +44,15 @@ public class MyShiroRealm extends AuthorizingRealm {
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token)
             throws AuthenticationException {
-        System.out.println("MyShiroRealm.doGetAuthenticationInfo()");
+        logger.info("身份校验,token:{}", token);
         //获取用户的输入的账号.
-        String username = (String)token.getPrincipal();
-        System.out.println(token.getCredentials());
+        String name = (String) token.getPrincipal();
+        logger.info("credentials={}", token.getCredentials());
         //通过username从数据库中查找 User对象，如果找到，没找到.
         //实际项目中，这里可以根据实际情况做缓存，如果不做，Shiro自己也是有时间间隔机制，2分钟内不会重复执行该方法
-        UserInfoEntity userInfo = userInfoService.findByUsername(username);
-        System.out.println("----->>userInfo="+userInfo);
-        if(userInfo == null){
+        UserInfoEntity userInfo = userInfoService.findByUsername(name);
+        logger.info("查询到的用户信息,userInfo={}",userInfo);
+        if (userInfo == null) {
             return null;
         }
         SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(
