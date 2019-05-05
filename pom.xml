@@ -216,6 +216,9 @@
             <artifactId>shiro-ehcache</artifactId>
             <version>1.4.0</version>
         </dependency>-->
+        <!-- Spring Boot Admin -->
+
+
 
     </dependencies>
 
