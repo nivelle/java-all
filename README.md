@@ -23,6 +23,9 @@
 
 ✅ 消息转化:HttpMessageConverters
 
+✅ Shiro 登陆认证
+
+
 ## 设计模式实践
 
 ✅ 迭代器模式
