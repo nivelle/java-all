@@ -1,5 +1,8 @@
 package com.nivelle.guide.algorithms.common;
 
+/**
+ * 替换空格
+ */
 public class StringReplaceBlank {
 
     /**

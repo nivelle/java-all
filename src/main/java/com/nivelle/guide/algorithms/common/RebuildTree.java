@@ -1,5 +1,8 @@
 package com.nivelle.guide.algorithms.common;
 
+/**
+ * 重建二叉树
+ */
 public class RebuildTree {
 
     /**

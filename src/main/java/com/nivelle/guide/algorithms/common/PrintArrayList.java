@@ -3,6 +3,9 @@ package com.nivelle.guide.algorithms.common;
 import java.util.ArrayList;
 import java.util.Stack;
 
+/**
+ * 从尾到头打印列表
+ */
 public class PrintArrayList {
 
     public static class ListNode {

@@ -3,6 +3,9 @@ package com.nivelle.guide.algorithms.common;
 
 import java.util.Stack;
 
+/**
+ * 栈实现链表
+ */
 public class StackForQueue {
 
     /**

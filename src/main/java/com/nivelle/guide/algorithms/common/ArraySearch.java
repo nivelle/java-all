@@ -1,5 +1,8 @@
 package com.nivelle.guide.algorithms.common;
 
+/**
+ * 二维数组的查找
+ */
 public class ArraySearch {
 
     /**
