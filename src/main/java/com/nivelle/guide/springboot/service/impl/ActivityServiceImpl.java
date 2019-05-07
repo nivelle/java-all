@@ -1,5 +1,6 @@
 package com.nivelle.guide.springboot.service.impl;
 
+import com.nivelle.guide.springboot.core.AopAnnotation;
 import com.nivelle.guide.springboot.entity.ActivityPvEntity;
 import com.nivelle.guide.springboot.mapper.ActivityPvMapper;
 import com.nivelle.guide.springboot.service.ActivityService;
@@ -22,6 +23,7 @@ public class ActivityServiceImpl implements ActivityService {
     private ActivityPvMapper activityPvMapper;
 
     @Override
+    @AopAnnotation
     public List<ActivityPvEntity> getAll() {
         List<ActivityPvEntity> ativities = activityPvMapper.getAll();
         return ativities;
