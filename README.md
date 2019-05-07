@@ -96,6 +96,7 @@
 
 ✅ hock （待实践:ImportBeanDefinitionRegistrar）
 
+✅ AOP
 
 ## java2e实践
 
