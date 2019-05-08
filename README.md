@@ -64,13 +64,13 @@
 
 ✅ 两个栈实现队列
 
-## jvm实践
+## JVM实践
 
 ✅ 自定义类加载器
 
 ✅ 类实例化过程实例
 
-## netty实践
+## Netty实践
 
 ## 分布式实践
 
@@ -82,7 +82,7 @@
 
 ✅ mybatis 使用redis做缓存组件
 
-## tomcat实践
+## Tomcat实践
 
 ## HBase实践
 
@@ -90,15 +90,15 @@
 
 ✅ string 指令
 
-## spring实践
+## Spring实践
 
 ✅ 生命周期学习
 
-✅ hock （待实践:ImportBeanDefinitionRegistrar）
+✅ 钩子方法 （待实践:ImportBeanDefinitionRegistrar）
 
 ✅ AOP
 
-## java2e实践
+## Java2e实践
 
 ✅ 自定义注解
 
