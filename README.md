@@ -52,7 +52,7 @@
 
 ## 数据结构实践
 
-✅ [ArrayList源码](https://github.com/nivelle/javaguides/blob/master/article/ArrayList%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB)
+✅ [ArrayList源码](https://github.com/nivelle/javaguides/blob/master/article/ArrayList%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB.md)
 
 ## 算法实践
 
