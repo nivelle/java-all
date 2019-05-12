@@ -716,7 +716,7 @@ public class ArrayList<E> extends AbstractList<E>
                 if (c.contains(elementData[r]) == complement)
                     elementData[w++] = elementData[r];
         } finally {
-            // Preserve behavioral compatibility with AbstractCollection,
+            // Preserve【保存】 behavioral【行为】 compatibility【兼容性】with AbstractCollection,
             // even if c.contains() throws.
             if (r != size) {
                 System.arraycopy(elementData, r,
@@ -741,7 +741,7 @@ public class ArrayList<E> extends AbstractList<E>
      * is, serialize it).
      *
      * @serialData The length of the array backing the <tt>ArrayList</tt>
-     *             instance is emitted (int), followed by all of its elements
+     *             instance is emitted【发出】 (int), followed by all of its elements
      *             (each an <tt>Object</tt>) in the proper order.
      */
     private void writeObject(java.io.ObjectOutputStream s)
@@ -771,7 +771,7 @@ public class ArrayList<E> extends AbstractList<E>
         throws java.io.IOException, ClassNotFoundException {
         elementData = EMPTY_ELEMENTDATA;
 
-        // Read in size, and any hidden stuff
+        // Read in size, and any hidden stuff【东西】
         s.defaultReadObject();
 
         // Read in capacity
@@ -833,7 +833,7 @@ public class ArrayList<E> extends AbstractList<E>
     }
 
     /**
-     * An optimized version of AbstractList.Itr
+     * An optimized【优化】 version of AbstractList.Itr
      */
     private class Itr implements Iterator<E> {
         int cursor;       // index of next element to return
