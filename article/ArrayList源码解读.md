@@ -369,13 +369,11 @@ public class ArrayList<E> extends AbstractList<E>
         return Arrays.copyOf(elementData, size);
     }
     
-    
-
     /**
-     * Returns an array containing all of the elements in this list in proper
-     * sequence (from first to last element); the runtime type of the returned
-     * array is that of the specified array.  If the list fits in the
-     * specified array, it is returned therein.  Otherwise, a new array is
+     * Returns an array containing all of the elements in this list in proper【正确的】
+     * sequence【序列】 (from first to last element); the runtime type of the returned
+     * array is that of the specified array.  If the list fits【合适】 in the
+     * specified array, it is returned therein【其中】.  Otherwise, a new array is
      * allocated with the runtime type of the specified array and the size of
      * this list.
      *
@@ -407,8 +405,8 @@ public class ArrayList<E> extends AbstractList<E>
     }
 
     // Positional Access Operations
-
-    @SuppressWarnings("unchecked")
+    //该批注的作用是给编译器一条指令，告诉它对被批注的代码元素内部的某些警告保持静默。
+    @SuppressWarnings("unchecked")//抑制警告  unchecked:抑制单类型的警告;rawtypes:抑制多类型的警告;all:抑制所有类型的警告
     E elementData(int index) {
         return (E) elementData[index];
     }
@@ -458,7 +456,7 @@ public class ArrayList<E> extends AbstractList<E>
     /**
      * Inserts the specified element at the specified position in this
      * list. Shifts the element currently at that position (if any) and
-     * any subsequent elements to the right (adds one to their indices).
+     * any subsequent【后来的】 elements to the right (adds one to their indices【指数】).
      *
      * @param index index at which the specified element is to be inserted
      * @param element element to be inserted
@@ -489,7 +487,7 @@ public class ArrayList<E> extends AbstractList<E>
         modCount++;
         E oldValue = elementData(index);
 
-        int numMoved = size - index - 1;
+        int numMoved = size - index - 1;//需要移动的元素
         if (numMoved > 0)
             System.arraycopy(elementData, index+1, elementData, index,
                              numMoved);
@@ -672,7 +670,7 @@ public class ArrayList<E> extends AbstractList<E>
      * @param c collection containing elements to be removed from this list
      * @return {@code true} if this list changed as a result of the call
      * @throws ClassCastException if the class of an element of this list
-     *         is incompatible with the specified collection
+     *         is incompatible【不相容的】 with the specified collection
      * (<a href="Collection.html#optional-restrictions">optional</a>)
      * @throws NullPointerException if this list contains a null element and the
      *         specified collection does not permit null elements
@@ -690,7 +688,7 @@ public class ArrayList<E> extends AbstractList<E>
      * specified collection.  In other words, removes from this list all
      * of its elements that are not contained in the specified collection.
      *
-     * @param c collection containing elements to be retained in this list
+     * @param c collection containing elements to be retained【保持】 in this list
      * @return {@code true} if this list changed as a result of the call
      * @throws ClassCastException if the class of an element of this list
      *         is incompatible with the specified collection
@@ -705,6 +703,9 @@ public class ArrayList<E> extends AbstractList<E>
         Objects.requireNonNull(c);
         return batchRemove(c, true);
     }
+
+
+
 
     private boolean batchRemove(Collection<?> c, boolean complement) {
         final Object[] elementData = this.elementData;
