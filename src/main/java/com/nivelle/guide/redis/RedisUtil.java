@@ -16,13 +16,6 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Redis工具类
- *
- * @author WangFan
- * @version 1.1 (GitHub文档: https://github.com/whvcse/RedisUtil )
- * @date 2018-02-24 下午03:09:50
- */
 @Service
 public class RedisUtil {
 
@@ -167,8 +160,8 @@ public class RedisUtil {
     /**
      * 仅当 newkey 不存在时，将 oldKey 改名为 newkey
      *
-     * @param oldKey
-     * @param newKey
+     * @param oldKey 旧key
+     * @param newKey 新key
      * @return
      */
     public Boolean renameIfAbsent(String oldKey, String newKey) {
