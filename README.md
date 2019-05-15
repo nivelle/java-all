@@ -1,7 +1,7 @@
 ## java开发者需要知道的知识点,部分实例来之网上,拿来学习.
 ## 本项目针对的是实际开发百分百常见的用发,注重实战,对原理涉及较少,大神绕道。
 
-### 姊 妹项目:[Java基础实践练习,常用项目知识点实践,源码注释翻译阅读](https://github.com/nivelle/javaguides)
+### 姊 妹项目:[java面试常见知识点汇总](http://nivelle.me/javaInterview/)
 
 ## springBoot实践
 
