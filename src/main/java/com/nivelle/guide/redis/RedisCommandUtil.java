@@ -17,7 +17,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
 @Service
-public class RedisUtil {
+public class RedisCommandUtil {
 
     @Autowired
     private StringRedisTemplate redisTemplate;
