@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.nivelle</groupId>
-    <artifactId>programming</artifactId>
+    <artifactId>javaguide</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>javaGuides</name>
     <description>javaerguides project for Spring Boot</description>
