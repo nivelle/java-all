@@ -94,6 +94,8 @@
 
 ✅ string 指令
 
+✅ bitMap 指令
+
 ## Spring实践
 
 ✅ 生命周期学习
