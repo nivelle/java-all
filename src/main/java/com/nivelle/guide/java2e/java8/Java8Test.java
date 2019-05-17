@@ -31,10 +31,15 @@ public class Java8Test {
         System.out.println(names2);
 
         //自定义接口
-        FunctionTest<String, Integer> convertMethod = (x) -> Integer.valueOf(x);
+//        FunctionTest<String, Integer> convertMethod = (x) -> Integer.valueOf(x);
+//
+//        Integer converted = convertMethod.convert();
+//        System.out.println(converted);    // 123
 
-        Integer converted = convertMethod.convert("123");
-        System.out.println(converted);    // 123
+        FunctionTest<String, String> convertMethodUp = (x) -> x.toUpperCase();
+
+        String convertedUp = convertMethodUp.convert("nivelle");
+        System.out.println(convertedUp);    //
 
         //静态方法
         FunctionTest<String, Integer> convertMethod1 = Integer::valueOf;
