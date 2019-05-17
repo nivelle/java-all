@@ -5,6 +5,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 
+
 public class Person {
 
     @NotNull(message = "年龄不能为空")//测试发现是说key不能为空注意哦

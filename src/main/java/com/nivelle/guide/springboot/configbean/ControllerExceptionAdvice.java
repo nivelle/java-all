@@ -1,6 +1,5 @@
 package com.nivelle.guide.springboot.configbean;
 
-import com.nivelle.guide.springboot.pojo.vo.ResponseResult;
 import com.nivelle.guide.springboot.enums.ErrorStatus;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.slf4j.Logger;
@@ -70,7 +69,7 @@ public class ControllerExceptionAdvice {
             ModelAndView modelAndView = new ModelAndView();
             modelAndView.setViewName("403");
 
-           return modelAndView;
+            return modelAndView;
 
         } else {
             message = "未知异常";

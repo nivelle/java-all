@@ -31,7 +31,8 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/config/**", "anon");
         filterChainDefinitionMap.put("/menus/**", "anon");//books
         filterChainDefinitionMap.put("/books/**", "anon");//configNoAOP
-        filterChainDefinitionMap.put("/configNoAOP/**", "anon");
+        filterChainDefinitionMap.put("/configNoAOP/**", "anon");//springMVC
+        filterChainDefinitionMap.put("/springMVC/**", "anon");
         //配置退出 过滤器,其中的具体的退出代码Shiro已经替我们实现了
         filterChainDefinitionMap.put("/logout", "logout");
         //filterChainDefinitionMap.put("/userInfo/**", "authc,perms[userInfo:add,userInfo:del]");//解决办法是加上这行代码
