@@ -85,7 +85,7 @@ public class ParameterBindController {
     @RequestMapping(value = "test2", consumes = "text/properties")
     @ResponseBody
     public Properties getUser2(@RequestBody Properties properties) {
-        System.out.println("入参被解析:properties={}" + properties);
+        System.out.println("入参被解析:properties的类型:" + properties.getClass().getSimpleName());
         return properties;
     }
 }
