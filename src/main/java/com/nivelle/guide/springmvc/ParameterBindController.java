@@ -26,7 +26,6 @@ public class ParameterBindController {
                                          HttpSession session,
                                          Model model,
                                          ModelMap modelMap) throws Exception {
-
         request.setAttribute("requestParameter", "request类型");
         response.getWriter().write("nivelle's response");
 
