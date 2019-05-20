@@ -61,7 +61,7 @@ public class ParameterBindController {
 
     /**
      * 自定义参数转换器测试,不依赖@RequestBody和 @ResponseBody
-     *
+     * <p>
      * {@link PropertiesHandlerMethodArgumentResolver}
      * {@link PropertiesHandlerMethodReturnValueHandler}
      *
@@ -69,21 +69,22 @@ public class ParameterBindController {
      * @return
      */
     @RequestMapping(value = "convertSelf", consumes = "text/properties")
-    public Properties getUser1(Properties properties) {
+    public Properties getconvertSelf(Properties properties) {
         System.out.println("入参被解析:properties={}" + properties);
         return properties;
     }
+
     /**
      * 自定义参数转换器测试,依赖@RequestBody和 @ResponseBody
-     *
+     * <p>
      * {@link PropertiesHttpMessageConverter}
      *
      * @param properties
      * @return
      */
-    @RequestMapping(value = "convertAnnotation", produces = "text/properties",consumes = "text/properties")
+    @RequestMapping(value = "convertAnnotation", produces = "text/properties", consumes = "text/properties")
     @ResponseBody
-    public Properties getUser2(@RequestBody Properties properties) {
+    public Properties getConvertAnnotation(@RequestBody Properties properties) {
         System.out.println("入参被解析:properties的类型:" + properties.getClass().getSimpleName());
         return properties;
     }
