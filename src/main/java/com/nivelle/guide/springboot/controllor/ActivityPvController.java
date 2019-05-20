@@ -20,7 +20,7 @@ public class ActivityPvController {
     @Autowired
     ActivityService activityService;
 
-    @RequestMapping("/pvs")
+    @RequestMapping(value = "/pvs",produces = "application/json")
     @ResponseBody
     public Object hello() {
 
