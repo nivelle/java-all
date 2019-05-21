@@ -103,6 +103,8 @@
 
 ✅ bitMap 指令
 
+✅ setEx 指令
+
 ## Spring实践
 
 ✅ 生命周期学习

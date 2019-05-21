@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.concurrent.TimeUnit;
+
 @Controller
 @RequestMapping("redis")
 public class RedisController {
@@ -103,6 +105,23 @@ public class RedisController {
         Boolean result = redisCommandUtil.setBit(key, offset, value);
         System.out.println(result);
         return ResponseResult.newResponseResult().setSuccess(result);
+    }
+
+
+    /**
+     * 我们在登陆某些博客网站或者视频网站的时候，网站往往会记录我们是否阅读了某篇文章，或者是观看了某个视频。
+     *
+     * @param key
+     * @param value
+     * @return
+     */
+    @RequestMapping("/setEx/{key}/{value}/{timeout}")
+    @ResponseBody
+    public ResponseResult setEx(@PathVariable(value = "key") String key,
+                                @PathVariable(value = "value") String value,
+                                @PathVariable(value = "timeout") long timeout) {
+        redisCommandUtil.setEx(key, value, timeout,TimeUnit.SECONDS);
+        return ResponseResult.newResponseResult().setSuccess("success");
     }
 
 }

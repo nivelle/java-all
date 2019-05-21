@@ -115,11 +115,11 @@ public class MyWebConfig implements WebMvcConfigurer {
         FastJsonConfig fj = new FastJsonConfig();
         fj.setSerializerFeatures(SerializerFeature.DisableCircularReferenceDetect);
         fjc.setFastJsonConfig(fj);
-        converters.add(fjc);
-        Jackson2ObjectMapperBuilder builder = Jackson2ObjectMapperBuilder.xml();
-        builder.indentOutput(true);
-        converters.add(new MappingJackson2XmlHttpMessageConverter(builder.build()));
-        converters.add(converter());
+        converters.add(0,fjc);
+//        Jackson2ObjectMapperBuilder builder = Jackson2ObjectMapperBuilder.xml();
+//        builder.indentOutput(true);
+//        converters.add(1,new MappingJackson2XmlHttpMessageConverter(builder.build()));
+//        converters.add(2,converter());
 
     }
 
@@ -128,10 +128,10 @@ public class MyWebConfig implements WebMvcConfigurer {
      *
      * @return
      */
-    @Bean
-    public PropertiesHttpMessageConverter converter() {
-        return new PropertiesHttpMessageConverter();
-    }
+//    @Bean
+//    public PropertiesHttpMessageConverter converter() {
+//        return new PropertiesHttpMessageConverter();
+//    }
 }
 
 
