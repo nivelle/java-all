@@ -28,12 +28,12 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/static/**", "anon");
         filterChainDefinitionMap.put("/redis/**", "anon");
         filterChainDefinitionMap.put("/activity/**", "anon");
-        filterChainDefinitionMap.put("/config/**", "anon");
-        filterChainDefinitionMap.put("/menus/**", "anon");//books
-        filterChainDefinitionMap.put("/books/**", "anon");//configNoAOP
-        filterChainDefinitionMap.put("/configNoAOP/**", "anon");//springMVC
+        filterChainDefinitionMap.put("/test/**", "anon");
+        filterChainDefinitionMap.put("/menus/**", "anon");
+        filterChainDefinitionMap.put("/books/**", "anon");
+        filterChainDefinitionMap.put("/configNoAOP/**", "anon");
         filterChainDefinitionMap.put("/springMVC/**", "anon");
-        filterChainDefinitionMap.put("/springBean/**", "anon");//xmlRequest
+        filterChainDefinitionMap.put("/springBean/**", "anon");
         filterChainDefinitionMap.put("/book/**", "anon");
         //配置退出 过滤器,其中的具体的退出代码Shiro已经替我们实现了
         filterChainDefinitionMap.put("/logout", "logout");
@@ -103,8 +103,10 @@ public class ShiroConfig {
         Properties mappings = new Properties();
         mappings.setProperty("DatabaseException", "databaseError");
         mappings.setProperty("org.apache.shiro.authz.UnauthorizedException", "/403");
-        r.setExceptionMappings(mappings);  // None by default
-        r.setDefaultErrorView("error");    // No default
+        // None by default
+        r.setExceptionMappings(mappings);
+        // No default
+        r.setDefaultErrorView("error");
         r.setExceptionAttribute("ex");
         return r;
     }
@@ -112,11 +114,8 @@ public class ShiroConfig {
     @Bean
     @ConditionalOnMissingBean
     public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
-
         DefaultAdvisorAutoProxyCreator app = new DefaultAdvisorAutoProxyCreator();
-
         app.setProxyTargetClass(true);
-
         return app;
 
     }
