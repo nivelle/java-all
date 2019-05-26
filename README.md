@@ -31,11 +31,11 @@
 
 ## springMVC实践
 
-✅ PropertiesHttpMessageConverter 
+✅ AbstractGenericHttpMessageConverter 
 
-✅ PropertiesHandlerMethodArgumentResolver 
+✅ HandlerMethodArgumentResolver 
 
-✅ PropertiesHandlerMethodArgumentResolver 
+✅ HandlerMethodReturnValueHandler 
 
 ## 设计模式实践
 
