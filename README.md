@@ -101,9 +101,15 @@
 
 ✅ string 指令
 
-✅ bitMap 指令
+✅ zSet 指令
 
-✅ setEx 指令
+✅ Set 指令
+
+✅ Hash 指令
+
+✅ List 指令
+
+✅ key 指令
 
 ## Spring实践
 
