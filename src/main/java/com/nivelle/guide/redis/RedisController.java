@@ -275,4 +275,35 @@ public class RedisController {
         return ResponseResult.newResponseResult().setSuccess(zZCard);
     }
 
+    //set
+
+    /**
+     * 返回集合的大小
+     *
+     * @param key
+     * @return
+     */
+    @RequestMapping("/sAdd/{key}/{value1}/{value2}/{value3}")
+    @ResponseBody
+    public ResponseResult sAdd(@PathVariable(value = "key") String key,
+                               @PathVariable(value = "value1") String value1,
+                               @PathVariable(value = "value2") String value2,
+                               @PathVariable(value = "value3") String value3) {
+        long size = redisCommandUtil.sAdd(key, value1, value2, value3);
+        return ResponseResult.newResponseResult().setSuccess(size);
+    }
+
+    /**
+     * 返回集合的元素
+     *
+     * @param key
+     * @return
+     */
+    @RequestMapping("/setMembers/{key}")
+    @ResponseBody
+    public ResponseResult setMembers(@PathVariable(value = "key") String key) {
+        Set<String> set = redisCommandUtil.setMembers(key);
+        return ResponseResult.newResponseResult().setSuccess(set);
+    }
+
 }
