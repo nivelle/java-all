@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -17,6 +18,19 @@ public class RedisController {
 
     @Autowired
     RedisCommandUtil redisCommandUtil;
+
+
+    /**
+     * 删除键
+     *
+     * @return
+     */
+    @RequestMapping("/deleteKey/{key}")
+    @ResponseBody
+    public ResponseResult deleteKey(@PathVariable(value = "key") String key) {
+        redisCommandUtil.delete(key);
+        return ResponseResult.newResponseResult().setSuccess("delete key=" + key + "success");
+    }
 
     /**
      * 获取值的子集
@@ -66,19 +80,6 @@ public class RedisController {
         return ResponseResult.newResponseResult().setSuccess(result);
     }
 
-    /**
-     * 获得旧值，设置新值
-     *
-     * @return
-     */
-    @RequestMapping("/getAndSet/{key}/{newValue}")
-    @ResponseBody
-    public ResponseResult getAndSetString(@PathVariable(value = "key") String key,
-                                          @PathVariable(value = "newValue") String newValue) {
-        String result = redisCommandUtil.getAndSet(key, newValue);
-        System.out.println(result);
-        return ResponseResult.newResponseResult().setSuccess(result);
-    }
 
     /**
      * 获得指定位是否有值
@@ -304,6 +305,37 @@ public class RedisController {
     public ResponseResult setMembers(@PathVariable(value = "key") String key) {
         Set<String> set = redisCommandUtil.setMembers(key);
         return ResponseResult.newResponseResult().setSuccess(set);
+    }
+
+    //hash
+
+    /**
+     * 添加元素
+     *
+     * @param key
+     * @return
+     */
+    @RequestMapping("/hPut/{key}/{hKey}/{hValue}")
+    @ResponseBody
+    public ResponseResult hPut(@PathVariable(value = "key") String key,
+                               @PathVariable(value = "hKey") String hKey,
+                               @PathVariable(value = "hValue") String hValue) {
+        redisCommandUtil.hPut(key, hKey, hValue);
+        return ResponseResult.newResponseResult().setSuccess("");
+    }
+
+
+    /**
+     * 返回hash集合中指定键所有元素
+     *
+     * @param key
+     * @return
+     */
+    @RequestMapping("/hGetAll/{key}")
+    @ResponseBody
+    public ResponseResult hGetAll(@PathVariable(value = "key") String key) {
+        Map<Object, Object> result = redisCommandUtil.hGetAll(key);
+        return ResponseResult.newResponseResult().setSuccess(result);
     }
 
 }
