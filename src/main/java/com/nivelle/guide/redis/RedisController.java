@@ -23,7 +23,7 @@ public class RedisController {
     /**
      * 删除键
      *
-     * @return
+     * @return ResponseResult
      */
     @RequestMapping("/deleteKey/{key}")
     @ResponseBody
@@ -36,13 +36,45 @@ public class RedisController {
     /**
      * 查看所有的键
      *
-     * @return
+     * @return ResponseResult
      */
     @RequestMapping("/keys/{pattern}")
     @ResponseBody
     public ResponseResult Key(@PathVariable(value = "pattern") String pattern) {
         Set<String> set = redisCommandUtil.keys(pattern);
         return ResponseResult.newResponseResult().setSuccess(set);
+    }
+
+
+    /*****************************************zSet操作********************************************************/
+
+    /**
+     * 获取键对应的值
+     *
+     * @param key
+     * @return ResponseResult
+     */
+    @RequestMapping("/string/{key}")
+    @ResponseBody
+    public ResponseResult string(@PathVariable(value = "key") String key) {
+        String result = redisCommandUtil.get(key);
+        System.out.println(result);
+        return ResponseResult.newResponseResult().setSuccess(result);
+    }
+
+    /**
+     * 键是否存在
+     *
+     * @param key
+     * @return ResponseResult
+     */
+    @RequestMapping("/substring/{key}")
+    @ResponseBody
+    public ResponseResult exists(@PathVariable(value = "key") String key) {
+        redisCommandUtil.set("stringTest", "test");
+        boolean result = redisCommandUtil.hasKey(key);
+        System.out.println(result);
+        return ResponseResult.newResponseResult().setSuccess(result);
     }
 
     /**
@@ -65,35 +97,22 @@ public class RedisController {
     }
 
     /**
-     * 获取键对应的值
+     * 设置key:value 并设置过期时间
      *
      * @param key
+     * @param value
      * @return
      */
-    @RequestMapping("/string/{key}")
+    @RequestMapping("/setEx/{key}/{value}/{timeout}")
     @ResponseBody
-    public ResponseResult string(@PathVariable(value = "key") String key) {
-        String result = redisCommandUtil.get(key);
-        System.out.println(result);
-        return ResponseResult.newResponseResult().setSuccess(result);
+    public ResponseResult setEx(@PathVariable(value = "key") String key,
+                                @PathVariable(value = "value") String value,
+                                @PathVariable(value = "timeout") long timeout) {
+        redisCommandUtil.setEx(key, value, timeout, TimeUnit.SECONDS);
+        return ResponseResult.newResponseResult().setSuccess("success");
     }
 
-    /**
-     * 键是否存在
-     *
-     * @param key
-     * @return
-     */
-    @RequestMapping("/substring/{key}")
-    @ResponseBody
-    public ResponseResult exists(@PathVariable(value = "key") String key) {
-        redisCommandUtil.set("stringTest", "test");
-        boolean result = redisCommandUtil.hasKey(key);
-        System.out.println(result);
-        return ResponseResult.newResponseResult().setSuccess(result);
-    }
-
-
+    /*****************************************位图操作********************************************************/
     /**
      * 获得指定位是否有值
      *
@@ -127,23 +146,7 @@ public class RedisController {
     }
 
 
-    /**
-     * 设置key:value 并设置过期时间
-     *
-     * @param key
-     * @param value
-     * @return
-     */
-    @RequestMapping("/setEx/{key}/{value}/{timeout}")
-    @ResponseBody
-    public ResponseResult setEx(@PathVariable(value = "key") String key,
-                                @PathVariable(value = "value") String value,
-                                @PathVariable(value = "timeout") long timeout) {
-        redisCommandUtil.setEx(key, value, timeout, TimeUnit.SECONDS);
-        return ResponseResult.newResponseResult().setSuccess("success");
-    }
-
-    //zSet操作
+    /*****************************************zSet操作********************************************************/
 
     /**
      * 设置 zSet 有序集合并设置分数
@@ -289,7 +292,7 @@ public class RedisController {
         return ResponseResult.newResponseResult().setSuccess(zZCard);
     }
 
-    //set
+    /*****************************************Set操作********************************************************/
 
     /**
      * 批量添加
@@ -362,7 +365,7 @@ public class RedisController {
         return ResponseResult.newResponseResult().setSuccess(result);
     }
 
-    //hash
+    /*****************************************hash操作********************************************************/
 
     /**
      * 添加元素
@@ -391,5 +394,7 @@ public class RedisController {
         Map<Object, Object> result = redisCommandUtil.hGetAll(key);
         return ResponseResult.newResponseResult().setSuccess(result);
     }
+
+    /*****************************************List操作********************************************************/
 
 }
