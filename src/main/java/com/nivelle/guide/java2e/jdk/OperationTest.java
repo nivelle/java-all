@@ -6,10 +6,23 @@ package com.nivelle.guide.java2e.jdk;
 public class OperationTest {
 
 
-    public static void main(String[] args) {
+    private static long subtraction() {
         int a = 10;
         long b = 4;
         long c = a - b;
-        System.out.println(a - b);
+        System.out.println(c);
+        return c;
+    }
+
+    private static int toInteger() {
+        String integer = "0x7fffffff";
+        return Integer.parseInt(integer,10);
+    }
+
+
+    public static void main(String[] args) {
+        //subtraction();
+        int result = toInteger();
+        System.out.println(result);
     }
 }

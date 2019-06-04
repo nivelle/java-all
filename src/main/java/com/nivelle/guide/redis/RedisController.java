@@ -29,7 +29,20 @@ public class RedisController {
     @ResponseBody
     public ResponseResult deleteKey(@PathVariable(value = "key") String key) {
         redisCommandUtil.delete(key);
-        return ResponseResult.newResponseResult().setSuccess("delete key=" + key + "success");
+        return ResponseResult.newResponseResult().setSuccess("delete key=" + key + " is success");
+    }
+
+
+    /**
+     * 查看所有的键
+     *
+     * @return
+     */
+    @RequestMapping("/keys/{pattern}")
+    @ResponseBody
+    public ResponseResult Key(@PathVariable(value = "pattern") String pattern) {
+        Set<String> set = redisCommandUtil.keys(pattern);
+        return ResponseResult.newResponseResult().setSuccess(set);
     }
 
     /**
@@ -279,7 +292,7 @@ public class RedisController {
     //set
 
     /**
-     * 返回集合的大小
+     * 批量添加
      *
      * @param key
      * @return
@@ -307,6 +320,48 @@ public class RedisController {
         return ResponseResult.newResponseResult().setSuccess(set);
     }
 
+    /**
+     * 移除集合的元素
+     *
+     * @param key
+     * @param values
+     * @return
+     */
+    @RequestMapping("/sRemove/{key}/{values}")
+    @ResponseBody
+    public ResponseResult sRemove(@PathVariable(value = "key") String key, @PathVariable(value = "values") String values) {
+        Long result = redisCommandUtil.sRemove(key, values.split(","));
+        return ResponseResult.newResponseResult().setSuccess(result);
+    }
+
+
+    /**
+     * 随机移除并返回集合中的一个元素（抽奖）
+     *
+     * @param key
+     * @return
+     */
+    @RequestMapping("/sPop/{key}")
+    @ResponseBody
+    public ResponseResult sRemove(@PathVariable(value = "key") String key) {
+        String result = redisCommandUtil.sPop(key);
+        return ResponseResult.newResponseResult().setSuccess(result);
+    }
+
+
+    /**
+     * 返回集合的大小
+     *
+     * @param key
+     * @return
+     */
+    @RequestMapping("/setSize/{key}")
+    @ResponseBody
+    public ResponseResult setSize(@PathVariable(value = "key") String key) {
+        Long result = redisCommandUtil.sSize(key);
+        return ResponseResult.newResponseResult().setSuccess(result);
+    }
+
     //hash
 
     /**
@@ -315,7 +370,7 @@ public class RedisController {
      * @param key
      * @return
      */
-    @RequestMapping("/hPut/{key}/{hKey}/{hValue}")
+    @RequestMapping("/addHash/{key}/{hKey}/{hValue}")
     @ResponseBody
     public ResponseResult hPut(@PathVariable(value = "key") String key,
                                @PathVariable(value = "hKey") String hKey,
@@ -323,7 +378,6 @@ public class RedisController {
         redisCommandUtil.hPut(key, hKey, hValue);
         return ResponseResult.newResponseResult().setSuccess("");
     }
-
 
     /**
      * 返回hash集合中指定键所有元素
