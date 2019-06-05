@@ -19,6 +19,7 @@ public class RedisController {
     @Autowired
     RedisCommandUtil redisCommandUtil;
 
+    /*****************************************key操作********************************************************/
 
     /**
      * 删除键
@@ -43,6 +44,30 @@ public class RedisController {
     public ResponseResult Key(@PathVariable(value = "pattern") String pattern) {
         Set<String> set = redisCommandUtil.keys(pattern);
         return ResponseResult.newResponseResult().setSuccess(set);
+    }
+
+    /**
+     * 设置键的过期时间
+     *
+     * @return ResponseResult
+     */
+    @RequestMapping("/expireTime/{key}/{timeout}")
+    @ResponseBody
+    public ResponseResult expireKey(@PathVariable(value = "key") String key, @PathVariable(value = "timeout") Long timeout) {
+        boolean expire = redisCommandUtil.expire(key, timeout, TimeUnit.SECONDS);
+        return ResponseResult.newResponseResult().setSuccess(expire);
+    }
+
+    /**
+     * 查看键的过期时间
+     *
+     * @return ResponseResult
+     */
+    @RequestMapping("/expire/{key}")
+    @ResponseBody
+    public ResponseResult getExpire(@PathVariable(value = "key") String key) {
+        long expire = redisCommandUtil.getExpire(key);
+        return ResponseResult.newResponseResult().setSuccess(expire);
     }
 
 
@@ -113,6 +138,7 @@ public class RedisController {
     }
 
     /*****************************************位图操作********************************************************/
+
     /**
      * 获得指定位是否有值
      *
@@ -342,7 +368,7 @@ public class RedisController {
      * 随机移除并返回集合中的一个元素（抽奖）
      *
      * @param key
-     * @return
+     * @return ResponseResult
      */
     @RequestMapping("/sPop/{key}")
     @ResponseBody
@@ -396,5 +422,32 @@ public class RedisController {
     }
 
     /*****************************************List操作********************************************************/
+
+    /**
+     * list添加操作
+     *
+     * @param key
+     * @return
+     */
+    @RequestMapping("/listLPush/{key}/{value}")
+    @ResponseBody
+    public ResponseResult lLeftPush(@PathVariable(value = "key") String key,@PathVariable(value = "value") String value) {
+        Long result = redisCommandUtil.lLeftPush(key,value);
+        return ResponseResult.newResponseResult().setSuccess(result);
+    }
+
+    /**
+     * list添加操作
+     *
+     * @param key
+     * @return
+     */
+    @RequestMapping("/lIndex/{key}/{index}")
+    @ResponseBody
+    public ResponseResult lIndex(@PathVariable(value = "key") String key,@PathVariable(value = "index") long index) {
+        String result = redisCommandUtil.lIndex(key,index);
+        return ResponseResult.newResponseResult().setSuccess(result);
+    }
+
 
 }

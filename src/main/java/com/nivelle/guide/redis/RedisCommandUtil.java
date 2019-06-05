@@ -570,6 +570,7 @@ public class RedisCommandUtil {
     }
 
     /**
+     *
      * @param key
      * @param value
      * @return
@@ -579,6 +580,7 @@ public class RedisCommandUtil {
     }
 
     /**
+     * 批量添加值
      * @param key
      * @param value
      * @return
