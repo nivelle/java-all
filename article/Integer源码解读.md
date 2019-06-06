@@ -1,45 +1,53 @@
+---
+layout: post
+title:  "数据结构源码学习--Integer"
+date:   2019-06-05 01:06:05
+categories: java
+tags: Integer
+excerpt: Integer
+---
 
+
+
+* content
+{:toc}
+
+```
 package java.lang;
 
 import java.lang.annotation.Native;
 
 /**
- * The {@code Integer} class wraps【包】 a value of the primitive type
+ * The {@code Integer} class wraps【包】 a value of the primitive【原始】 type
  * {@code int} in an object. An object of type {@code Integer}
- * contains a single field whose type is {@code int}.
- *
- * <p>In addition, this class provides several methods for converting
- * an {@code int} to a {@code String} and a {@code String} to an
- * {@code int}, as well as other constants and methods useful when
- * dealing with an {@code int}.
- *
- * <p>Implementation note: The implementations of the "bit twiddling"
+ * contains a single【唯一】 field【属性】 whose type is {@code int}.
+ * <p>Implementation note: The implementations of the "bit twiddling【摆弄】"
  * methods (such as {@link #highestOneBit(int) highestOneBit} and
  * {@link #numberOfTrailingZeros(int) numberOfTrailingZeros}) are
  * based on material from Henry S. Warren, Jr.'s <i>Hacker's
  * Delight</i>, (Addison Wesley, 2002).
- *
- * @author  Lee Boynton
- * @author  Arthur van Hoff
- * @author  Josh Bloch
- * @author  Joseph D. Darcy
- * @since JDK1.0
  */
+ 
+```
+** 总结：Integer就是int的一个包装类，Integer包含的唯一属性就是int**
+ 
+ 
+```
 public final class Integer extends Number implements Comparable<Integer> {
     /**
-     * A constant holding the minimum value an {@code int} can
+     * A constant holding the minimum【最小值】 value an {@code int} can
      * have, -2<sup>31</sup>.
      */
-    @Native public static final int   MIN_VALUE = 0x80000000;
+    @Native public static final int   MIN_VALUE = 0x80000000;//2147483648
 
     /**
-     * A constant holding the maximum value an {@code int} can
+     * A constant holding the maximum【最大只】 value an {@code int} can
      * have, 2<sup>31</sup>-1.
      */
-    @Native public static final int   MAX_VALUE = 0x7fffffff;
+    @Native public static final int   MAX_VALUE = 0x7fffffff;//2147483647
 
     /**
-     * The {@code Class} instance representing the primitive type
+     * The {@code Class} instance representing【代表】 the primitive type
      * {@code int}.
      *
      * @since   JDK1.1
@@ -48,7 +56,8 @@ public final class Integer extends Number implements Comparable<Integer> {
     public static final Class<Integer>  TYPE = (Class<Integer>) Class.getPrimitiveClass("int");
 
     /**
-     * All possible chars for representing a number as a String
+     * All possible【可能】 chars for representing a number as a String//用于将数字表示为字符串的所有可能字符
+
      */
     final static char[] digits = {
         '0' , '1' , '2' , '3' , '4' , '5' ,
@@ -60,14 +69,14 @@ public final class Integer extends Number implements Comparable<Integer> {
     };
 
     /**
-     * Returns a string representation of the first argument in the
-     * radix specified by the second argument.
+     * Returns a string representation【表示】 of the first argument in the
+     * radix【基数】 specified【规定】 by the second argument.
      *
      * <p>If the radix is smaller than {@code Character.MIN_RADIX}
      * or larger than {@code Character.MAX_RADIX}, then the radix
      * {@code 10} is used instead.
      *
-     * <p>If the first argument is negative, the first element of the
+     * <p>If the first argument is negative【负数】, the first element of the
      * result is the ASCII minus character {@code '-'}
      * ({@code '\u005Cu002D'}). If the first argument is not
      * negative, no sign character appears in the result.
@@ -1569,3 +1578,5 @@ public final class Integer extends Number implements Comparable<Integer> {
     /** use serialVersionUID from JDK 1.0.2 for interoperability */
     @Native private static final long serialVersionUID = 1360826667806852920L;
 }
+
+```
