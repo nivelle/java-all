@@ -29,10 +29,12 @@ import java.lang.annotation.Native;
  */
  
 ```
+
 ** 总结：Integer就是int的一个包装类，Integer包含的唯一属性就是int**
  
  
 ```
+
 public final class Integer extends Number implements Comparable<Integer> {
     /**
      * A constant holding the minimum【最小值】 value an {@code int} can
@@ -52,13 +54,14 @@ public final class Integer extends Number implements Comparable<Integer> {
      *
      * @since   JDK1.1
      */
+    //告诉编译器忽略 unchecked 警告信息
     @SuppressWarnings("unchecked")
     public static final Class<Integer>  TYPE = (Class<Integer>) Class.getPrimitiveClass("int");
 
     /**
-     * All possible【可能】 chars for representing a number as a String//用于将数字表示为字符串的所有可能字符
-
+     * All possible【可能】 chars for representing a number as a String
      */
+    //用于将数字表示为字符串的所有可能字符
     final static char[] digits = {
         '0' , '1' , '2' , '3' , '4' , '5' ,
         '6' , '7' , '8' , '9' , 'a' , 'b' ,
@@ -77,11 +80,11 @@ public final class Integer extends Number implements Comparable<Integer> {
      * {@code 10} is used instead.
      *
      * <p>If the first argument is negative【负数】, the first element of the
-     * result is the ASCII minus character {@code '-'}
+     * result is the ASCII minus【减】 character {@code '-'}
      * ({@code '\u005Cu002D'}). If the first argument is not
      * negative, no sign character appears in the result.
      *
-     * <p>The remaining characters of the result represent the magnitude
+     * <p>The remaining【剩下的】 characters of the result represent【代表】 the magnitude【重量】
      * of the first argument. If the magnitude is zero, it is
      * represented by a single zero character {@code '0'}
      * ({@code '\u005Cu0030'}); otherwise, the first character of
@@ -1505,7 +1508,7 @@ public final class Integer extends Number implements Comparable<Integer> {
     }
 
     /**
-     * Returns the signum function of the specified {@code int} value.  (The
+     * Returns the signum【符号】 function of the specified {@code int} value.  (The
      * return value is -1 if the specified value is negative; 0 if the
      * specified value is zero; and 1 if the specified value is positive.)
      *
@@ -1519,8 +1522,8 @@ public final class Integer extends Number implements Comparable<Integer> {
     }
 
     /**
-     * Returns the value obtained by reversing the order of the bytes in the
-     * two's complement representation of the specified {@code int} value.
+     * Returns the value obtained【获得】 by reversing the order of the bytes in the
+     * two's complement【补充】 representation 【代表】of the specified {@code int} value.
      *
      * @param i the value whose bytes are to be reversed
      * @return the value obtained by reversing the bytes in the specified
