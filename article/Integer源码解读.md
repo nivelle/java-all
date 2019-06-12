@@ -13,8 +13,8 @@ excerpt: Integer
 {:toc}
 
 ```
-package java.lang;
 
+package java.lang;
 import java.lang.annotation.Native;
 
 /**
@@ -410,10 +410,10 @@ public final class Integer extends Number implements Comparable<Integer> {
     }
 
     /**
-     * Places characters representing the integer i into the
-     * character array buf. The characters are placed into
-     * the buffer backwards starting with the least significant
-     * digit at the specified index (exclusive), and working
+     * Places【安置】 characters representing【代表】 the integer i into the
+     * character array buf. The characters are placed【放置】 into
+     * the buffer backwards【倒置】starting with the least【最少】 significant【重要的】
+     * digit【数字】at the specified index (exclusive), and working
      * backwards from there.
      *
      * Will fail if i == Integer.MIN_VALUE
@@ -856,8 +856,9 @@ public final class Integer extends Number implements Comparable<Integer> {
     }
 
     /**
+     * byte 范围 -128～127,超出范围的值会因为高位丢失，导致首位变成1,成为负数。
      * Returns the value of this {@code Integer} as a {@code byte}
-     * after a narrowing primitive conversion.
+     * after a narrowing【缩小】 primitive conversion【转换】.
      * @jls 5.1.3 Narrowing Primitive Conversions
      */
     public byte byteValue() {
@@ -866,7 +867,7 @@ public final class Integer extends Number implements Comparable<Integer> {
 
     /**
      * Returns the value of this {@code Integer} as a {@code short}
-     * after a narrowing primitive conversion.
+     * after a narrowing【缩小】 primitive conversion.
      * @jls 5.1.3 Narrowing Primitive Conversions
      */
     public short shortValue() {
@@ -884,7 +885,7 @@ public final class Integer extends Number implements Comparable<Integer> {
     /**
      * Returns the value of this {@code Integer} as a {@code long}
      * after a widening primitive conversion.
-     * @jls 5.1.2 Widening Primitive Conversions
+     * @jls 5.1.2 Widening【加宽】 Primitive Conversions
      * @see Integer#toUnsignedLong(int)
      */
     public long longValue() {
@@ -911,8 +912,8 @@ public final class Integer extends Number implements Comparable<Integer> {
 
     /**
      * Returns a {@code String} object representing this
-     * {@code Integer}'s value. The value is converted to signed
-     * decimal representation and returned as a string, exactly as if
+     * {@code Integer}'s value. The value is converted to signed【有符号】
+     * decimal【十进制】 representation【代表】 and returned as a string, exactly as if
      * the integer value were given as an argument to the {@link
      * java.lang.Integer#toString(int)} method.
      *
@@ -1464,7 +1465,7 @@ public final class Integer extends Number implements Comparable<Integer> {
     }
 
     /**
-     * Returns the value obtained by rotating the two's complement binary
+     * Returns the value obtained by rotating【旋转】 the two's complement binary
      * representation of the specified {@code int} value right by the
      * specified number of bits.  (Bits shifted out of the right hand, or
      * low-order, side reenter on the left, or high-order.)
