@@ -17,5 +17,10 @@ public class BaseDataTypes {
         Byte myByte = new Byte("127");
         System.out.println(myByte.intValue());
         System.out.println(myByte.doubleValue());
+
+        //精度超过36会默认为10
+        String integer2 = Integer.toUnsignedString(-300,80);
+
+        System.out.println(integer2);
     }
 }
