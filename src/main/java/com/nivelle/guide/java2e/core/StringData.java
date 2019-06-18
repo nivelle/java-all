@@ -64,5 +64,17 @@ public class StringData {
         for (int i = 0; i < bytes.length; i++) {
             System.out.print("字符串ASCII码:" + bytes[i] + ";");
         }
+        System.out.println();
+        System.out.println("指定位置的字符:" + string1.charAt(1));
+        /**
+         * 返回指定位置的字节编码
+         */
+        System.out.println("指定位置的字符:" + string1.codePointAt(1));
+        /**
+         * 默认都是转化为大写字母比较
+         */
+        System.out.println("字符串忽略大小写比较:" + string1.equalsIgnoreCase(string2));
+
+
     }
 }
