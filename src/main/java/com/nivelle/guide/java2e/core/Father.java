@@ -7,13 +7,13 @@ import lombok.ToString;
 @Setter
 @Getter
 @ToString
-public class Human {
+public class Father {
 
     private int age;
 
     private String name;
 
-    public Human(int age, String name) {
+    public Father(int age, String name) {
         this.age = age;
         this.name = name;
     }

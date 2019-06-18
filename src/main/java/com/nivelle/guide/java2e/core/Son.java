@@ -7,11 +7,11 @@ import lombok.ToString;
 @ToString
 @Setter
 @Getter
-public class Man extends Human {
+public class Son extends Father {
 
     private int score;
 
-    public Man(int age, String name, int score) {
+    public Son(int age, String name, int score) {
         /**
          * 继承构造函数需要先实现父类的构造函数
          */
