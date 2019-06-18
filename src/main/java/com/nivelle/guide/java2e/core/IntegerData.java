@@ -74,6 +74,10 @@ public class IntegerData {
          */
         System.err.println("二进制表示:" + Integer.toBinaryString(100) + ";1位数量:" + Integer.bitCount(100));
 
+        /**
+         * decode方法主要作用是解码字符串转成Integer型
+         */
+        System.out.println("解码为十进制:" + Integer.decode("0x11") + Integer.decode("#11")+Integer.decode("0001"));
 
     }
 }
