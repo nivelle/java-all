@@ -64,9 +64,15 @@ public class IntegerData {
          * 返回正负号 1:正号 0:0 -1:负号
          */
         System.err.println("符号:" + Integer.signum(-100));
-
-
-        System.out.println("反数:" + Integer.reverse(100));
+        /**
+         * 该方法即是将i进行反转，反转就是第1位与第32位对调，第二位与第31位对调 0000 0000 0000 0001 1000 0000 0000 0000 = 98304
+         */
+        System.err.println("反数:" + Integer.reverse(98304));
+        /**
+         ** 补码是计算机中用来表示负数，使得负数能够使用加法器参与加法运算的一种码。
+         ** 正数的补码即为自己，负数的补码为符号位不变，其余逐位求反再加1。
+         */
+        System.err.println("二进制表示:" + Integer.toBinaryString(100) + ";1位数量:" + Integer.bitCount(100));
 
 
     }
