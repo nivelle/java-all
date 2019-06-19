@@ -1,5 +1,10 @@
 package com.nivelle.guide.java2e.core;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.StringJoiner;
+
 /**
  * TODO:DOCUMENT ME!
  *
@@ -107,5 +112,82 @@ public class StringData {
          * 底层利用了: public String(char value[], int offset, int count) 构造函数
          */
         System.out.println("切割字符串:" + string2.substring(0, 1));
+
+        /**
+         * 字符串拼接
+         * 需要经过两次字符串复制:
+         * 1. char buf[] = Arrays.copyOf(value, len + otherLen);//buf[] 字符数组包括 string2字符串+加上新字符串的长度
+         *
+         * 2.str.getChars(buf, len);//"love jessy!".getChars(buf,len);
+         *
+         * 3.System.arraycopy(value, 0, dst, dstBegin, value.length);//love jessy! 这个字符串调用复制函数
+         */
+        System.out.println("拼接字符串:" + string2.concat(" love jessy!"));
+
+        /**
+         * 字符串替换
+         */
+        System.out.println("字符串替换:" + string2.replace("l", "j"));
+
+        /**
+         * 字符串匹配
+         */
+        System.out.println("字符串匹配:" + string2.matches("nivelle"));
+
+        /**
+         * 字符串分割成数组
+         */
+        String string5 = "n,i,v,e,l,l,e";
+        for (int i = 0; i < string5.split(",").length; i++) {
+            System.out.print("字符分割:" + string5.split(",")[i] + ";");
+        }
+        System.out.println();
+
+        /**
+         * 集合转指定字符拼接的字符串
+         */
+        List list = new ArrayList();
+        list.add("n");
+        list.add("i");
+        list.add("v");
+        list.add("e");
+        list.add("l");
+        list.add("l");
+        list.add("e");
+        String joinResult = String.join(",", list);
+        System.out.println("集合元素通过指定符号拼接:" + joinResult);
+
+        StringJoiner joiner = new StringJoiner(";");
+        for (Object cs : list) {
+            joiner.add((CharSequence) cs);
+        }
+        System.out.println("集合元素通过指定符号拼接原理:" + joiner.toString());
+
+        /**
+         * 字符串字母转换:大写->小写
+         */
+        System.out.println("字符串转小写:" + "NIVELLE".toLowerCase(Locale.US));
+        /**
+         * 字符串字母转换:小写->大写
+         */
+        System.out.println("字符串转大写:" + "nivellE".toUpperCase(Locale.US));
+
+        /**
+         * 去掉字符串首尾中的空格
+         */
+        System.out.println("去掉字符串首尾中的空格:" + " nive  ll e ".trim());
+
+        /**
+         * 底层原理:通过复制当前字符窜的字符串数组实现：
+         * System.arraycopy(value, 0, result, 0, value.length);
+         */
+        for (int i=0;i<"nivelle".length();i++){
+            System.out.println("转为字符串数组:"+("nivelle".toCharArray()[i]));
+        }
+
+        System.out.println("格式化字符串:"+String.format("nivell%s","e"));
+
+
+
     }
 }
