@@ -83,16 +83,29 @@ public class StringData {
          */
         System.out.println("指定位置的字符:" + string1.codePointAt(1));
         /**
-         * 忽略大小写话比较
+         * 忽略大小写等于比较
          * **默认都是转化为大写字母比较**
          */
-        System.out.println("字符串忽略大小写比较:" + string1.equalsIgnoreCase(string2));
+        System.out.println("字符串忽略大小写相等判断:" + string1.equalsIgnoreCase(string2));
 
         /**
          * The comparison is based on the Unicode value of each character in the strings
          */
-        System.out.println("字符串字典比较:" + string1.compareTo(string2));
+        String compare1 = "A";
+        String compare2 = "C";
+        System.out.println("字符串字典比较:" + compare1.compareTo(compare2));
 
+        /**
+         * 大小写不敏感比较，分别转为大写字母和小写字母分别比较一次
+         */
+        String compare3 = "100";
+        String compare4 = "97";
+        System.out.println("字符串忽略大小写大小比较:" + compare3.compareToIgnoreCase(compare4));
 
+        /**
+         * 切割字符串
+         * 底层利用了: public String(char value[], int offset, int count) 构造函数
+         */
+        System.out.println("切割字符串:" + string2.substring(0, 1));
     }
 }
