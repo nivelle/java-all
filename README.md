@@ -131,9 +131,11 @@
 
 ## JDK学习
 
-✅ Interger
+✅ Integer
 
 ✅ String
+
+✅ Enum
 
 
 
