@@ -6,7 +6,7 @@ import java.util.Locale;
 import java.util.StringJoiner;
 
 /**
- * TODO:DOCUMENT ME!
+ * String
  *
  * @author fuxinzhong
  * @date 2019/06/16
