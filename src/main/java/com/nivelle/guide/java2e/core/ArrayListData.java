@@ -1,5 +1,7 @@
 package com.nivelle.guide.java2e.core;
 
+import com.google.common.collect.Lists;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
@@ -73,6 +75,8 @@ public class ArrayListData {
          * 如果不是初始空集合,则按照指定的minCapacity进行扩容;如果是初始空集合,则只有大于默认的容量
          *
          * DEFAULT_CAPACITY = 10 才进行扩容,否则不扩容。
+         *
+         * 扩容会导致modCount+1
          */
         ArrayList arrayList3 = new ArrayList();
         //必须进行一次添加操纵才有默认的容量
@@ -84,6 +88,80 @@ public class ArrayListData {
         System.out.println("ensureCapacity:通过反射获取当前 arrayList3 的容量大小" + ensureResult.length);
         System.out.println("当前 arrayList3 集合的大小size():" + arrayList3.size());
 
+        /**
+         * 底层扩容函数:
+         *
+         *
+         * private void grow(int minCapacity) {
+         *         // overflow-conscious code
+         *         int oldCapacity = elementData.length;
+         *         int newCapacity = oldCapacity + (oldCapacity >> 1);//1.5倍
+         *         if (newCapacity - minCapacity < 0)
+         *             newCapacity = minCapacity;
+         *         if (newCapacity - MAX_ARRAY_SIZE > 0)
+         *             newCapacity = hugeCapacity(minCapacity);
+         *         // minCapacity is usually close to size, so this is a win:
+         *         elementData = Arrays.copyOf(elementData, newCapacity);
+         *     }
+         *
+         * private static int hugeCapacity(int minCapacity) {
+         *         if (minCapacity < 0) // overflow
+         *             throw new OutOfMemoryError();
+         *         return (minCapacity > MAX_ARRAY_SIZE) ?
+         *             Integer.MAX_VALUE :
+         *             MAX_ARRAY_SIZE;
+         *     }
+         *
+         *
+         */
+        //从hugeCapacity看出,最大容量是:Integer.MAX_VALUE
+
+        /**
+         * 底层规范的最大容量大小,因为一些虚拟机会存储一些头部信息,所以会大于实际申请的容量大小
+         * The maximum size of array to allocate. Some VMs reserve some header words in an array.
+         * Attempts to allocate larger arrays may result in OutOfMemoryError: Requested array size exceeds VM limit
+         */
+        //private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
+
+        /**
+         * 底层实现: indexOf(o) >= 0;
+         * 判断指定元素的索引是否存在(查找到第一额元素就终止)
+         */
+        System.out.println("至少包含一个指定元素:" + arrayList.contains(null));
+
+
+        /**
+         * 查询指定元素的索引，需要关注null元素,null元素没有方法可调用,如果查询元素为null,复杂度为O(n),否则为O(n)
+         * public int indexOf(Object o) {
+         *         if (o == null) {
+         *             for (int i = 0; i < size; i++)
+         *                 if (elementData[i]==null)
+         *                     return i;
+         *         } else {
+         *             for (int i = 0; i < size; i++)
+         *                 if (o.equals(elementData[i]))
+         *                     return i;
+         *         }
+         *         return -1;
+         *     }
+         */
+        System.out.println("至少包含一个指定元素,第一个的索引:" + arrayList.indexOf(null));
+
+        System.out.println("至少包含一个指定元素,最后一个的索引:" + arrayList.lastIndexOf(null));
+
+        System.out.println("复制一个ArrayList:" + arrayList.clone());
+
+        /**
+         * 本质上是拷贝ArrayList的底层对象数组
+         */
+        for (int i = 0; i < arrayList.size(); i++) {
+            System.out.print("转化成一个数组" + i + ":" + arrayList.toArray()[i]);
+        }
+        ArrayList arrayList4 = Lists.newArrayList();
+        arrayList4.add(1);
+        arrayList4.add(2);
+        arrayList4.add(3);
+        arrayList4.add(4);
 
     }
 }
