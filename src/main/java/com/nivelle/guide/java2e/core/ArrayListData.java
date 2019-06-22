@@ -1,5 +1,7 @@
 package com.nivelle.guide.java2e.core;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
@@ -9,6 +11,7 @@ import java.util.ArrayList;
  * @author fuxinzhong
  * @date 2019/06/16
  */
+@Slf4j
 public class ArrayListData {
 
 
@@ -177,6 +180,24 @@ public class ArrayListData {
         /**
          * 超出目标数组长度的访问会报错
          */
-        System.err.println("destination1 被拷贝的数组未设置的数组元素为空:" + b1[4]);
+        try {
+            System.err.println("destination1 被拷贝的数组未设置的数组元素为空:" + b1[4]);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
+        /**
+         * 获取指定索引的元素前首先会检查索引范围是否超过了底层数组保存元素的个数
+         */
+        System.out.println("获取指定索引的元素:" + arrayList4.get(1));
+        try {
+            System.out.println("获取指定索引的元素:" + arrayList4.get(6));
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
+        /**
+         * 设置指定索引位置的值,并返回旧值
+         */
+        System.out.println("设置指定索引的值,并返回旧值:" + arrayList4.set(0, 5));
+        System.out.println("原位置的值被设置为5:" + arrayList4.get(0));
     }
 }
