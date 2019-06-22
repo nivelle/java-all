@@ -199,5 +199,18 @@ public class ArrayListData {
          */
         System.out.println("设置指定索引的值,并返回旧值:" + arrayList4.set(0, 5));
         System.out.println("原位置的值被设置为5:" + arrayList4.get(0));
+
+        /**
+         * 在尾部新加值
+         */
+        ArrayList arrayList5 = new ArrayList<String>(5);
+        arrayList5.add("1");
+        arrayList5.add("2");
+        arrayList5.add("3");
+        arrayList5.add("4");
+        arrayList5.add("5");
+        System.out.println(arrayList5);
+        arrayList5.add("6");
+        
     }
 }
