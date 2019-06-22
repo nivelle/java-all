@@ -1,7 +1,5 @@
 package com.nivelle.guide.java2e.core;
 
-import com.google.common.collect.Lists;
-
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
@@ -157,11 +155,28 @@ public class ArrayListData {
         for (int i = 0; i < arrayList.size(); i++) {
             System.out.print("转化成一个数组" + i + ":" + arrayList.toArray()[i]);
         }
-        ArrayList arrayList4 = Lists.newArrayList();
-        arrayList4.add(1);
-        arrayList4.add(2);
-        arrayList4.add(3);
-        arrayList4.add(4);
+        System.out.println();
 
+        ArrayList arrayList4 = new ArrayList<String>();
+        arrayList4.add("1");
+        arrayList4.add("2");
+        arrayList4.add("3");
+        arrayList4.add("4");
+        String[] destination = new String[10];
+        Object[] b = arrayList4.toArray(destination);
+        System.out.println("将list中的数据拷贝到指定数组:" + b.length);
+        System.out.println("被拷贝的数组未设置的数组元素为空:" + b[9]);
+
+        String[] destination1 = new String[2];
+        Object[] b1 = arrayList4.toArray(destination1);
+
+        System.out.println("destination1 被拷贝的数组未设置的数组元素为空:" + b1[0]);
+        System.out.println("destination1 被拷贝的数组未设置的数组元素为空:" + b1[1]);
+        System.out.println("destination1 被拷贝的数组未设置的数组元素为空:" + b1[2]);
+        System.out.println("destination1 被拷贝的数组未设置的数组元素为空:" + b1[3]);
+        /**
+         * 超出目标数组长度的访问会报错
+         */
+        System.err.println("destination1 被拷贝的数组未设置的数组元素为空:" + b1[4]);
     }
 }
