@@ -1,9 +1,11 @@
-package com.nivelle.guide.java2e.core;
+package com.nivelle.guide.java2e.jdk;
 
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.ListIterator;
 
 /**
  * ArrayList
@@ -225,7 +227,89 @@ public class ArrayListData {
          *  System.arraycopy(elementData, index, elementData, index + 1,size - index);
          */
         arrayList5.add(9, "12");
-        System.out.println("经过插入的arrayList5:" + arrayList5);
+        System.out.println("经过插入的 arrayList5:" + arrayList5);
+        System.out.println("移除元素前的大小:" + arrayList5.size());
+        arrayList5.remove(9);
+        System.out.println("被移除指定元素后的 arrayList5:" + arrayList5);
+        System.out.println("移除元素后的大小:" + arrayList5.size());
+
+        /**
+         * 把所有元素设置为null,让垃圾回收器能够回收
+         */
+        //arrayList5.clear();
+
+        ArrayList arrayList6 = new ArrayList();
+        arrayList6.add(1);
+        arrayList6.add(2);
+        arrayList6.add(3);
+        ArrayList arrayList7 = new ArrayList();
+        arrayList7.add(4);
+        arrayList7.add(5);
+        arrayList7.add(6);
+        arrayList7.add(3);
+
+        /**
+         * Object[] a = c.toArray();
+         * int numNew = a.length;
+         * ensureCapacityInternal(size + numNew);  // Increments modCount
+         * System.arraycopy(a, 0, elementData, size, numNew);
+         * size += numNew;
+         * return numNew != 0;
+         */
+        //arrayList6.addAll(arrayList7);
+        System.out.println("集合中添加另一个集合:" + arrayList6);
+        /**
+         * 只保留同时在arrayList6 和arrayList7同时存在的元素，返回值为是否修改过结构
+         */
+        Boolean retain = arrayList7.retainAll(arrayList6);
+        System.out.println("只保留同时在arrayList6 和arrayList7同时存在的元素:" + retain + ":" + arrayList7);
+
+        ArrayList arrayList8 = new ArrayList();
+        arrayList8.add(11);
+        ArrayList arrayList9 = new ArrayList();
+        arrayList9.add(11);
+        arrayList9.add(12);
+        System.out.println("removeAll操作之前的 arrayList8:" + arrayList8);
+        System.out.println("removeAll操作之前的 arrayList9:" + arrayList9);
+        /**
+         * 返回被删除元素的集合是否修改过结构
+         */
+        Boolean remove = arrayList9.removeAll(arrayList8);
+        System.out.println("删除同时在 arrayList9 和 arrayList8 同时存在的元素:" + remove + ":" + arrayList9);
+
+        ListIterator<Integer> iterator = arrayList5.listIterator();
+        //顺序
+        while (iterator.hasNext()) {
+            System.out.print(iterator.next());
+            System.out.print(";");
+        }
+        iterator.add(12);
+        System.out.println();
+        System.out.println("被遍历器添加了元素的集合:" + arrayList5);
+        //倒叙
+        while (iterator.hasPrevious()) {
+            System.out.print(iterator.previous());
+            System.out.print(";");
+        }
+
+        System.out.println();
+
+        System.out.println("replace 之前的 arrayList5:" + arrayList5);
+        /**
+         * ArrayList自带的遍历操作元素
+         */
+        arrayList5.replaceAll(x -> Integer.parseInt(x.toString()) + 1);
+        System.out.println("replace 之后的 arrayList5:" + arrayList5);
+
+        arrayList5.forEach(System.out::print);
+
+        List<String> list =new ArrayList();
+        list.add("1");
+        list.add("2");
+
+        list.removeIf(s -> s.contains("1"));
+        System.out.println(list);
+
 
     }
 }

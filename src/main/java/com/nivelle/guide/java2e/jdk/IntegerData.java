@@ -1,4 +1,4 @@
-package com.nivelle.guide.java2e.core;
+package com.nivelle.guide.java2e.jdk;
 
 /**
  * Integer
