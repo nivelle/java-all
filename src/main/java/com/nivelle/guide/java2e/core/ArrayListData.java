@@ -201,7 +201,8 @@ public class ArrayListData {
         System.out.println("原位置的值被设置为5:" + arrayList4.get(0));
 
         /**
-         * 在尾部新加值
+         * 在尾部新加值时会判断是否需要扩容。第一次是默认值，发现底层数组没有元素，会第一次扩容到默认容量:10;
+         * 第二次添加元素时发现elementData.length=10，不需要进行拓容,直接添加就行.
          */
         ArrayList arrayList5 = new ArrayList<String>(5);
         arrayList5.add("1");
@@ -211,6 +212,20 @@ public class ArrayListData {
         arrayList5.add("5");
         System.out.println(arrayList5);
         arrayList5.add("6");
-        
+        arrayList5.add("7");
+        arrayList5.add("8");
+        arrayList5.add("9");
+        arrayList5.add("10");
+        /**
+         * 添加第11个元素的时候,会进行第二次扩容,扩容后的容量的为原来的1.5倍
+         */
+        arrayList5.add("11");
+        /**
+         *  1.在指定的位置插入指定的元素,底层实现是将指定位置后移，通过复制实现。
+         *  System.arraycopy(elementData, index, elementData, index + 1,size - index);
+         */
+        arrayList5.add(9, "12");
+        System.out.println("经过插入的arrayList5:" + arrayList5);
+
     }
 }
