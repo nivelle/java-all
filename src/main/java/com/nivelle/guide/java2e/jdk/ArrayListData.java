@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -272,7 +273,7 @@ public class ArrayListData {
         System.out.println("removeAll操作之前的 arrayList8:" + arrayList8);
         System.out.println("removeAll操作之前的 arrayList9:" + arrayList9);
         /**
-         * 返回被删除元素的集合是否修改过结构
+         * 返回值是:被删除元素的集合是否修改过结构
          */
         Boolean remove = arrayList9.removeAll(arrayList8);
         System.out.println("删除同时在 arrayList9 和 arrayList8 同时存在的元素:" + remove + ":" + arrayList9);
@@ -296,20 +297,44 @@ public class ArrayListData {
 
         System.out.println("replace 之前的 arrayList5:" + arrayList5);
         /**
-         * ArrayList自带的遍历操作元素
+         * ArrayList自带的遍历元素,并执行对应操作
          */
         arrayList5.replaceAll(x -> Integer.parseInt(x.toString()) + 1);
         System.out.println("replace 之后的 arrayList5:" + arrayList5);
 
         arrayList5.forEach(System.out::print);
 
-        List<String> list =new ArrayList();
+        List<String> list = new ArrayList();
         list.add("1");
         list.add("2");
-
+        /**
+         * 条件删除
+         */
         list.removeIf(s -> s.contains("1"));
         System.out.println(list);
 
 
+        List<String> list2 = new ArrayList();
+        list2.add("9");
+        list2.add("10");
+        list2.add("11");
+        list2.add("11");
+        list2.sort(new CompareAble());
+        System.out.println("排序之后的 list2 集合:" + list2);
     }
+
+
+}
+
+class CompareAble implements Comparator<String> {
+
+    @Override
+    public int compare(String a, String b) {
+        if (Integer.parseInt(a) >= Integer.parseInt(b)) {
+            return -1;
+        } else {
+            return 1;
+        }
+    }
+
 }
