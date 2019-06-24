@@ -5,7 +5,7 @@
  * https://www.nayuki.io/page/bitcoin-cryptography-library
  * https://github.com/nayuki/Bitcoin-Cryptography-Library
  */
-package com.nivelle.guide.blockchain.util;
+package com.nivelle.guide.blockChain.util;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

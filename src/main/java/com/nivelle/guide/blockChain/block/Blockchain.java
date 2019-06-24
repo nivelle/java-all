@@ -1,10 +1,10 @@
-package com.nivelle.guide.blockchain.block;
+package com.nivelle.guide.blockChain.block;
 
 import com.google.common.collect.Maps;
-import com.nivelle.guide.blockchain.store.RocksDBUtils;
-import com.nivelle.guide.blockchain.transaction.TXInput;
-import com.nivelle.guide.blockchain.transaction.TXOutput;
-import com.nivelle.guide.blockchain.transaction.Transaction;
+import com.nivelle.guide.blockChain.store.RocksDBUtils;
+import com.nivelle.guide.blockChain.transaction.TXInput;
+import com.nivelle.guide.blockChain.transaction.TXOutput;
+import com.nivelle.guide.blockChain.transaction.Transaction;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

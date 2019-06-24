@@ -1,4 +1,4 @@
-package com.nivelle.guide.blockchain.cli;
+package com.nivelle.guide.blockChain.cli;
 
 public class Main {
 

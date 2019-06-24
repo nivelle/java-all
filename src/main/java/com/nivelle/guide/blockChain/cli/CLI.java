@@ -1,15 +1,15 @@
-package com.nivelle.guide.blockchain.cli;
+package com.nivelle.guide.blockChain.cli;
 
-import com.nivelle.guide.blockchain.block.Block;
-import com.nivelle.guide.blockchain.block.Blockchain;
-import com.nivelle.guide.blockchain.pow.ProofOfWork;
-import com.nivelle.guide.blockchain.store.RocksDBUtils;
-import com.nivelle.guide.blockchain.transaction.TXOutput;
-import com.nivelle.guide.blockchain.transaction.Transaction;
-import com.nivelle.guide.blockchain.transaction.UTXOSet;
-import com.nivelle.guide.blockchain.util.Base58Check;
-import com.nivelle.guide.blockchain.wallet.Wallet;
-import com.nivelle.guide.blockchain.wallet.WalletUtils;
+import com.nivelle.guide.blockChain.block.Block;
+import com.nivelle.guide.blockChain.block.Blockchain;
+import com.nivelle.guide.blockChain.pow.ProofOfWork;
+import com.nivelle.guide.blockChain.store.RocksDBUtils;
+import com.nivelle.guide.blockChain.transaction.TXOutput;
+import com.nivelle.guide.blockChain.transaction.Transaction;
+import com.nivelle.guide.blockChain.transaction.UTXOSet;
+import com.nivelle.guide.blockChain.util.Base58Check;
+import com.nivelle.guide.blockChain.wallet.Wallet;
+import com.nivelle.guide.blockChain.wallet.WalletUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.cli.*;
 import org.apache.commons.lang.math.NumberUtils;

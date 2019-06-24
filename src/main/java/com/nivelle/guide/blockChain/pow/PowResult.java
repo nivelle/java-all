@@ -1,4 +1,4 @@
-package com.nivelle.guide.blockchain.pow;
+package com.nivelle.guide.blockChain.pow;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

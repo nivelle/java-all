@@ -1,10 +1,10 @@
-package com.nivelle.guide.blockchain.transaction;
+package com.nivelle.guide.blockChain.transaction;
 
-import com.nivelle.guide.blockchain.block.Blockchain;
-import com.nivelle.guide.blockchain.util.BtcAddressUtils;
-import com.nivelle.guide.blockchain.util.SerializeUtils;
-import com.nivelle.guide.blockchain.wallet.Wallet;
-import com.nivelle.guide.blockchain.wallet.WalletUtils;
+import com.nivelle.guide.blockChain.block.Blockchain;
+import com.nivelle.guide.blockChain.util.BtcAddressUtils;
+import com.nivelle.guide.blockChain.util.SerializeUtils;
+import com.nivelle.guide.blockChain.wallet.Wallet;
+import com.nivelle.guide.blockChain.wallet.WalletUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
