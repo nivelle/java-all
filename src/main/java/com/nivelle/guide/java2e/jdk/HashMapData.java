@@ -1,5 +1,6 @@
 package com.nivelle.guide.java2e.jdk;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,7 +46,26 @@ public class HashMapData {
         /**
          * 根据时间和空间的因素,默认的加载因子是 0.75
          */
+
+        /**
+         * hashMap 非同步，需要外部同步来实现同步。或者可以使用 Collections.synchronizedMap
+         *
+         * 在返回迭代器之后,除非通过迭代器的remove方法,其他改变hashMap结构的方法都有可能会在迭代期间抛出 ConcurrentModificationException 异常。
+         *
+         * 采用快速失败机制,而不是在一个不确定的未来时机抛出异常。同时快速失败机制并不是可靠的,仅仅是力所能及的抛出异常。不能依赖快速失败机制来
+         *
+         * Note that the fail-fast behavior of an iterator cannot be guaranteed as it is, generally speaking, impossible to make any hard guarantees in the
+         * presence of unsynchronized concurrent modification.  Fail-fast iterators throw <tt>ConcurrentModificationException</tt> on a best-effort basis.
+         * Therefore, it would be wrong to write a program that depended on this exception for its correctness: the fail-fast behavior of iterators
+         * should be used only to detect bugs.
+         */
+
+
         Map map = new HashMap();
+
+        Map synchronizedMap = Collections.synchronizedMap(new HashMap());
+
+
 
 
     }

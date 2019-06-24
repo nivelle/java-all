@@ -139,6 +139,10 @@
 
 ✅ ArrayList
 
+✅ HashMap
+
+
+
 
 
 
