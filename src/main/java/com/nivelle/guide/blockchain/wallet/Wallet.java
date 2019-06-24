@@ -1,7 +1,7 @@
-package com.nivelle.guide.blockChain.wallet;
+package com.nivelle.guide.blockchain.wallet;
 
-import com.nivelle.guide.blockChain.util.Base58Check;
-import com.nivelle.guide.blockChain.util.BtcAddressUtils;
+import com.nivelle.guide.blockchain.util.Base58Check;
+import com.nivelle.guide.blockchain.util.BtcAddressUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;

@@ -1,4 +1,4 @@
-package com.nivelle.guide.blockChain.util;
+package com.nivelle.guide.blockchain.util;
 
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang.ArrayUtils;

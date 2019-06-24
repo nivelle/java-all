@@ -1,6 +1,6 @@
-package com.nivelle.guide.blockChain.transaction;
+package com.nivelle.guide.blockchain.transaction;
 
-import com.nivelle.guide.blockChain.util.Base58Check;
+import com.nivelle.guide.blockchain.util.Base58Check;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

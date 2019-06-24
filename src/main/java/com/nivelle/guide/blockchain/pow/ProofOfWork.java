@@ -1,7 +1,7 @@
-package com.nivelle.guide.blockChain.pow;
+package com.nivelle.guide.blockchain.pow;
 
-import com.nivelle.guide.blockChain.block.Block;
-import com.nivelle.guide.blockChain.util.ByteUtils;
+import com.nivelle.guide.blockchain.block.Block;
+import com.nivelle.guide.blockchain.util.ByteUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

@@ -1,4 +1,4 @@
-package com.nivelle.guide.blockChain.util;
+package com.nivelle.guide.blockchain.util;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;

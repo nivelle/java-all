@@ -1,10 +1,10 @@
-package com.nivelle.guide.blockChain.block;
+package com.nivelle.guide.blockchain.block;
 
-import com.nivelle.guide.blockChain.pow.PowResult;
-import com.nivelle.guide.blockChain.pow.ProofOfWork;
-import com.nivelle.guide.blockChain.transaction.MerkleTree;
-import com.nivelle.guide.blockChain.transaction.Transaction;
-import com.nivelle.guide.blockChain.util.ByteUtils;
+import com.nivelle.guide.blockchain.pow.PowResult;
+import com.nivelle.guide.blockchain.pow.ProofOfWork;
+import com.nivelle.guide.blockchain.transaction.MerkleTree;
+import com.nivelle.guide.blockchain.transaction.Transaction;
+import com.nivelle.guide.blockchain.util.ByteUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

@@ -1,7 +1,7 @@
-package com.nivelle.guide.blockChain.transaction;
+package com.nivelle.guide.blockchain.transaction;
 
 import com.google.common.collect.Lists;
-import com.nivelle.guide.blockChain.util.ByteUtils;
+import com.nivelle.guide.blockchain.util.ByteUtils;
 import lombok.Data;
 import org.apache.commons.codec.digest.DigestUtils;
 

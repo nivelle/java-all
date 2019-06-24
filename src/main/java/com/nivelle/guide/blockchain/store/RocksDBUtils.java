@@ -1,9 +1,9 @@
-package com.nivelle.guide.blockChain.store;
+package com.nivelle.guide.blockchain.store;
 
 import com.google.common.collect.Maps;
-import com.nivelle.guide.blockChain.block.Block;
-import com.nivelle.guide.blockChain.transaction.TXOutput;
-import com.nivelle.guide.blockChain.util.SerializeUtils;
+import com.nivelle.guide.blockchain.block.Block;
+import com.nivelle.guide.blockchain.transaction.TXOutput;
+import com.nivelle.guide.blockchain.util.SerializeUtils;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.rocksdb.RocksDB;

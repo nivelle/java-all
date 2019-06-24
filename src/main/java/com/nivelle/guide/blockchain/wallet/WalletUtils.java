@@ -1,7 +1,7 @@
-package com.nivelle.guide.blockChain.wallet;
+package com.nivelle.guide.blockchain.wallet;
 
 import com.google.common.collect.Maps;
-import com.nivelle.guide.blockChain.util.Base58Check;
+import com.nivelle.guide.blockchain.util.Base58Check;
 import lombok.AllArgsConstructor;
 import lombok.Cleanup;
 import lombok.Data;

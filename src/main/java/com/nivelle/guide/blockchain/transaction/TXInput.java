@@ -1,6 +1,6 @@
-package com.nivelle.guide.blockChain.transaction;
+package com.nivelle.guide.blockchain.transaction;
 
-import com.nivelle.guide.blockChain.util.BtcAddressUtils;
+import com.nivelle.guide.blockchain.util.BtcAddressUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

@@ -1,4 +1,4 @@
-package com.nivelle.guide.blockChain.transaction;
+package com.nivelle.guide.blockchain.transaction;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
