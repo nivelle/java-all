@@ -1,4 +1,4 @@
-package com.nivelle.guide.algorithm.sort;
+package com.nivelle.guide.algorithms.sort;
 
 import java.util.Arrays;
 

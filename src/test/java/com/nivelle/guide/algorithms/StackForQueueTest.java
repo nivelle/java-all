@@ -1,6 +1,6 @@
-package com.nivelle.guide.algorithm;
+package com.nivelle.guide.algorithms;
 
-import com.nivelle.guide.algorithm.common.StackForQueue;
+import com.nivelle.guide.algorithms.common.StackForQueue;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;

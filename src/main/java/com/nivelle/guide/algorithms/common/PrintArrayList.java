@@ -1,4 +1,4 @@
-package com.nivelle.guide.algorithm.common;
+package com.nivelle.guide.algorithms.common;
 
 import java.util.ArrayList;
 import java.util.Stack;

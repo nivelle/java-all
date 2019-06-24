@@ -1,4 +1,4 @@
-package com.nivelle.guide.algorithm.sort.binarysorttree;
+package com.nivelle.guide.algorithms.sort.binarysorttree;
 
 public class BinarySortTree {
 	Node root;
