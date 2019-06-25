@@ -1,8 +1,6 @@
 package com.nivelle.guide.java2e.jdk;
 
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * HashMap
@@ -13,7 +11,7 @@ import java.util.Map;
 public class HashMapData {
 
 
-    public static void main(String[] args) throws Exception{
+    public static void main(String[] args) throws Exception {
 
         /**
          * Hash table based implementation of the <tt>Map</tt> interface.  This implementation provides all of the optional map operations,
@@ -87,12 +85,58 @@ public class HashMapData {
          */
 
 
-        Map hashMap = new HashMap();
+        /**
+         * 默认无参构造函数,初始化的加载因子:0.75
+         */
+        HashMap hashMap = new HashMap();
+
+        hashMap.put("1", "nivelle");
+        hashMap.put("2", "jessy");
+        System.out.println("无参初始化HashMap" + hashMap);
 
 
+        /**
+         * 默认加载因子:0.75
+         *
+         * final void putMapEntries(Map<? extends K, ? extends V> m, boolean evict) {
+         *         int s = m.size();
+         *         if (s > 0) {
+         *             if (table == null) { // pre-size
+         *                 float ft = ((float)s / loadFactor) + 1.0F;
+         *                 int t = ((ft < (float)MAXIMUM_CAPACITY) ?
+         *                          (int)ft : MAXIMUM_CAPACITY);
+         *                 if (t > threshold)
+         *                     //table的容量是离t最近的2的整次幂
+         *                     threshold = tableSizeFor(t);
+         *             }
+         *             else if (s > threshold)
+         *                 //若table已经初始化,容量不够则需要进行扩容
+         *                 resize();
+         *             for (Map.Entry<? extends K, ? extends V> e : m.entrySet()) {
+         *                 K key = e.getKey();
+         *                 V value = e.getValue();
+         *                 putVal(hash(key), key, value, false, evict);
+         *             }
+         *         }
+         *     }
+         */
+        HashMap hashMap1 = new HashMap(hashMap);
+        System.out.println("初始化参数是已经存在的HashMap" + hashMap1);
 
-        Map synchronizedMap = Collections.synchronizedMap(new HashMap());
+        HashMap hashMap2 = new HashMap();
+        hashMap2.put("3", "xihui");
+        hashMap2.put("4", "wangzheng");
 
+        /**
+         *
+         * The table, initialized on first use, and resized as necessary. When allocated, length is always a power of two.
+         * We also tolerate length zero in some operations to allow bootstrapping mechanics that are currently not needed.)
+         *  transient Node<K, V>[] table;
+         */
+        HashMap hashMap3 = new HashMap(hashMap);
+
+
+        System.out.println(hashMap1);
 
     }
 
