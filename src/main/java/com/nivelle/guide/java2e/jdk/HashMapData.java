@@ -13,7 +13,7 @@ import java.util.Map;
 public class HashMapData {
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception{
 
         /**
          * Hash table based implementation of the <tt>Map</tt> interface.  This implementation provides all of the optional map operations,
@@ -60,12 +60,38 @@ public class HashMapData {
          * should be used only to detect bugs.
          */
 
+        /**
+         * treeNode 默认hashCode 排序,如果实现了Comparable 接口,则按照比较器进行排序。
+         */
 
-        Map map = new HashMap();
+        /**
+         *
+         *    //初始化默认容量2的4次方,必须是2的整数倍
+         *    static final int DEFAULT_INITIAL_CAPACITY = 1 << 4; // aka 16
+         *
+         *     //最大为2的30次方
+         *     static final int MAXIMUM_CAPACITY = 1 << 30;
+         *
+         *     //默认加载因子
+         *    static final float DEFAULT_LOAD_FACTOR = 0.75f;
+         *
+         *
+         *     //链表数超过8个则考虑进行转换为红黑树
+         *     static final int TREEIFY_THRESHOLD = 8;
+         *
+         *     //当执行resize操作时，当桶中bin的数量少于UNTREEIFY_THRESHOLD时使用链表来代替树。默认值是6
+         *     static final int UNTREEIFY_THRESHOLD = 6;
+         *
+         *     //要转换为红黑树,桶的树木最少是64
+         *     static final int MIN_TREEIFY_CAPACITY = 64;
+         */
+
+
+        Map hashMap = new HashMap();
+
+
 
         Map synchronizedMap = Collections.synchronizedMap(new HashMap());
-
-
 
 
     }
