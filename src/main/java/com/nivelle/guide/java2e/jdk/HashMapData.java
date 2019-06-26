@@ -138,12 +138,13 @@ public class HashMapData {
 
         System.out.println(hashMap1);
 
-
+        // 添加元素
         /**
          * final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
          *                    boolean evict) {
          *         Node<K,V>[] tab; Node<K,V> p; int n, i;
          *         if ((tab = table) == null || (n = tab.length) == 0)
+         *             //槽是空的
          *             n = (tab = resize()).length;
          *         if ((p = tab[i = (n - 1) & hash]) == null)
          *             tab[i] = newNode(hash, key, value, null);
@@ -184,28 +185,39 @@ public class HashMapData {
          *     }
          */
 
-
+        //扩容函数
         /**
+         *  Initializes or doubles table size.  If null, allocates in accord with initial capacity target held in field threshold.
+         *  Otherwise, because we are using power-of-two expansion, the elements from each bin must either stay at same index, or move
+         *  with a power of two offset in the new table.
+         *
+
          *   final Node<K,V>[] resize() {
          *         Node<K,V>[] oldTab = table;
-         *         int oldCap = (oldTab == null) ? 0 : oldTab.length;
-         *         int oldThr = threshold;
+         *         int oldCap = (oldTab == null) ? 0 : oldTab.length;//容量
+         *         int oldThr = threshold;//阀值
          *         int newCap, newThr = 0;
+         *         //1. 已经初始化过容量的扩容
          *         if (oldCap > 0) {
          *             if (oldCap >= MAXIMUM_CAPACITY) {
          *                 threshold = Integer.MAX_VALUE;
          *                 return oldTab;
          *             }
+         *             //2. 如果 oldCap 扩大为原来的2倍同时还小于 MAXIMUM_CAPACITY（2^30） && oldCap 是大于 默认的 DEFAULT_INITIAL_CAPACITY（16）
          *             else if ((newCap = oldCap << 1) < MAXIMUM_CAPACITY &&
          *                      oldCap >= DEFAULT_INITIAL_CAPACITY)
-         *                 newThr = oldThr << 1; // double threshold
+         *             //3. 阀值数量扩大为原来的2倍，容量扩大为原来的2倍
+         *                 newThr = oldThr << 1;
          *         }
+         *         //4. 没有初始化容量,但是已经添加过元素，有一定数量的阀值数量,将阀值数量赋值给新的容量;阀值数量不变
          *         else if (oldThr > 0) // initial capacity was placed in threshold
          *             newCap = oldThr;
-         *         else {               // zero initial threshold signifies using defaults
-         *             newCap = DEFAULT_INITIAL_CAPACITY;
+         *         else {
+         *             // 5. zero initial threshold signifies using defaults
+         *             newCap = DEFAULT_INITIAL_CAPACITY; //16
          *             newThr = (int)(DEFAULT_LOAD_FACTOR * DEFAULT_INITIAL_CAPACITY);
          *         }
+         *         //6. 阀值的数量是0
          *         if (newThr == 0) {
          *             float ft = (float)newCap * loadFactor;
          *             newThr = (newCap < MAXIMUM_CAPACITY && ft < (float)MAXIMUM_CAPACITY ?
@@ -213,21 +225,32 @@ public class HashMapData {
          *         }
          *         threshold = newThr;
          *         @SuppressWarnings({"rawtypes","unchecked"})
-         *             Node<K , V>[] newTab = (Node<K,V>[])new Node[newCap];
+         *         Node<K,V>[] newTab = (Node<K,V>[])new Node[newCap];
          *         table = newTab;
          *         if (oldTab != null) {
          *             for (int j = 0; j < oldCap; ++j) {
          *                 Node<K,V> e;
+         *                 // 桶位置不为空,赋值给临时变量e
          *                 if ((e = oldTab[j]) != null) {
+         *                     //旧桶位置置为null,让垃圾回收器可以回收
          *                     oldTab[j] = null;
+         *                     //如果该位置仅仅一个元素
          *                     if (e.next == null)
+         *                         //计算下标 e.hash & (newCap -1 )
          *                         newTab[e.hash & (newCap - 1)] = e;
+         *                         //如果该节点是一个树节点
          *                     else if (e instanceof TreeNode)
+         *                         //Splits nodes in a tree bin into lower and upper tree bins,or untreeifies if now too small. Called only from resize;
+         *                         //see above discussion about split bits and indices.
+         *
          *                         ((TreeNode<K,V>)e).split(this, newTab, j, oldCap);
          *                     else { // preserve order
+         *                         // 低位头;低位尾
          *                         Node<K,V> loHead = null, loTail = null;
+         *                         // 高位头;高位尾
          *                         Node<K,V> hiHead = null, hiTail = null;
          *                         Node<K,V> next;
+         *                         // 扩容后原来的元素进行重新安置
          *                         do {
          *                             next = e.next;
          *                             if ((e.hash & oldCap) == 0) {
@@ -260,7 +283,6 @@ public class HashMapData {
          *         return newTab;
          *     }
          */
-
 
 
     }
