@@ -130,6 +130,8 @@ public class HashMapData {
         int hashInt = (key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16);
         System.out.println(hashInt);
 
+
+
     }
 
 }
