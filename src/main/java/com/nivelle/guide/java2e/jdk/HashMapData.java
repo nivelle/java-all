@@ -13,6 +13,7 @@ public class HashMapData {
 
     public static void main(String[] args) throws Exception {
 
+        ////////////////////////////整体说明//////////////////////////
         /**
          * Hash table based implementation of the <tt>Map</tt> interface.  This implementation provides all of the optional map operations,
          * and permits<tt>null</tt> values and the <tt>null</tt> key.
@@ -62,6 +63,8 @@ public class HashMapData {
          * treeNode 默认hashCode 排序,如果实现了Comparable 接口,则按照比较器进行排序。
          */
 
+
+        /////////////////////////// 静态常量///////////////////////////////
         /**
          *
          *    //初始化默认容量2的4次方,必须是2的整数倍
@@ -80,20 +83,16 @@ public class HashMapData {
          *     //当执行resize操作时，当桶中bin的数量少于UNTREEIFY_THRESHOLD时使用链表来代替树。默认值是6
          *     static final int UNTREEIFY_THRESHOLD = 6;
          *
-         *     //要转换为红黑树,桶的树木最少是64
+         *     //当集合中的容量大于这个值时，表中的桶才能进行树形化 ，否则桶内元素太多时会扩容而不是树形化 \
+         *     为了避免进行扩容、树形化选择的冲突，这个值不能小于 4 * TREEIFY_THRESHOLD
          *     static final int MIN_TREEIFY_CAPACITY = 64;
+         *
+         *     //装载因子，是用来衡量 HashMap 满的程度，计算HashMap的实时装载因子的方法为：size/capacity，而不是占用桶的数量去除以capacity。capacity 是桶的数量，也就是 table 的长度length。
+         *     //默认的负载因子0.75 是对空间和时间效率的一个平衡选择，建议大家不要修改，除非在时间和空间比较特殊的情况下，如果内存空间很多而又对时间效率要求很高，可以降低负载因子loadFactor 的值；相反，如果内存空间紧张而对时间效率要求不高，可以增加负载因子 loadFactor 的值，这个值可以大于1。
+         *     final float loadFactory
          */
 
-
-        /**
-         * 默认无参构造函数,初始化的加载因子:0.75
-         */
-        HashMap hashMap = new HashMap();
-
-        hashMap.put("1", "nivelle");
-        hashMap.put("2", "jessy");
-        System.out.println("无参初始化HashMap" + hashMap);
-
+        //////////////////////////内部方法/////////////////////////////////////
 
         /**
          * 默认加载因子:0.75
@@ -120,23 +119,6 @@ public class HashMapData {
          *         }
          *     }
          */
-        HashMap hashMap1 = new HashMap(hashMap);
-        System.out.println("初始化参数是已经存在的HashMap" + hashMap1);
-
-        HashMap hashMap2 = new HashMap();
-        hashMap2.put("3", "xihui");
-        hashMap2.put("4", "wangzheng");
-
-        /**
-         *
-         * The table, initialized on first use, and resized as necessary. When allocated, length is always a power of two.
-         * We also tolerate length zero in some operations to allow bootstrapping mechanics that are currently not needed.)
-         *  transient Node<K, V>[] table;
-         */
-        HashMap hashMap3 = new HashMap(hashMap);
-
-
-        System.out.println(hashMap1);
 
         // 添加元素
         /**
@@ -225,7 +207,7 @@ public class HashMapData {
          *         }
          *         threshold = newThr;
          *         @SuppressWarnings({"rawtypes","unchecked"})
-         *         Node<K,V>[] newTab = (Node<K,V>[])new Node[newCap];
+         *         Node<K   ,   V>[] newTab = (Node<K,V>[])new Node[newCap];
          *         table = newTab;
          *         if (oldTab != null) {
          *             for (int j = 0; j < oldCap; ++j) {
@@ -283,6 +265,47 @@ public class HashMapData {
          *         return newTab;
          *     }
          */
+
+
+        /**
+         * 默认无参构造函数,初始化的加载因子:0.75
+         */
+        HashMap hashMap = new HashMap();
+
+        hashMap.put("1", "nivelle");
+        hashMap.put("2", "jessy");
+        System.out.println("无参初始化HashMap" + hashMap);
+
+        /**
+         * 指定 初始化数据,默认加载因子0.75
+         *
+         * 1.如果目标集合为空,则除以装载因子+1,然后和 threshold比较是否需要桶扩容
+         *
+         * 2.如果目标集合不为空,则 直接判断是否需要扩容
+         */
+        HashMap hashMap1 = new HashMap(hashMap);
+        System.out.println("初始化参数是已经存在的HashMap" + hashMap1);
+
+        HashMap hashMap2 = new HashMap();
+        hashMap2.put("3", "xihui");
+        hashMap2.put("4", "wangzheng");
+        System.out.println("hashMap键值对数量:" + hashMap2.size());
+        /**
+         * 也就是判断size是否为0
+         */
+        System.out.println("判断是否为空hashMap:" + hashMap2.isEmpty());
+        /**
+         *
+         * The table, initialized on first use, and resized as necessary. When allocated, length is always a power of two.
+         * We also tolerate length zero in some operations to allow bootstrapping mechanics that are currently not needed.)
+         *  transient Node<K, V>[] table;
+         */
+        HashMap hashMap3 = new HashMap(hashMap);
+
+
+        System.out.println(hashMap1);
+
+
 
 
     }
