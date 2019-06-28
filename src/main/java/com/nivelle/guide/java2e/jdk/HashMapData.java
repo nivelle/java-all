@@ -367,6 +367,7 @@ public class HashMapData {
         System.out.println("对value值指定执行某个操作:" + hashMap2.compute("8", (k, v) -> v + "++"));
         System.out.println("hashMap2:" + hashMap2);
 
+
     }
 
 
