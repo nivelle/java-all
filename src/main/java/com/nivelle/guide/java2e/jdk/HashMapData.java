@@ -45,10 +45,21 @@ public class HashMapData {
         System.out.println("判断是否为空hashMap:" + hashMap2.isEmpty());
 
         /**
-         * 集合元素的key的hashCode和
+         * 1. 集合元素的key的hashCode之和，这个方法继承之AbstractMap
+         * 2. hashCode的具体求发是k的hashCode 异或 v的hashCode
          */
         int hash = hashMap2.hashCode();
         System.out.println("hashMap的hashCode:" + hash);
+
+        HashMap hashMap3 = new HashMap();
+        hashMap3.putIfAbsent("1", "2");
+        hashMap3.putIfAbsent("2", "1");
+
+        int hashMap3Key = "1".hashCode();
+        int hashMap3Value = "2".hashCode();
+        System.err.println("hashMap3的hashCode:" + (hashMap3Key ^ hashMap3Value));
+        System.err.println("hashMap3的hashCode:" + hashMap3.hashCode());
+
 
         /**
          * 判断是否存在某个指定键/值
@@ -68,7 +79,7 @@ public class HashMapData {
         hashMap2.put("5", "xubing");
         hashMap2.put("6", "biliang");
         /**
-         * value集合
+         * 返回value集合
          */
         System.out.println("values Collections 集合:" + hashMap2.values());
         /**
@@ -84,7 +95,7 @@ public class HashMapData {
         Set<Map.Entry<String, String>> entries = hashMap2.entrySet();
         Iterator iterator = entries.iterator();
         while (iterator.hasNext()) {
-            System.out.println("entries 集合内的元素:" + iterator.next());
+            System.out.println("entries 集合内的元素:" + iterator.next().hashCode());
         }
 
         System.out.println(hashMap2.getOrDefault("8", "不存在情况下的默认值"));
@@ -112,23 +123,37 @@ public class HashMapData {
         System.out.println("对value值指定执行某个操作:" + hashMap2.compute("8", (k, v) -> v + "++"));
         System.out.println("hashMap2:" + hashMap2);
 
-        /**
-         * HashMap 使用的方法很巧妙，它通过 hash & (table.length -1)来得到该对象的保存位，前面说过 HashMap 底层数组的长度总是2的n次方，这是HashMap在速度上的优化。
-         * 当 length 总是2的n次方时，hash & (length-1)运算等价于对 length 取模，也就是 hash%length，但是&比%具有更高的效率。
-         */
-        int n = 16;
-        int result1 = n & (32 - 1);
-        int result2 = n % 32;
-        boolean result3 = result1 == result2 ? true : false;
-        System.out.println("位运算优化:" + result3);
 
         /**
-         * 32位的hashCode值，通过与h>>>16然后让高位也参与到运算
+         * 32位的hashCode值，通过与h>>>16然后让高位也参与到运算，然后再进行 (h-1)&hashCode
          */
         String key = "8";
         int h;
-        int hashInt = (key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16);
-        System.out.println(hashInt);
+        int hashCode = (key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16);
+        System.out.println("计算某个key的hash值,然后用户后面定位:" + hashCode);
+
+
+        /**
+         * HashMap 使用的方法很巧妙，它通过 hash & (table.length -1)来得到该对象的保存位，HashMap 底层数组的长度总是2的n次方，这是HashMap在速度上的优化。
+         * 当 length 总是2的n次方时，hash & (length-1)运算等价于对 length 取模，也就是 hash%length，但是&比%具有更高的效率。
+         */
+        int hashCodeInt = 16;
+        int tableLength = 64;
+        int result1 = hashCodeInt & (tableLength - 1);
+        int result2 = hashCodeInt % tableLength;
+        boolean result3 = result1 == result2 ? true : false;
+        System.out.println("位运算优化,前提是n是2的整次方:" + result3);
+
+
+        /**
+         * initialCapacity 会计算出一个最近的2的n次方作为threshold的初始值，加载因子会使用指定的加载因子
+         */
+        HashMap hashMap4 = new HashMap(4,0.5F);
+        hashMap4.put(1,1);
+        hashMap4.put(2,2);
+        System.out.println(hashMap4);
+
     }
+
 
 }
