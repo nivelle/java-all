@@ -95,22 +95,34 @@ public class LinkedListData {
 
         System.out.println("当前linkedList3:" + linkedList3);
 
-        /**
-         * 下行迭代器
-         */
-        Iterator iterator = linkedList3.descendingIterator();
-        if (iterator.hasNext()) {
-            System.out.print(iterator.next() + ";");
-        }
+
+        LinkedList linkedList = new LinkedList();
+        linkedList.addLast(9);
+        linkedList.addLast(8);
+        linkedList.addLast(7);
+        linkedList.addLast(6);
+        linkedList.addLast(5);
 
         /**
-         * 上行迭代器
+         * Iterator 顺序遍历
          */
-        ListIterator iterator1 = linkedList3.listIterator();
-        if (iterator1.hasPrevious()) {
-            System.out.print(iterator1.next() + ";");
+        Iterator iterator = linkedList.descendingIterator();
+        while (iterator.hasNext()) {
+            System.out.print("倒序排序:" + iterator.next() + ";");
         }
 
+        System.out.println();
 
+        /**
+         * ListIterator 倒叙遍历
+         */
+        ListIterator listIterator = linkedList.listIterator();
+        while (listIterator.hasNext()) {
+            System.out.print("顺序排序:" + listIterator.next() + ";");
+        }
+        System.out.println();
+        while (listIterator.hasPrevious()) {
+            System.out.print("倒叙排序:" + listIterator.previous() + ";");
+        }
     }
 }
