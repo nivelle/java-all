@@ -1,8 +1,8 @@
 package com.nivelle.guide;
 
-import com.nivelle.guide.java2e.java8.FormulaService;
-import com.nivelle.guide.java2e.java8.LambdaTest;
-import com.nivelle.guide.java2e.java8.StreamTest;
+import com.nivelle.guide.javacore.java8.FormulaService;
+import com.nivelle.guide.javacore.java8.LambdaTest;
+import com.nivelle.guide.javacore.java8.StreamTest;
 import org.assertj.core.util.Lists;
 import org.junit.Test;
 import org.junit.runner.RunWith;
