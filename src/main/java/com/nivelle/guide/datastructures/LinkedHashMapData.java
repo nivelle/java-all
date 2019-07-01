@@ -1,5 +1,6 @@
 package com.nivelle.guide.datastructures;
 
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -46,11 +47,25 @@ public class LinkedHashMapData {
          */
         Set set = linkedHashMap1.keySet();
 
-        set.forEach(x->{
+        set.forEach(x -> {
             System.out.print(x);
             System.out.print("?");
             System.out.println(linkedHashMap1.get(x));
         });
+        /**
+         * 值集合
+         */
+        Collection collections = linkedHashMap1.values();
+        System.out.println("linkedHashMap1 to list:" + collections);
+
+        /**
+         * 1. 依次遍历, 判断方法:if (v == value || (value != null && value.equals(v)))
+         *
+         * 2.
+         *
+         */
+        System.out.println("是否包含指定的值:"+linkedHashMap1.containsValue(4));
+
 
     }
 }
