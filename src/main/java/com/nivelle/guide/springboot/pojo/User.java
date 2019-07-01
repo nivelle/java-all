@@ -1,6 +1,8 @@
 package com.nivelle.guide.springboot.pojo;
 
-public class User {
+import java.io.Serializable;
+
+public class User implements Serializable {
 
     private Integer age;
 
@@ -27,7 +29,8 @@ public class User {
         this.name = name;
     }
 
-    public User(){}
+    public User() {
+    }
 
     @Override
     public String toString() {

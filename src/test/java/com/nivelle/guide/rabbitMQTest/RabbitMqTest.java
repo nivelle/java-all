@@ -25,7 +25,6 @@ public class RabbitMqTest {
 
     @Test
     public void send() throws java.io.IOException, TimeoutException {
-
         //创建连接工程
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("127.0.0.1");
@@ -34,15 +33,10 @@ public class RabbitMqTest {
         factory.setPassword("guest");
         //创建连接
         Connection connection = factory.newConnection();
-
         //创建消息通道
         Channel channel = connection.createChannel();
-
-
         //生成一个消息队列
         channel.queueDeclare(QUEUE_NAME, true, false, false, null);
-
-
         for (int i = 0; i < 10; i++) {
             String message = "Hello World RabbitMQ count: " + i;
 
@@ -66,20 +60,14 @@ public class RabbitMqTest {
         factory.setPort(5672);
         factory.setUsername("guest");
         factory.setPassword("guest");
-
         //创建连接
         Connection connection = factory.newConnection();
-
         //创建消息信道
         Channel channel = connection.createChannel();
-
         //消息队列
         channel.queueDeclare(QUEUE_NAME, true, false, false, null);
         System.out.println("[*] Waiting for message. To exist press CTRL+C");
-
         AtomicInteger count = new AtomicInteger(0);
-
-
         //消费者用于获取消息信道绑定的消息队列中的信息
         Consumer consumer = new DefaultConsumer(channel) {
             @Override
