@@ -83,6 +83,16 @@
 
 ## Netty实践
 
+## RabbitMQ
+
+✅ Exchange
+
+✅ Queue
+
+✅ Producer
+
+✅ Consumer
+
 ## 分布式实践
 
 ✅ 自己实现RPC
