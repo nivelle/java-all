@@ -1,7 +1,10 @@
 package com.nivelle.guide.springboot.configbean;
 
+import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 /**
@@ -17,11 +20,31 @@ public class RabbitMQConfig {
     @Value("host")
     private String host;
     @Value("port")
-    private String port;
-    @Value("username")
-    private String username;
+    private int port;
+    @Value("userName")
+    private String userName;
     @Value("password")
     private String password;
+
+
+    @Bean(name = "rabbitTemplate")
+    public RabbitTemplate getRabbitTemplate() {
+        RabbitTemplate template = new RabbitTemplate(connectionFactory());
+        return template;
+    }
+
+    public org.springframework.amqp.rabbit.connection.ConnectionFactory connectionFactory() {
+        CachingConnectionFactory connectionFactory = new CachingConnectionFactory();
+
+        connectionFactory.setHost(host);
+        connectionFactory.setPort(port);
+
+        connectionFactory.setUsername(userName);
+        connectionFactory.setPassword(password);
+        //必须要设置
+        connectionFactory.setPublisherConfirms(true);
+        return connectionFactory;
+    }
 
     public String getHost() {
         return host;
@@ -31,20 +54,20 @@ public class RabbitMQConfig {
         this.host = host;
     }
 
-    public String getPort() {
+    public int getPort() {
         return port;
     }
 
-    public void setPort(String port) {
+    public void setPort(int port) {
         this.port = port;
     }
 
-    public String getUsername() {
-        return username;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public String getPassword() {

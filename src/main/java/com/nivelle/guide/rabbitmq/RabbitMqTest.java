@@ -7,7 +7,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.amqp.core.AmqpTemplate;
 
 
 /**
@@ -28,7 +27,9 @@ public class RabbitMqTest {
 
 
     @RequestMapping("/fanout")
-    public Object sendFanout(@RequestBody User user){
+    public Object sendFanout(@RequestBody User user) {
+
+        rabbitMQConfig.getRabbitTemplate();
 
 
         return new Object();
