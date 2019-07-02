@@ -26,10 +26,8 @@ public class RabbitMqController {
 
     @Autowired
     private RabbitMQConfig rabbitMQConfig;
-
     @Autowired
     private RabbitTemplate rabbitTemplate;
-
     /**
      * 发往fanout 类型的 Exchange 的消息会分别转发给 Exchange绑定的队列
      *
@@ -72,6 +70,10 @@ public class RabbitMqController {
         return true;
     }
 
+    /**
+     * 消息只会发到key2绑定的队列
+     * @return
+     */
     @RequestMapping("/direct2")
     @ResponseBody
     public Object sendDirect2() {
