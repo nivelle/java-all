@@ -30,8 +30,6 @@ public class LinkedHashMapData {
         linkedHashMap1.put(3, 3);
         linkedHashMap1.put(4, 4);
         System.out.println("linkedHashMap1:" + linkedHashMap1);
-
-
         /**
          * entry视图
          */
@@ -41,7 +39,6 @@ public class LinkedHashMapData {
             System.out.print(x.getKey() + ":");
             System.out.println(x.getValue());
         });
-
         /**
          * key视图
          */
@@ -61,10 +58,47 @@ public class LinkedHashMapData {
         /**
          * 1. 依次遍历, 判断方法:if (v == value || (value != null && value.equals(v)))
          *
-         * 2.
+         * 2. 从前往后遍历
          *
          */
-        System.out.println("是否包含指定的值:"+linkedHashMap1.containsValue(4));
+        System.out.println("是否包含指定的值:" + linkedHashMap1.containsValue(4));
+        LinkedHashMap linkedHashMap2 = new LinkedHashMap();
+        linkedHashMap2.put(1, 1);
+        linkedHashMap2.put(2, 3);
+
+        /**
+         * 只能操作value值
+         */
+        System.out.println("linkedHashMap2 before :" + linkedHashMap2);
+        linkedHashMap2.replaceAll((x, y) -> y.hashCode() + x.hashCode());
+        System.out.println("linkedHashMap2 after :" + linkedHashMap2);
+
+        /**
+         * 移除指定键的元素
+         */
+        Object oldValue = linkedHashMap2.remove(1);
+        System.out.println(oldValue);
+
+
+        /**
+         * 默认是安装插入顺序遍历,accessOrder将按照访问顺讯。
+         * 构造函数 指定accessOrder= true 在元素被访问后将其移动到链表的末尾,最近最少使用的在前
+         */
+
+        LinkedHashMap linkedHashMap4 = new LinkedHashMap(16, 0.76F);
+        linkedHashMap4.put("a", 100);
+        linkedHashMap4.put("b", 200);
+        System.out.println(linkedHashMap4);
+        linkedHashMap4.put("a", 300);
+        System.out.println("linkedHashMap4 插入顺序遍历:" + linkedHashMap4);
+
+
+        LinkedHashMap linkedHashMap3 = new LinkedHashMap(16, 0.76F, true);
+        linkedHashMap3.put("a", 100);
+        linkedHashMap3.put("b", 200);
+        System.out.println(linkedHashMap3);
+        linkedHashMap3.put("a", 300);
+        System.out.println("linkedHashMap3 访问顺序遍历:" + linkedHashMap3);
 
 
     }
