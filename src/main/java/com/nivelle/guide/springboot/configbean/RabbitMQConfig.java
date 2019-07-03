@@ -1,6 +1,7 @@
 package com.nivelle.guide.springboot.configbean;
 
 
+import com.nivelle.guide.rabbitmq.DirectMessageReceiver;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -9,6 +10,7 @@ import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -61,6 +63,9 @@ public class RabbitMQConfig {
     private String directQueue1;
     @Value("direct.queue2")
     private String directQueue2;
+
+    @Autowired
+    DirectMessageReceiver directMessageReceiver;
 
 
     //fanout
@@ -137,6 +142,9 @@ public class RabbitMQConfig {
     @Bean(name = "rabbitTemplate")
     public RabbitTemplate getRabbitTemplate() {
         RabbitTemplate template = new RabbitTemplate(connectionFactory());
+        template.setConfirmCallback((correlationData, ack, cause)->{
+            log.info("消息确认结果:correlationData={},ack={},cause={}",correlationData,ack,cause);
+        });
         return template;
     }
 
@@ -151,7 +159,7 @@ public class RabbitMQConfig {
         connectionFactory.setPort(Integer.parseInt(port));
         connectionFactory.setUsername(userName);
         connectionFactory.setPassword(password);
-        //自动确认
+        //发送者确认
         connectionFactory.setPublisherConfirms(true);
         return connectionFactory;
     }
@@ -162,6 +170,8 @@ public class RabbitMQConfig {
         container.setConnectionFactory(connectionFactory);
         container.setMessageListener(message -> log.info("simple fanoutQueue1,message:{}", message));
         container.setQueueNames(fanoutQueue1);
+        //消费者手动确认,其实都是手动确认，只不过 Auto确认是spring包装了一层,对于执行异常会放到待确认队列，重新投递
+        container.setAcknowledgeMode(AcknowledgeMode.AUTO);
         return container;
     }
 
@@ -196,8 +206,10 @@ public class RabbitMQConfig {
     SimpleMessageListenerContainer directContainerB(ConnectionFactory connectionFactory) {
         SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
-        container.setMessageListener(message -> log.info("simple directQueue2,message:{}", message));
+        container.setMessageListener(directMessageReceiver);
         container.setQueueNames(directQueue2);
+        //消费者手动确认,其实都是手动确认，只不过 Auto确认是spring包装了一层,对于执行异常会放到待确认队列，重新投递
+        container.setAcknowledgeMode(AcknowledgeMode.MANUAL);
         return container;
     }
 }
