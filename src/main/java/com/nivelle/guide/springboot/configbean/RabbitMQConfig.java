@@ -106,8 +106,6 @@ public class RabbitMQConfig {
     }
 
 
-
-
     //direct
     @Bean
     DirectExchange directExchange() {
@@ -142,9 +140,16 @@ public class RabbitMQConfig {
     @Bean(name = "rabbitTemplate")
     public RabbitTemplate getRabbitTemplate() {
         RabbitTemplate template = new RabbitTemplate(connectionFactory());
-        template.setConfirmCallback((correlationData, ack, cause)->{
-            log.info("消息确认结果:correlationData={},ack={},cause={}",correlationData,ack,cause);
+        //未找到投递队列时，则将消息返回给生成者
+        template.setMandatory(true);
+
+        //确认消息是否到达broker服务器，也就是只确认是否正确到达exchange中即可，只要正确的到达exchange中，broker即可确认该消息返回给客户端ack。
+        template.setConfirmCallback((correlationData, ack, cause) -> {
+            log.info("消息确认结果:correlationData={},ack={},cause={}", correlationData, ack, cause);
         });
+        //mandatory这个参数为true表示如果发送消息到了RabbitMq，没有对应该消息的队列。那么会将消息返回给生产者，此时仍然会发送ack确认消息
+        template.setReturnCallback((message, replyCode, replyText, exchange, routingKey)
+                -> log.info("消息返回结果：return callback message：{},code:{},text:{}", message, replyCode, replyText));
         return template;
     }
 
