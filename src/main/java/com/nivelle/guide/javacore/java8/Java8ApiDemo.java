@@ -10,7 +10,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 
-public class Java8Test {
+public class Java8ApiDemo {
 
     public static void main(String[] args) {
         List<String> names = Arrays.asList("peter", "anna", "mike", "xenia");

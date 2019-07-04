@@ -1,7 +1,6 @@
 package com.nivelle.guide;
 
 import com.nivelle.guide.javacore.java8.FormulaService;
-import com.nivelle.guide.javacore.java8.LambdaTest;
 import com.nivelle.guide.javacore.java8.StreamTest;
 import org.assertj.core.util.Lists;
 import org.junit.Test;
@@ -22,9 +21,6 @@ import java.util.stream.Stream;
 public class JDKTest {
 
 
-    @Autowired
-    LambdaTest lambdaTest;
-
     @Qualifier(value = "streamtest")
     @Resource
     StreamTest streamTest;
@@ -32,12 +28,6 @@ public class JDKTest {
     @Autowired
     private FormulaService formulaService;
 
-
-    @Test
-    public void testAdultUser() {
-
-        lambdaTest.adultUser();
-    }
 
     @Test
     public void testCounUser() {
@@ -54,20 +44,12 @@ public class JDKTest {
         streamTest.editAge();
     }
 
-    @Test
-    public void testSortUsers() {
-        lambdaTest.sortUser();
-    }
 
     @Test
     public void testListAge() {
         streamTest.ageList();
     }
 
-    @Test
-    public void testSumAge() {
-        lambdaTest.sumAge();
-    }
 
     @Test
     public void testFlatUser() {
