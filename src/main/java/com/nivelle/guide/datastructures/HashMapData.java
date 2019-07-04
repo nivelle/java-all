@@ -95,7 +95,7 @@ public class HashMapData {
         Set<Map.Entry<String, String>> entries = hashMap2.entrySet();
         Iterator iterator = entries.iterator();
         while (iterator.hasNext()) {
-            System.out.println("entries 集合内的元素:" + iterator.next().hashCode());
+            System.out.println("entries 集合内的元素:" + iterator.next());
         }
 
         System.out.println(hashMap2.getOrDefault("8", "不存在情况下的默认值"));
@@ -153,6 +153,19 @@ public class HashMapData {
         hashMap4.put(2,2);
         System.out.println(hashMap4);
 
+        /**
+         * 默认的遍历是无序的
+         */
+        HashMap hashMap5 = new HashMap();
+        hashMap5.put("name1","value1");
+        hashMap5.put("name2","value2");
+        hashMap5.put("name2","value2");
+        Set<Map.Entry<String, String>> entries1 = hashMap5.entrySet();
+        Iterator iterator1 = entries1.iterator();
+        while (iterator1.hasNext()){
+            Map.Entry entry = (Map.Entry)iterator1.next();
+            System.out.println("key="+entry.getKey());
+        }
     }
 
 

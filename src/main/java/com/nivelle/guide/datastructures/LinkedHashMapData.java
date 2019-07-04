@@ -21,6 +21,10 @@ public class LinkedHashMapData {
          *  1. true  代表按访问顺序迭代
          *  2. false 代表按插入顺序迭代
          */
+
+        /**
+         * HashMap是无序的，当我们希望有顺序地去存储key-value时，就需要使用LinkedHashMap了
+         */
         LinkedHashMap linkedHashMap = new LinkedHashMap();
         linkedHashMap.put(1, 1);
         linkedHashMap.put(2, 2);
