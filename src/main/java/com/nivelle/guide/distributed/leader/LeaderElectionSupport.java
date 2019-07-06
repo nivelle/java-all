@@ -175,8 +175,7 @@ public class LeaderElectionSupport implements Watcher {
              * If the stat fails, the node has gone missing between the call to
              * getChildren() and exists(). We need to try and become the leader.
              */
-            log
-                    .info(
+            log.info(
                             "We were behind {} but it looks like they died. Back to determination.",
                             neighborLeaderOffer.getNodePath());
             determineElectionStatus();
