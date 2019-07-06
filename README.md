@@ -97,6 +97,8 @@
 
 ✅ 自己实现RPC
 
+✅ zookeeper
+
 ## Mybatis实践
 
 ✅ mybatis 整合到springBoot
