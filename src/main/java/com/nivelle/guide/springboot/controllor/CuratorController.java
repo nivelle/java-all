@@ -7,7 +7,7 @@ package com.nivelle.guide.springboot.controllor;
  * @date 2019/07/06
  */
 
-import com.nivelle.guide.distributed.distributedLock.DistributedLockByCurator;
+import com.nivelle.guide.distributed.lock.DistributedLockByCurator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
