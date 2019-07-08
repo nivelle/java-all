@@ -1,6 +1,8 @@
 package com.nivelle.guide.distributed.rpc;
 
-@RpcService(HelloService.class)// 指定远程接口
+
+// 指定远程接口
+@RpcService(HelloService.class)
 public class HelloServiceImpl implements HelloService {
 
     @Override
