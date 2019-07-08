@@ -1,4 +1,4 @@
-package com.nivelle.guide.springboot.configbean.shiro;
+package com.nivelle.guide.configbean.shiro;
 
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.mgt.SecurityManager;

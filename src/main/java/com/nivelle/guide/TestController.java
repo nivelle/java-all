@@ -1,7 +1,7 @@
 package com.nivelle.guide;
 
 import com.nivelle.guide.datastructures.Son;
-import com.nivelle.guide.springboot.configbean.LearnConfig;
+import com.nivelle.guide.configbean.LearnConfig;
 import com.nivelle.guide.springboot.mapper.ActivityPvMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;

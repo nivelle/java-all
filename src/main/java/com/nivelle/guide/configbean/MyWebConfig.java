@@ -1,4 +1,4 @@
-package com.nivelle.guide.springboot.configbean;
+package com.nivelle.guide.configbean;
 
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
@@ -8,15 +8,12 @@ import com.nivelle.guide.springboot.filter.MyFilter2;
 import com.nivelle.guide.springboot.interceptor.MyInterceptor;
 import com.nivelle.guide.springmvc.PropertiesHandlerMethodArgumentResolver;
 import com.nivelle.guide.springmvc.PropertiesHandlerMethodReturnValueHandler;
-import com.nivelle.guide.springmvc.PropertiesHttpMessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
-import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;

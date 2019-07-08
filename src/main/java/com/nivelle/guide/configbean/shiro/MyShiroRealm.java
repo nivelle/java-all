@@ -1,4 +1,4 @@
-package com.nivelle.guide.springboot.configbean.shiro;
+package com.nivelle.guide.configbean.shiro;
 
 import com.google.common.collect.Lists;
 import com.nivelle.guide.springboot.entity.*;

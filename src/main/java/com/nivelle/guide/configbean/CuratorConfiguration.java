@@ -1,4 +1,4 @@
-package com.nivelle.guide.springboot.configbean;
+package com.nivelle.guide.configbean;
 
 /**
  * Curator
@@ -7,6 +7,8 @@ package com.nivelle.guide.springboot.configbean;
  * @date 2019/07/06
  */
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.RetryNTimes;
@@ -17,6 +19,8 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ConfigurationProperties(prefix = "curator")
+@Getter
+@Setter
 public class CuratorConfiguration {
 
     @Value("${curator.retryCount}")

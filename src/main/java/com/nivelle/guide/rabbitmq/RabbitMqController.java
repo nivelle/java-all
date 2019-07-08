@@ -1,6 +1,6 @@
 package com.nivelle.guide.rabbitmq;
 
-import com.nivelle.guide.springboot.configbean.RabbitMQConfig;
+import com.nivelle.guide.configbean.RabbitMQConfig;
 import com.nivelle.guide.springboot.pojo.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;

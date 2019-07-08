@@ -1,4 +1,4 @@
-package com.nivelle.guide.springboot.configbean;
+package com.nivelle.guide.configbean;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
