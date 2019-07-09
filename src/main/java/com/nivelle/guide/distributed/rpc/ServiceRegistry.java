@@ -1,60 +1,84 @@
 package com.nivelle.guide.distributed.rpc;
 
-import org.apache.zookeeper.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.curator.framework.CuratorFramework;
+import org.apache.zookeeper.CreateMode;
+import org.apache.zookeeper.KeeperException;
+import org.apache.zookeeper.Watcher;
+import org.apache.zookeeper.ZooDefs;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 
-public class ServiceRegistry {
+@Service
+@Slf4j
+public class ServiceRegistry implements InitializingBean {
 
-    private static Logger logger = LoggerFactory.getLogger(ServiceRegistry.class);
-
-
-    private CountDownLatch latch = new CountDownLatch(1);
-
-    private String registryAddress;
+    private CountDownLatch countDownLatch = new CountDownLatch(1);
 
 
-    public ServiceRegistry(String registryAddress) {
-        this.registryAddress = registryAddress;
-    }
+    @Autowired
+    @Lazy
+    private CuratorFramework curatorFramework;
 
 
     public void register(String data) {
         if (data != null) {
-            ZooKeeper zk = connectServer();
-
-            if (zk != null) {
-                createNode(zk, data);
-            }
+            createNode(data);
         }
     }
 
-    private ZooKeeper connectServer() {
-        ZooKeeper zk = null;
-        try {
-            zk = new ZooKeeper(registryAddress, Constant.ZK_SESSION_TIMEOUT, event -> {
-
-                if (event.getState() == Watcher.Event.KeeperState.SyncConnected) {
-                    latch.countDown();
-                }
-            });
-            latch.await();
-        } catch (IOException | InterruptedException e) {
-            logger.error("", e);
-        }
-        return zk;
-    }
-
-    private void createNode(ZooKeeper zk, String data) {
+    private void createNode(String data) {
         try {
             byte[] bytes = data.getBytes();
-            String path = zk.create(Constant.ZK_DATA_PATH, bytes, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
-            logger.debug("create zookeeper node ({} => {})", path, data);
+            log.debug("create zookeeper node data={}", data);
+            curatorFramework
+                    .create()
+                    .creatingParentsIfNeeded()
+                    .withMode(CreateMode.EPHEMERAL)
+                    .withACL(ZooDefs.Ids.OPEN_ACL_UNSAFE)
+                    .forPath(Constant.ZK_DATA_PATH, bytes);
         } catch (KeeperException | InterruptedException e) {
-            logger.error("", e);
+            log.error("", e);
+        } catch (Exception e) {
+            log.error("create node error data ={}", data, e);
+        }
+    }
+
+
+    /**
+     * 创建 watcher 事件
+     */
+    private void addRootWatcher() throws Exception {
+
+        Watcher watcher = (watchedEvent) -> {
+            if (watchedEvent.getState() == Watcher.Event.KeeperState.SyncConnected) {
+                countDownLatch.countDown();
+            }
+        };
+        watcher.wait();
+    }
+
+    //创建父节点
+    @Override
+    public void afterPropertiesSet() {
+        curatorFramework = curatorFramework.usingNamespace("register");
+        String path = "/" + Constant.ZK_DATA_PATH;
+        try {
+            if (curatorFramework.checkExists().forPath(path) == null) {
+                curatorFramework.create()
+                        .creatingParentsIfNeeded()
+                        .withMode(CreateMode.PERSISTENT)
+                        .withACL(ZooDefs.Ids.OPEN_ACL_UNSAFE)
+                        .forPath(path);
+            }
+            addRootWatcher();
+            log.info("root path 的 watcher 事件创建成功");
+        } catch (Exception e) {
+            log.error("connect zookeeper fail，please check the log >> {}", e.getMessage(), e);
         }
     }
 

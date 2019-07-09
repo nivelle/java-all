@@ -1,34 +1,34 @@
 package com.nivelle.guide.distributed.rpc;
 
 import io.netty.util.internal.ThreadLocalRandom;
-import org.apache.zookeeper.KeeperException;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.framework.recipes.cache.PathChildrenCache;
+import org.apache.curator.framework.recipes.cache.PathChildrenCacheEvent;
+import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.Watcher;
-import org.apache.zookeeper.ZooKeeper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.zookeeper.ZooDefs;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
-public class ServiceDiscovery {
+@Service
+@Slf4j
+public class ServiceDiscovery implements InitializingBean {
 
-    private static Logger logger = LoggerFactory.getLogger(ServiceDiscovery.class);
-    private CountDownLatch latch = new CountDownLatch(1);
+    private CountDownLatch countDownLatch = new CountDownLatch(1);
 
     private volatile List<String> dataList = new ArrayList<>();
 
-    private String registryAddress;
+    @Autowired
+    @Lazy
+    private CuratorFramework curatorFramework;
 
-    public ServiceDiscovery(String registryAddress) {
-        this.registryAddress = registryAddress;
-
-        ZooKeeper zk = connectServer();
-        if (zk != null) {
-            watchNode(zk);
-        }
-    }
 
     public String discover() {
         String data = null;
@@ -36,49 +36,79 @@ public class ServiceDiscovery {
         if (size > 0) {
             if (size == 1) {
                 data = dataList.get(0);
-                logger.debug("using only data: {}", data);
+                log.debug("using only data: {}", data);
             } else {
                 data = dataList.get(ThreadLocalRandom.current().nextInt(size));
-                logger.debug("using random data: {}", data);
+                log.debug("using random data: {}", data);
             }
         }
         return data;
     }
 
-    private ZooKeeper connectServer() {
-        ZooKeeper zk = null;
-        try {
-            zk = new ZooKeeper(registryAddress, Constant.ZK_SESSION_TIMEOUT, watchedEvent -> {
-                if (watchedEvent.getState() == Watcher.Event.KeeperState.SyncConnected) {
-                    latch.countDown();
+    /**
+     * 创建 watcher 事件
+     */
+    private void watchChildNode() throws Exception {
+
+        curatorFramework = curatorFramework.usingNamespace("register");
+        PathChildrenCache cache = new PathChildrenCache(curatorFramework,
+                Constant.ZK_DATA_PATH, false);
+
+        cache.start();
+        cache.getListenable().addListener((CuratorFramework curatorFramework, PathChildrenCacheEvent pathChildrenCacheEvent) -> {
+            if (pathChildrenCacheEvent.getType().equals(PathChildrenCacheEvent.Type.CHILD_ADDED)) {
+                List<String> nodeList = curatorFramework.getChildren().forPath(Constant.ZK_DATA_PATH);
+                for (int i = 0; i < nodeList.size(); i++) {
+                    dataList.add(new String(curatorFramework.getData().forPath(Constant.ZK_DATA_PATH + "/" + nodeList.get(i))));
                 }
-            });
-            latch.await();
-        } catch (IOException | InterruptedException e) {
-            logger.error("", e);
-        }
-        return zk;
-    }
-
-    private void watchNode(final ZooKeeper zk) {
-        try {
-            List<String> nodeList = zk.getChildren(Constant.ZK_REGISTRY_PATH, watchedEvent -> {
-
-                if (watchedEvent.getType() == Watcher.Event.EventType.NodeChildrenChanged) {
-                    watchNode(zk);
+            } else if (pathChildrenCacheEvent.getType().equals(PathChildrenCacheEvent.Type.CHILD_UPDATED)) {
+                List<String> nodeList = curatorFramework.getChildren().forPath(Constant.ZK_DATA_PATH);
+                for (int i = 0; i < nodeList.size(); i++) {
+                    dataList.add(new String(curatorFramework.getData().forPath(Constant.ZK_DATA_PATH + "/" + nodeList.get(i))));
                 }
-
-            });
-            List<String> dataList = new ArrayList<>();
-            for (String node : nodeList) {
-                byte[] bytes = zk.getData(Constant.ZK_REGISTRY_PATH + "/" + node, false, null);
-                dataList.add(new String(bytes));
+            } else if (pathChildrenCacheEvent.getType().equals(PathChildrenCacheEvent.Type.CHILD_REMOVED)) {
+                List<String> nodeList = curatorFramework.getChildren().forPath(Constant.ZK_DATA_PATH);
+                for (int i = 0; i < nodeList.size(); i++) {
+                    dataList.add(new String(curatorFramework.getData().forPath(Constant.ZK_DATA_PATH + "/" + nodeList.get(i))));
+                }
             }
-            logger.debug("node data: {}", dataList);
-            this.dataList = dataList;
-        } catch (KeeperException | InterruptedException e) {
-            logger.error("", e);
-        }
+        });
+
+
     }
+
+    /**
+     * 创建 watcher 事件
+     */
+    private void addRootWatcher() throws Exception {
+
+        Watcher watcher = (watchedEvent) -> {
+            if (watchedEvent.getState() == Watcher.Event.KeeperState.SyncConnected) {
+                countDownLatch.countDown();
+            }
+        };
+        watcher.wait();
+    }
+
+    @Override
+    public void afterPropertiesSet() {
+        curatorFramework = curatorFramework.usingNamespace("register");
+        String path = "/" + Constant.ZK_DATA_PATH;
+        try {
+            if (curatorFramework.checkExists().forPath(path) == null) {
+                curatorFramework.create()
+                        .creatingParentsIfNeeded()
+                        .withMode(CreateMode.PERSISTENT)
+                        .withACL(ZooDefs.Ids.OPEN_ACL_UNSAFE)
+                        .forPath(path);
+            }
+            addRootWatcher();
+            watchChildNode();
+        } catch (Exception e) {
+            log.error("connect zookeeper fail，please check the log >> {}", e.getMessage(), e);
+        }
+        log.info("服务发现注册成功");
+    }
+
 
 }

@@ -8,36 +8,34 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.MapUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.curator.framework.CuratorFramework;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Service
+@Slf4j
 public class RpcServer implements ApplicationContextAware, InitializingBean {
 
-
-    private static Logger logger = LoggerFactory.getLogger(RpcServer.class);
-
-    private String serverAddress;
+    @Autowired
+    @Lazy
     private ServiceRegistry serviceRegistry;
 
     private Map<String, Object> handlerMap = new HashMap<>(); // 存放接口名与服务对象之间的映射关系
 
+    @Autowired
+    @Lazy
+    private CuratorFramework curatorFramework;
 
-    public RpcServer(String serverAddress) {
-        this.serverAddress = serverAddress;
-    }
-
-    public RpcServer(String serverAddress, ServiceRegistry serviceRegistry) {
-        this.serverAddress = serverAddress;
-        this.serviceRegistry = serviceRegistry;
-    }
 
     @Override
     public void setApplicationContext(ApplicationContext ctx) throws BeansException {
@@ -71,23 +69,23 @@ public class RpcServer implements ApplicationContextAware, InitializingBean {
                     .option(ChannelOption.SO_BACKLOG, 128)
                     .childOption(ChannelOption.SO_KEEPALIVE, true);
 
+            String serverAddress = new String(curatorFramework.getData().forPath(Constant.ZK_DATA_PATH));
             String[] array = serverAddress.split(":");
             String host = array[0];
             int port = Integer.parseInt(array[1]);
 
             ChannelFuture future = bootstrap.bind(host, port).sync();
-            logger.debug("server started on port {}", port);
-
+            log.debug("server started on port {}", port);
             if (serviceRegistry != null) {
                 serviceRegistry.register(serverAddress); // 注册服务地址
             }
-
             future.channel().closeFuture().sync();
         } finally {
             workerGroup.shutdownGracefully();
             bossGroup.shutdownGracefully();
         }
     }
+
 }
 
 
