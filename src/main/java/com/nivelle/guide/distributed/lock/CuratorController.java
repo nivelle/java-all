@@ -1,4 +1,4 @@
-package com.nivelle.guide.springboot.controllor;
+package com.nivelle.guide.distributed.lock;
 
 /**
  * curator
