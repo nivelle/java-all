@@ -13,8 +13,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling//开启定时任务注解
 @EnableRabbit//开启rabbitMQ注解支持
 public class SpringBootAllApplication {
-
-
     public static void main(String[] args) {
         SpringApplication.run(SpringBootAllApplication.class, args);
         System.out.print("启动成功！！");
