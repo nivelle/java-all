@@ -1,4 +1,4 @@
-package com.nivelle.guide.distributed.lock;
+package com.nivelle.guide.zookeeper.lock;
 
 /**
  * curator

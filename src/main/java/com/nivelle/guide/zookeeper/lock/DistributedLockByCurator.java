@@ -1,4 +1,4 @@
-package com.nivelle.guide.distributed.lock;
+package com.nivelle.guide.zookeeper.lock;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;
