@@ -3,6 +3,7 @@ package com.nivelle.guide.zookeeper.leader;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.leader.LeaderLatch;
+import org.apache.curator.framework.recipes.leader.LeaderLatchListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,7 +29,10 @@ public class LeaderController {
     @Lazy
     private CuratorFramework curatorFramework;
 
-
+    /**
+     * LeaderSelectorListener可以对领导权进行控制， 在适当的时候释放领导权，这样每个节点都有可能获得领导权
+     * @return
+     */
     @RequestMapping("leaderSelector")
     public String leaderSelector() {
         SelectorClient example = new SelectorClient(curatorFramework, PATH, "jessy");
@@ -38,25 +42,40 @@ public class LeaderController {
         return "success";
     }
 
+    /**
+     * LeaderLatch一直持有leadership， 除非调用close方法，否则它不会释放领导权。
+     * @return
+     */
     @RequestMapping("leaderLatch")
     public String leaderLatch() {
         try {
             LeaderLatch leaderLatch1 = new LeaderLatch(curatorFramework, PATH, "jessy");
-            leaderLatch1.start();
+            leaderLatch1.addListener(new LeaderLatchListener() {
+                @Override
+                public void isLeader() {
+                    System.out.println(leaderLatch1.getId() + "leaderLatch1 is leader");
+                }
+
+                @Override
+                public void notLeader() {
+                    System.out.println(leaderLatch1.getId() + "leaderLatch1 is not leader");
+                }
+            });
+
             LeaderLatch leaderLatch2 = new LeaderLatch(curatorFramework, PATH, "fuck");
+            leaderLatch2.addListener(new LeaderLatchListener() {
+                @Override
+                public void isLeader() {
+                    System.out.println(leaderLatch2.getId() + "leaderLatch2 is leader");
+                }
+
+                @Override
+                public void notLeader() {
+                    System.out.println(leaderLatch2.getId() + "leaderLatch2 is not leader");
+                }
+            });
             leaderLatch2.start();
-            Boolean isLeader = leaderLatch1.hasLeadership();
-            if (isLeader) {
-                log.info(leaderLatch1.getId() + "is leader");
-                leaderLatch1.close();
-            }else {
-                leaderLatch1.await();
-            }
-            Boolean isLeader2 = leaderLatch2.hasLeadership();
-            if (isLeader2) {
-                log.info(leaderLatch2.getId() + "is leader");
-                leaderLatch2.close();
-            }
+            leaderLatch1.start();
         } catch (Exception e) {
             log.error("leaderLatch is error ", e);
         }
