@@ -40,8 +40,8 @@ public class ThreadPoolData {
          * ThreadPoolExecutor.CallerRunsPolicy：由调用线程处理该任务
          *
          * 4. 队列
-         * - SynchronousQueue
-         * - LinkedBlockingQueue
+         * - SynchronousQueue:仅仅是投递作用。 处理能力不足//an attempt to queue a task will fail if no threads are immediately available to run it, so a new thread will be constructed
+         * - LinkedBlockingQueue://This may be appropriate when each task is completely independent of others
          * - ArrayBlockingQueue
          *
          * */
