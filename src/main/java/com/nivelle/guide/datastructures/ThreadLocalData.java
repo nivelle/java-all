@@ -13,6 +13,10 @@ import org.springframework.stereotype.Service;
 public class ThreadLocalData {
 
     public static void main(String[] args) {
+
+        /**
+         * 每个线程保留一个副本,线程安全。
+         */
         User user = new User(1, "nivelle");
         ThreadLocal threadLocal = ThreadLocal.withInitial(() -> user.getAge());
 
