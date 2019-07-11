@@ -13,6 +13,9 @@ import java.util.concurrent.TimeUnit;
 public class ThreadPoolData {
 
     public static void main(String[] args) {
+        /**
+         * ThreadPoolExecutor
+         */
         ThreadPoolExecutor executor =
                 new ThreadPoolExecutor(5, 10, 200, TimeUnit.MILLISECONDS,
                         new ArrayBlockingQueue(5));
