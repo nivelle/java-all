@@ -1,5 +1,7 @@
 package com.nivelle.guide.datastructures;
 
+import com.nivelle.guide.springboot.enums.MyEnum;
+
 /**
  * Enum
  *

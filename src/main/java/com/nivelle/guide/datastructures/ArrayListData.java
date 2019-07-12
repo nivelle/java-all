@@ -1,5 +1,6 @@
 package com.nivelle.guide.datastructures;
 
+import com.nivelle.guide.springboot.enums.MyEnum;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;

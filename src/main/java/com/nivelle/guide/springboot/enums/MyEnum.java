@@ -1,4 +1,4 @@
-package com.nivelle.guide.datastructures;
+package com.nivelle.guide.springboot.enums;
 
 /**
  * TODO:DOCUMENT MEe
