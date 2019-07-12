@@ -7,7 +7,7 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * condition
  */
-public class ConditionTest {
+public class ThreadCondition {
 
     public static void main(String args[]) {
         ReentrantLock lock = new ReentrantLock();
