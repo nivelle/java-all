@@ -1,10 +1,10 @@
 package com.nivelle.guide.datastructures;
 
 /**
- * AbstractQueuedSynchronizer
+ * TODO:DOCUMENT ME!
  *
  * @author fuxinzhong
- * @date 2019/06/16
+ * @date 2019/07/12
  */
-public class AQSData {
+public class UnsafeData {
 }
