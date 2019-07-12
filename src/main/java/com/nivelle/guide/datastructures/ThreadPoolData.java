@@ -45,6 +45,16 @@ public class ThreadPoolData {
          * - ArrayBlockingQueue
          *
          * */
+
+        /**    ctl:高3位表示状态，低29位表示线程数目
+         *
+         *     RUNNING:  Accept new tasks and process queued tasks
+         *     SHUTDOWN: Don't accept new tasks, but process queued tasks
+         *     STOP:     Don't accept new tasks, don't process queued tasks,and interrupt in-progress tasks
+         *     TIDYING:  All tasks have terminated, workerCount is zero,the thread transitioning to state TIDYING
+         *               will run the terminated() hook method
+         *     TERMINATED: terminated() has completed
+         */
         Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
         ThreadPoolExecutor executor =
                 new ThreadPoolExecutor(5, 10, 200, TimeUnit.MILLISECONDS,
@@ -70,10 +80,12 @@ public class ThreadPoolData {
         executor.shutdown();
         int priority = Thread.currentThread().getPriority();
         System.err.println("当前线程的优先级,priority=" + priority);
+
+        executorsThreadFactory(threadLocal);
     }
 
 
-    public static void ExecutorsThreadFactory() {
+    public static void executorsThreadFactory(ThreadLocal threadLocal) {
 
         /**
          * 线程池默认提供的线程工程实现,创建的线程优先级为Thread.NORMAL = 5;非守护线程；
@@ -81,6 +93,11 @@ public class ThreadPoolData {
          * if a ThreadFactory ails to create a thread when asked by returning null from {@code newThread}, the executor will continue, but might not be able to execute any tasks.
          */
         ThreadFactory threadFactory = Executors.defaultThreadFactory();
+        threadLocal.set(20);
+        MyTask myTask = new MyTask(20, threadLocal);
+        Thread thread = threadFactory.newThread(myTask);
+        thread.start();
+
 
     }
 }
@@ -98,8 +115,14 @@ class MyTask implements Runnable {
     @Override
     public void run() {
         System.out.println("正在执行task " + taskNum + "修改自己的变量值:");
-        threadLocal.set(taskNum);
         try {
+            if (taskNum == 20) {
+                System.err.println("自定义线程:" + taskNum + "本地变量: " + threadLocal.get());
+            } else {
+                threadLocal.set(taskNum);
+
+            }
+
             Thread.sleep(500);
         } catch (InterruptedException e) {
             System.out.println(e);
