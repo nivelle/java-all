@@ -181,11 +181,11 @@ public class StringData {
          * 底层原理:通过复制当前字符窜的字符串数组实现：
          * System.arraycopy(value, 0, result, 0, value.length);
          */
-        for (int i=0;i<"nivelle".length();i++){
-            System.out.println("转为字符串数组:"+("nivelle".toCharArray()[i]));
+        for (int i = 0; i < "nivelle".length(); i++) {
+            System.out.println("转为字符串数组:" + ("nivelle".toCharArray()[i]));
         }
 
-        System.out.println("格式化字符串:"+String.format("nivell%s","e"));
+        System.out.println("格式化字符串:" + String.format("nivell%s", "e"));
 
         String str = new String("aaa");
         System.out.println(str);
@@ -252,17 +252,23 @@ public class StringData {
     private static void stringInit() {
         String s1 = "abc";
         String s3 = new String("abc");
-        //↑ 创建了两个对象，一个存放在字符串池中，一个存在与堆区中；
-        //↑ 还有一个对象引用s3存放在栈中
+        //创建了两个对象，一个存放在字符串池中，一个存在与堆区中；
+        //还有一个对象引用s3存放在栈中
+        //字符串池中已经存在“abc”对象，所以只在堆中创建了一个对象
         String s4 = new String("abc");
-        //↑ 字符串池中已经存在“abc”对象，所以只在堆中创建了一个对象
+        System.out.println("字符串比较");
+
+        //false   s3和s4栈区的地址不同，指向堆区的不同地址；
         System.out.println("s3 == s4 : " + (s3 == s4));
-        //↑false   s3和s4栈区的地址不同，指向堆区的不同地址；
+
+        //true  s3和s4的值相同
         System.out.println("s3.equals(s4) : " + (s3.equals(s4)));
-        //↑true  s3和s4的值相同
+
+        //false 存放的地区都不同，一个方法区，一个堆区
         System.out.println("s1 == s3 : " + (s1 == s3));
-        //↑false 存放的地区都不同，一个方法区，一个堆区
+
+        //true  值相同
         System.out.println("s1.equals(s3) : " + (s1.equals(s3)));
-        //↑true  值相同
+
     }
 }
