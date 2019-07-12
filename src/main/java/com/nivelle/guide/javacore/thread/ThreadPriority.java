@@ -1,21 +1,29 @@
 package com.nivelle.guide.javacore.thread;
 
-public class ThreadPriority{
-	public static void main(String[] args) {
-		MyPriorityThread myThread=new MyPriorityThread ();
-		for (int i=0;i<100 ;i++ ) {
-			System.out.println("main thread i="+i);
-			if(i==20){
-				myThread.setPriority(Thread.MAX_PRIORITY);
-				myThread.start();
-			}
-		}
-	}
+public class ThreadPriority {
+
+    public static void main(String[] args)  {
+        new MyThread("低级", 1).start();
+        new MyThread("中级", 5).start();
+        new MyThread("高级", 10).start();
+    }
+
 }
-class MyPriorityThread extends Thread{
-	public void run(){
-		for (int i=0;i<100 ;i++ ) {
-			 System.out.println("i = " + i);
-		}
-	}
-}
+
+    class  MyThread extends Thread{
+        public MyThread(String name,int pro){
+            super(name);
+            this.setPriority(pro);
+        }
+
+        @Override
+        public void run(){
+            for (int i=0;i<30;i++){
+                System.out.println(this.getName()+"线程第"+i+"次执行!");
+                if(i%5==0){
+                    Thread.yield();
+                }
+            }
+        }
+    }
+

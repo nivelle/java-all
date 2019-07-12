@@ -24,9 +24,9 @@ public class SynchronizedKeyWordTest {
 
     public static void main(String args[]){
         SynchronizedKeyWordTest reentrantLockTest = new SynchronizedKeyWordTest();
-        new Thread(()->{reentrantLockTest.execute();}).start();
+        new Thread(()->reentrantLockTest.execute()).start();
 
-        new Thread(()->{reentrantLockTest.execute();}).start();
+        new Thread(()->reentrantLockTest.execute()).start();
     }
 
     public synchronized void anotherLock() {

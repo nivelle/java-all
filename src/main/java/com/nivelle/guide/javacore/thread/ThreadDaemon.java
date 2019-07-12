@@ -1,11 +1,14 @@
 package com.nivelle.guide.javacore.thread;
 
-public class HiddenTest{
+/**
+ * daemon
+ */
+public class ThreadDaemon{
 	public static void main(String[] args) {
 		Thread myThread=new MyThreadHidden();
-		for (int i=0;i<100 ;i++ ) {
+		for (int i=0;i<10 ;i++ ) {
 			  System.out.println("main thread i = " + i);
-			  if(i==20){
+			  if(i==2){
 			  	myThread.setDaemon(true);
 			  	myThread.start();
 			  }
@@ -14,7 +17,7 @@ public class HiddenTest{
 }
 class MyThreadHidden extends Thread{
 	public void run(){
-		for (int i=0;i<100 ;i++ ) {
+		for (int i=0;i<10 ;i++ ) {
 			System.out.println("i = " + i);
 			try{
 				Thread.sleep(1);

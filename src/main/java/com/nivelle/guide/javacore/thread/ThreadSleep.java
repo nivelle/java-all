@@ -1,6 +1,6 @@
 package com.nivelle.guide.javacore.thread;
 
-public class SleepTest {
+public class ThreadSleep {
   public static void main(String[] args) {
       MySleepRunnable myRunnable = new MySleepRunnable();
              Thread thread = new Thread(myRunnable);

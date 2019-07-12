@@ -2,11 +2,14 @@ package com.nivelle.guide.javacore.thread;
 
 import java.util.concurrent.locks.AbstractQueuedSynchronizer;
 
+/**
+ * aqs
+ */
 public class MySynchronizer extends AbstractQueuedSynchronizer {
 
     @Override
     protected boolean tryAcquire(int arg) {
-        if(compareAndSetState(0, 1)) {
+        if (compareAndSetState(0, 1)) {
             setExclusiveOwnerThread(Thread.currentThread());
             return true;
         }
@@ -14,7 +17,7 @@ public class MySynchronizer extends AbstractQueuedSynchronizer {
     }
 
     @Override
-    protected boolean tryRelease(int arg){
+    protected boolean tryRelease(int arg) {
         setState(0);
         setExclusiveOwnerThread(null);
         return true;

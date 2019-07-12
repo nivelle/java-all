@@ -1,6 +1,9 @@
 package com.nivelle.guide.javacore.thread;
 
-public class WaitTest {
+/**
+ * wait/notify
+ */
+public class ThreadWaitNotify{
 
     public static void main(String[] args) {
         AccountSecurity account = new AccountSecurity("123456", 0);
@@ -84,7 +87,7 @@ class AccountSecurity {
 
     /**
      * 存钱
-     * 
+     *
      * @param depositeAmount
      */
     public synchronized void deposite(double depositeAmount, int i) {
@@ -120,7 +123,7 @@ class AccountSecurity {
 
     /**
      * 取钱
-     * 
+     *
      * @param drawAmount
      */
     public synchronized void draw(double drawAmount, int i) {

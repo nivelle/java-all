@@ -1,23 +1,32 @@
 package com.nivelle.guide.javacore.thread;
 
+/**
+ * join
+ */
 public class ThreadJoin {
-
-    public static void main(String args[]){
-        Thread thread= new Thread(new Runnable() {
-            @Override
-            public void run() {
-                System.err.println("线程"+Thread.currentThread().getId()+" 打印信息");
+    public static void main(String[] args) {
+        MyRunnable myRunnable = new MyRunnable();
+        Thread thread = new Thread(myRunnable);
+        for (int i = 0; i < 10; i++) {
+            System.out.println(Thread.currentThread().getName() + " " + i);
+            if (i == 3) {
+                thread.start();
+                try {
+                    //main线程需要等待thread线程执行完后才能继续执行
+                    thread.join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
-        });
-        thread.start();
-
-        try {
-            thread.join();//调用者不断试探thread是否还或者,如果活着就不断的调用wait
-        }catch (Exception e){
-            System.err.println(e);
         }
+    }
+}
 
-        System.err.println("主线程打印信息");
-
+class MyRunnable implements Runnable {
+    @Override
+    public void run() {
+        for (int i = 0; i < 10; i++) {
+            System.out.println(Thread.currentThread().getName() + " " + i);
+        }
     }
 }
