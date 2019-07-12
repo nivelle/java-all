@@ -1,7 +1,7 @@
 package com.nivelle.guide.datastructures;
 
 /**
- * TODO:DOCUMENT ME!
+ * Unsafe
  *
  * @author fuxinzhong
  * @date 2019/07/12

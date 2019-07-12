@@ -1,7 +1,7 @@
 package com.nivelle.guide.datastructures;
 
 /**
- * TODO:DOCUMENT ME!
+ * Long
  *
  * @author fuxinzhong
  * @date 2019/06/16

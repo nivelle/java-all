@@ -1,4 +1,4 @@
-package com.nivelle.guide.datastructures;
+package com.nivelle.guide.javacore.instance;
 
 import lombok.Getter;
 import lombok.Setter;
