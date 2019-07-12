@@ -97,7 +97,7 @@ public class ThreadPoolData {
         MyTask myTask = new MyTask(20, threadLocal);
         Thread thread = threadFactory.newThread(myTask);
         thread.start();
-        //threadLocal.remove();
+        threadLocal.remove();
     }
 }
 
