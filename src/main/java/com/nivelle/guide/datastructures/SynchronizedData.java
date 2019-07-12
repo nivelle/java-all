@@ -1,10 +1,10 @@
 package com.nivelle.guide.datastructures;
 
 /**
- * TODO:DOCUMENT ME!
+ * Synchronized
  *
  * @author fuxinzhong
  * @date 2019/06/16
  */
-public class synchronizedData {
+public class SynchronizedData {
 }
