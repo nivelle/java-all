@@ -1,4 +1,4 @@
-package com.nivelle.guide.javacore.annotion.Inherited;
+package com.nivelle.guide.javacore.annotion.inherited;
 
 @DBTable1
 class Super {

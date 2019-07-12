@@ -18,7 +18,7 @@ public class ThreadPoolData {
         /**
          * ThreadPoolExecutor 工作流程:
          *
-         * 1. 线程池数目先增加至 corePoolSize 大小限制数目
+         * 1. 线程池数目先增加至 corthreadLocal.remove();ePoolSize 大小限制数目
          * 2. 将任务添加至阻塞队列，至阻塞队列大小限制此时线程数目不再增加(若添加失败也会增加线程)
          * 3. 线程继续增加,最终达到 maximumPoolSize大小限制的数目
          * 4. 超出的任务数目采取拒绝策略
@@ -63,7 +63,7 @@ public class ThreadPoolData {
         executor.prestartAllCoreThreads();
         //核心线程数目也可以设置过期时间
         executor.allowCoreThreadTimeOut(true);
-        for (int i = 0; i < 15; i++) {
+        for (int i = 0; i < 1555; i++) {
             MyTask myTask = new MyTask(i, threadLocal);
             executor.execute(myTask);
             if (i == 3) {
@@ -97,8 +97,7 @@ public class ThreadPoolData {
         MyTask myTask = new MyTask(20, threadLocal);
         Thread thread = threadFactory.newThread(myTask);
         thread.start();
-
-
+        //threadLocal.remove();
     }
 }
 
@@ -134,7 +133,7 @@ class MyTask implements Runnable {
          * number of this factory, and <em>M</em> is the sequence number of the thread created by this factory.
          */
         System.out.println("task " + Thread.currentThread().getName() + taskNum + "执行完毕");
-        Thread.currentThread().interrupt();
+        threadLocal.remove();
 
     }
 

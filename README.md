@@ -85,7 +85,7 @@
 
 ## RabbitMQ
 
-✅ Exchange
+✅ Exchange(direct,fanout)
 
 ✅ Queue
 
