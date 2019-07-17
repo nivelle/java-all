@@ -29,6 +29,8 @@
 
 ✅ 定时任务
 
+✅ swagger
+
 ## springMVC实践
 
 ✅ AbstractGenericHttpMessageConverter 
