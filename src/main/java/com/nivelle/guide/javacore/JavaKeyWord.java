@@ -1,5 +1,10 @@
 package com.nivelle.guide.javacore;
 
+import com.nivelle.guide.javacore.instance.Father;
+import com.nivelle.guide.javacore.instance.Son;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -15,6 +20,8 @@ public class JavaKeyWord {
     public static void main(String[] args) {
         //retry不是java的关键字
         retryTest();
+        System.out.println("================================");
+        instanceOfTest();
     }
 
     /**
@@ -41,6 +48,36 @@ public class JavaKeyWord {
                 System.out.println("当前数字:" + i + " atomicInteger is " + atomicInteger);
             }
         }
+    }
+
+    /**
+     * 1. null是一种特殊类型,null 引用也可以转换为任意引用类型
+     * 2. 在 JavaSE规范 中对 instanceof 运算符的规定就是：如果 obj 为 null，那么将返回 false。
+     * 3. 通过 ClassCastException 异常来判断是否是其子类型
+     */
+    private static void instanceOfTest() {
+        System.out.println("1. null 属性Object 类型:" + (null instanceof Object));
+//        int i = 0; //编译不通过
+//        System.out.println("i 属性 int 类型:" + (i instanceof Integer));
+        Integer i = 0;
+        System.out.println("2. i实例属于类的实例对象:" + (i instanceof Integer));
+
+        ArrayList arrayList = new ArrayList();
+        System.out.println("3. arrayList 属于接口List的实现类:" + (arrayList instanceof List));
+
+        List list = new ArrayList();
+        System.out.println("4. list是ArrayList的实例,属于List接口的实现类:"+(list instanceof List));
+
+        Son son = new Son(1,"nivelle",10);
+        System.out.println("5. son是其父类的实现类:"+(son instanceof Father));
+
+        String[] strings = new String[]{};
+        System.out.println("6. 数组类型是否是 Object 的子类型:"+(strings instanceof Object));
+        System.out.println("6.1. 数组类型是否是 String[] 的子类型:"+(strings instanceof String[]));
+
+
+
+
 
     }
 }
