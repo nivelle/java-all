@@ -65,6 +65,7 @@ public class ThreadPoolData {
         executor.allowCoreThreadTimeOut(true);
         for (int i = 0; i < 1555; i++) {
             MyTask myTask = new MyTask(i, threadLocal);
+            /** 在worker中通过 threadFactory 创建一个线程去执行这个task. **/
             executor.execute(myTask);
             if (i == 3) {
                 //corePoolSize 和 maxMumPoolSize是可以调节的

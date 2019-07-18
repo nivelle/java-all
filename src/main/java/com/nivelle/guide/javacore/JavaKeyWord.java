@@ -13,6 +13,7 @@ public class JavaKeyWord {
     private static AtomicInteger atomicInteger = new AtomicInteger(0);
 
     public static void main(String[] args) {
+        //retry不是java的关键字
         retryTest();
     }
 
