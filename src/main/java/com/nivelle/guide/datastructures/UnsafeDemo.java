@@ -24,7 +24,8 @@ public class UnsafeDemo {
          * 当且仅当调用getUnsafe方法的类为引导类加载器所加载时才合法;
          *
          * 1.java -Xbootclasspath/a: ${path}   // 其中path为调用Unsafe相关方法的类所在jar包路径
-         * 2.通过反射获取
+         * 2.通过反射获取Unsafe实例
+         * 3. unSafe操纵的是堆外内存,堆内内存由JVM控制
          */
         try {
             Unsafe unsafe = reflectGetUnsafe();
@@ -38,6 +39,8 @@ public class UnsafeDemo {
             //设置指定元素的值
             unsafe.putObject(user, unsafe.objectFieldOffset(age), 11);
             System.out.println("after value =" + user.getAge());
+
+
         } catch (Exception e) {
             System.err.println("反射获取异常: " + e + ":" + e.getMessage());
         }
