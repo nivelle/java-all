@@ -26,11 +26,6 @@ public class UnsafeDemo {
          * 1.java -Xbootclasspath/a: ${path}   // 其中path为调用Unsafe相关方法的类所在jar包路径
          * 2.通过反射获取
          */
-//        try {
-//            Unsafe unsafe = Unsafe.getUnsafe();
-//        } catch (Exception e) {
-//            System.err.println("securityException: " + e + e.getMessage());
-//        }
         try {
             Unsafe unsafe = reflectGetUnsafe();
             User user = new User(2, "Jessy");
@@ -40,6 +35,9 @@ public class UnsafeDemo {
             //从内存中直接获取指定属性的值
             int memoryAge = (int) unsafe.getObject(user, unsafe.objectFieldOffset(age));
             System.out.println("memory value =" + memoryAge);
+            //设置指定元素的值
+            unsafe.putObject(user, unsafe.objectFieldOffset(age), 11);
+            System.out.println("after value =" + user.getAge());
         } catch (Exception e) {
             System.err.println("反射获取异常: " + e + ":" + e.getMessage());
         }
