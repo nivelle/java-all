@@ -10,7 +10,7 @@ import java.util.TreeMap;
  * @author fuxinzhong
  * @date 2019/06/16
  */
-public class TreeMapData {
+public class TreeMapDemo {
 
     public static void main(String[] args) {
 

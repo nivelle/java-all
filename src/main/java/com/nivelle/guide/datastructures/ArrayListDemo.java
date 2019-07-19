@@ -13,7 +13,7 @@ import java.util.*;
  * @date 2019/06/16
  */
 @Slf4j
-public class ArrayListData {
+public class ArrayListDemo {
 
 
     /**

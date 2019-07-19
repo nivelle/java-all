@@ -1,10 +1,10 @@
 package com.nivelle.guide.datastructures;
 
 /**
- * CyclicBarrier
+ * Long
  *
  * @author fuxinzhong
  * @date 2019/06/16
  */
-public class CyclicBarrierData {
+public class LongDemo {
 }

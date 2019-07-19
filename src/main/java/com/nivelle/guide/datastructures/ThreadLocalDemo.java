@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
  * @date 2019/06/16
  */
 @Service
-public class ThreadLocalData {
+public class ThreadLocalDemo {
 
 
     /**

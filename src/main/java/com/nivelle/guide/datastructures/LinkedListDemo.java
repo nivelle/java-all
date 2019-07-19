@@ -10,7 +10,7 @@ import java.util.ListIterator;
  * @author fuxinzhong
  * @date 2019/06/16
  */
-public class LinkedListData {
+public class LinkedListDemo {
 
     public static void main(String[] args) {
 

@@ -6,7 +6,7 @@ package com.nivelle.guide.datastructures;
  * @author fuxinzhong
  * @date 2019/06/05
  */
-public class IntegerData {
+public class IntegerDemo {
 
     public static void main(String[] args) {
 

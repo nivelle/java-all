@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author fuxinzhong
  * @date 2019/06/16
  */
-public class ConcurrentHashMapData {
+public class ConcurrentHashMapDemo {
 
     public static void main(String[] args) {
 

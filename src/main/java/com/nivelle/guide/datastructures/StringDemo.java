@@ -11,7 +11,7 @@ import java.util.StringJoiner;
  * @author fuxinzhong
  * @date 2019/06/16
  */
-public class StringData {
+public class StringDemo {
 
 
     /**

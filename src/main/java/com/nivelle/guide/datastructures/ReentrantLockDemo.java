@@ -1,10 +1,10 @@
 package com.nivelle.guide.datastructures;
 
 /**
- * CopyOnWriterArrayList
+ * ReentrantLock
  *
  * @author fuxinzhong
  * @date 2019/06/16
  */
-public class CopyOnWriterArrayListData {
+public class ReentrantLockDemo {
 }

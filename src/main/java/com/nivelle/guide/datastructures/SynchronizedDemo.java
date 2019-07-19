@@ -1,10 +1,10 @@
 package com.nivelle.guide.datastructures;
 
 /**
- * NIO
+ * Synchronized
  *
  * @author fuxinzhong
  * @date 2019/06/16
  */
-public class NIOData {
+public class SynchronizedDemo {
 }

@@ -1,10 +1,10 @@
 package com.nivelle.guide.datastructures;
 
 /**
- * Float
+ * Unsafe
  *
  * @author fuxinzhong
- * @date 2019/06/16
+ * @date 2019/07/12
  */
-public class FloatData {
+public class UnsafeDemo {
 }

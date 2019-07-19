@@ -1,38 +1,15 @@
-package com.nivelle.guide.javacore.thread;
-
-import java.util.concurrent.locks.AbstractQueuedSynchronizer;
+package com.nivelle.guide.datastructures;
 
 /**
- * aqs
+ * AQS
+ *
+ * @author fuxinzhong
+ * @date 2019/07/19
  */
-public class MySynchronizer extends AbstractQueuedSynchronizer {
-
-    @Override
-    protected boolean tryAcquire(int arg) {
-        if (compareAndSetState(0, 1)) {
-            setExclusiveOwnerThread(Thread.currentThread());
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    protected boolean tryRelease(int arg) {
-        setState(0);
-        setExclusiveOwnerThread(null);
-        return true;
-    }
-
-    public void lock() {
-        acquire(1);
-    }
-
-    public void unlock() {
-        release(1);
-    }
+public class AQSDataTest {
 
     public static void main(String[] args) {
-        MySynchronizer mySynchronizer = new MySynchronizer();
+        AQSDemo mySynchronizer = new AQSDemo();
         Thread thread1 = new Thread(() -> {
 
             mySynchronizer.lock();
@@ -63,4 +40,3 @@ public class MySynchronizer extends AbstractQueuedSynchronizer {
         thread2.start();
     }
 }
-

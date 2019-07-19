@@ -8,7 +8,7 @@ import com.nivelle.guide.springboot.enums.MyEnum;
  * @author fuxinzhong
  * @date 2019/06/16
  */
-public class EnumData {
+public class EnumDemo {
 
     public static void main(String[] args) {
 

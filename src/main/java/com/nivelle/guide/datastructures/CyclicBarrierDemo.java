@@ -1,10 +1,10 @@
 package com.nivelle.guide.datastructures;
 
 /**
- * ReadWriteLock
+ * CyclicBarrier
  *
  * @author fuxinzhong
  * @date 2019/06/16
  */
-public class ReadWriteLockData {
+public class CyclicBarrierDemo {
 }

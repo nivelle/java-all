@@ -1,10 +1,10 @@
 package com.nivelle.guide.datastructures;
 
 /**
- * AbstractQueuedSynchronizer
+ * IO
  *
  * @author fuxinzhong
  * @date 2019/06/16
  */
-public class AQSData {
+public class IODemo {
 }

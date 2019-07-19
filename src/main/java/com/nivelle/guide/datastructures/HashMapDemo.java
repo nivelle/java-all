@@ -12,7 +12,7 @@ import java.util.Set;
  * @author fuxinzhong
  * @date 2019/06/16
  */
-public class HashMapData {
+public class HashMapDemo {
 
     public static void main(String[] args) {
 
