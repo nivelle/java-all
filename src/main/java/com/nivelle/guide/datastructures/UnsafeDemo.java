@@ -37,18 +37,18 @@ public class UnsafeDemo {
          */
         try {
             Field field = Unsafe.class.getDeclaredField("theUnsafe");
+            // 设置该Field为可访问
             field.setAccessible(true);
-            Unsafe unsafe1 = (Unsafe) field.get(null);
+            // 通过Field得到该Field对应的具体对象，传入null是因为该Field为static的
+            Unsafe unsafe = (Unsafe) field.get(null);
 
-            User user = new User(1, "jessy");
+            User user = new User(1, "Jessy");
+            System.out.println("before value =" + user);
             Class userClass = user.getClass();
             Field age = userClass.getDeclaredField("age");
-            long ageIndex = unsafe1.objectFieldOffset(age);
-
-            System.out.println("before value:" + user.getAge());
-            unsafe1.putInt(user, ageIndex, 2);
-            int newAge = user.getAge();
-            System.out.println("after value:" + user.getAge());
+            //直接往内存地址写数据
+            unsafe.putInt(user, unsafe.objectFieldOffset(age), 101);
+            System.out.println("after value =" + user);
         } catch (Exception e) {
             System.err.println("反射获取异常: " + e + e.getMessage());
         }
