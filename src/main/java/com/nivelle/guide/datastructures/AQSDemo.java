@@ -36,6 +36,5 @@ public class AQSDemo extends AbstractQueuedSynchronizer {
         release(1);
     }
 
-
 }
 
