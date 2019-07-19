@@ -18,39 +18,56 @@ public class UnsafeDemo {
      *
      * @param args
      */
-    public static void main(String[] args) {
-        /**
-         * 单例实现;
-         * 当且仅当调用getUnsafe方法的类为引导类加载器所加载时才合法;
-         *
-         * 1.java -Xbootclasspath/a: ${path}   // 其中path为调用Unsafe相关方法的类所在jar包路径
-         * 2.通过反射获取Unsafe实例
-         *
-         */
-        try {
-            Unsafe unsafe = reflectGetUnsafe();
-            User user = new User(2, "Jessy");
-            System.out.println("before value =" + user);
-            Class userClass = user.getClass();
-            Field age = userClass.getDeclaredField("age");
-            //从内存中直接获取指定属性的值
-            /**
-             * 3. unSafe操纵的是堆外内存,堆内内存由JVM控制
-             */
-            int memoryAge = (int) unsafe.getObject(user, unsafe.objectFieldOffset(age));
-            System.out.println("memory value =" + memoryAge);
-            //设置指定元素的值
-            unsafe.putObject(user, unsafe.objectFieldOffset(age), 11);
-            System.out.println("after value =" + user.getAge());
-            //释放元素内存
-            //unsafe.freeMemory(ageAddress);
-            System.out.println("free after =" + user.getAge());
+    public static void main(String[] args) throws Exception {
 
-        } catch (Exception e) {
-            System.err.println("反射获取异常: " + e + ":" + e.getMessage());
+        /**
+         * 内存操纵
+         */
+        User user = new User(2, "Jessy");
+
+        Unsafe unsafe = reflectGetUnsafe();
+        System.out.println("before value =" + user);
+        Class userClass = user.getClass();
+        Field age = userClass.getDeclaredField("age");
+        //从内存中直接获取指定属性的值
+        /**
+         * 3. unSafe操纵的是堆外内存,堆内内存由JVM控制
+         */
+        long userOffset = unsafe.objectFieldOffset(age);
+        System.out.println("userOffset=" + userOffset);
+        int memoryAge = (int) unsafe.getObject(user, userOffset);
+        System.out.println("memory value =" + memoryAge);
+        //设置指定元素的值
+        unsafe.putObject(user, userOffset, 11);
+        System.out.println("userOffset=" + userOffset);
+
+        System.out.println("after value =" + user.getAge());
+        //释放元素内存
+        //unsafe.freeMemory(ageAddress);
+        System.out.println("free after =" + user.getAge());
+        /**
+         * CAS
+         */
+        System.out.println("user2 before value =" + user.getAge());
+        int memoryAge2 = (int) unsafe.getObject(user, userOffset);
+        System.out.println("memory age2 " + memoryAge2);
+        System.out.println("user2 memory value =" + user.getAge());
+
+        for (; ; ) {
+            boolean swapResult = unsafe.compareAndSwapInt(user, userOffset, memoryAge2, 20);
+            if (swapResult) break;
         }
+        System.out.println("userOffset=" + userOffset);
+        System.out.println("user2 age is = " + user.getAge());
     }
 
+    /**
+     * 单例实现;
+     * 当且仅当调用getUnsafe方法的类为引导类加载器所加载时才合法;
+     * <p>
+     * 1.java -Xbootclasspath/a: ${path}   // 其中path为调用Unsafe相关方法的类所在jar包路径
+     * 2.通过反射获取Unsafe实例
+     */
     private static Unsafe reflectGetUnsafe() {
         try {
             Field field = Unsafe.class.getDeclaredField("theUnsafe");
