@@ -12,8 +12,6 @@ import java.lang.reflect.Field;
  * @date 2019/07/12
  */
 public class UnsafeDemo {
-
-
     /**
      * Unsafe是位于sun.misc包下的一个类，主要提供一些用于执行低级别、不安全操作的方法，
      * 如直接访问系统内存资源、自主管理内存资源等
@@ -33,18 +31,15 @@ public class UnsafeDemo {
 //        } catch (Exception e) {
 //            System.err.println("securityException: " + e + e.getMessage());
 //        }
-
         try {
             Unsafe unsafe = reflectGetUnsafe();
-            User user = new User(1, "Jessy");
-
+            User user = new User(2, "Jessy");
             System.out.println("before value =" + user);
             Class userClass = user.getClass();
             Field age = userClass.getDeclaredField("age");
-            //直接往内存地址写数据
-            unsafe.putInt(user, unsafe.objectFieldOffset(age), 12);
-
-            System.out.println("after value =" + user);
+            //从内存中直接获取指定属性的值
+            int memoryAge = (int) unsafe.getObject(user, unsafe.objectFieldOffset(age));
+            System.out.println("memory value =" + memoryAge);
         } catch (Exception e) {
             System.err.println("反射获取异常: " + e + ":" + e.getMessage());
         }
