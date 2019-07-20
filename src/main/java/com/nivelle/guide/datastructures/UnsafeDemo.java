@@ -53,12 +53,14 @@ public class UnsafeDemo {
         System.out.println("memory age2 " + memoryAge2);
         System.out.println("user2 memory value =" + user.getAge());
 
-        for (; ; ) {
-            boolean swapResult = unsafe.compareAndSwapInt(user, userOffset, memoryAge2, 20);
-            if (swapResult) break;
-        }
+        boolean swapResult = unsafe.compareAndSwapInt(user, userOffset, memoryAge2, 20);
+        System.out.println("cas操纵结果" + swapResult);
         System.out.println("userOffset=" + userOffset);
         System.out.println("user2 age is = " + user.getAge());
+
+        /**
+         * 线程调度
+         */
     }
 
     /**
