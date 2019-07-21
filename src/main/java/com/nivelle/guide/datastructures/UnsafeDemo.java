@@ -22,6 +22,10 @@ public class UnsafeDemo {
 
         /**
          * ## 内存操纵
+         *
+         * 主要包含堆外内存的分配、拷贝、释放、给定地址值操作等方法
+         *
+         * unSafe操纵的是堆外内存,堆内内存由JVM控制
          */
         User user = new User(2, "Jessy");
 
@@ -30,9 +34,6 @@ public class UnsafeDemo {
         Class userClass = user.getClass();
         Field age = userClass.getDeclaredField("age");
         //从内存中直接获取指定属性的值
-        /**
-         * 3. unSafe操纵的是堆外内存,堆内内存由JVM控制
-         */
         long userAgeOffset = unsafe.objectFieldOffset(age);
         System.out.println("userAgeOffset = " + userAgeOffset);
         int memoryAge = (int) unsafe.getObject(user, userAgeOffset);
@@ -57,15 +58,6 @@ public class UnsafeDemo {
         System.out.println("userOffset= " + userAgeOffset);
         System.out.println("user2 age is = " + user.getAge());
 
-        /**
-         * ## 线程调度
-         */
-        //可重入锁
-        boolean monitorEnter = unsafe.tryMonitorEnter(user);
-        System.out.println("获取对象锁,monitorEnter:" + monitorEnter);
-        boolean monitorEnter2 = unsafe.tryMonitorEnter(user);
-        System.out.println("获取对象锁,monitorEnter2:" + monitorEnter2);
-        System.out.println("当前锁:" + Thread.currentThread().getName());
 
         new Thread(() -> {
             synchronized (user) {
@@ -76,21 +68,36 @@ public class UnsafeDemo {
                 }
 
             }
+            unsafe.park(true,5000);
         }).start();
 
-        new Thread(() -> {
-            synchronized (user) {
-                try {
-                    System.out.println("获取到了user2的对象锁！" + Thread.currentThread().getName());
-                } catch (Exception e) {
-                    System.out.println(e + e.getMessage());
-                }
+        /**
+         * ## 线程调度
+         *
+         * 包括线程挂起、恢复、锁机制
+         */
+        //可重入锁
+        boolean monitorEnter = unsafe.tryMonitorEnter(user);
+        System.out.println("获取对象锁,monitorEnter:" + monitorEnter);
+        boolean monitorEnter2 = unsafe.tryMonitorEnter(user);
+        System.out.println("获取对象锁,monitorEnter2:" + monitorEnter2);
+        System.out.println("当前锁:" + Thread.currentThread().getName());
+        Thread.sleep(1000);
 
-            }
-        }).start();
+        /**
+         * ## Class相关
+         *
+         * 提供Class和它的静态字段的操作相关方法，包含静态字段内存定位、定义类、定义匿名类、检验&确保初始化等
+         */
+        User userAllocateInstance = (User) unsafe.allocateInstance(userClass);
+        userAllocateInstance.setAge(20);
+        userAllocateInstance.setName("AllocateUser");
+        System.out.println("userAllocateInstance is:" + userAllocateInstance);
+
 
 
     }
+
 
     /**
      * 单例实现;
