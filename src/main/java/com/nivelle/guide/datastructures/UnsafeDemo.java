@@ -21,46 +21,75 @@ public class UnsafeDemo {
     public static void main(String[] args) throws Exception {
 
         /**
-         * 内存操纵
+         * ## 内存操纵
          */
         User user = new User(2, "Jessy");
 
         Unsafe unsafe = reflectGetUnsafe();
-        System.out.println("before value =" + user);
+        System.out.println("before value = " + user);
         Class userClass = user.getClass();
         Field age = userClass.getDeclaredField("age");
         //从内存中直接获取指定属性的值
         /**
          * 3. unSafe操纵的是堆外内存,堆内内存由JVM控制
          */
-        long userOffset = unsafe.objectFieldOffset(age);
-        System.out.println("userOffset=" + userOffset);
-        int memoryAge = (int) unsafe.getObject(user, userOffset);
-        System.out.println("memory value =" + memoryAge);
-        //设置指定元素的值
-        unsafe.putObject(user, userOffset, 11);
-        System.out.println("userOffset=" + userOffset);
-
-        System.out.println("after value =" + user.getAge());
+        long userAgeOffset = unsafe.objectFieldOffset(age);
+        System.out.println("userAgeOffset = " + userAgeOffset);
+        int memoryAge = (int) unsafe.getObject(user, userAgeOffset);
+        System.out.println("memory value = " + memoryAge);
+        //直接操纵指定元素的值
+        unsafe.putObject(user, userAgeOffset, 11);
+        System.out.println("userAgeOffset = " + userAgeOffset);
+        System.out.println("after value = " + user.getAge());
         //释放元素内存
         //unsafe.freeMemory(ageAddress);
-        System.out.println("free after =" + user.getAge());
+        System.out.println("free after = " + user.getAge());
         /**
-         * CAS
+         * ## CAS
          */
-        System.out.println("user2 before value =" + user.getAge());
-        int memoryAge2 = (int) unsafe.getObject(user, userOffset);
+        System.out.println("user2 before value = " + user.getAge());
+        int memoryAge2 = (int) unsafe.getObject(user, userAgeOffset);
         System.out.println("memory age2 " + memoryAge2);
-        System.out.println("user2 memory value =" + user.getAge());
-
-        boolean swapResult = unsafe.compareAndSwapInt(user, userOffset, memoryAge2, 20);
-        System.out.println("cas操纵结果" + swapResult);
-        System.out.println("userOffset=" + userOffset);
+        System.out.println("user2 memory value = " + user.getAge());
+        //修改值
+        boolean swapResult = unsafe.compareAndSwapObject(user, userAgeOffset, 11, 20);
+        System.out.println("cas操纵结果:" + swapResult);
+        System.out.println("userOffset= " + userAgeOffset);
         System.out.println("user2 age is = " + user.getAge());
 
         /**
-         * 线程调度
+         * ## 线程调度
          */
+        //可重入锁
+        boolean monitorEnter = unsafe.tryMonitorEnter(user);
+        System.out.println("获取对象锁,monitorEnter:" + monitorEnter);
+        boolean monitorEnter2 = unsafe.tryMonitorEnter(user);
+        System.out.println("获取对象锁,monitorEnter2:" + monitorEnter2);
+        System.out.println("当前锁:" + Thread.currentThread().getName());
+
+        new Thread(() -> {
+            synchronized (user) {
+                try {
+                    System.out.println("获取到了user1的对象锁！" + Thread.currentThread().getName());
+                } catch (Exception e) {
+                    System.out.println(e + e.getMessage());
+                }
+
+            }
+        }).start();
+
+        new Thread(() -> {
+            synchronized (user) {
+                try {
+                    System.out.println("获取到了user2的对象锁！" + Thread.currentThread().getName());
+                } catch (Exception e) {
+                    System.out.println(e + e.getMessage());
+                }
+
+            }
+        }).start();
+
+
     }
 
     /**
@@ -80,4 +109,6 @@ public class UnsafeDemo {
             return null;
         }
     }
+
+
 }
