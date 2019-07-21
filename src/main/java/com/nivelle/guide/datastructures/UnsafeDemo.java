@@ -94,8 +94,6 @@ public class UnsafeDemo {
         userAllocateInstance.setName("AllocateUser");
         System.out.println("userAllocateInstance is:" + userAllocateInstance);
 
-
-
     }
 
 
