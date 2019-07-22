@@ -8,64 +8,70 @@ package com.nivelle.guide.datastructures;
  */
 public class AQSDemoTest {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         AQSDemo aqsDemo = new AQSDemo();
+
         Thread thread1 = new Thread(() -> {
+            Thread.currentThread().setName("thread1");
             aqsDemo.lock();
             try {
-                System.out.println(" thread1 run");
-                System.out.println(" thread1 will sleep 5 secs");
+                System.out.println(Thread.currentThread().getName() + " ：is run");
+                System.out.println(Thread.currentThread().getName() + " ：will sleep 100 ");
                 try {
                     Thread.sleep(100L);
-                    System.out.println("thread1 continue");
+                    System.out.println(Thread.currentThread().getName() + " ：continue");
                 } catch (InterruptedException e) {
-                    System.out.println(" tread1 interrupted");
+                    System.out.println(Thread.currentThread().getName() + " ：interrupted");
                     Thread.currentThread().interrupt();
                 }
             } finally {
                 aqsDemo.unlock();
-                System.out.println("thread1 run end");
+                System.out.println(Thread.currentThread().getName() + "：run end");
 
             }
         });
+
         Thread thread2 = new Thread(() -> {
+            Thread.currentThread().setName("thread2");
             aqsDemo.lock();
             try {
-                System.out.println("tread2 run");
-                System.out.println(" thread2 will sleep 4 secs");
+                System.out.println(Thread.currentThread().getName() + "： is run");
+                System.out.println(Thread.currentThread().getName() + " ：will sleep 100 ");
                 Thread.sleep(1000L);
-                System.out.println("thread2 continue");
+                System.out.println(Thread.currentThread().getName() + "： continue");
             } catch (InterruptedException e) {
-                System.out.println(" thread2 interrupted");
+                System.out.println(Thread.currentThread().getName() + " ：interrupted");
                 Thread.currentThread().interrupt();
             } finally {
                 aqsDemo.unlock();
-                System.out.println("thread2 run end");
+                System.out.println(Thread.currentThread().getName() + "：run end");
 
             }
         });
+
         Thread thread3 = new Thread(() -> {
+            Thread.currentThread().setName("thread3");
             aqsDemo.lock();
             try {
-                System.out.println(" thread3 run");
-                System.out.println(" thread3 will sleep 3 secs");
+                System.out.println(Thread.currentThread().getName() + " ：is run");
+                System.out.println(Thread.currentThread().getName() + " ：will sleep 100 ");
                 try {
                     //若不释放锁，则必须等待当前线程执行完毕，才可能继续执行thread1
-                    //aqsDemo.unlock();
-                    Thread.sleep(5000L);
+                    aqsDemo.unlock();
+                    Thread.sleep(1000L);
                     System.out.println("thread3 continue");
                 } catch (Exception e) {
-                    System.out.println(" thread3 interrupted");
+                    System.out.println(Thread.currentThread().getName() + " ：interrupted");
                     Thread.currentThread().interrupt();
                 }
             } finally {
                 aqsDemo.unlock();
-                System.out.println("thread3 run end");
+                System.out.println(Thread.currentThread().getName() + "：run end");
             }
         });
         thread2.start();
         thread3.start();
         thread1.start();
-
+        Thread.sleep(1000L);
     }
 }
