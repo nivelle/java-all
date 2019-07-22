@@ -1,4 +1,4 @@
-package com.nivelle.guide.datastructures;
+package com.nivelle.guide.javacore;
 
 import java.util.Random;
 
@@ -8,7 +8,7 @@ import java.util.Random;
  * @author fuxinzhong
  * @date 2019/07/22
  */
-public class MathDemo {
+public class JavaMathDemo {
 
     public static void main(String[] args) {
 

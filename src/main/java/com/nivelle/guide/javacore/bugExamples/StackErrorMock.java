@@ -1,4 +1,4 @@
-package com.nivelle.guide.javacore;
+package com.nivelle.guide.javacore.bugExamples;
 
 public class StackErrorMock {
 

@@ -1,4 +1,4 @@
-package com.nivelle.guide.javacore;
+package com.nivelle.guide.javacore.jvm;
 
 import java.io.File;
 import java.net.URL;
