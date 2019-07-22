@@ -90,7 +90,7 @@ public class FloatDemo {
         /**
          * toHexString(float f):转成16进制的字符串（用科学计数法表示）
          */
-        System.out.println(Float.toHexString(new Float("0.12")));
+        System.out.println(Float.toHexString(new Float("0.1")));
 
     }
 }
