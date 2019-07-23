@@ -37,9 +37,13 @@ public class AQSDemoTest {
             try {
                 System.out.println(Thread.currentThread().getName() + "： is run");
                 System.out.println(Thread.currentThread().getName() + " ：will sleep 100 ");
-                Thread.sleep(1000L);
+                //可重入锁
+                aqsDemo.lock();
+                //可重入锁,获取多少次就必须要释放多少次
+                Thread.sleep(100);
+                aqsDemo.unlock();
                 System.out.println(Thread.currentThread().getName() + "： continue");
-            } catch (InterruptedException e) {
+            } catch (Exception e) {
                 System.out.println(Thread.currentThread().getName() + " ：interrupted");
                 Thread.currentThread().interrupt();
             } finally {
@@ -58,7 +62,7 @@ public class AQSDemoTest {
                 try {
                     //若不释放锁，则必须等待当前线程执行完毕，才可能继续执行thread1
                     aqsDemo.unlock();
-                    Thread.sleep(1000L);
+                    Thread.sleep(100L);
                     System.out.println("thread3 continue");
                 } catch (Exception e) {
                     System.out.println(Thread.currentThread().getName() + " ：interrupted");
@@ -72,6 +76,6 @@ public class AQSDemoTest {
         thread2.start();
         thread3.start();
         thread1.start();
-        Thread.sleep(1000L);
+        Thread.sleep(100L);
     }
 }

@@ -21,9 +21,10 @@ public class AQSDemo extends AbstractQueuedSynchronizer {
 
     @Override
     protected boolean tryAcquire(int arg) {
-        if (compareAndSetState(0, 1)) {
+        if (compareAndSetState(getState(), getState() + arg)) {
             //设置独占锁拥有者线程（模版方法）
             setExclusiveOwnerThread(Thread.currentThread());
+            System.out.println("tryAcquire after:" + Thread.currentThread().getName() + ":state:" + getState());
             System.out.println("tryAcquire after:" + Thread.currentThread().getName() + ":isHeldExclusively:" + isHeldExclusively());
             return true;
         }
@@ -33,8 +34,10 @@ public class AQSDemo extends AbstractQueuedSynchronizer {
     @Override
     protected boolean tryRelease(int arg) {
         System.out.println("tryRelease before:" + Thread.currentThread().getName() + ":getState() is:" + getState());
-        setState(0);
-        setExclusiveOwnerThread(null);
+        setState(getState() - 1);
+        if (getState() == 0) {
+            setExclusiveOwnerThread(null);
+        }
         System.out.println("tryRelease after:" + Thread.currentThread().getName() + ":isHeldExclusively:" + isHeldExclusively());
         return true;
     }
