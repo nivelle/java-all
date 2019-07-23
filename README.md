@@ -31,6 +31,8 @@
 
 ✅ swagger
 
+✅ nginx
+
 ## springMVC实践
 
 ✅ AbstractGenericHttpMessageConverter 
