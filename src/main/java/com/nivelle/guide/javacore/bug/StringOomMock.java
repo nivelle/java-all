@@ -1,4 +1,4 @@
-package com.nivelle.guide.javacore.bugExamples;
+package com.nivelle.guide.javacore.bug;
 
 import java.util.ArrayList;
 import java.util.List;
