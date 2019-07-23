@@ -2,6 +2,7 @@ package com.nivelle.guide.javacore;
 
 import com.nivelle.guide.javacore.instance.Father;
 import com.nivelle.guide.javacore.instance.Son;
+import com.nivelle.guide.springboot.pojo.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +23,8 @@ public class JavaKeyWord {
         retryTest();
         System.out.println("================================");
         instanceOfTest();
+        System.out.println("================================");
+        finalTest();
     }
 
     /**
@@ -66,18 +69,47 @@ public class JavaKeyWord {
         System.out.println("3. arrayList 属于接口List的实现类:" + (arrayList instanceof List));
 
         List list = new ArrayList();
-        System.out.println("4. list是ArrayList的实例,属于List接口的实现类:"+(list instanceof List));
+        System.out.println("4. list是ArrayList的实例,属于List接口的实现类:" + (list instanceof List));
 
-        Son son = new Son(1,"nivelle",10);
-        System.out.println("5. son是其父类的实现类:"+(son instanceof Father));
+        Son son = new Son(1, "nivelle", 10);
+        System.out.println("5. son是其父类的实现类:" + (son instanceof Father));
 
         String[] strings = new String[]{};
-        System.out.println("6. 数组类型是否是 Object 的子类型:"+(strings instanceof Object));
-        System.out.println("6.1. 数组类型是否是 String[] 的子类型:"+(strings instanceof String[]));
+        System.out.println("6. 数组类型是否是 Object 的子类型:" + (strings instanceof Object));
+        System.out.println("6.1. 数组类型是否是 String[] 的子类型:" + (strings instanceof String[]));
+    }
 
+    /**
+     * final可以修饰变量,方法,方法,类
+     */
+    private static void finalTest() {
 
-
+        final User user = new User(10, "jessy");
+        //定义为final 的user引用指向的对象引用这个应用不可以改变，但是对象的内容是可以改变的
+        // user = null;
+        user.setAge(12);
+        System.out.println("change user " + user);
+        final int temp = 14;
+        int result = changeInt(temp);
+        System.out.println("值传递:" + result);
+        System.out.println("参数不变:" + temp);
+        //定义为final的变量不能改变
+        //temp = 16;
 
 
     }
+
+    /**
+     * 值传递,
+     * 值传递（pass by value）:是指在调用函数时将实际参数复制一份传递到函数中，这样在函数中如果对参数进行修改，将不会影响到实际参数
+     * 引用传递（pass by reference）:是指在调用函数时将实际参数的地址直接传递到函数中，那么在函数中对参数所进行的修改，将影响到实际参数。
+     *
+     * @param temp
+     * @return
+     */
+    private static int changeInt(int temp) {
+        temp++;
+        return temp;
+    }
+
 }
