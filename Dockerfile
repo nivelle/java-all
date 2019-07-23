@@ -17,7 +17,7 @@ MAINTAINER nivelle
 VOLUME /tmp
 
 #复制上下文目录下的target/demo-1.0.0.jar 到容器里
-COPY target/javaguide-1.0.0-SNAPSHOT.jar javaguide-1.0.0.jar
+COPY target/javaguide-1.0.0.jar javaguide-1.0.0.jar
 
 #bash方式执行，使javaguide-0.0.1.jar可访问
 #RUN新建立一层，在其上执行这些命令，执行结束后， commit 这一层的修改，构成新的镜像。
