@@ -22,7 +22,9 @@ public class TestController {
 
         String desc = learnConfig.getDesc();
 
-        Son man = new Son(1, "nivelle", 100);
+        Son man = new Son(1,
+
+                "nivelle", 100);
 
         System.out.println(desc);
 

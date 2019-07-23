@@ -30,7 +30,7 @@ public class MyContextRefreshedEventListener implements ApplicationListener<Cont
         ApplicationContext applicationContext = event.getApplicationContext();
         TimeLine bean = applicationContext.getAutowireCapableBeanFactory().createBean(TimeLine.class);
         bean.setName("jessy");
-        bean.setContent("fuck");
+        bean.setContent("love");
         bean.setDateTime(new Date());
 
         System.out.println("自己创建出来的bean" + bean.getClass().getSimpleName());

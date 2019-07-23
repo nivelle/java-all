@@ -15,7 +15,7 @@ public class Main {
 
         Target target = new Adapter(print);
 
-        String result2 = target.showAround("fuck", "jessy");
+        String result2 = target.showAround("love", "jessy");
 
         System.out.println(result2);
 
