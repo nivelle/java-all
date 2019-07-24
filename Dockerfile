@@ -17,14 +17,14 @@ MAINTAINER nivelle
 VOLUME /tmp
 
 #复制上下文目录下的target/demo-1.0.0.jar 到容器里
-COPY target/javaguide-1.0.0.jar javaguide-1.0.0.jar
+COPY target/javaguide-1.0.1.jar javaguide-1.0.1.jar
 
 #bash方式执行，使javaguide-0.0.1.jar可访问
 #RUN新建立一层，在其上执行这些命令，执行结束后， commit 这一层的修改，构成新的镜像。
-RUN bash -c "touch /javaguide-1.0.0.jar"
+RUN bash -c "touch /javaguide-1.0.1.jar"
 
 #声明运行时容器提供服务端口，这只是一个声明，在运行时并不会因为这个声明应用就会开启这个端口的服务
 EXPOSE 8088
 
 #指定容器启动程序及参数   <ENTRYPOINT> "<CMD>"
-ENTRYPOINT ["java","-jar","javaguide-1.0.0.jar"]
+ENTRYPOINT ["java","-jar","javaguide-1.0.1.jar"]

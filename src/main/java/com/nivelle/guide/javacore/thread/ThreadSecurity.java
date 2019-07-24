@@ -1,6 +1,6 @@
 package com.nivelle.guide.javacore.thread;
 
-public class SecurityTest{
+public class ThreadSecurity{
 
     public static void main(String[] args) {
         Account account = new Account("123456", 1000);

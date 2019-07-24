@@ -1,7 +1,7 @@
 package com.nivelle.guide.datastructures;
 
 /**
- * CyclicBarrier
+ * 自己实现一个 CyclicBarrier
  *
  * @author fuxinzhong
  * @date 2019/06/16
