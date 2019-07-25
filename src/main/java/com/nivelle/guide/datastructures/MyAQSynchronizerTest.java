@@ -8,7 +8,7 @@ import com.nivelle.guide.javacore.thread.MyAQSynchronizer;
  * @author fuxinzhong
  * @date 2019/07/19
  */
-public class myAQSynchronizerTest {
+public class MyAQSynchronizerTest {
 
     public static void main(String[] args) throws Exception {
 
