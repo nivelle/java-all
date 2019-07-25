@@ -33,6 +33,8 @@
 
 ✅ nginx
 
+✅ shutdown 实现优雅停机
+
 ## springMVC实践
 
 ✅ AbstractGenericHttpMessageConverter 
