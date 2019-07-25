@@ -85,7 +85,7 @@ Mysql版本:8.0.16;Kafka版本:2.2.1;RabbitMQ版本:3.7.15;Redis版本:5.0.4;Mav
 
 ## Redis实践
 
-✅string 指令 ✅zSet 有序集合 ✅Set集合 ✅Hash列表 ✅List ✅key 指令
+✅string 指令 ✅zSet 有序集合 ✅Set集合 ✅Hash hash表 ✅List列表 ✅key 指令
 
 ## Spring实践
 
