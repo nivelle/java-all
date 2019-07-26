@@ -6,10 +6,16 @@
 ### 依赖环境:
 
 
-```
-Mysql版本:8.0.16;Kafka版本:2.2.1;RabbitMQ版本:3.7.15;Redis版本:5.0.4;Maven版本:3.6.1JDK版本:1.8;ZooKeeper版本:3.4.13;Nginx版本:1.17.1
+**Mysql版本:8.0.16;**
+**Kafka版本:2.2.1;** 
+**RabbitMQ版本:3.7.15;** 
+**Redis版本:5.0.4;** 
+**Maven版本:3.6.1** 
+**JDK版本:1.8;**
+**ZooKeeper版本:3.4.13;**
+**Nginx版本:1.17.1**
 
-```
+
 
 ## springBoot实践
 
