@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nivelle.spring.springboot.mapper.ActivityPvMapper" >
+
+    <resultMap id="BaseResultMap" type="com.nivelle.spring.springboot.entity.ActivityPvEntity" >
+        <id column="id" property="id"/>
+        <result column="activity_id" property="activityId"/>
+        <result column="position_type" property="positionType"/>
+        <result column="ip" property="ip"/>
+        <result column="device_type" property="deviceType"/>
+        <result column="device_no" property="deviceNo"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, activity_id, position_type, ip, device_type,device_no,create_time,update_time
+    </sql>
+     <!--XML中只需resultType属性值为实体对象别名或全路径名。
+     * mybatis会通过接口文件的返回值类型来判断返回的是集合还是对象。
+     * 如果是对象，则按常规查询并返回；如果是List集合，mybatis则会将查询到的多条记录设置进集合中并返回 -->
+    <select id="getAll" resultMap="BaseResultMap" >
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM activity_pv
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id"  parameterType="com.nivelle.spring.springboot.entity.ActivityPvEntity">
+        INSERT INTO
+        activity_pv
+        (activity_id,position_type,ip,device_type,device_no)
+        VALUES
+        (#{activityId}, #{positionType}, #{ip},#{deviceType},#{deviceNo})
+    </insert>
+
+    <!--
+    使用resultType，直接映射到实体类，没有通过mabatis提供的 BaseResultMap，
+    使用_命名的字段会映射失败，将这里的resultType改成 resultMap="BaseResultMap"即可，使查询到的数据通过mabatis的内部实现完整的映射到实体类
+    -->
+    <!--
+      resultType：将查询结果按照sql列名pojo属性名一致性映射到pojo中。
+      resultMap可以实现延迟加载，resultType无法实现延迟加载。
+     -->
+    <select id="getActivityById" resultMap="BaseResultMap">
+        SELECT
+        *
+        FROM activity_pv where id =#{id};
+    </select>
+
+    <!--
+         association:用于映射关联查询单个对象的信息
+         collection:对关联查询到的多条记录映射到集合中
+         property:将关联查询到的多条记录映射到orders类的那个属性
+         ofType:指定映射的集合属性中pojo的类型
+    -->
+
+</mapper>

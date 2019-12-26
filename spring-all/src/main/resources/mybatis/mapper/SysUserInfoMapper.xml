@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace命名空间,作用就是对sql进行分类化的管理,理解为sql隔离
+    注意:使用mapper代理开发时，namespace有特殊作用,namespace等于mapper接口地址
+    配置文件和mapper接口文件名一样，通过mapper接口加载配置文件
+ -->
+<mapper namespace="com.nivelle.spring.springboot.mapper.SysUserInfoMapper">
+    <!-- 使用resultMap将查询结果映射到type-->
+    <resultMap id="BaseResultMap" type="com.nivelle.spring.springboot.entity.UserInfoEntity">
+        <id column="uid" property="uid"/>
+        <result column="username" property="username"/>
+        <result column="name" property="name"/>
+        <result column="password" property="password"/>
+        <result column="salt" property="salt"/>
+        <result column="state" property="state"/>
+
+        <collection property="roleList" ofType="com.nivelle.spring.springboot.entity.SysRoleEntity">
+            <id column="id" property="id"/>
+            <result column="available" property="available"/>
+            <result column="description" property="description"/>
+            <result column="role" property="role"/>
+            <result column="create_time" property="createTime"/>
+            <result column="update_time" property="updateTime"/>
+        </collection>
+    </resultMap>
+
+
+    <select id="getUserInfoByName" resultMap="BaseResultMap">
+
+        SELECT
+        u.*
+        FROM user_info u where username =#{name};
+    </select>
+
+
+</mapper>
