@@ -1,11 +1,12 @@
 ## java 初级中级开发必备实战篇
 
+## newmaster 分支为最新分支
+
 ### 姊妹项目:[java面试常见知识点汇总](http://nivelle.me/javaInterview/)
 
 ## 该项目和 [vueGuides](https://github.com/nivelle/vueGuides)项目可搭配使用
 
-
-## 依赖环境:
+## 依赖环境: 
 
 
 **Mysql版本:8.0.16;**
