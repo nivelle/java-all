@@ -1,7 +1,7 @@
 package com.nivelle.middleware.rabbitmq;
 
-import com.nivelle.spring.configbean.RabbitMQConfig;
-import com.nivelle.base.pojo.User;
+import com.nivelle.middleware.config.RabbitMQConfig;
+import com.nivelle.middleware.pojo.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +28,7 @@ public class RabbitMqController {
     private RabbitMQConfig rabbitMQConfig;
     @Autowired
     private RabbitTemplate rabbitTemplate;
+
     /**
      * 发往fanout 类型的 Exchange 的消息会分别转发给 Exchange绑定的队列
      *
@@ -52,6 +53,7 @@ public class RabbitMqController {
     /**
      * 发往direct 类型的 Exchange 的消息会转发给对应的完全匹配的队列，不需要进行任何绑定操作
      * direct 类型的行为是"先匹配, 再投送". 即在绑定时设定一个 routing_key, 消息的routing_key 匹配时, 才会被交换器投送到绑定的队列中去.
+     *
      * @return
      */
     @RequestMapping("/direct1")
@@ -72,6 +74,7 @@ public class RabbitMqController {
 
     /**
      * 消息只会发到key2绑定的队列
+     *
      * @return
      */
     @RequestMapping("/direct2")

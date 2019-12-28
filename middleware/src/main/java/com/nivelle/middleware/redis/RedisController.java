@@ -1,6 +1,6 @@
 package com.nivelle.middleware.redis;
 
-import com.nivelle.base.pojo.vo.ResponseResult;
+import com.nivelle.middleware.pojo.ResponseResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Controller;
@@ -431,8 +431,8 @@ public class RedisController {
      */
     @RequestMapping("/listLPush/{key}/{value}")
     @ResponseBody
-    public ResponseResult lLeftPush(@PathVariable(value = "key") String key,@PathVariable(value = "value") String value) {
-        Long result = redisCommandService.lLeftPush(key,value);
+    public ResponseResult lLeftPush(@PathVariable(value = "key") String key, @PathVariable(value = "value") String value) {
+        Long result = redisCommandService.lLeftPush(key, value);
         return ResponseResult.newResponseResult().setSuccess(result);
     }
 
@@ -444,8 +444,8 @@ public class RedisController {
      */
     @RequestMapping("/lIndex/{key}/{index}")
     @ResponseBody
-    public ResponseResult lIndex(@PathVariable(value = "key") String key,@PathVariable(value = "index") long index) {
-        String result = redisCommandService.lIndex(key,index);
+    public ResponseResult lIndex(@PathVariable(value = "key") String key, @PathVariable(value = "index") long index) {
+        String result = redisCommandService.lIndex(key, index);
         return ResponseResult.newResponseResult().setSuccess(result);
     }
 

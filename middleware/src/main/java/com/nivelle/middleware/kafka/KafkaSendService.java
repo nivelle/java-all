@@ -1,6 +1,6 @@
 package com.nivelle.middleware.kafka;
 
-import com.nivelle.middleware.config.KafkaMessage;
+import com.nivelle.middleware.pojo.KafkaMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.KafkaHeaders;
