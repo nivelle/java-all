@@ -14,6 +14,6 @@ public class MyImportSelector implements ImportSelector {
     @Override
     public String[] selectImports(AnnotationMetadata importingClassMetadata){
         //要注入类的全限定名
-       return new String[]{"com.nivelle.rpc.model.Cat"};
+       return new String[]{"com.nivelle.spring.pojo.Cat"};
     }
 }

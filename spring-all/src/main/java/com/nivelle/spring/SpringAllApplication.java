@@ -21,7 +21,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableCaching//开启缓存注解,mybatis使用redis作为缓存
 @EnableScheduling//开启定时任务注解
 @EnableDubbo//开启dubbo
-@ComponentScan(basePackages = {"com.nivelle.spring", "com.nivelle.base"})
+@ComponentScan(basePackages = {"com.nivelle.spring"})
 public class SpringAllApplication {
     public static void main(String[] args) {
         SpringApplication springApplication = new SpringApplication(SpringAllApplication.class);

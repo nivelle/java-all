@@ -36,7 +36,7 @@ public class MyTypeFilter implements TypeFilter {
         //System.out.println(annotationMetadata.getAnnotatedMethods("Bean"));
         System.out.println("过滤不扫描的类----->" + className);
 
-        if (className.equals("com.nivelle.rpc.config.MyScanConfig")) {
+        if (className.equals("com.nivelle.spring.configbean.MyScanConfig")) {
             return true;
         }
         return false;
