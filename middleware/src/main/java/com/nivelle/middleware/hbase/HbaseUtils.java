@@ -1,6 +1,6 @@
 
 
-package com.nivelle.spring.hbase;
+package com.nivelle.middleware.hbase;
 
 import com.google.common.base.Strings;
 import org.apache.hadoop.hbase.client.Delete;

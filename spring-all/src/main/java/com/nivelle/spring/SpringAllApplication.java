@@ -24,7 +24,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling//开启定时任务注解
 @EnableRabbit//开启rabbitMQ注解支持
 @EnableDubbo//开启dubbo
-@EnableKafka
 @ComponentScan(basePackages = {"com.nivelle.spring","com.nivelle.base"})
 public class SpringAllApplication {
     public static void main(String[] args) {

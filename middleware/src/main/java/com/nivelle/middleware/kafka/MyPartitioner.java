@@ -1,4 +1,4 @@
-package com.nivelle.spring.kafka;
+package com.nivelle.middleware.kafka;
 
 import org.apache.kafka.clients.producer.Partitioner;
 import org.apache.kafka.common.Cluster;

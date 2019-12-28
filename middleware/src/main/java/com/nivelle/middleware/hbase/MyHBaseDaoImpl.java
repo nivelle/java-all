@@ -1,4 +1,4 @@
-package com.nivelle.spring.hbase;
+package com.nivelle.middleware.hbase;
 
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;

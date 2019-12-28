@@ -1,9 +1,6 @@
-package com.nivelle.spring.kafka;
+package com.nivelle.middleware.kafka;
 
-import com.nivelle.spring.springboot.entity.KafkaMessage;
-import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.common.header.Header;
-import org.apache.kafka.common.header.internals.RecordHeader;
+import com.nivelle.middleware.config.KafkaMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.KafkaHeaders;
@@ -46,7 +43,7 @@ public class KafkaSendService {
             message.setId("NIVELLE_" + System.currentTimeMillis());
             message.setMsg("jessy1");
             message.setSendTime(new Date());
-            kafkaTemplate.send("defautTopic", "default",message.toString());
+            kafkaTemplate.send("defautTopic", "default", message.toString());
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -95,13 +92,13 @@ public class KafkaSendService {
             map.put(KafkaHeaders.MESSAGE_KEY, "0");
             map.put(KafkaHeaders.PARTITION_ID, 0);
             map.put(KafkaHeaders.TIMESTAMP, System.currentTimeMillis());
-            kafkaTemplate.send(new GenericMessage<>("quick anno test",map));
+            kafkaTemplate.send(new GenericMessage<>("quick anno test", map));
         } catch (Exception e) {
             System.out.println(e);
         }
     }
 
-    public void send7() throws Exception{
+    public void send7() throws Exception {
         for (int i = 0; i < 12; i++) {
             TimeUnit.SECONDS.sleep(5);
             kafkaTemplate.send("topic.quick.batch.partition", "test batch listener,dataNum-" + i);

@@ -1,4 +1,4 @@
-package com.nivelle.spring.kafka;
+package com.nivelle.middleware.kafka;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

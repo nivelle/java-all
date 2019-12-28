@@ -1,5 +1,5 @@
 
-package com.nivelle.spring.hbase;
+package com.nivelle.middleware.hbase;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.client.HTable;

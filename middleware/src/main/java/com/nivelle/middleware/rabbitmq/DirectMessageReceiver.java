@@ -1,4 +1,4 @@
-package com.nivelle.spring.rabbitmq;
+package com.nivelle.middleware.rabbitmq;
 
 import com.rabbitmq.client.Channel;
 import lombok.extern.slf4j.Slf4j;
@@ -7,7 +7,7 @@ import org.springframework.amqp.rabbit.listener.api.ChannelAwareMessageListener;
 import org.springframework.stereotype.Service;
 
 /**
- * TODO:DOCUMENT ME!
+ * rabbitMQ监听器
  *
  * @author fuxinzhong
  * @date 2019/07/03

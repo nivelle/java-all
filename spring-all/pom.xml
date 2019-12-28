@@ -32,19 +32,6 @@
             <artifactId>spring-boot-starter-tomcat</artifactId>
             <version>2.1.7.RELEASE</version>
         </dependency>
-        <!-- rabbitMQ-->
-        <dependency>
-            <groupId>org.springframework.amqp</groupId>
-            <artifactId>spring-rabbit</artifactId>
-            <version>2.1.7.RELEASE</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>amqp-client</artifactId>
-                    <groupId>com.rabbitmq</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
         <!--lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -71,10 +58,7 @@
             <scope>test</scope>
             <!--表示依赖的组件仅仅参与测试相关的工作，包括测试代码的编译和执行，不会被打包包含进去 -->
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis</artifactId>
-        </dependency>
+
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-pool2</artifactId>
@@ -109,11 +93,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-cache</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.rabbitmq</groupId>
-            <artifactId>amqp-client</artifactId>
-            <version>5.6.0</version>
         </dependency>
         <dependency>
             <groupId>io.protostuff</groupId>
@@ -277,53 +256,14 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!-- kafka -->
-        <dependency>
-            <groupId>org.springframework.kafka</groupId>
-            <artifactId>spring-kafka</artifactId>
-        </dependency>
-        <!--Netty-->
-        <!--<dependency>-->
-        <!--<groupId>io.netty</groupId>-->
-        <!--<artifactId>netty-all</artifactId>-->
-        <!--<version>4.0.36.Final</version>-->
-        <!--</dependency>-->
+
+
         <!--dubbo -->
         <dependency>
             <groupId>com.alibaba.boot</groupId>
             <artifactId>dubbo-spring-boot-starter</artifactId>
             <version>0.2.0</version>
         </dependency>
-        <!-- Spring Boot HBase 依赖 -->
-        <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-hadoop-hbase</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.hbase</groupId>
-            <artifactId>hbase-client</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>commons-configuration</groupId>
-            <artifactId>commons-configuration</artifactId>
-            <exclusions>
-                <exclusion>
-                    <artifactId>commons-logging</artifactId>
-                    <groupId>commons-logging</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>commons-lang</artifactId>
-                    <groupId>commons-lang</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>com.google.guava</artifactId>
-                    <groupId>guava</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-
-        <!-- Spring Boot HBase 依赖 结束-->
         <dependency>
             <groupId>com.nivelle.guide</groupId>
             <artifactId>java-base</artifactId>

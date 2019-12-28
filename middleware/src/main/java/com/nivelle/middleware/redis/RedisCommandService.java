@@ -1,8 +1,7 @@
-package com.nivelle.spring.redis;
+package com.nivelle.middleware.redis;
 
-
-import org.apache.shiro.dao.DataAccessException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.DataType;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.Cursor;
@@ -570,7 +569,6 @@ public class RedisCommandService {
     }
 
     /**
-     *
      * @param key
      * @param value
      * @return
@@ -581,6 +579,7 @@ public class RedisCommandService {
 
     /**
      * 批量添加值
+     *
      * @param key
      * @param value
      * @return
@@ -1016,6 +1015,7 @@ public class RedisCommandService {
 
     /**
      * 批量添加有序集合
+     *
      * @param key
      * @param values
      * @return

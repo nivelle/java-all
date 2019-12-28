@@ -1,4 +1,4 @@
-package com.nivelle.spring.redis;
+package com.nivelle.middleware.redis;
 
 import com.nivelle.base.pojo.vo.ResponseResult;
 import org.springframework.beans.factory.annotation.Autowired;

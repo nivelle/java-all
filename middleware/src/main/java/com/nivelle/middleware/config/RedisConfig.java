@@ -1,4 +1,4 @@
-package com.nivelle.spring.configbean;
+package com.nivelle.middleware.config;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;

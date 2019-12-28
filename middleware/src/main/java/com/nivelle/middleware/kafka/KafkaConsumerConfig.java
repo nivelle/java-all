@@ -1,4 +1,4 @@
-package com.nivelle.spring.kafka;
+package com.nivelle.middleware.kafka;
 
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;

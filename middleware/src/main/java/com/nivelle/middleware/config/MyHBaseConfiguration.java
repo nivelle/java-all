@@ -1,4 +1,4 @@
-package com.nivelle.spring.configbean;
+package com.nivelle.middleware.config;
 
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.HConstants;

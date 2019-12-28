@@ -1,4 +1,4 @@
-package com.nivelle.spring.kafka;
+package com.nivelle.middleware.kafka;
 
 /**
  * consumer消费者

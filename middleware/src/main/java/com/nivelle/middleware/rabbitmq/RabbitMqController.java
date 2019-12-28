@@ -1,4 +1,4 @@
-package com.nivelle.spring.rabbitmq;
+package com.nivelle.middleware.rabbitmq;
 
 import com.nivelle.spring.configbean.RabbitMQConfig;
 import com.nivelle.base.pojo.User;

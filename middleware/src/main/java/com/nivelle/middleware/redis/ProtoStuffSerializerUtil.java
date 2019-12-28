@@ -1,4 +1,4 @@
-package com.nivelle.spring.redis;
+package com.nivelle.middleware.redis;
 
 
 import io.protostuff.LinkedBuffer;
