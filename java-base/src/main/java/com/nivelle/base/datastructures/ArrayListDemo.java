@@ -1,6 +1,6 @@
 package com.nivelle.base.datastructures;
 
-import com.nivelle.base.enums.MyEnum;
+import com.nivelle.base.pojo.enums.MyEnum;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;

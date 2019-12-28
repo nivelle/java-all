@@ -1,7 +1,6 @@
 package com.nivelle.base.javacore;
 
-import com.nivelle.base.enums.MyEnum;
-import com.nivelle.base.enums.MyEnum;
+import com.nivelle.base.pojo.enums.MyEnum;
 
 /**
  * Enum

@@ -48,11 +48,6 @@
             <artifactId>jackson-dataformat-xml</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-all</artifactId>
-            <version>4.1.43.Final</version>
-        </dependency>
-        <dependency>
             <groupId>com.nivelle</groupId>
             <artifactId>container-all</artifactId>
             <version>1.0.1</version>

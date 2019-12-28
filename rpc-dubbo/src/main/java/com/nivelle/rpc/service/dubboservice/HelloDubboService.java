@@ -1,4 +1,4 @@
-package com.nivelle.base.dubboservice;
+package com.nivelle.rpc.service.dubboservice;
 
 /**
  * TODO:DOCUMENT ME!

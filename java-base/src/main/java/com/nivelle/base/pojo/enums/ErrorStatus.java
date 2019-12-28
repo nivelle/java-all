@@ -1,4 +1,4 @@
-package com.nivelle.base.enums;
+package com.nivelle.base.pojo.enums;
 
 public enum ErrorStatus {
 

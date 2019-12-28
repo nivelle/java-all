@@ -1,6 +1,6 @@
 package com.nivelle.spring.configbean;
 
-import com.nivelle.base.enums.ErrorStatus;
+import com.nivelle.base.pojo.enums.ErrorStatus;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
