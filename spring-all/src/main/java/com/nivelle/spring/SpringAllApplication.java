@@ -6,13 +6,11 @@ import com.nivelle.spring.springboot.listener.context.MyContextRefreshedEventLis
 import com.nivelle.spring.springboot.listener.context.MyContextStartedEventListener;
 import com.nivelle.spring.springboot.listener.context.MyContextStopedEventEventListener;
 import com.nivelle.spring.springboot.listener.springApplicationRunListeners.*;
-import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
@@ -22,9 +20,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @ServletComponentScan//扫描servlet组件注解
 @EnableCaching//开启缓存注解,mybatis使用redis作为缓存
 @EnableScheduling//开启定时任务注解
-@EnableRabbit//开启rabbitMQ注解支持
 @EnableDubbo//开启dubbo
-@ComponentScan(basePackages = {"com.nivelle.spring","com.nivelle.base"})
+@ComponentScan(basePackages = {"com.nivelle.spring", "com.nivelle.base"})
 public class SpringAllApplication {
     public static void main(String[] args) {
         SpringApplication springApplication = new SpringApplication(SpringAllApplication.class);
