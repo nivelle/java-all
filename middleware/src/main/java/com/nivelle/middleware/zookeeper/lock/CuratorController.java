@@ -1,4 +1,4 @@
-package com.nivelle.spring.zookeeper.lock;
+package com.nivelle.middleware.zookeeper.lock;
 
 /**
  * curator
