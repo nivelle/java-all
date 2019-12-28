@@ -1,4 +1,4 @@
-package com.nivelle.rpc.model;
+package com.nivelle.spring.pojo;
 
 /**
  * 狗狗

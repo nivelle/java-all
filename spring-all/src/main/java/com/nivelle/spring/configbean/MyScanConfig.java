@@ -1,9 +1,9 @@
-package com.nivelle.rpc.config;
+package com.nivelle.spring.configbean;
 
-import com.nivelle.rpc.model.Dog;
-import com.nivelle.rpc.core.MyCondition;
-import com.nivelle.rpc.core.MyImportSelector;
-import com.nivelle.rpc.model.Car;
+import com.nivelle.spring.pojo.Car;
+import com.nivelle.spring.pojo.Dog;
+import com.nivelle.spring.springcore.MyCondition;
+import com.nivelle.spring.springcore.MyImportSelector;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.*;
 
@@ -21,6 +21,7 @@ import org.springframework.context.annotation.*;
 @Conditional(MyCondition.class)
 @Import({Car.class, MyImportSelector.class})
 public class MyScanConfig {
+
     /**
      * 默认实例名为方法名字
      *

@@ -127,7 +127,7 @@ public class Java8Demo {
         //map:map是一种中间过程操作，借助函数表达式将元素转换成另一种形式。可以使用map将每个对象转换为另一种类型。最终输出的结果类型依赖于你传入的函数表达式。
         stringCollection.stream().map(String::toUpperCase).sorted((x, y) -> x.compareTo(y)).forEach(System.out::println);
 
-        System.err.println("映射然后去重复："+stringCollection.stream().map(String::toLowerCase).distinct().collect(Collectors.toList()));
+        System.err.println("映射然后去重复：" + stringCollection.stream().map(String::toLowerCase).distinct().collect(Collectors.toList()));
 
         //Match 匹配 //任意一个元素满足
         boolean anyStartsWithA =
@@ -177,12 +177,17 @@ public class Java8Demo {
         userList.add(user4);
 
 
-
         System.err.println("list转Map:" + userList.stream().collect(Collectors.toMap(User::getAge, a -> a, (k1, k2) -> k1)));
 
         System.err.println("根据age排序:" + userList.stream().sorted(Comparator.comparing(User::getAge)).collect(Collectors.toList()));
 
         System.err.println("根据age分组然:" + userList.stream().collect(Collectors.groupingBy(User::getAge)));
+
+        List<String> lines = Arrays.asList(new String[]{
+                "hello abc", "老马 编程"
+        });
+        List<String> words = lines.stream().flatMap(line -> Arrays.stream(line.split("\\s+"))).collect(Collectors.toList());
+        System.out.println(words);
 
         //userList.stream().filter(x->x.getAge>1).toArray(User::new);
 

@@ -1,6 +1,6 @@
-package com.nivelle.rpc.config;
+package com.nivelle.spring.configbean;
 
-import com.nivelle.rpc.model.Dog;
+import com.nivelle.spring.pojo.Dog;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.EmbeddedValueResolverAware;
 import org.springframework.context.annotation.Bean;
@@ -59,6 +59,7 @@ public class MyProfileConfig implements EmbeddedValueResolverAware {
         this.applicationName = this.resolver.resolveStringValue("${dubbo.application.name}");
 
     }
+
 
     public String getApplicationName() {
         return this.applicationName;

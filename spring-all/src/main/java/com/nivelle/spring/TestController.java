@@ -1,10 +1,13 @@
 package com.nivelle.spring;
 
 import com.nivelle.spring.configbean.LearnConfig;
+import com.nivelle.spring.pojo.Cat;
+import com.nivelle.spring.pojo.Dog;
 import com.nivelle.spring.springboot.dao.ActivityDaoImpl;
 import com.nivelle.spring.springboot.entity.ActivityPvEntity;
 import com.nivelle.spring.springboot.listener.springApplicationRunListeners.MyEvent;
 import com.nivelle.spring.springboot.mapper.ActivityPvMapper;
+import com.nivelle.spring.springcore.XmlBeanServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -164,5 +167,68 @@ public class TestController {
     public void publishEvent() {
         webApplicationConnect.publishEvent(new MyEvent("你好"));
         return;
+    }
+
+    /**
+     * 单实例测试
+     *
+     * @return
+     */
+    @RequestMapping("/singletonBean")
+    public Object singletonTest() {
+        Dog dog = (Dog) webApplicationConnect.getBean("bigDog");
+        System.out.println(dog.getClass().getName());
+        Dog dog2 = (Dog) webApplicationConnect.getBean("bigDog");
+        if (dog == dog2) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * 多实例测试
+     *
+     * @return
+     */
+    @RequestMapping("/prototypeBean")
+    public Object prototypeBeanTest() {
+        Dog dog = (Dog) webApplicationConnect.getBean("buDingDog");
+        Dog dog2 = (Dog) webApplicationConnect.getBean("buDingDog");
+        if (dog == dog2) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @RequestMapping("/registerBean")
+    public Object registerBean() {
+        Cat cat = (Cat) webApplicationConnect.getBean("com.nivelle.guide.model.Cat");
+        System.out.println(cat);
+        return cat;
+    }
+
+    @RequestMapping("/ok")
+    public Object test() {
+        System.out.println("dubbo provider is ok");
+        /**
+         * springboot默认属性未设置值时为null,可设置为""
+         */
+        //UserInfo userInfo = new UserInfo();
+        Object object = webApplicationConnect.getBean("userInfo");
+        return object;
+    }
+
+    /**
+     * 通过xml配置文件导入不能自动扫描到的实例
+     *
+     * @return
+     */
+    @RequestMapping("xml")
+    public Object testXmlService() {
+        Object xmlBeanService = webApplicationConnect.getBean("xmlService");
+        XmlBeanServiceImpl xmlBeanService1 = (XmlBeanServiceImpl) xmlBeanService;
+        return xmlBeanService1.helloXmlService();
     }
 }

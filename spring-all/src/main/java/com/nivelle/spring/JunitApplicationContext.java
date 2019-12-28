@@ -1,7 +1,7 @@
-package com.nivelle.rpc;
+package com.nivelle.spring;
 
-import com.nivelle.rpc.config.MyProfileConfig;
-import com.nivelle.rpc.model.Dog;
+import com.nivelle.spring.configbean.MyProfileConfig;
+import com.nivelle.spring.pojo.Dog;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 
@@ -37,6 +37,7 @@ public class JunitApplicationContext {
         MyProfileConfig myProfileConfig = (MyProfileConfig) annotationConfigApplicationContext.getBean("myProfileConfig");
         System.err.println(myProfileConfig.getApplicationName());
         System.out.println("启动成了");
+
     }
 
 

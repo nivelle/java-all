@@ -1,4 +1,4 @@
-package com.nivelle.rpc.service.other;
+package com.nivelle.spring.springcore;
 
 /**
  * @author fuxinzhong

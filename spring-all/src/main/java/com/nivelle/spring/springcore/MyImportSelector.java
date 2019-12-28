@@ -1,4 +1,4 @@
-package com.nivelle.rpc.core;
+package com.nivelle.spring.springcore;
 
 import org.springframework.context.annotation.ImportSelector;
 import org.springframework.core.type.AnnotationMetadata;
