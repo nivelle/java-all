@@ -10,6 +10,6 @@ import org.springframework.context.annotation.Configuration;
  * @date 2019/09/27
  */
 @Configuration
-@ComponentScan(basePackages = "com.nivelle.javabase.spring.lifecycle")
+@ComponentScan(basePackages = "com.nivelle.spring.springlife.lifecycle")
 public class Config {
 }

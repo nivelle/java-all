@@ -1,4 +1,4 @@
-package com.nivelle.spring.springboot.params;
+package com.nivelle.spring.springboot.validparams;
 
 
 import lombok.*;

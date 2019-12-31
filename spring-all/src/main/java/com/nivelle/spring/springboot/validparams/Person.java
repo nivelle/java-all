@@ -1,4 +1,4 @@
-package com.nivelle.spring.springboot.valid;
+package com.nivelle.spring.springboot.validparams;
 
 
 import javax.validation.constraints.Min;
