@@ -17,10 +17,14 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * nivelle
  */
 @SpringBootApplication
-@ServletComponentScan//扫描servlet组件注解
-@EnableCaching//开启缓存注解,mybatis使用redis作为缓存
-@EnableScheduling//开启定时任务注解
-@EnableDubbo//开启dubbo
+//扫描servlet组件注解
+@ServletComponentScan
+//开启缓存注解,mybatis使用redis作为缓存
+@EnableCaching
+//开启定时任务注解
+@EnableScheduling
+//开启dubbo
+@EnableDubbo
 @ComponentScan(basePackages = {"com.nivelle.spring"})
 public class SpringAllApplication {
     public static void main(String[] args) {
@@ -43,7 +47,6 @@ public class SpringAllApplication {
         springApplication.addListeners(new MyContextRefreshedEventListener());
         springApplication.addListeners(new MyContextClosedEventListenerListener());
         springApplication.addListeners(new MyContextStopedEventEventListener());
-
 
         springApplication.run(args);
         System.err.println("启动成功！！");

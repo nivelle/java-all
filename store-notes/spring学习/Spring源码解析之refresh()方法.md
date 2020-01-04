@@ -111,7 +111,7 @@
 ## 第九步:onRefresh();留给子容器（子类）
 	
 	// Called on initialization of special beans, before instantiation of singletons.
-   - 子类重写这个方法,默认不做任何操作在容器刷新的时候可以自定义逻辑;	
+   - 子类重写这个方法,默认不做任何操作在容器刷新的时候可以自定义逻辑; 内嵌tomcat在这个地方实例化;	
 
 ## 第十步:registerListeners();
 	
