@@ -1,0 +1,22 @@
+
+## java打包
+
+```
+jar -cvf 包名.jar 最上层包名
+
+```
+
+## 执行jar
+
+```
+
+java -jar 包名.jar
+
+```
+
+### 后台启动
+
+````
+java -jar -Dloing.file=日志路径.log 包名.jar > 日志路径.log & 
+
+````
