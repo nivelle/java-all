@@ -212,5 +212,10 @@
 		
    - liveBeansView.registerApplicationContext(this);
    
+   - WebServer webServer = startWebServer();//子类启动tomcat容器，发布事件
+     		
+   
+  
+   
 [来源备注:watermelon1015](https://gitee.com/watermelon1015/spring_source_parsing_data)
    

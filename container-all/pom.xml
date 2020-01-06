@@ -13,7 +13,7 @@
     <artifactId>container-all</artifactId>
     <version>1.0.1</version>
     <name>container-all</name>
-    <packaging>jar</packaging>
+    <packaging>war</packaging>
     <url>http://maven.apache.org</url>
     <description>javaguide project for Spring Boot</description>
 
@@ -23,6 +23,19 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-tomcat</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
+            <!-- 仅仅编译不会被打包-->
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
