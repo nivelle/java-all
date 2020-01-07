@@ -12,10 +12,10 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
  * @date 2020/01/06
  */
 @SpringBootApplication
-public class JavaContainerAllBootstrapApplication extends SpringBootServletInitializer {
+public class BootstrapApplication extends SpringBootServletInitializer {
 
     public static void main(String[] args) {
-        SpringApplication.run(JavaContainerAllBootstrapApplication.class);
+        SpringApplication.run(BootstrapApplication.class);
     }
 
     @Override

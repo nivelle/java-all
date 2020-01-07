@@ -8,7 +8,7 @@ import org.springframework.context.annotation.ComponentScan;
 @ComponentScan(basePackages = "com.nivelle.container.sci")
 public class JavaContainerAllApplication {
 
-    public static void main(String[] args) {
+    public static void main2(String[] args) {
         for (int i = 0; i < args.length; i++) {
             System.err.println("启动参数:" + args[i]);
         }
