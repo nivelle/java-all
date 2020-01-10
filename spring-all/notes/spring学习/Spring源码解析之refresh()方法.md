@@ -212,9 +212,10 @@
 		
    - liveBeansView.registerApplicationContext(this);
    
-   - WebServer webServer = startWebServer();//子类启动tomcat容器，发布事件
+   - WebServer webServer = startWebServer();//子类启动tomcat容器，发布事件(Tomcat started on port(s): XX (http) with context path '/XX')
      		
-   
+
+root容器启动成功,监听到时间后创建 DispatcherServlet->FrameworkServlet(initServletBean())->HttpServletBean->HttpServlet
   
    
 [来源备注:watermelon1015](https://gitee.com/watermelon1015/spring_source_parsing_data)

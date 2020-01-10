@@ -1,5 +1,12 @@
-/Users/nivellefu/IdeaProjects/javaguides/container-all/src/main/java/com/nivelle/sci/MySCI.java
-/Users/nivellefu/IdeaProjects/javaguides/container-all/src/main/java/com/nivelle/sci/JavaContainerAllApplication.java
-/Users/nivellefu/IdeaProjects/javaguides/container-all/src/main/java/com/nivelle/sci/MyListContainerInitalizer.java
-/Users/nivellefu/IdeaProjects/javaguides/container-all/src/main/java/com/nivelle/sci/MyMapContainerInitalizer.java
-/Users/nivellefu/IdeaProjects/javaguides/container-all/src/main/java/com/nivelle/sci/MyContainerInitalizer.java
+/Users/nivellefu/IdeaProjects/javadaybyday/container-all/src/main/java/com/nivelle/container/sci/MyMapContainerInitalizer.java
+/Users/nivellefu/IdeaProjects/javadaybyday/container-all/src/main/java/com/nivelle/container/JavaContainerAllApplication.java
+/Users/nivellefu/IdeaProjects/javadaybyday/container-all/src/main/java/com/nivelle/container/sci/MySCI.java
+/Users/nivellefu/IdeaProjects/javadaybyday/container-all/src/main/java/com/nivelle/container/BootstrapApplication.java
+/Users/nivellefu/IdeaProjects/javadaybyday/container-all/src/main/java/com/nivelle/container/netty/NettyClient.java
+/Users/nivellefu/IdeaProjects/javadaybyday/container-all/src/main/java/com/nivelle/container/netty/NettyClientFilter.java
+/Users/nivellefu/IdeaProjects/javadaybyday/container-all/src/main/java/com/nivelle/container/sci/MyContainerInitalizer.java
+/Users/nivellefu/IdeaProjects/javadaybyday/container-all/src/main/java/com/nivelle/container/netty/NettyServerHandler.java
+/Users/nivellefu/IdeaProjects/javadaybyday/container-all/src/main/java/com/nivelle/container/netty/NettyServer.java
+/Users/nivellefu/IdeaProjects/javadaybyday/container-all/src/main/java/com/nivelle/container/netty/NettyServerFilter.java
+/Users/nivellefu/IdeaProjects/javadaybyday/container-all/src/main/java/com/nivelle/container/sci/MyListContainerInitalizer.java
+/Users/nivellefu/IdeaProjects/javadaybyday/container-all/src/main/java/com/nivelle/container/netty/NettyClientHandler.java

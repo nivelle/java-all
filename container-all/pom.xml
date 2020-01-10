@@ -2,18 +2,25 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <!--<parent>-->
+        <!--<groupId>com.nivelle</groupId>-->
+        <!--<artifactId>javaDayByDay</artifactId>-->
+        <!--<version>1.0.1</version>-->
+        <!--<relativePath>../parent/pom.xml</relativePath>-->
+    <!--</parent>-->
+
     <parent>
-        <groupId>com.nivelle</groupId>
-        <artifactId>javaDayByDay</artifactId>
-        <version>1.0.1</version>
-        <relativePath>../parent/pom.xml</relativePath>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.1.4.RELEASE</version>
+        <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
     <groupId>com.nivelle</groupId>
     <artifactId>container-all</artifactId>
     <version>1.0.1</version>
     <name>container-all</name>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
     <url>http://maven.apache.org</url>
     <description>javaguide project for Spring Boot</description>
 

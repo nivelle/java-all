@@ -3,12 +3,11 @@ package com.nivelle.container.sci;
 import javax.servlet.ServletContext;
 
 /**
- * 自定义 SpringServletContainerInitializer
+ * TODO:DOCUMENT ME!
  *
  * @author fuxinzhong
- * @date 2019/12/25
+ * @date 2020/01/10
  */
 public interface MyContainerInitalizer {
-
-    void onStartup(ServletContext servletContext);
+    void onStartup(ServletContext context);
 }

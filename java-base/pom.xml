@@ -57,6 +57,17 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.nivelle</groupId>
+            <artifactId>container-all</artifactId>
+            <version>1.0.1</version>
+            <scope>system</scope>
+            <systemPath>
+                /Users/nivellefu/IdeaProjects/javadaybyday/parent/container-all-1.0.1.jar
+            </systemPath>
+        </dependency>
+
     </dependencies>
 
     <build>
