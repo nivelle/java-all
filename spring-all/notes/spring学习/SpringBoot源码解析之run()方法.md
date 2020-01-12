@@ -71,8 +71,9 @@
 ## 第六步: 创建容器
 			
 ```
-- context = createApplicationContext(); //根据容器类型创建容器（org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext；
-org.springframework.context.annotation.AnnotationConfigApplicationContext）
+- context = createApplicationContext(); 
+
+//根据容器类型创建容器（AnnotationConfigServletWebServerApplicationContext;AnnotationConfigApplicationContext）
 
 ```
 

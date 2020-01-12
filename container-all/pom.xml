@@ -20,7 +20,7 @@
     <artifactId>container-all</artifactId>
     <version>1.0.1</version>
     <name>container-all</name>
-    <packaging>jar</packaging>
+    <packaging>war</packaging>
     <url>http://maven.apache.org</url>
     <description>javaguide project for Spring Boot</description>
 
@@ -45,10 +45,11 @@
             <scope>provided</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
+        <!-- 暂时将监控注解 -->
+        <!--<dependency>-->
+            <!--<groupId>org.springframework.boot</groupId>-->
+            <!--<artifactId>spring-boot-starter-actuator</artifactId>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>io.netty</groupId>

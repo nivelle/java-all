@@ -112,7 +112,27 @@
 	
 	// Called on initialization of special beans, before instantiation of singletons.
    - 子类重写这个方法,默认不做任何操作在容器刷新的时候可以自定义逻辑; 内嵌tomcat在这个地方实例化;	
+   
+#### 转为 AbstractApplicationContext  
 
+#### 子类 GenericApplicationContext
+
+#### 具体类型子类 ServletWebServerApplicationContext;ReactiveWebServerApplicationContext;StaticWebApplicationContext
+   
+   - createWebServer()
+     
+     - ServletContext servletContext = getServletContext();//获取Servlet容器
+     
+     - ServletWebServerFactory factory = getWebServerFactory();//获取WebServerFactory工厂方法
+     
+       - getSelfInitializer(); //获取 ServletContextInitializer接口的实现类实现 onStartup(ServletContext servletContext)
+       
+         - prepareWebApplicationContext(servletContext);//Initializing Spring embedded WebApplicationContext
+         
+         - registerApplicationScope(servletContext);
+         
+         - getServletContextInitializerBeans();
+               
 ## 第十步:registerListeners();
 	
   （1）从容器中获取静态的ApplicationListener; 然后直接注入=>getApplicationEventMulticaster().addApplicationListener(listener);
@@ -212,6 +232,8 @@
 		
    - liveBeansView.registerApplicationContext(this);
    
+#### 子类: ServletWebServerApplicationContext
+
    - WebServer webServer = startWebServer();//子类启动tomcat容器，发布事件(Tomcat started on port(s): XX (http) with context path '/XX')
      		
 
