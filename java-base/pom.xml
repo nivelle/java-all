@@ -61,9 +61,9 @@
         <dependency>
             <groupId>com.nivelle</groupId>
             <artifactId>container-all</artifactId>
-            <version>1.0.1</version>
+            <version>1.0.2</version>
             <systemPath>
-                /Users/nivellefu/IdeaProjects/javadaybyday/parent/jar/container-all-1.0.1.jar
+                /Users/nivellefu/IdeaProjects/javadaybyday/parent/jar/container-all-1.0.2.jar
             </systemPath>
         </dependency>
 

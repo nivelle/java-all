@@ -127,7 +127,7 @@
      
        - getSelfInitializer(); //获取 ServletContextInitializer接口的实现类实现 onStartup(ServletContext servletContext)
        
-         - prepareWebApplicationContext(servletContext);//Initializing Spring embedded WebApplicationContext
+         - prepareWebApplicationContext(servletContext); //Initializing Spring embedded WebApplicationContext
          
          - registerApplicationScope(servletContext);
          

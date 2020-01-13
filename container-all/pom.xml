@@ -3,10 +3,10 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <!--<parent>-->
-        <!--<groupId>com.nivelle</groupId>-->
-        <!--<artifactId>javaDayByDay</artifactId>-->
-        <!--<version>1.0.1</version>-->
-        <!--<relativePath>../parent/pom.xml</relativePath>-->
+    <!--<groupId>com.nivelle</groupId>-->
+    <!--<artifactId>javaDayByDay</artifactId>-->
+    <!--<version>1.0.1</version>-->
+    <!--<relativePath>../parent/pom.xml</relativePath>-->
     <!--</parent>-->
 
     <parent>
@@ -18,7 +18,7 @@
 
     <groupId>com.nivelle</groupId>
     <artifactId>container-all</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <name>container-all</name>
     <packaging>war</packaging>
     <url>http://maven.apache.org</url>
@@ -47,8 +47,8 @@
 
         <!-- 暂时将监控注解 -->
         <!--<dependency>-->
-            <!--<groupId>org.springframework.boot</groupId>-->
-            <!--<artifactId>spring-boot-starter-actuator</artifactId>-->
+        <!--<groupId>org.springframework.boot</groupId>-->
+        <!--<artifactId>spring-boot-starter-actuator</artifactId>-->
         <!--</dependency>-->
 
         <dependency>
@@ -63,6 +63,9 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <classifier>exec</classifier>
+                </configuration>
             </plugin>
         </plugins>
     </build>
