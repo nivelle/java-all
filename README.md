@@ -121,7 +121,7 @@ docker整合【下载:docker pull nivelle/nivelle:1.0.2】【运行:sudo docker 
 
 ✅ 【类实例化过程实例】
 
-###### zookeeper实践
+#### zookeeper实践
 
 ⌛ 自己实现RPC 
 
@@ -136,11 +136,11 @@ docker整合【下载:docker pull nivelle/nivelle:1.0.2】【运行:sudo docker 
 
 ✅ 【redis实践】
 
-###### RabbitMQ
+#### RabbitMQ
 
 ✅ 【rabbitMQ】
 
-###### Kafka
+#### Kafka
 
 ✅【Produce】
 
@@ -152,13 +152,13 @@ docker整合【下载:docker pull nivelle/nivelle:1.0.2】【运行:sudo docker 
 
 ✅【Partitioner:自定义分区】
 
-###### MySQL实践
+#### MySQL实践
 
 ✅ 【mysql常用语句】
 
 ⌛️ 乐观锁，悲观锁，事物，传播特性
 
-###### HBase实践
+#### HBase实践
 
 ✅【put】
 
@@ -170,12 +170,12 @@ docker整合【下载:docker pull nivelle/nivelle:1.0.2】【运行:sudo docker 
 
 ✅【delete所有版本数据】
 
-###### Netty实践 
+#### Netty实践 
 
 ✅【客户端&服务端】
 
 
-###### 待实践。。。。
+#### 待实践。。。。
 
 ⌛ ElasticSearch实践
 
@@ -184,7 +184,7 @@ docker整合【下载:docker pull nivelle/nivelle:1.0.2】【运行:sudo docker 
 
 ### container-all项目
 
-###### Tomcat实践
+#### Tomcat实践
 
 ✅ 【ConfigurableServletWebServerFactory:自定义Tomcat】
 
@@ -193,7 +193,7 @@ docker整合【下载:docker pull nivelle/nivelle:1.0.2】【运行:sudo docker 
 
 ### java-base项目
 
-###### 算法实践
+#### 算法实践
 
 ✅ 【有序二维数组查】
 
@@ -215,7 +215,7 @@ docker整合【下载:docker pull nivelle/nivelle:1.0.2】【运行:sudo docker 
 
 ✅ 【数组奇数偶数相对排序】
 
-###### Java2e实践
+#### Java2e实践
 
 ✅【自定义注解】
 
@@ -230,7 +230,7 @@ docker整合【下载:docker pull nivelle/nivelle:1.0.2】【运行:sudo docker 
 ✅【范型:范型类,范性方法,范型接口】
 
 
-###### JDK学习
+#### JDK学习
 
 ✅【Integer】
 
@@ -268,7 +268,7 @@ docker整合【下载:docker pull nivelle/nivelle:1.0.2】【运行:sudo docker 
 
 ✅【Byte】
 
-###### 设计模式实践
+#### 设计模式实践
 
 ✅ 【迭代器模式】
 
