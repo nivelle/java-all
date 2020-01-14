@@ -23,8 +23,8 @@ docker整合【下载:docker pull nivelle/nivelle:1.0.2】【运行:sudo docker 
 
 --- 
 
-## spring-all项目(SpringBoot依赖相关中间件,需要安装依赖的中间件,然后使用 local_server_start.sh启动   
-)
+### spring-all项目(SpringBoot依赖相关中间件,需要安装依赖的中间件,然后使用 local_server_start.sh启动   
+
 
 ✅ 【spring refresh()方法学习路径】
 
@@ -106,21 +106,22 @@ docker整合【下载:docker pull nivelle/nivelle:1.0.2】【运行:sudo docker 
 
 ✅ 【WebMvcConfigurer && @EnableWebMvc】
 
+--------------------
 
-## middleware项目
+### middleware项目
 
 ✅ 【mybatis 整合到springBoot】
 
 ✅ 【mybatis 使用redis做缓存组件】
 
 
-### JVM实践
+##### JVM实践
 
 ✅ 【自定义类加载器】
 
 ✅ 【类实例化过程实例】
 
-### zookeeper实践
+###### zookeeper实践
 
 ⌛ 自己实现RPC 
 
@@ -131,15 +132,15 @@ docker整合【下载:docker pull nivelle/nivelle:1.0.2】【运行:sudo docker 
 ⌛ 分布式事物
 
 
-### Redis实践
+##### Redis实践
 
 ✅ 【redis实践】
 
-### RabbitMQ
+###### RabbitMQ
 
 ✅ 【rabbitMQ】
 
-### Kafka
+###### Kafka
 
 ✅【Produce】
 
@@ -151,13 +152,13 @@ docker整合【下载:docker pull nivelle/nivelle:1.0.2】【运行:sudo docker 
 
 ✅【Partitioner:自定义分区】
 
-### MySQL实践
+###### MySQL实践
 
 ✅ 【mysql常用语句】
 
 ⌛️ 乐观锁，悲观锁，事物，传播特性
 
-### HBase实践
+###### HBase实践
 
 ✅【put】
 
@@ -169,30 +170,30 @@ docker整合【下载:docker pull nivelle/nivelle:1.0.2】【运行:sudo docker 
 
 ✅【delete所有版本数据】
 
-### Netty实践 
+###### Netty实践 
 
 ✅【客户端&服务端】
 
 
-### 待实践。。。。
+###### 待实践。。。。
 
 ⌛ ElasticSearch实践
 
 --------------------------
 
 
-## container-all项目
+### container-all项目
 
-### Tomcat实践
+###### Tomcat实践
 
 ✅ 【ConfigurableServletWebServerFactory:自定义Tomcat】
 
 
 -------------------------
 
-## java-base项目
+### java-base项目
 
-### 算法实践
+###### 算法实践
 
 ✅ 【有序二维数组查】
 
@@ -214,7 +215,7 @@ docker整合【下载:docker pull nivelle/nivelle:1.0.2】【运行:sudo docker 
 
 ✅ 【数组奇数偶数相对排序】
 
-### Java2e实践
+###### Java2e实践
 
 ✅【自定义注解】
 
@@ -229,7 +230,7 @@ docker整合【下载:docker pull nivelle/nivelle:1.0.2】【运行:sudo docker 
 ✅【范型:范型类,范性方法,范型接口】
 
 
-### JDK学习
+###### JDK学习
 
 ✅【Integer】
 
@@ -267,7 +268,7 @@ docker整合【下载:docker pull nivelle/nivelle:1.0.2】【运行:sudo docker 
 
 ✅【Byte】
 
-### 设计模式实践
+###### 设计模式实践
 
 ✅ 【迭代器模式】
 
