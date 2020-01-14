@@ -30,8 +30,6 @@ docker整合【下载:docker pull nivelle/nivelle:1.0.2】【运行:sudo docker 
 
 ✅ 【生命周期学习】
 
-✅ 【SPI&SCI机制】
-
 ✅ 【CommandLineRunner】
 
 ✅ 【shutdown 实现优雅停机】
@@ -186,10 +184,18 @@ docker整合【下载:docker pull nivelle/nivelle:1.0.2】【运行:sudo docker 
 
 #### Tomcat实践
 
-✅ 【ConfigurableServletWebServerFactory:自定义Tomcat】
+✅ 【SPI&SCI机制】
 
 
 -------------------------
+
+### rpc-dubbo
+
+✅ 【ConfigurableServletWebServerFactory:自定义Tomcat】
+
+✅ 【dubbo service】
+
+✅ 【AsyncService】
 
 ### java-base项目
 
