@@ -1,12 +1,14 @@
-package com.nivelle.spring.springlife.lifecycle;
+package com.nivelle.spring;
 
+import com.nivelle.spring.springcore.beanlifecycle.Animal;
+import com.nivelle.spring.springcore.beanlifecycle.Config;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 /**
  * @author fuxinzhong
  * @date 2019/09/27
  */
-public class BeanLifeApplocation {
+public class TestBeanLifeApplocation {
 
     public static void main(String[] args) {
         AnnotationConfigApplicationContext annotationConfigApplicationContext = new AnnotationConfigApplicationContext();

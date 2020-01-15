@@ -1,4 +1,4 @@
-package com.nivelle.spring.springboot.listener.springApplicationRunListeners;
+package com.nivelle.spring.springboot.listener.springlisteners;
 
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;

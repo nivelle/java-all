@@ -3,7 +3,7 @@ package com.nivelle.spring;
 //import com.nivelle.programming.springboot.mystarter.StarterTest;
 //import org.junit.Test;
 
-import com.nivelle.spring.springlife.initdemo.InitSpringBean;
+import com.nivelle.spring.springcore.initdemo.InitSpringBean;
 import org.junit.runner.RunWith;
 //import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Autowired;

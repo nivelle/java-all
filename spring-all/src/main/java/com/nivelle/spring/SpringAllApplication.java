@@ -5,7 +5,7 @@ import com.nivelle.spring.springboot.listener.context.MyContextClosedEventListen
 import com.nivelle.spring.springboot.listener.context.MyContextRefreshedEventListener;
 import com.nivelle.spring.springboot.listener.context.MyContextStartedEventListener;
 import com.nivelle.spring.springboot.listener.context.MyContextStopedEventEventListener;
-import com.nivelle.spring.springboot.listener.springApplicationRunListeners.*;
+import com.nivelle.spring.springboot.listener.springlisteners.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletComponentScan;

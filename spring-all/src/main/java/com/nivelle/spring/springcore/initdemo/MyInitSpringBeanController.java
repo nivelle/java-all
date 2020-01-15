@@ -1,4 +1,4 @@
-package com.nivelle.spring.springlife.initdemo;
+package com.nivelle.spring.springcore.initdemo;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

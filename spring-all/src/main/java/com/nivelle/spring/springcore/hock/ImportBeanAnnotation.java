@@ -1,6 +1,5 @@
-package com.nivelle.spring.springlife.annotation;
+package com.nivelle.spring.springcore.hock;
 
-import com.nivelle.spring.springlife.hock.MyBeanAutoConfiguredRegistrar;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.*;

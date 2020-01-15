@@ -1,4 +1,4 @@
-package com.nivelle.spring.springlife.lifecycle;
+package com.nivelle.spring.springcore.beanlifecycle;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.*;

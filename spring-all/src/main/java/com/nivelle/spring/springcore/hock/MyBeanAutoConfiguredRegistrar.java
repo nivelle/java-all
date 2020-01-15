@@ -1,6 +1,5 @@
-package com.nivelle.spring.springlife.hock;
+package com.nivelle.spring.springcore.hock;
 
-import com.nivelle.spring.springlife.annotation.ImportBeanAnnotation;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;

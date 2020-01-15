@@ -2,7 +2,7 @@
 
 ## 第一步:prepareRefresh():刷新前的预处理：
    
-   (1) initPropertySources():初始化一些属性设置,默认不做任何处理,留给子类自定义属性设置方法;
+   (1) initPropertySources():初始化一些属性设置,默认不做任何处理,留给子类自定义属性设置方法;//servletContextInitParams 和 servletConfigInitParams
    
    (2) getEnvironment().validateRequiredProperties():校验非空属性是否设置了值，没有设置的话抛出异常(MissingRequiredPropertiesException);
        - systemEnvironment

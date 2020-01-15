@@ -1,4 +1,4 @@
-package com.nivelle.spring.springcore;
+package com.nivelle.spring;
 
 import com.nivelle.spring.configbean.MyProfileConfig;
 import com.nivelle.spring.configbean.MyScanConfig;

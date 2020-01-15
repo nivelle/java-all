@@ -1,4 +1,4 @@
-package com.nivelle.spring.springlife.hock;
+package com.nivelle.spring.springcore.hock;
 
 import com.nivelle.base.pojo.UserInfo;
 import org.springframework.beans.BeansException;
