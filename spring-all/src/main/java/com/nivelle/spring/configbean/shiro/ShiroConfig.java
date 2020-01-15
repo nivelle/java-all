@@ -28,6 +28,8 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/static/**", "anon");
         filterChainDefinitionMap.put("/test/**", "anon");
         filterChainDefinitionMap.put("/dubbo/**", "anon");
+        filterChainDefinitionMap.put("/registerServlet", "anon");
+        filterChainDefinitionMap.put("/initServlet2", "anon");
 
         //配置退出 过滤器,其中的具体的退出代码Shiro已经替我们实现了
         filterChainDefinitionMap.put("/logout", "logout");

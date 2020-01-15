@@ -7,8 +7,10 @@ import com.nivelle.spring.springboot.filter.CorsFilter;
 import com.nivelle.spring.springboot.filter.MyFilter1;
 import com.nivelle.spring.springboot.filter.MyFilter2;
 import com.nivelle.spring.springboot.interceptor.MyInterceptor;
+import com.nivelle.spring.springmvc.servlet.myServlet1;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
@@ -123,6 +125,22 @@ public class MyWebConfig implements WebMvcConfigurer {
         frBean.setOrder(1);
         System.out.println("跨域过滤器");
         return frBean;
+    }
+
+    /**
+     * 自定义servle有三种注入方式
+     *
+     * 1.ServletRegistrationBean
+     *
+     * 2.@WebServlet
+     */
+    @Bean
+    public ServletRegistrationBean registerServlet() {
+        ServletRegistrationBean servletRegistrationBean = new ServletRegistrationBean(
+                new myServlet1(), "/registerServlet");
+        servletRegistrationBean.addInitParameter("desc", "nivele love jessy");
+        System.out.println("自定义servlet");
+        return servletRegistrationBean;
     }
 
     /**
