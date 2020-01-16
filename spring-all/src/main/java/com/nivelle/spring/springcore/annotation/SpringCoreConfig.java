@@ -1,9 +1,7 @@
-package com.nivelle.spring.configbean;
+package com.nivelle.spring.springcore.annotation;
 
 import com.nivelle.spring.pojo.Car;
 import com.nivelle.spring.pojo.Dog;
-import com.nivelle.spring.springcore.annotation.MyCondition;
-import com.nivelle.spring.springcore.annotation.MyImportSelector;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.*;
 
@@ -15,12 +13,12 @@ import org.springframework.context.annotation.*;
  */
 
 /**
- * 采用自定义的过滤方式，必须使用useDefaultFilters=false
+ * 采用自定义的过滤方式，必须使用:useDefaultFilters=false
  */
 @Configuration
 @Conditional(MyCondition.class)
-@Import({Car.class, MyImportSelector.class})
-public class MyScanConfig {
+@Import({Car.class, ImportSelector.class})
+public class SpringCoreConfig {
 
     /**
      * 默认实例名为方法名字

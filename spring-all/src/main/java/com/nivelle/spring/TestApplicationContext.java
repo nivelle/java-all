@@ -1,8 +1,9 @@
 package com.nivelle.spring;
 
-import com.nivelle.spring.configbean.MyProfileConfig;
-import com.nivelle.spring.configbean.MyScanConfig;
 import com.nivelle.spring.pojo.Dog;
+import com.nivelle.spring.springcore.annotation.ProfileConfig;
+import com.nivelle.spring.springcore.annotation.SelfProperties;
+import com.nivelle.spring.springcore.annotation.SpringCoreConfig;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 
@@ -24,8 +25,7 @@ public class TestApplicationContext {
         ConfigurableEnvironment configurableEnvironment = annotationConfigApplicationContext.getEnvironment();
         configurableEnvironment.setActiveProfiles("dev");
         System.err.println("====================");
-        annotationConfigApplicationContext.register(MyProfileConfig.class);
-        annotationConfigApplicationContext.register(MyScanConfig.class);
+        annotationConfigApplicationContext.register(ProfileConfig.class, SpringCoreConfig.class, SelfProperties.class);
 
         //必须要刷新一下
         annotationConfigApplicationContext.refresh();
@@ -37,10 +37,13 @@ public class TestApplicationContext {
         Dog dog = (Dog) annotationConfigApplicationContext.getBean("devDog");
         System.err.println(dog.getName());
 
-        MyProfileConfig myProfileConfig = (MyProfileConfig) annotationConfigApplicationContext.getBean("myProfileConfig");
-        System.err.println(myProfileConfig.getApplicationName());
-        System.out.println("启动成了");
+        ProfileConfig profileConfig = (ProfileConfig) annotationConfigApplicationContext.getBean("profileConfig");
+        System.err.println(profileConfig.getApplicationName());
 
+        SelfProperties selfProperties = (SelfProperties) annotationConfigApplicationContext.getBean("selfProperties");
+        selfProperties.printDesc();
+
+        System.out.println("启动成了");
     }
 
 

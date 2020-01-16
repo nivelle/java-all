@@ -1,4 +1,4 @@
-package com.nivelle.spring.configbean;
+package com.nivelle.spring.springcore.annotation;
 
 import com.nivelle.spring.pojo.Dog;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,14 +10,14 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.util.StringValueResolver;
 
 /**
- * 数据源
+ * 启动配置类
  *
  * @author fuxinzhong
  * @date 2019/09/25
  */
 @Configuration
 @PropertySource(value = "classpath:config/application.properties")
-public class MyProfileConfig implements EmbeddedValueResolverAware {
+public class ProfileConfig implements EmbeddedValueResolverAware {
 
 
     private String applicationName;

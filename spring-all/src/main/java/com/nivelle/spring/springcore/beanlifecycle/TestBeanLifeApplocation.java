@@ -1,7 +1,5 @@
-package com.nivelle.spring;
+package com.nivelle.spring.springcore.beanlifecycle;
 
-import com.nivelle.spring.springcore.beanlifecycle.Animal;
-import com.nivelle.spring.springcore.beanlifecycle.Config;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 /**

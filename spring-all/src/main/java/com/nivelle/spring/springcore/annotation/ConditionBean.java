@@ -1,0 +1,17 @@
+package com.nivelle.spring.springcore.annotation;
+
+/**
+ * 条件注解bean
+ *
+ * @author fuxinzhong
+ * @date 2020/01/16
+ */
+public class ConditionBean {
+
+    private String desc;
+
+    public ConditionBean(String desc) {
+        System.err.println("通过条件注解创建了ConditionBean" + desc);
+        this.desc = desc;
+    }
+}

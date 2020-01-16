@@ -129,10 +129,12 @@ public class MyWebConfig implements WebMvcConfigurer {
 
     /**
      * 自定义servle有三种注入方式
-     *
+     * <p>
      * 1.ServletRegistrationBean
-     *
+     * <p>
      * 2.@WebServlet
+     * <p>
+     * 3.ServletContextInitializer
      */
     @Bean
     public ServletRegistrationBean registerServlet() {

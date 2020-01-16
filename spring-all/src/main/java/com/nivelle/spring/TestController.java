@@ -1,6 +1,6 @@
 package com.nivelle.spring;
 
-import com.nivelle.spring.configbean.LearnConfig;
+import com.nivelle.spring.configbean.CommonConfig;
 import com.nivelle.spring.pojo.Cat;
 import com.nivelle.spring.pojo.Dog;
 import com.nivelle.spring.springboot.dao.ActivityDaoImpl;
@@ -23,7 +23,7 @@ import java.util.Map;
 public class TestController {
 
     @Autowired
-    LearnConfig learnConfig;
+    CommonConfig commonConfig;
     @Autowired
     ActivityPvMapper activityPvMapper;
 
@@ -39,7 +39,7 @@ public class TestController {
     @RequestMapping("/config")
     public String config() {
 
-        String desc = learnConfig.getDesc();
+        String desc = commonConfig.getDesc();
 
         // Son man = new Son(1, "nivelle", 100);
 

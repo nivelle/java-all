@@ -1,4 +1,4 @@
-package com.nivelle.spring.springcore;
+package com.nivelle.spring.springcore.annotation;
 
 import org.springframework.core.io.Resource;
 import org.springframework.core.type.AnnotationMetadata;

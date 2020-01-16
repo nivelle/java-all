@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @ConfigurationProperties(prefix = "springboot.learn")
-public class LearnConfig {
+public class CommonConfig {
 
     @Value("${springboot.learn.desc}")
     private String desc;
