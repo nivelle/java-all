@@ -4,12 +4,7 @@ import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 /**
  * 自定义Servlet
@@ -27,6 +22,8 @@ public class RegisterMyServlet2 implements ServletContextInitializer {
         initServlet.addMapping("/initServlet2");
         initServlet.setInitParameter("desc2", "nivelle");
     }
+
+
 
 
 }

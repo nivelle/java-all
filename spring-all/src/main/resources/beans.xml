@@ -5,6 +5,6 @@
        http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <!-- 注入spring boot无法扫描到的bean. -->
-    <bean id="xmlService" class="com.nivelle.rpc.service.other.XmlBeanServiceImpl"></bean>
+    <bean id="xmlService" class="com.nivelle.spring.springcore.xml.XmlBeanServiceImpl"></bean>
 
 </beans>

@@ -1,4 +1,4 @@
-package com.nivelle.spring.springcore;
+package com.nivelle.spring.springcore.xml;
 
 /**
  * @author fuxinzhong

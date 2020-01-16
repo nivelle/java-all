@@ -7,7 +7,7 @@ import com.nivelle.spring.springboot.dao.ActivityDaoImpl;
 import com.nivelle.spring.springboot.entity.ActivityPvEntity;
 import com.nivelle.spring.springboot.listener.springlisteners.MyEvent;
 import com.nivelle.spring.springboot.mapper.ActivityPvMapper;
-import com.nivelle.spring.springcore.XmlBeanServiceImpl;
+import com.nivelle.spring.springcore.xml.XmlBeanServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;

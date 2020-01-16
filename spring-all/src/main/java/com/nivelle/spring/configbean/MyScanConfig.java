@@ -2,8 +2,8 @@ package com.nivelle.spring.configbean;
 
 import com.nivelle.spring.pojo.Car;
 import com.nivelle.spring.pojo.Dog;
-import com.nivelle.spring.springcore.MyCondition;
-import com.nivelle.spring.springcore.MyImportSelector;
+import com.nivelle.spring.springcore.annotation.MyCondition;
+import com.nivelle.spring.springcore.annotation.MyImportSelector;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.*;
 

@@ -1,4 +1,4 @@
-package com.nivelle.spring.springcore;
+package com.nivelle.spring.springcore.annotation;
 
 
 import org.springframework.context.annotation.Condition;
