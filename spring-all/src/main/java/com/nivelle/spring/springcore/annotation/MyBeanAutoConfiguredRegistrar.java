@@ -1,4 +1,4 @@
-package com.nivelle.spring.springcore.hock;
+package com.nivelle.spring.springcore.annotation;
 
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -11,7 +11,7 @@ import org.springframework.core.type.AnnotationMetadata;
 import java.util.Map;
 
 /**
- * ImportBeanDefinitionRegistrar
+ * ImportBeanDefinitionRegistrar 向容器注册 beanDefinition
  *
  * @author fuxinzhong
  * @date 2019/08/25
@@ -30,6 +30,8 @@ public class MyBeanAutoConfiguredRegistrar implements ImportBeanDefinitionRegist
         Map<String, Object> annotationAttributes
                 = importingClassMetadata.getAnnotationAttributes(ImportBeanAnnotation.class.getCanonicalName());
         Class<?>[] targets = (Class<?>[]) annotationAttributes.get("targets");
+        System.err.println("额外的 beanDefinition targets is:" + targets[0].getName());
+
         if (null != targets && targets.length > 0) {
             for (Class<?> target : targets) {
                 BeanDefinition beanDefinition = BeanDefinitionBuilder

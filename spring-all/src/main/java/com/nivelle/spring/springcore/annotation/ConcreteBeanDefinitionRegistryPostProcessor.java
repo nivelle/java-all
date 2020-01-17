@@ -1,4 +1,4 @@
-package com.nivelle.spring.springcore.hock;
+package com.nivelle.spring.springcore.annotation;
 
 import com.nivelle.base.pojo.UserInfo;
 import org.springframework.beans.BeansException;
@@ -11,7 +11,8 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProce
 import org.springframework.stereotype.Component;
 
 /**
- * BeanDefinitionRegistryPostProcessor 接口可以看作是 BeanFactoryPostProcessor 和 ImportBeanDefinitionRegistrar的功能集合，
+ * BeanDefinitionRegistryPostProcessor 接口可以看作是
+ * BeanFactoryPostProcessor 和 ImportBeanDefinitionRegistrar的功能集合，
  * 既可以获取和修改BeanDefinition的元数据，也可以实现BeanDefinition的注册、移除等操作。
  *
  * @author fuxinzhong
@@ -37,6 +38,6 @@ public class ConcreteBeanDefinitionRegistryPostProcessor implements BeanDefiniti
         System.err.println("postProcessBeanFactory");
         BeanDefinition beanDefinition = beanFactory.getBeanDefinition(beanName);
         MutablePropertyValues propertyValues = beanDefinition.getPropertyValues();
-        propertyValues.addPropertyValue("userName", "TJPU");
+        propertyValues.addPropertyValue("userName", "fuck you !!!");
     }
 }

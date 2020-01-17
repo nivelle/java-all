@@ -21,7 +21,7 @@ public class MyCondition implements Condition {
         System.err.println("OSNAME is" + osName);
 
         if (osName.contains("Mac")) {
-            System.err.println("OSNAME is" + "true");
+            System.err.println("OSNAME is mac");
             return true;
         } else {
             return false;

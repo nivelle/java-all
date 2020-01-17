@@ -16,7 +16,9 @@ import org.springframework.context.annotation.*;
  * 采用自定义的过滤方式，必须使用:useDefaultFilters=false
  */
 @Configuration
+//返回true时将此类作为配置类
 @Conditional(MyCondition.class)
+//注册器
 @Import({Car.class, ImportSelector.class})
 public class SpringCoreConfig {
 

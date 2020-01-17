@@ -1,6 +1,7 @@
 package com.nivelle.spring;
 
 import com.nivelle.spring.pojo.Dog;
+import com.nivelle.spring.springcore.annotation.ConditionConfig;
 import com.nivelle.spring.springcore.annotation.ProfileConfig;
 import com.nivelle.spring.springcore.annotation.SelfProperties;
 import com.nivelle.spring.springcore.annotation.SpringCoreConfig;
@@ -25,7 +26,9 @@ public class TestApplicationContext {
         ConfigurableEnvironment configurableEnvironment = annotationConfigApplicationContext.getEnvironment();
         configurableEnvironment.setActiveProfiles("dev");
         System.err.println("====================");
-        annotationConfigApplicationContext.register(ProfileConfig.class, SpringCoreConfig.class, SelfProperties.class);
+        annotationConfigApplicationContext.register(ProfileConfig.class,
+                SpringCoreConfig.class,
+                SelfProperties.class,ConditionConfig.class);
 
         //必须要刷新一下
         annotationConfigApplicationContext.refresh();
