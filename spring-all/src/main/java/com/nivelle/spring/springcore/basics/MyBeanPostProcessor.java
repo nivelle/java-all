@@ -1,10 +1,12 @@
-package com.nivelle.spring.springcore.beanlifecycle;
+package com.nivelle.spring.springcore.basics;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 
 /**
+ * 自定义 BeanPostProcessor
  *
+ * @Author nivelle
  */
 public class MyBeanPostProcessor implements BeanPostProcessor {
 

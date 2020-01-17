@@ -16,10 +16,21 @@ import org.springframework.context.annotation.*;
  * 采用自定义的过滤方式，必须使用:useDefaultFilters=false
  */
 @Configuration
-//返回true时将此类作为配置类
+//返回true时将此类作为配置类，系统条件注解
 @Conditional(MyCondition.class)
-//注册器
+
+/**
+ * @Import 导入另外一个配置类的方式注册bean, 也可以将一些普通java类注册成一个bean
+ *
+ * 1. 导入某个配置类（导入某个加了@Configuration的配置类或者某个类）
+ *
+ * 2. 导入某个ImportSelector接口的实现类
+ *
+ * 3. 导入某个ImportBeanDefinitionRegistrar接口的实现类
+ */
 @Import({Car.class, ImportSelector.class})
+//此注解为自定义注解,目的是注入一个bean
+@ImportBeanAnnotation(targets = ImportBean.class)
 public class SpringCoreConfig {
 
     /**

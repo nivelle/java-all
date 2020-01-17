@@ -1,4 +1,4 @@
-package com.nivelle.spring.springcore.beanlifecycle;
+package com.nivelle.spring.springcore.basics;
 
 /**
  * 通过BeanDefinitionRegisterPostProcess注入的Bean定义

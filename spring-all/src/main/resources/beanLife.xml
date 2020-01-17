@@ -3,22 +3,22 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
-    <bean id="beanPostProcessor" class="com.nivelle.spring.springcore.beanlifecycle.MyBeanPostProcessor">
+
+
+    <bean id="beanPostProcessor" class="com.nivelle.spring.springcore.basics.MyBeanPostProcessor">
     </bean>
 
     <bean id="instantiationAwareBeanPostProcessor"
-          class="com.nivelle.spring.springcore.beanlifecycle.MyInstantiationAwareBeanPostProcessor">
+          class="com.nivelle.spring.springcore.basics.MyInstantiationAwareBeanPostProcessor">
     </bean>
 
-    <bean id="beanFactoryPostProcessor" class="com.nivelle.spring.springcore.beanlifecycle.MyBeanFactoryPostProcessor">
+    <bean id="beanFactoryPostProcessor" class="com.nivelle.spring.springcore.basics.MyBeanFactoryPostProcessor">
     </bean>
 
-    <bean id="person" class="com.nivelle.spring.springcore.beanlifecycle.Person" init-method="myInit"
+    <bean id="person" class="com.nivelle.spring.springcore.basics.PersonBeanLife" init-method="myInit"
           destroy-method="myDestory" scope="singleton" p:name="张三" p:address="广州" p:phone="17600383849"/>
 
-    <bean id="computer" class="com.nivelle.spring.springcore.beanlifecycle.Computer"
-          init-method="myInit" destroy-method="myDestory"
-          scope="singleton"
-          p:name="UPCAutoLang-Computer" p:brand="MacBookPro" p:serial="1234567890"/>
+    <!-- 注入spring boot无法扫描到的bean. -->
+    <bean id="xmlService" class="com.nivelle.spring.springcore.basics.XmlBeanServiceImpl"></bean>
 
 </beans>

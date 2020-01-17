@@ -1,4 +1,4 @@
-package com.nivelle.spring.springcore.beanlifecycle;
+package com.nivelle.spring.springcore.basics;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.PropertyValues;
@@ -6,6 +6,11 @@ import org.springframework.beans.factory.config.InstantiationAwareBeanPostProces
 
 import java.beans.PropertyDescriptor;
 
+/**
+ *  InstantiationAwareBeanPostProcessorAdapter 初始化方法集成器
+ *
+ * @Author
+ */
 public class MyInstantiationAwareBeanPostProcessor extends
         InstantiationAwareBeanPostProcessorAdapter {
 

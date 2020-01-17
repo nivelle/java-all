@@ -1,4 +1,4 @@
-package com.nivelle.spring.springcore.beanlifecycle;
+package com.nivelle.spring.springcore.basics;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -28,7 +28,7 @@ public class MyRegisterBeanPostProcesser implements BeanDefinitionRegistryPostPr
     public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
 
         BeanDefinition myBeanDefinition = new RootBeanDefinition(Animal.class);
-        registry.registerBeanDefinition("animal", myBeanDefinition);
+        registry.registerBeanDefinition("beanDefinition's_animal", myBeanDefinition);
         return;
     }
 

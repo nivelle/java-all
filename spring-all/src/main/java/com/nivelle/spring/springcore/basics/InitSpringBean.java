@@ -1,12 +1,13 @@
-package com.nivelle.spring.springcore.initdemo;
+package com.nivelle.spring.springcore.basics;
 
 
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 
-@Service
+@Component
 public class InitSpringBean implements InitializingBean {
 
     private String name;

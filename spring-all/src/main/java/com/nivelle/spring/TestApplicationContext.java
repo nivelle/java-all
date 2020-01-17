@@ -7,6 +7,7 @@ import com.nivelle.spring.springcore.annotation.SelfProperties;
 import com.nivelle.spring.springcore.annotation.SpringCoreConfig;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.stereotype.Repository;
 
 /**
  * 自定义测试
@@ -14,6 +15,7 @@ import org.springframework.core.env.ConfigurableEnvironment;
  * @author fuxinzhong
  * @date 2019/09/25
  */
+@Repository
 public class TestApplicationContext {
 
     /**
@@ -45,6 +47,10 @@ public class TestApplicationContext {
 
         SelfProperties selfProperties = (SelfProperties) annotationConfigApplicationContext.getBean("selfProperties");
         selfProperties.printDesc();
+        /**
+         * 扫描 @Service @Repository @Controller @Component 注解标注的类
+         */
+        annotationConfigApplicationContext.scan("com.nivelle.spring.springcore.basics");
 
         System.out.println("启动成了");
     }

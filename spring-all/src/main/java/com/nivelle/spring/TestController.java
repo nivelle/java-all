@@ -7,7 +7,8 @@ import com.nivelle.spring.springboot.dao.ActivityDaoImpl;
 import com.nivelle.spring.springboot.entity.ActivityPvEntity;
 import com.nivelle.spring.springboot.listener.springlisteners.MyEvent;
 import com.nivelle.spring.springboot.mapper.ActivityPvMapper;
-import com.nivelle.spring.springcore.xml.XmlBeanServiceImpl;
+import com.nivelle.spring.springcore.basics.InitSpringBean;
+import com.nivelle.spring.springcore.basics.XmlBeanServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -230,5 +231,18 @@ public class TestController {
         Object xmlBeanService = webApplicationConnect.getBean("xmlService");
         XmlBeanServiceImpl xmlBeanService1 = (XmlBeanServiceImpl) xmlBeanService;
         return xmlBeanService1.helloXmlService();
+    }
+
+    @Autowired
+    InitSpringBean initSpringBean;
+
+    @RequestMapping("/init")
+    @ResponseBody
+    public Object myInitSpringBean() {
+
+        String name = initSpringBean.getName();
+        int age = initSpringBean.getAge();
+
+        return name + age;
     }
 }
