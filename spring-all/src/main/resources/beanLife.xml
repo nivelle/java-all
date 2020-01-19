@@ -19,6 +19,6 @@
           destroy-method="myDestory" scope="singleton" p:name="张三" p:address="广州" p:phone="17600383849"/>
 
     <!-- 注入spring boot无法扫描到的bean. -->
-    <bean id="xmlService" class="com.nivelle.spring.springcore.basics.XmlBeanServiceImpl"></bean>
+    <!--<bean id="xmlService" class="com.nivelle.spring.springcore.basics.XmlBeanServiceImpl"></bean>-->
 
 </beans>

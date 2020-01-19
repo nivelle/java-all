@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
  */
 
 @Component
-public class MyRegisterBeanPostProcesser implements BeanDefinitionRegistryPostProcessor {
+public class MyRegisterBeanPostProcessor implements BeanDefinitionRegistryPostProcessor {
 
 
     @Override
@@ -26,7 +26,6 @@ public class MyRegisterBeanPostProcesser implements BeanDefinitionRegistryPostPr
 
     @Override
     public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
-
         BeanDefinition myBeanDefinition = new RootBeanDefinition(Animal.class);
         registry.registerBeanDefinition("beanDefinition's_animal", myBeanDefinition);
         return;

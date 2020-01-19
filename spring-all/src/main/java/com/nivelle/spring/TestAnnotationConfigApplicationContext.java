@@ -16,7 +16,7 @@ import org.springframework.stereotype.Repository;
  * @date 2019/09/25
  */
 @Repository
-public class TestApplicationContext {
+public class TestAnnotationConfigApplicationContext {
 
     /**
      * spring源码学习
@@ -27,18 +27,24 @@ public class TestApplicationContext {
         AnnotationConfigApplicationContext annotationConfigApplicationContext = new AnnotationConfigApplicationContext();
         ConfigurableEnvironment configurableEnvironment = annotationConfigApplicationContext.getEnvironment();
         configurableEnvironment.setActiveProfiles("dev");
-        System.err.println("====================");
+        System.err.println("====================加载注册文件========================");
         annotationConfigApplicationContext.register(ProfileConfig.class,
                 SpringCoreConfig.class,
-                SelfProperties.class,ConditionConfig.class);
+                SelfProperties.class, ConditionConfig.class);
+
+        System.err.println("====================scan 扫描加载需要加载的文件========================");
+
+        /**
+         * 扫描 @Service @Repository @Controller @Component 注解标注的类
+         */
+        annotationConfigApplicationContext.scan("com.nivelle.spring.springcore.basics");
+
+        annotationConfigApplicationContext.refresh();
+
 
         //必须要刷新一下
-        annotationConfigApplicationContext.refresh();
         String[] beans = annotationConfigApplicationContext.getBeanDefinitionNames();
-        for (int i = 0; i < beans.length; i++) {
-            System.err.println("当前扫描到的bean定义2:" + beans[i]);
-        }
-        System.err.println("====================");
+
         Dog dog = (Dog) annotationConfigApplicationContext.getBean("devDog");
         System.err.println(dog.getName());
 
@@ -47,10 +53,12 @@ public class TestApplicationContext {
 
         SelfProperties selfProperties = (SelfProperties) annotationConfigApplicationContext.getBean("selfProperties");
         selfProperties.printDesc();
-        /**
-         * 扫描 @Service @Repository @Controller @Component 注解标注的类
-         */
-        annotationConfigApplicationContext.scan("com.nivelle.spring.springcore.basics");
+
+
+        for (int i = 0; i < beans.length; i++) {
+            System.err.println("当前扫描到的bean定义2:" + beans[i]);
+        }
+        System.err.println("====================");
 
         System.out.println("启动成了");
     }

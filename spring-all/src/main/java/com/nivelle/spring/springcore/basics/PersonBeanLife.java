@@ -2,6 +2,7 @@ package com.nivelle.spring.springcore.basics;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.*;
+import org.springframework.stereotype.Component;
 
 /**
  * 实现了常用扩展的接口
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.*;
  * @Author nivelle
  *
  */
+@Component
 public class PersonBeanLife implements BeanFactoryAware, BeanNameAware,
         InitializingBean, DisposableBean {
 

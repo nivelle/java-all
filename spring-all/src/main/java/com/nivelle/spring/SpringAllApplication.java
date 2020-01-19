@@ -25,7 +25,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 //开启dubbo
 @EnableDubbo
-@ComponentScan(basePackages = {"com.nivelle.spring"})
 public class SpringAllApplication {
     public static void main(String[] args) {
         SpringApplication springApplication = new SpringApplication(SpringAllApplication.class);
