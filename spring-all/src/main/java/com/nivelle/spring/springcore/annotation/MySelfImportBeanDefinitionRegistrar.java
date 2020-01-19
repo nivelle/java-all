@@ -16,9 +16,14 @@ import java.util.Map;
  * @author fuxinzhong
  * @date 2019/08/25
  */
-public class MyBeanAutoConfiguredRegistrar implements ImportBeanDefinitionRegistrar, EnvironmentAware {
+public class MySelfImportBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar, EnvironmentAware {
 
 
+    /**
+     * 在registerBeanDefinitions方法之前执行
+     *
+     * @param environment
+     */
     @Override
     public void setEnvironment(Environment environment) {
         System.err.println("My JAVA_HOME:" + environment.getProperty("JAVA_HOME"));
@@ -28,7 +33,7 @@ public class MyBeanAutoConfiguredRegistrar implements ImportBeanDefinitionRegist
     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata,
                                         BeanDefinitionRegistry registry) {
         Map<String, Object> annotationAttributes
-                = importingClassMetadata.getAnnotationAttributes(ImportBeanAnnotation.class.getCanonicalName());
+                = importingClassMetadata.getAnnotationAttributes(MyAnnotationImportBeanDefinitionRegistrar.class.getCanonicalName());
         Class<?>[] targets = (Class<?>[]) annotationAttributes.get("targets");
         System.err.println("额外的 beanDefinition targets is:" + targets[0].getName());
 

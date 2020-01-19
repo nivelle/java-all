@@ -24,6 +24,12 @@ public class MyRegisterBeanPostProcessor implements BeanDefinitionRegistryPostPr
 
     }
 
+    /**
+     * 直接注册一个bean定义
+     *
+     * @param registry
+     * @throws BeansException
+     */
     @Override
     public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
         BeanDefinition myBeanDefinition = new RootBeanDefinition(Animal.class);

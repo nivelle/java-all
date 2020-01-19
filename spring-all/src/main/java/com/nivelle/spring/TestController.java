@@ -8,7 +8,7 @@ import com.nivelle.spring.springboot.entity.ActivityPvEntity;
 import com.nivelle.spring.springboot.listener.springlisteners.MyEvent;
 import com.nivelle.spring.springboot.mapper.ActivityPvMapper;
 import com.nivelle.spring.springcore.basics.InitSpringBean;
-import com.nivelle.spring.springcore.basics.XmlBeanServiceImpl;
+import com.nivelle.spring.springcore.basics.XmlBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -229,7 +229,7 @@ public class TestController {
     @RequestMapping("xml")
     public Object testXmlService() {
         Object xmlBeanService = webApplicationConnect.getBean("xmlService");
-        XmlBeanServiceImpl xmlBeanService1 = (XmlBeanServiceImpl) xmlBeanService;
+        XmlBean xmlBeanService1 = (XmlBean) xmlBeanService;
         return xmlBeanService1.helloXmlService();
     }
 

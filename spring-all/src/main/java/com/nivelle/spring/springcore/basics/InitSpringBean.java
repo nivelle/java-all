@@ -7,6 +7,11 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 
+/**
+ * spring Bean 初始化接口实现
+ *
+ * @Author nivelle
+ */
 @Component
 public class InitSpringBean implements InitializingBean {
 
