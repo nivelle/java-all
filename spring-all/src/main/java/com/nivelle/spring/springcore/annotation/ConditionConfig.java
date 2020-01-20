@@ -1,6 +1,7 @@
 package com.nivelle.spring.springcore.annotation;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -22,7 +23,9 @@ public class ConditionConfig {
      */
     @Bean(name = "myCondition")
     @ConditionalOnClass(name = "com.nivelle.spring.springcore.basics.Animal")
+    @ConditionalOnProperty(prefix = "test", name = "name", havingValue="condition",matchIfMissing = false)
     public ConditionBean getConditionBean() {
         return new ConditionBean("我是条件注解加载进来的");
     }
+
 }

@@ -13,6 +13,11 @@ import java.lang.reflect.Type;
 import java.nio.charset.Charset;
 import java.util.Properties;
 
+/**
+ * 自定义 properties 类型参数转换
+ *
+ * @Author nivelle
+ */
 public class PropertiesHttpMessageConverter extends AbstractGenericHttpMessageConverter<Properties> {
 
     public PropertiesHttpMessageConverter() {

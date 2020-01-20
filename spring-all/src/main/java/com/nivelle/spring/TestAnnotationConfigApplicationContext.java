@@ -7,7 +7,6 @@ import com.nivelle.spring.springcore.annotation.SelfProperties;
 import com.nivelle.spring.springcore.annotation.SpringCoreConfig;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
-import org.springframework.stereotype.Repository;
 
 /**
  * 自定义测试
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Repository;
  * @author fuxinzhong
  * @date 2019/09/25
  */
-@Repository
 public class TestAnnotationConfigApplicationContext {
 
     /**

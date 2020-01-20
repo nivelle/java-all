@@ -1,6 +1,7 @@
 BeanPostProcessor类 |  介绍
 --- | ---
-o.sf.context.support.ApplicationContextAwareProcessor |	功能:bean创建时调用bean所实现的各种Aware接口方法设置相应的属性
+o.sf.context.support.ApplicationContextAwareProcessor |	
+功能:bean创建时调用bean所实现的各种Aware接口方法设置相应的属性
 o.sf.boot.web.servlet.context.WebApplicationContextServletContextAwareProcessor |	功能:Springboot Servlet Web应用中bean创建时调用bean实现的ServletContextAware或者ServletConfigAware接口为bean设置ServletContext或者ServletConfig属性 引入时机:在ServletWebServerApplicationContext #postProcessBeanFactory中登记到应用上下文
 o.sf.context.annotation.ConfigurationClassPostProcessor$ImportAwareBeanPostProcessor |	TBD
 o.sf.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker	| TBD

@@ -15,6 +15,11 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.util.Properties;
 
+/**
+ * 返回值参数类型转换
+ *
+ * @Author nivelle
+ */
 public class PropertiesHandlerMethodReturnValueHandler implements HandlerMethodReturnValueHandler {
 
     @Override

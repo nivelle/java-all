@@ -16,7 +16,9 @@ import java.nio.charset.Charset;
 import java.util.Properties;
 
 /**
- * 自定义参数转换器
+ * 自定义入参参数转换器
+ *
+ * @Author nivelle
  */
 public class PropertiesHandlerMethodArgumentResolver implements HandlerMethodArgumentResolver {
     @Override

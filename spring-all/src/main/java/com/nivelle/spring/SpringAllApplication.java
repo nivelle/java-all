@@ -10,20 +10,19 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-/**
- * nivelle
- */
 @SpringBootApplication
-//扫描servlet组件注解
+/**
+ * 扫描servlet组件注解
+ */
 @ServletComponentScan
-//开启缓存注解,mybatis使用redis作为缓存
+/**
+ * 开启缓存注解,mybatis使用redis作为缓存
+ * @author nivelle
+ */
 @EnableCaching
-//开启定时任务注解
 @EnableScheduling
-//开启dubbo
 @EnableDubbo
 public class SpringAllApplication {
     public static void main(String[] args) {

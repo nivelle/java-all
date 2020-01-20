@@ -30,7 +30,7 @@ import org.springframework.context.annotation.*;
  */
 @Import({Car.class, ImportSelector.class, MySelfImportBeanDefinitionRegistrar.class})
 //此注解为自定义注解,目的是注入一个bean
-@MyAnnotationImportBeanDefinitionRegistrar(targets = {ImportBean.class})
+@MyAnnotationImportBeanDefinitionRegistrar(targets = {BeanImported.class})
 @ImportResource(value = {"classpath*:beanLife.xml"})
 public class SpringCoreConfig {
 

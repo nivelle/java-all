@@ -6,7 +6,9 @@ package com.nivelle.spring.springcore.annotation;
  * @author fuxinzhong
  * @date 2020/01/17
  */
-public class ImportBean {
+public class BeanImported {
+
+    private String userName;
 
     public String getUserName() {
         return userName;
@@ -15,8 +17,6 @@ public class ImportBean {
     public void setUserName(String userName) {
         this.userName = userName;
     }
-
-    private String userName;
 
 
 }
