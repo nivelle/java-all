@@ -3,10 +3,10 @@ package com.nivelle.spring.springmvc;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
-import com.nivelle.spring.springboot.filter.CorsFilter;
-import com.nivelle.spring.springboot.filter.MyFilter1;
-import com.nivelle.spring.springboot.filter.MyFilter2;
-import com.nivelle.spring.springboot.interceptor.MyInterceptor;
+import com.nivelle.spring.springmvc.filter.CorsFilter;
+import com.nivelle.spring.springmvc.filter.MyFilter1;
+import com.nivelle.spring.springmvc.filter.MyFilter2;
+import com.nivelle.spring.springcore.handlerinterceptor.MyHandlerInterceptor;
 import com.nivelle.spring.springmvc.servlet.myServlet1;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -152,7 +152,7 @@ public class MyWebConfig implements WebMvcConfigurer {
      */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new MyInterceptor()).addPathPatterns("/config/**");
+        registry.addInterceptor(new MyHandlerInterceptor()).addPathPatterns("/config/**");
     }
 
     /**

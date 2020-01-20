@@ -28,6 +28,11 @@ public class JdbcTemplateConfig {
         return new JdbcTemplate(dataSource);
     }
 
+    /**
+     * 从数据库
+     * @param dataSource
+     * @return
+     */
     @Bean(name = "slaveJdbcTemplate")
     public JdbcTemplate slaveJdbcTemplate(
             @Qualifier("slaveDataSource") DataSource dataSource) {

@@ -18,6 +18,11 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.Set;
 
+/**
+ * 全局异常拦截器
+ *
+ * @author nivelle
+ */
 @ControllerAdvice
 public class ControllerExceptionAdvice {
 
@@ -80,7 +85,6 @@ public class ControllerExceptionAdvice {
             System.err.println(ex.getMessage());
             System.err.println(ex.getStackTrace());
             System.err.println(ex.getLocalizedMessage());
-
 
 
         }

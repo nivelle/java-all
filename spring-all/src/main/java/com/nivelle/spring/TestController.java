@@ -1,18 +1,22 @@
 package com.nivelle.spring;
 
+import com.google.common.collect.Lists;
+import com.nivelle.base.pojo.TimeLine;
 import com.nivelle.spring.configbean.CommonConfig;
 import com.nivelle.spring.pojo.Cat;
 import com.nivelle.spring.pojo.Dog;
 import com.nivelle.spring.springboot.dao.ActivityDaoImpl;
 import com.nivelle.spring.springboot.entity.ActivityPvEntity;
-import com.nivelle.spring.springboot.listener.springlisteners.MyEvent;
 import com.nivelle.spring.springboot.mapper.ActivityPvMapper;
 import com.nivelle.spring.springcore.basics.InitSpringBean;
 import com.nivelle.spring.springcore.basics.XmlBean;
+import com.nivelle.spring.springcore.factorybean.*;
+import com.nivelle.spring.springcore.listener.springevent.MyEvent;
 import com.nivelle.spring.springmvc.PropertiesHandlerMethodArgumentResolver;
 import com.nivelle.spring.springmvc.PropertiesHandlerMethodReturnValueHandler;
 import com.nivelle.spring.springmvc.PropertiesHttpMessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
@@ -37,6 +41,12 @@ public class TestController {
 
     @Autowired
     ActivityDaoImpl activityDao;
+
+    @Autowired
+    MyFactoryBean myFactoryBean;
+
+    @Autowired
+    ApplicationContext applicationContext;
 
     /**
      * 获取上下文
@@ -245,6 +255,7 @@ public class TestController {
 
     /**
      * 初始化测试
+     *
      * @return
      */
     @RequestMapping("/init")
@@ -325,6 +336,29 @@ public class TestController {
     public Properties getConvertAnnotation(@RequestBody Properties properties) {
         System.out.println("入参被解析:properties的类型:" + properties.getClass().getSimpleName());
         return properties;
+    }
+
+
+    /**
+     * 工厂类获取bean
+     *
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping("/timeline")
+    public List<Object> getObject() throws Exception {
+        //直接通过#getObject获取实例
+        TimeLine timeLine = myFactoryBean.getObject();
+
+        //通过Spring上下文获取实例
+        TimeLine timeLine1 = (TimeLine) applicationContext.getBean("myFactoryBean");
+        //MyFactoryBean
+        MyFactoryBean bean = (MyFactoryBean) applicationContext.getBean("&myFactoryBean");
+        List<Object> time = Lists.newArrayList();
+        time.add(timeLine);
+        time.add(timeLine1);
+        time.add(bean);
+        return time;
     }
 
 }

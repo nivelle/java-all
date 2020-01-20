@@ -8,6 +8,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * 缓存配置
+ */
 @Service
 @CacheConfig(cacheNames = "users")
 public class UserFactory {

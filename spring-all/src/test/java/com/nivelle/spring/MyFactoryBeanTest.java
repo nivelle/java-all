@@ -3,7 +3,7 @@ package com.nivelle.spring;
 
 import com.nivelle.base.pojo.TimeLine;
 import com.nivelle.base.pojo.User;
-import com.nivelle.spring.springboot.hock.MyFactoryBean;
+import com.nivelle.spring.springcore.factorybean.MyFactoryBean;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,6 +1,6 @@
 package com.nivelle.spring.springboot.service.impl;
 
-import com.nivelle.spring.springboot.core.AopAnnotation;
+import com.nivelle.spring.springboot.aop.AopAnnotation;
 import com.nivelle.spring.springboot.dao.ActivityDaoImpl;
 import com.nivelle.spring.springboot.entity.ActivityPvEntity;
 import com.nivelle.spring.springboot.mapper.ActivityPvMapper;

@@ -35,7 +35,7 @@ public class TestAnnotationConfigApplicationContext {
         /**
          * 扫描 @Service @Repository @Controller @Component 注解标注的类
          */
-        annotationConfigApplicationContext.scan("com.nivelle.spring.springcore.basics");
+        annotationConfigApplicationContext.scan("com.nivelle.spring.springcore.*.*");
 
         annotationConfigApplicationContext.refresh();
 
