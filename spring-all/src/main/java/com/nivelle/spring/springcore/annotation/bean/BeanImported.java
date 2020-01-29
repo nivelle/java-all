@@ -1,4 +1,4 @@
-package com.nivelle.spring.springcore.annotation;
+package com.nivelle.spring.springcore.annotation.bean;
 
 /**
  * 通过 ImportBeanDefinitionRegistrar 将 Definition 注入容器

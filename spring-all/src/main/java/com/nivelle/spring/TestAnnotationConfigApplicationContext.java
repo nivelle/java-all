@@ -26,9 +26,9 @@ public class TestAnnotationConfigApplicationContext {
         ConfigurableEnvironment configurableEnvironment = annotationConfigApplicationContext.getEnvironment();
         configurableEnvironment.setActiveProfiles("dev");
         System.err.println("====================加载注册文件========================");
+
         annotationConfigApplicationContext.register(ProfileConfig.class,
-                SpringCoreConfig.class,
-                SelfProperties.class, ConditionConfig.class);
+                SpringCoreConfig.class, ConditionConfig.class, SelfProperties.class);
 
         System.err.println("====================scan 扫描加载需要加载的文件========================");
 
@@ -38,18 +38,22 @@ public class TestAnnotationConfigApplicationContext {
         annotationConfigApplicationContext.scan("com.nivelle.spring.springcore.*.*");
         //必须要刷新一下
         annotationConfigApplicationContext.refresh();
-        String[] beans = annotationConfigApplicationContext.getBeanDefinitionNames();
         Dog dog = (Dog) annotationConfigApplicationContext.getBean("devDog");
         System.err.println(dog.getName());
         ProfileConfig profileConfig = (ProfileConfig) annotationConfigApplicationContext.getBean("profileConfig");
         System.err.println(profileConfig.getApplicationName());
         SelfProperties selfProperties = (SelfProperties) annotationConfigApplicationContext.getBean("selfProperties");
         selfProperties.printDesc();
+        //获取容器中的bean定义
+        String[] beans = annotationConfigApplicationContext.getBeanDefinitionNames();
         for (int i = 0; i < beans.length; i++) {
             System.err.println("当前扫描到的bean定义2:" + beans[i]);
         }
         System.err.println("====================");
+
         System.out.println("启动成了");
+
+
     }
 
 

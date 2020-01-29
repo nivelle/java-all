@@ -1,4 +1,4 @@
-package com.nivelle.spring.springcore.annotation;
+package com.nivelle.spring.springcore.annotation.bean;
 
 /**
  * 条件注解bean

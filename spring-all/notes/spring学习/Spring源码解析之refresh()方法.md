@@ -1,50 +1,134 @@
 # Spring容器的refresh() 方法，synchronized (this.startupShutdownMonitor)实现同步
 
-## 第一步:prepareRefresh():刷新前的预处理：
+## 第一步:prepareRefresh():刷新前的预处理：(Prepare this context for refreshing.)
    
    (1) initPropertySources():初始化一些属性设置,默认不做任何处理,留给子类自定义属性设置方法;//servletContextInitParams 和 servletConfigInitParams
    
-   (2) getEnvironment().validateRequiredProperties():校验非空属性是否设置了值，没有设置的话抛出异常(MissingRequiredPropertiesException);
-       - systemEnvironment
-       - systemProperties
-   (3) earlyApplicationEvents= new LinkedHashSet<ApplicationEvent>():保存容器中的一些早期的事件,先清理掉旧的监听器
-  
-## 第二步:ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory():获取beanFactory
-
-   (1) refreshBeanFactory(): 刷新(CAS刷新容器状态)并创建，this.beanFactory = new DefaultListableBeanFactory()并设置id；
+       - AbstractRefreshableWebApplicationContext
+       
+         - ConfigurableEnvironment env = getEnvironment();
+         
+         - ((ConfigurableWebEnvironment) env).initPropertySources(this.servletContext, this.servletConfig);
+         
+           - WebApplicationContextUtils.initServletPropertySources(getPropertySources(), servletContext, servletConfig);
+           
+           - 解析 servletContextInitParams 和 servletConfigInitParams 参数
    
-   (2) getBeanFactory(): 返回刚才GenericApplicationContext创建的BeanFactory对象 DefaultListableBeanFactory；
+   (2) getEnvironment().validateRequiredProperties():校验非空属性是否设置了值，没有设置的话抛出异常(MissingRequiredPropertiesException);//Validate that all properties marked as required are resolvable:see ConfigurablePropertyResolver#setRequiredProperties
+   
+       - systemEnvironment
+       
+       - systemProperties
+       
+   (3) earlyApplicationEvents= new LinkedHashSet<ApplicationEvent>():保存容器中的一些早期的事件,如果存在则先清理掉旧的监听器
+  
+## 第二步:ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory():获取beanFactory （Tell the subclass to refresh the internal bean factory.）
+
+
+   #### 子类实现: AbstractRefreshableApplicationContext
+   
+   (1) refreshBeanFactory(): 刷新(CAS刷新容器状态)并创建，this.beanFactory = new DefaultListableBeanFactory()并设置id;
+     
+       - destroyBeans()&closeBeanFactory()
+       
+       - DefaultListableBeanFactory beanFactory = createBeanFactory();
+       
+         - new DefaultListableBeanFactory(getInternalParentBeanFactory());//Return the internal bean factory of the parent context if it implements ConfigurableApplicationContext; else, return the parent context itself.
+         
+       - beanFactory.setSerializationId(getId());//设置Id
+       
+       - customizeBeanFactory(beanFactory);//让子类实现
+       
+         - beanFactory.setAllowBeanDefinitionOverriding(this.allowBeanDefinitionOverriding);
+         
+         - beanFactory.setAllowCircularReferences(this.allowCircularReferences);
+         
+       - loadBeanDefinitions(beanFactory);//让子类实现
+       
+         ### 子类实现:AnnotationConfigWebApplicationContext 
+         
+         - AnnotatedBeanDefinitionReader reader = getAnnotatedBeanDefinitionReader(beanFactory);
+		
+         - ClassPathBeanDefinitionScanner scanner = getClassPathBeanDefinitionScanner(beanFactory);
+         		
+         - BeanNameGenerator beanNameGenerator = getBeanNameGenerator();
+ 		
+         - ScopeMetadataResolver scopeMetadataResolver = getScopeMetadataResolver();
+
+         - reader.register(ClassUtils.toClassArray(this.annotatedClasses));
+
+	     - scanner.scan(StringUtils.toStringArray(this.basePackages));
+	     
+	     - String[] configLocations = getConfigLocations();//获得 XmlWebApplicationContext 的资源路径
+
+         - 先reader.register(clazz);出现异常则 scanner.scan(configLocation);
+
+   (2) getBeanFactory(): 返回刚才创建的BeanFactory对象 DefaultListableBeanFactory；
 	
 ## 第三步:prepareBeanFactory(beanFactory):BeanFactory的预准备工作（BeanFactory进行一些设置;
+
+       ```
+       // 准备当前上下文使用的Bean容器 BeanFactory,设置其标准上下文特征，比如类加载器等
+	   // 1. BeanFactory 的类加载器设置为当前上下文的类加载器
+	   // 2. BeanFactory 的Bean表达式解析器设置为 new StandardBeanExpressionResolver()
+	   // 3. BeanFactory 增加 BeanPostProcessror new ApplicationListenerDetector(this)
+	   // 4.三个单例Bean被注册 : environment,systemProperties,systemEnvironment
+	    	
+       ```
 	  
-   (1) 设置BeanFactory的类加载器(setBeanClassLoader)、设置表达式解析器(setBeanExpressionResolver)、添加属性解析器(addPropertyEditorRegistrar)
+   (1) 设置BeanFactory的类加载器(setBeanClassLoader)、设置表达式解析器(setBeanExpressionResolver)、添加属性注册器(addPropertyEditorRegistrar)
 	
-   (2) 添加部分BeanPostProcessor【ApplicationContextAwareProcessor,设置EmbeddedValueResolver值解析器;	设置忽略的自动装配的接口EnvironmentAware;
+   (2) 添加部分BeanPostProcessor【ApplicationContextAwareProcessor,设置EmbeddedValueResolver值解析器;设置忽略的自动装配的接口EnvironmentAware;
 	
    (3) 注册可以解析的自动装配;我们能直接在任何组件中自动注入:BeanFactory、ResourceLoader、ApplicationEventPublisher、ApplicationContext
+   
+   ```
+        beanFactory.registerResolvableDependency(BeanFactory.class, beanFactory);
+   		beanFactory.registerResolvableDependency(ResourceLoader.class, this);
+   		beanFactory.registerResolvableDependency(ApplicationEventPublisher.class, this);
+   		beanFactory.registerResolvableDependency(ApplicationContext.class, this);
+   		
+   		   --> this.resolvableDependencies.put(dependencyType, autowiredValue);
 	
-   (4) 添加BeanPostProcessor【ApplicationListenerDetector】
+   ```
+
+   (4) 添加BeanPostProcessor【ApplicationListenerDetector】//Register early post-processor for detecting inner beans as ApplicationListeners.
 	
-   (5) 添加编译时的AspectJ；
+   (5) 添加编译时的AspectJ; beanFactory.addBeanPostProcessor(new LoadTimeWeaverAwareProcessor(beanFactory)) & 	beanFactory.setTempClassLoader(new ContextTypeMatchClassLoader(beanFactory.getBeanClassLoader()));
 	
-   (6) 给BeanFactory中注册一些能用的组件: environment【ConfigurableEnvironment、systemProperties【Map<String, Object>、systemEnvironment【Map<String, Object>】
+   (6) 给BeanFactory中注册一些能用的组件: environment,systemProperties,systemEnvironment
 
 ## 第四步:postProcessBeanFactory(beanFactory);
      
    - 子类通过重写这个方法来在BeanFactory创建并预准备完成以后做进一步的设置;
    
-   ```
-   Modify the application context's internal bean factory after its standard initialization. All bean definitions will have been loaded, but no beans will have been instantiated yet. This allows for registering special
-   
-   ```
+    ```
+        /**
+     	 * Modify the application context's internal bean factory after its standard
+     	 * initialization. All bean definitions will have been loaded, but no beans
+     	 * will have been instantiated yet. This allows for registering special
+     	 * BeanPostProcessors etc in certain ApplicationContext implementations.
+     	 * @param beanFactory the bean factory used by the application context
+     	 */
+    
+    ```
+    子类实现: AnnotationConfigServletWebServerApplicationContext
+            
+            - super.postProcessBeanFactory(beanFactory);
+              
+              - beanFactory.addBeanPostProcessor(new WebApplicationContextServletContextAwareProcessor(this));
+              
+              - this.scanner.scan(this.basePackages);
+              
+              - this.reader.register(ClassUtils.toClassArray(this.annotatedClasses));
 
-## 第五步:invokeBeanFactoryPostProcessors(beanFactory):
-	
+## 第五步:invokeBeanFactoryPostProcessors(beanFactory):Instantiate and invoke all registered BeanFactoryPostProcessor beans,respecting explicit order if given.Must be called before singleton instantiation.
+                                                    	
    ### 两个接口:接口BeanDefinitionRegistryPostProcessor 继承自 BeanFactoryPostProcessor
 	
-   - 如果beanFactory是BeanDefinitionRegistry先执行 BeanDefinitionRegistryPostProcessor的postProcessBeanDefinitionRegistry方法:
+   - 如果beanFactory是 BeanDefinitionRegistry 先执行 BeanDefinitionRegistryPostProcessor的 postProcessBeanDefinitionRegistry方法:
 	    
-     (1) 获取所有的BeanDefinitionRegistryPostProcessor；
+     (1) 获取所有的BeanDefinitionRegistryPostProcessor;
 		
      (2) 看先执行实现了PriorityOrdered优先级接口的BeanDefinitionRegistryPostProcessor,执行 invokeBeanDefinitionRegistryPostProcessors=>postProcessBeanDefinitionRegistry
 			
@@ -54,7 +138,7 @@
 	
    - 否则直接执行 invokeBeanFactoryPostProcessors(postProcessors,beanFactory)=>postProcessBeanFactory
 		
-   - 最后执行所有的BeanFactoryPostProcessor的方法:
+   - 最后执行所有的 BeanFactoryPostProcessor 的方法:
 
      (1) 获取所有的BeanFactoryPostProcessor
 		
