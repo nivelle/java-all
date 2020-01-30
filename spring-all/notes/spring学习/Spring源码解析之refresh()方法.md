@@ -247,7 +247,7 @@
    
    - beanFactory.setTempClassLoader(null);// Stop using the temporary ClassLoader for type matching.
    
-   - beanFactory.freezeConfiguration();//冻结bean定义,保证缓存有效;Allow for caching all bean definition metadata, not expecting further changes.
+   - beanFactory.freezeConfiguration();//冻结所有bean定义，注册的bean定义不会被修改或进一步后处理，因为马上要创建 Bean 实例对象了;Allow for caching all bean definition metadata, not expecting further changes.
 
    - beanFactory.preInstantiateSingletons();初始化后剩下的单实例非懒加载的bean;// Instantiate all remaining (non-lazy-init) singletons.
    
@@ -259,7 +259,7 @@
       
      ##### 判断是否是FactoryBean => isFactoryBean(beanName)
             
-     ##### 是工厂bean
+     ##### 是工厂bean,则利用工厂方法创建bean
             
       //是 A standard FactoryBean is not expected to initialize eagerly,工厂方法获取bean
       - Object bean = getBean(FACTORY_BEAN_PREFIX + beanName);
@@ -272,9 +272,9 @@
 
           - 获取Bean的定义信息 => getMergedLocalBeanDefinition(beanName)
 
-          - 获取当前Bean依赖的其他Bean;如果有按照getBean()把依赖的Bean先创建出来=>String[] dependsOn = mbd.getDependsOn();
+          - 获取当前Bean依赖的其他Bean;如果有按照getBean()把依赖的Bean先创建出来 => String[] dependsOn = mbd.getDependsOn();
 
-          - 启动单实例Bean的创建流程=>createBean(String beanName, RootBeanDefinition mbd, @Nullable Object[] args);
+          - 启动单实例Bean的创建流程 => createBean(String beanName, RootBeanDefinition mbd, @Nullable Object[] args);
                     
            // Give BeanPostProcessors a chance to return a proxy instead of the target bean instance.
           - Object bean = resolveBeforeInstantiation(beanName, mbdToUse);让BeanPostProcessor 返回代理对象;
@@ -315,7 +315,7 @@
 
              - 将创建的Bean添加到缓存中singletonObjects;
 					
-     ##### 不是工厂Bean,利用getBean(beanName)创建对象
+     ##### 不是工厂Bean,利用getBean(beanName)直接创建对象
             
      ##### 遍历所有的bean实现了 SmartInitializingSingleton接口的执行=>smartSingleton.afterSingletonsInstantiated()
                  
