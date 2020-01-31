@@ -49,6 +49,10 @@
        #### 如果不存在initMethodName对应的方法，并且是强制执行初始化方法(默认为强制), 则抛出异常;如果设置了非强制，找不到则直接返回
        
        - initMethod.invoke(bean);//调用初始化方法
+             
+  - wrappedBean = applyBeanPostProcessorsAfterInitialization(wrappedBean, beanName);
+  
+    - for (BeanPostProcessor processor : getBeanPostProcessors()) => processor.postProcessAfterInitialization(result, beanName)
         
 
 
