@@ -180,8 +180,6 @@
                
                - checkDependencies(beanName, mbd, filteredPds, pvs);// 依赖检查，对应depends-on属性
                
-               ##### 将所有PropertyValues中的属性填充到bean中
-               
                - applyPropertyValues(beanName, mbd, bw, pvs); 
 
             -  exposedObject = initializeBean(beanName, exposedObject, mbd);//对bean进行初始化
