@@ -1,4 +1,4 @@
-## Spring 的 createBean()
+## Spring 的 getBean()
 
 -  getBean(String name) 
 
