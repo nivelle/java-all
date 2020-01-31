@@ -98,7 +98,7 @@
      
        - beforePrototypeCreation(beanName);//创建实例前的操作（将beanName保存到prototypesCurrentlyInCreation缓存中）
       
-       - 创建Bean实例:prototypeInstance = createBean(beanName, mbd, args);
+       - 创建Bean实例:prototypeInstance = createBean(beanName, mbd, args); 
        
          ##### 子类实现: AbstractAutowireCapableBeanFactory
        
@@ -182,7 +182,7 @@
                
                - applyPropertyValues(beanName, mbd, bw, pvs); 
 
-            -  exposedObject = initializeBean(beanName, exposedObject, mbd);//对bean进行初始化
+            -  exposedObject = initializeBean(beanName, exposedObject, mbd);//对bean进行初始化 [initializeBean](./Spring源码解析之initializeBean()方法.md)
             
             #### 如果允许提前曝光实例，则进行循环依赖检查;earlySingletonReference只有在当前解析的bean存在循环依赖的情况下才会不为空
             
@@ -227,29 +227,3 @@
      - getTypeConverter().convertIfNecessary(bean, requiredType);//类型不对，则尝试转换bean类型
      
      - 返回创建出来的bean实例对象
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-
-
-       
-       
-
-
-
-

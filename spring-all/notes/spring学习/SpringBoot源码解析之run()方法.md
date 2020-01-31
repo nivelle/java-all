@@ -2,22 +2,16 @@
 
 ## 第一步: 开启启动时间监控
 
-```
 //非线程安全
-- StopWatch stopWatch = new StopWatch();
 
-```
+- StopWatch stopWatch = new StopWatch();
 
 ## 第二步: 开启headless配置模式
 
-```
 - configureHeadlessProperty();
-
-```
 
 ## 第二步: 通过 SpringFactoriesLoader 返回监听器
 
-````
 - SpringApplicationRunListeners listeners = getRunListeners(args);
     
     //构造监听器实例集合
@@ -29,12 +23,8 @@
     
 - listeners.starting();//springBoot开始启动监听器,监听器集合(starting,environmentPrepared,contextPrepared,contextLoaded,started,running or failed)如果启动失败,则回调失败处理器:callFailedListener
 
-
-````
-
 ## 第三步: 参数准备以及启动参数准备
 
-```
 - ApplicationArguments applicationArguments = new DefaultApplicationArguments(args);//启动参数构建
 
 - ConfigurableEnvironment environment = prepareEnvironment(listeners,applicationArguments);//参数:监听器集合,启动时的参数,构造一个ConfigurableEnvironment(Environment)
@@ -57,26 +47,16 @@
     
   - ConfigurationPropertySources.attach(environment);//Adapts each {@link PropertySource} managed by the environment to a {@link ConfigurationPropertySource} and allows classic {@link PropertySourcesPropertyResolver} calls to resolve using
 
-
-```
-
 ## 第四步: 忽略的配置
 
-````
 - configureIgnoreBeanInfo(environment);
   
-````
-
 ## 第五步: 打印启动标识
 
-```
 - Banner printedBanner = printBanner(environment);
-
-```
 
 ## 第六步: 创建容器
 			
-```
 - context = createApplicationContext(); 
 
   - contextClass = Class.forName(DEFAULT_SERVLET_WEB_CONTEXT_CLASS);//通过Class.forName()获取类实例；根据容器类型创建容器（AnnotationConfigServletWebServerApplicationContext;AnnotationConfigApplicationContext）
@@ -85,18 +65,12 @@
   
     - (KotlinDetector.isKotlinReflectPresent() && KotlinDetector.isKotlinType(ctor.getDeclaringClass()) ?KotlinDelegate.instantiateClass(ctor, args) : ctor.newInstance(args));//创建实例
 
-```
-
 ## 第七步:创建异常处理器
 
-```
 - exceptionReporters = getSpringFactoriesInstances(SpringBootExceptionReporter.class,new Class[] { ConfigurableApplicationContext.class }, context);
-
-```
 
 ## 第八步: 容器准备
 
-```
 - prepareContext(context, environment, listeners, applicationArguments,printedBanner);
   
   - postProcessApplicationContext(context);//将 internalConfigurationBeanNameGenerator;resourceLoader;ConversionService设置到当前上下文context
@@ -130,6 +104,7 @@
       - new BeanDefinitionLoader(registry, sources);//参数:当前上下文和需要加载的资源;
       
       ```
+      
       BeanDefinitionLoader(BeanDefinitionRegistry registry, Object... sources) {
       		Assert.notNull(registry, "Registry must not be null");
       		Assert.notEmpty(sources, "Sources must not be empty");
@@ -143,7 +118,7 @@
       		this.scanner = new ClassPathBeanDefinitionScanner(registry);//环境变量处的解析器
       		this.scanner.addExcludeFilter(new ClassExcludeFilter(sources));//排除过滤器
       	}
-      
+      	
       ```
         
         - new AnnotatedBeanDefinitionReader(registry);
@@ -196,52 +171,32 @@
   - listeners.contextLoaded(context);//监听器容器加载完毕事件触发
 
 
-```
-
 ## 第九步: 容器刷新
 
-```
+
 - refreshContext(context);//((AbstractApplicationContext) applicationContext).refresh()
 
-  - refresh(context);//子类 Spring源码分析值refresh()方法
+  - refresh(context);//子类 Spring源码分析值refresh()方法 [refresh](./Spring源码解析之refresh()方法.md)
 
-```
 
 ## 第十步: 刷新之后
 
-```
 - afterRefresh(context, applicationArguments);
-
-```
-
 
 ## 第十一步: 停止启动时间监控
 
-```
 - stopWatch.stop();
-
-```
-
 
 ## 第十二步: 容器启动成功监听器
 
-```
 - listeners.started(context);
-
-```
 
 ## 第十三步: 启动后回调函数
 
-```
 - callRunners(context, applicationArguments);
-
-```
-
 
 ## 第十四步: 容器运行中监听器
 
-```
 - listeners.running(context);
 
-```
 

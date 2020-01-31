@@ -262,7 +262,7 @@
      ##### 是工厂bean,则利用工厂方法创建bean
             
       //是 A standard FactoryBean is not expected to initialize eagerly,工厂方法获取bean
-      - Object bean = getBean(FACTORY_BEAN_PREFIX + beanName);
+      - Object bean = getBean(FACTORY_BEAN_PREFIX + beanName); [getBean](./Spring源码解析之createBean()方法.md)
 
      ###### 赋值之前使用后置处理器:
 
