@@ -98,8 +98,114 @@
      
        - beforePrototypeCreation(beanName);//创建实例前的操作（将beanName保存到prototypesCurrentlyInCreation缓存中）
       
-       - prototypeInstance = createBean(beanName, mbd, args);//创建Bean实例
-      
+       - 创建Bean实例:prototypeInstance = createBean(beanName, mbd, args);
+       
+         ##### 子类实现: AbstractAutowireCapableBeanFactory
+       
+         - Class<?> resolvedClass = resolveBeanClass(mbd, beanName);//获取类的全限定名
+         
+         #### 如果resolvedClass存在，并且mdb的beanClass类型不是Class，并且mdb的beanClass不为空（则代表beanClass存的是Class的name）,则使用mdb深拷贝一个新的RootBeanDefinition副本，并且将解析的Class赋值给拷贝的RootBeanDefinition副本的beanClass属性，该拷贝副本取代mdb用于后续的操作
+         
+         - mbdToUse = new RootBeanDefinition(mbd);
+         
+         - mbdToUse.setBeanClass(resolvedClass);
+         
+         - mbdToUse.prepareMethodOverrides();//验证及准备覆盖的方法（对override属性进行标记及验证）
+           //Give BeanPostProcessors a chance to return a proxy instead of the target bean instance. 返回的是代理对象
+         - Object bean = resolveBeforeInstantiation(beanName, mbdToUse);//实例化前的处理，给InstantiationAwareBeanPostProcessor一个机会返回代理对象来替代真正的bean实例，达到“短路”效果
+           
+           #### mbd不是合成的，并且BeanFactory中存在InstantiationAwareBeanPostProcessor
+           
+           - Class<?> targetType = determineTargetType(beanName, mbd);//解析beanName对应的Bean实例的类型
+
+           - bean = applyBeanPostProcessorsBeforeInstantiation(targetType, beanName);//实例化前的后置处理器应用（处理InstantiationAwareBeanPostProcessor）
+            
+           - bean = applyBeanPostProcessorsAfterInitialization(bean, beanName);//如果bean不为空，则将beforeInstantiationResolved赋值为true，代表在实例化之前已经解析
+          
+         -  Object beanInstance = doCreateBean(beanName, mbdToUse, args);
+         
+            - BeanWrapper instanceWrapper = null;//新建Bean包装类
+            
+            - instanceWrapper = this.factoryBeanInstanceCache.remove(beanName);//如果是FactoryBean，则需要先移除未完成的FactoryBean实例的缓存
+            
+            - instanceWrapper = createBeanInstance(beanName, mbd, args);//根据beanName、mbd、args，使用对应的策略创建Bean实例，并返回包装类BeanWrapper
+
+            - final Object bean = (instanceWrapper != null ? instanceWrapper.getWrappedInstance() : null);//拿到创建好的Bean实例
+            
+            - Class<?> beanType = (instanceWrapper != null ? instanceWrapper.getWrappedClass() : null);//拿到Bean实例的类型
+            
+            #### // Allow post-processors to modify the merged bean definition.
+            
+            #### 应用后置处理器MergedBeanDefinitionPostProcessor，允许修改MergedBeanDefinition,Autowired注解正是通过此方法实现注入类型的预解析
+            
+            - applyMergedBeanDefinitionPostProcessors(mbd, beanType, beanName); 
+            
+            -  boolean earlySingletonExposure = (mbd.isSingleton() && this.allowCircularReferences && isSingletonCurrentlyInCreation(beanName));//判断是否需要提早曝光实例：单例 && 允许循环依赖 && 当前bean正在创建中
+            
+            -  addSingletonFactory(beanName, new ObjectFactory<Object>();//提前曝光beanName的ObjectFactory，用于解决循环引用
+            
+               - getEarlyBeanReference(beanName, mbd, bean);//应用后置处理器SmartInstantiationAwareBeanPostProcessor，允许返回指定bean的早期引用，若没有则直接返回bean
+            
+            -  Object exposedObject = bean;//Initialize the bean instance.  初始化bean实例。
+            
+            #### 对bean进行属性填充；其中，可能存在依赖于其他bean的属性，则会递归初始化依赖的bean实例
+            
+            -  populateBean(beanName, mbd, instanceWrapper);
+            
+               - PropertyValues pvs = mbd.getPropertyValues();//返回此bean的属性值
+               
+               // Give any InstantiationAwareBeanPostProcessors the opportunity to modify the state of the bean before properties are set. This can be used, for example,
+               // to support styles of field injection.
+               - boolean continueWithPropertyPopulation = true;
+               
+               #### 如果mbd不是合成的 && 存在InstantiationAwareBeanPostProcessor，则遍历处理InstantiationAwareBeanPostProcessor
+               
+               - !ibp.postProcessAfterInstantiation(bw.getWrappedInstance(), beanName);//在bean实例化后，属性填充之前被调用，允许修改bean的属性，如果返回false，则跳过之后的属性填充
+               
+               - continueWithPropertyPopulation = false;//如果返回false，将continueWithPropertyPopulation赋值为false，代表要跳过之后的属性填充
+               
+               - autowireByName(beanName, mbd, bw, newPvs);//解析autowireByName的注入
+               
+               - autowireByType(beanName, mbd, bw, newPvs);//解析autowireByType的注入
+               
+               - boolean hasInstAwareBpps = hasInstantiationAwareBeanPostProcessors();//BeanFactory是否注册过InstantiationAwareBeanPostProcessors
+               
+               - boolean needsDepCheck = (mbd.getDependencyCheck() != RootBeanDefinition.DEPENDENCY_CHECK_NONE);//是否需要依赖检查
+
+               #### if (hasInstAwareBpps || needsDepCheck)
+               
+               - PropertyDescriptor[] filteredPds = filterPropertyDescriptorsForDependencyCheck(bw, mbd.allowCaching);
+               
+               - pvs = ibp.postProcessPropertyValues(pvs, filteredPds, bw.getWrappedInstance(), beanName);//应用后置处理器InstantiationAwareBeanPostProcessor的方法postProcessPropertyValues，进行属性填充前的再次处理。例子：现在最常用的@Autowire属性注入就是这边注入依赖的bean实例对象
+               
+               - checkDependencies(beanName, mbd, filteredPds, pvs);// 依赖检查，对应depends-on属性
+               
+               ##### 将所有PropertyValues中的属性填充到bean中
+               
+               - applyPropertyValues(beanName, mbd, bw, pvs); 
+
+            -  exposedObject = initializeBean(beanName, exposedObject, mbd);//对bean进行初始化
+            
+            #### 如果允许提前曝光实例，则进行循环依赖检查;earlySingletonReference只有在当前解析的bean存在循环依赖的情况下才会不为空
+            
+            - Object earlySingletonReference = getSingleton(beanName, false);
+            
+            - exposedObject = earlySingletonReference;//如果exposedObject没有在initializeBean方法中被增强，则不影响之前的循环引用
+            
+            #### 如果exposedObject在initializeBean方法中被增强 && 不允许在循环引用的情况下使用注入原始bean实例 && 当前bean有被其他bean依赖
+            
+            - String[] dependentBeans = getDependentBeans(beanName);//拿到依赖当前bean的所有bean的beanName数组
+            
+            - !removeSingletonIfCreatedForTypeCheckOnly(dependentBean);//尝试移除这些bean的实例，因为这些bean依赖的bean已经被增强了，他们依赖的bean相当于脏数据
+            
+            -  actualDependentBeans.add(dependentBean);//移除失败的添加到 actualDependentBeans
+            
+            #### 注册用于销毁的bean，执行销毁操作的有三种：自定义destroy方法、DisposableBean接口、DestructionAwareBeanPostProcessor
+            
+            - registerDisposableBeanIfNecessary(beanName, bean, mbd);
+            
+            - return exposedObject;   //完成创建并返回
+            
        - afterPrototypeCreation(beanName);//创建实例后的操作（将创建完的beanName从prototypesCurrentlyInCreation缓存中移除）
       
        - bean = getObjectForBeanInstance(prototypeInstance, name, beanName, mbd);
@@ -114,9 +220,9 @@
        
        - createBean(beanName, mbd, args);//创建实例
        
-       -  afterPrototypeCreation(beanName);//创建实例后的操作（将创建完的beanName从prototypesCurrentlyInCreation缓存中移除）
+       - afterPrototypeCreation(beanName);//创建实例后的操作（将创建完的beanName从prototypesCurrentlyInCreation缓存中移除）
        
-       -  bean = getObjectForBeanInstance(scopedInstance, name, beanName, mbd)//创建Bean实例
+       - bean = getObjectForBeanInstance(scopedInstance, name, beanName, mbd)//创建Bean实例
        
      - if (requiredType != null && bean != null && !requiredType.isInstance(bean))
      
