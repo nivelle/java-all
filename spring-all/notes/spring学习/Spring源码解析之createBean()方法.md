@@ -1,6 +1,6 @@
 ## Spring 的 getBean()
 
--  getBean(String name) 
+### getBean(String name) 
 
    - doGetBean(final String name, final Class<T> requiredType, final Object[] args, boolean typeCheckOnly);
    
@@ -20,10 +20,10 @@
                 
      - Object singletonObject = this.singletonObjects.get(beanName);//从单例对象缓存中获取beanName对应的单例对象;如果单例对象缓存中没有，并且该beanName对应的单例bean正在创建中
        
+       #### 从早期单例对象缓存中获取单例对象（之所称成为早期单例对象，是因为earlySingletonObjects里的对象的都是通过提前曝光的ObjectFactory创建出来的，还未进行属性填充等操作)如果在早期单例对象缓存中也没有，并且允许创建早期单例对象引用
+
        - singletonObject = this.earlySingletonObjects.get(beanName);
-       //从早期单例对象缓存中获取单例对象（之所称成为早期单例对象，是因为earlySingletonObjects里的对象的都是通过提前曝光的ObjectFactory创建出来的，还未进行属性填充等操作)
-       //如果在早期单例对象缓存中也没有，并且允许创建早期单例对象引用
-       
+              
        - ObjectFactory<?> singletonFactory = this.singletonFactories.get(beanName);//从单例工厂缓存中获取beanName的单例工厂
        
        - singletonObject = singletonFactory.getObject();//如果存在单例对象工厂，则通过工厂创建一个单例对象
@@ -111,48 +111,59 @@
          - mbdToUse.setBeanClass(resolvedClass);
          
          - mbdToUse.prepareMethodOverrides();//验证及准备覆盖的方法（对override属性进行标记及验证）
-           //Give BeanPostProcessors a chance to return a proxy instead of the target bean instance. 返回的是代理对象
-         - Object bean = resolveBeforeInstantiation(beanName, mbdToUse);//实例化前的处理，给InstantiationAwareBeanPostProcessor一个机会返回代理对象来替代真正的bean实例，达到“短路”效果
+          
+           ### 实例化前的处理，给InstantiationAwareBeanPostProcessor一个机会返回代理对象来替代真正的bean实例，达到“短路”效果
+           
+         - Object bean = resolveBeforeInstantiation(beanName, mbdToUse); //Give BeanPostProcessors a chance to return a proxy instead of the target bean instance. 返回的是代理对象
            
            #### mbd不是合成的，并且BeanFactory中存在InstantiationAwareBeanPostProcessor
            
            - Class<?> targetType = determineTargetType(beanName, mbd);//解析beanName对应的Bean实例的类型
 
+           #### 如果返回的bean不为空，会跳过Spring默认的实例化过程所以只能在这里调用BeanPostProcessor实现类的postProcessAfterInitialization方法
+           
            - bean = applyBeanPostProcessorsBeforeInstantiation(targetType, beanName);//实例化前的后置处理器应用（处理InstantiationAwareBeanPostProcessor）
-            
-           - bean = applyBeanPostProcessorsAfterInitialization(bean, beanName);//如果bean不为空，则将beforeInstantiationResolved赋值为true，代表在实例化之前已经解析
-          
-         -  Object beanInstance = doCreateBean(beanName, mbdToUse, args);
+        
+           - bean = applyBeanPostProcessorsAfterInitialization(bean, beanName);
+           
+           - mbd.beforeInstantiationResolved = (bean != null);//如果bean不为空，则将beforeInstantiationResolved赋值为true，代表在实例化之前已经解析
+           
+           ### 未短路情况下,创建Bean实例（真正创建Bean的方法）
+
+         - Object beanInstance = doCreateBean(beanName, mbdToUse, args);
          
             - BeanWrapper instanceWrapper = null;//新建Bean包装类
             
             - instanceWrapper = this.factoryBeanInstanceCache.remove(beanName);//如果是FactoryBean，则需要先移除未完成的FactoryBean实例的缓存
             
-            - instanceWrapper = createBeanInstance(beanName, mbd, args);//根据beanName、mbd、args，使用对应的策略创建Bean实例，并返回包装类BeanWrapper
-
+            ### 根据beanName、mbd、args，使用对应的策略创建Bean实例，并返回包装类BeanWrapper 
+        
+            - instanceWrapper = createBeanInstance(beanName, mbd, args); [createBeanInstance](./Spring源码解析之createBeanInstance()方法.md)
+            
             - final Object bean = (instanceWrapper != null ? instanceWrapper.getWrappedInstance() : null);//拿到创建好的Bean实例
             
             - Class<?> beanType = (instanceWrapper != null ? instanceWrapper.getWrappedClass() : null);//拿到Bean实例的类型
             
             #### // Allow post-processors to modify the merged bean definition.
             
-            #### 应用后置处理器MergedBeanDefinitionPostProcessor，允许修改MergedBeanDefinition,Autowired注解正是通过此方法实现注入类型的预解析
+            ### 应用后置处理器MergedBeanDefinitionPostProcessor，允许修改MergedBeanDefinition,Autowired 注解正是通过此方法实现注入类型的预解析
             
             - applyMergedBeanDefinitionPostProcessors(mbd, beanType, beanName); 
             
-            -  boolean earlySingletonExposure = (mbd.isSingleton() && this.allowCircularReferences && isSingletonCurrentlyInCreation(beanName));//判断是否需要提早曝光实例：单例 && 允许循环依赖 && 当前bean正在创建中
+            ### 判断是否需要提早曝光实例：单例 && 允许循环依赖 && 当前bean正在创建中
             
-            -  addSingletonFactory(beanName, new ObjectFactory<Object>();//提前曝光beanName的ObjectFactory，用于解决循环引用
+            - boolean earlySingletonExposure = (mbd.isSingleton() && this.allowCircularReferences && isSingletonCurrentlyInCreation(beanName));
             
-               - getEarlyBeanReference(beanName, mbd, bean);//应用后置处理器SmartInstantiationAwareBeanPostProcessor，允许返回指定bean的早期引用，若没有则直接返回bean
+            - addSingletonFactory(beanName, new ObjectFactory<Object>();//提前曝光beanName的ObjectFactory，用于解决循环引用
             
-            -  Object exposedObject = bean;//Initialize the bean instance.  初始化bean实例。
+              - getEarlyBeanReference(beanName, mbd, bean);//应用后置处理器SmartInstantiationAwareBeanPostProcessor，允许返回指定bean的早期引用，若没有则直接返回bean
             
-            #### 对bean进行属性填充；其中，可能存在依赖于其他bean的属性，则会递归初始化依赖的bean实例
+            - Object exposedObject = bean;//Initialize the bean instance.  初始化bean实例。
             
-            -  populateBean(beanName, mbd, instanceWrapper);
+            ### 对bean进行属性填充;其中，可能存在依赖于其他bean的属性，则会递归初始化依赖的bean实例
+            - populateBean(beanName, mbd, instanceWrapper);
             
-               - PropertyValues pvs = mbd.getPropertyValues();//返回此bean的属性值
+              - PropertyValues pvs = mbd.getPropertyValues();//返回此bean的属性值
                
                // Give any InstantiationAwareBeanPostProcessors the opportunity to modify the state of the bean before properties are set. This can be used, for example,
                // to support styles of field injection.
@@ -182,21 +193,21 @@
                
                - applyPropertyValues(beanName, mbd, bw, pvs); 
 
-            -  exposedObject = initializeBean(beanName, exposedObject, mbd);//对bean进行初始化 [initializeBean](./Spring源码解析之initializeBean()方法.md)
+            - exposedObject = initializeBean(beanName, exposedObject, mbd);//对bean进行初始化 [spring initializeBean()方法](./Spring源码解析之initializeBean()方法.md)
             
-            #### 如果允许提前曝光实例，则进行循环依赖检查;earlySingletonReference只有在当前解析的bean存在循环依赖的情况下才会不为空
+            #### 如果允许提前曝光实例，则进行循环依赖检查;earlySingletonReference 只有在当前解析的bean存在循环依赖的情况下才会不为空
+            ####(如果exposedObject在initializeBean方法中被增强 && 不允许在循环引用的情况下使用注入原始bean实例 && 当前bean有被其他bean依赖)
             
             - Object earlySingletonReference = getSingleton(beanName, false);
             
             - exposedObject = earlySingletonReference;//如果exposedObject没有在initializeBean方法中被增强，则不影响之前的循环引用
-            
-            #### 如果exposedObject在initializeBean方法中被增强 && 不允许在循环引用的情况下使用注入原始bean实例 && 当前bean有被其他bean依赖
-            
+                        
             - String[] dependentBeans = getDependentBeans(beanName);//拿到依赖当前bean的所有bean的beanName数组
             
             - !removeSingletonIfCreatedForTypeCheckOnly(dependentBean);//尝试移除这些bean的实例，因为这些bean依赖的bean已经被增强了，他们依赖的bean相当于脏数据
             
-            -  actualDependentBeans.add(dependentBean);//移除失败的添加到 actualDependentBeans
+            #### 跑出异常:BeanCurrentlyInCreationException: Bean with name '" + beanName + "' has been injected into other beans 
+            -  actualDependentBeans.add(dependentBean);//移除失败的添加到 actualDependentBeans,如果集合不为空则跑出异常
             
             #### 注册用于销毁的bean，执行销毁操作的有三种：自定义destroy方法、DisposableBean接口、DestructionAwareBeanPostProcessor
             
