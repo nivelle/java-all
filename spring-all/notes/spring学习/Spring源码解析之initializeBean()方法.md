@@ -24,7 +24,7 @@
 
 - protected Object initializeBean(final String beanName, final Object bean, @Nullable RootBeanDefinition mbd)
 
-  - invokeAwareMethods(beanName, bean);
+  - invokeAwareMethods(beanName, bean);//执行aware方法
   
     -  if (bean instanceof BeanNameAware) => ((BeanNameAware) bean).setBeanName(beanName);
     
@@ -36,7 +36,7 @@
   
     - for (BeanPostProcessor processor : getBeanPostProcessors()) => processor.postProcessBeforeInitialization(result, beanName);
     
-  - invokeInitMethods(beanName, wrappedBean, mbd);
+  - invokeInitMethods(beanName, wrappedBean, mbd);//自定义的初始化方法
     
     -  ((InitializingBean) bean).afterPropertiesSet();//调用afterPropertiesSet方法
     

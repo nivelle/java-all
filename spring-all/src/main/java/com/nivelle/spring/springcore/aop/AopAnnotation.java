@@ -1,4 +1,4 @@
-package com.nivelle.spring.springboot.aop;
+package com.nivelle.spring.springcore.aop;
 
 import java.lang.annotation.*;
 

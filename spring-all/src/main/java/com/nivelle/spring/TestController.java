@@ -8,6 +8,7 @@ import com.nivelle.spring.pojo.Dog;
 import com.nivelle.spring.springboot.dao.ActivityDaoImpl;
 import com.nivelle.spring.springboot.entity.ActivityPvEntity;
 import com.nivelle.spring.springboot.mapper.ActivityPvMapper;
+import com.nivelle.spring.springcore.aop.MyService;
 import com.nivelle.spring.springcore.basics.InitSpringBean;
 import com.nivelle.spring.springcore.basics.XmlBean;
 import com.nivelle.spring.springcore.factorybean.*;
@@ -47,6 +48,9 @@ public class TestController {
 
     @Autowired
     ApplicationContext applicationContext;
+
+    @Autowired
+    MyService myService;
 
     /**
      * 获取上下文
@@ -359,6 +363,16 @@ public class TestController {
         time.add(timeLine1);
         time.add(bean);
         return time;
+    }
+
+    /**
+     * 使用AOP代理
+     * @return
+     */
+    @RequestMapping("myService")
+    public String writeLog(){
+        myService.writeLog();
+        return "SUCCESS";
     }
 
 }

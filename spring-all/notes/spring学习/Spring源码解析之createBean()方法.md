@@ -113,10 +113,11 @@
          - mbdToUse.prepareMethodOverrides();//验证及准备覆盖的方法（对override属性进行标记及验证）
           
            ### 实例化前的处理，给InstantiationAwareBeanPostProcessor一个机会返回代理对象来替代真正的bean实例，达到“短路”效果
+                      
+         - Object bean = resolveBeforeInstantiation(beanName, mbdToUse); //Give BeanPostProcessors a chance to return a proxy instead of the target bean ins返回的是代理对象;            [Spring源码解析之AOP实现.md](AnnotationAwareAspectJAutoProxyCreator 后置处理器的使用,返回AOP代理类)
+           [AnnotationAwareAspectJAutoProxyCreator 后置处理器的使用,返回AOP代理类](./Spring源码解析之AOP实现.md) 
            
-         - Object bean = resolveBeforeInstantiation(beanName, mbdToUse); //Give BeanPostProcessors a chance to return a proxy instead of the target bean instance. 返回的是代理对象
-           
-           #### mbd不是合成的，并且BeanFactory中存在InstantiationAwareBeanPostProcessor
+           #### if (!mbd.isSynthetic() && hasInstantiationAwareBeanPostProcessors());//mbd不是合成的，并且BeanFactory中存在InstantiationAwareBeanPostProcessor
            
            - Class<?> targetType = determineTargetType(beanName, mbd);//解析beanName对应的Bean实例的类型
 
@@ -128,7 +129,7 @@
            
            - mbd.beforeInstantiationResolved = (bean != null);//如果bean不为空，则将beforeInstantiationResolved赋值为true，代表在实例化之前已经解析
            
-           ### 未短路情况下,创建Bean实例（真正创建Bean的方法）
+         ### 未短路情况下,创建Bean实例（真正创建Bean的方法）
 
          - Object beanInstance = doCreateBean(beanName, mbdToUse, args);
          
