@@ -1,6 +1,6 @@
 package com.nivelle.spring.springcore.annotation;
 
-import com.nivelle.base.pojo.UserInfo;
+import com.nivelle.spring.springboot.entity.UserInfoEntity;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 /**
  * BeanDefinitionRegistryPostProcessor 接口可以看作是 BeanFactoryPostProcessor 和 ImportBeanDefinitionRegistrar的功能集合，
  * 既可以获取和修改BeanDefinition的元数据，也可以实现BeanDefinition的注册、移除等操作。
- *
+ * <p>
  * 执行时机 : 在BeanDefinitionRegistry的标准初始化之后所有其他一般的BeanFactoryPostProcessor执行之前执行，此时所有的bean定义已经加载但是还没有bean实例被创建。
  *
  * @author fuxinzhong
@@ -26,7 +26,7 @@ public class MyBeanDefinitionRegistryPostProcessor implements BeanDefinitionRegi
 
     /**
      * 在应用上下文内部的bean definition registry的标准初始化之后修改对其进行修改
-     *
+     * <p>
      * 此时所有常规的bean定义已经被加载，但是还没有bean被实例化。
      *
      * @param registry
@@ -36,7 +36,7 @@ public class MyBeanDefinitionRegistryPostProcessor implements BeanDefinitionRegi
     public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
         System.err.println("postProcessBeanDefinitionRegistry");
         BeanDefinition beanDefinition = BeanDefinitionBuilder
-                .genericBeanDefinition(UserInfo.class)
+                .genericBeanDefinition(UserInfoEntity.class)
                 .getBeanDefinition();
 
         registry.registerBeanDefinition(beanName, beanDefinition);

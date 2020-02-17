@@ -1,5 +1,8 @@
 package com.nivelle.spring.springcore.annotation;
 
+import com.nivelle.spring.pojo.Car;
+import com.nivelle.spring.pojo.Dog;
+import com.nivelle.spring.springcore.annotation.bean.BeanImported;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.*;
 
