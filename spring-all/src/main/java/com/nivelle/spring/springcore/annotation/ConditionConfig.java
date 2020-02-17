@@ -1,6 +1,5 @@
 package com.nivelle.spring.springcore.annotation;
 
-import com.nivelle.spring.springcore.annotation.bean.ConditionBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;

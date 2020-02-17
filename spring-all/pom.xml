@@ -30,7 +30,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-tomcat</artifactId>
-            <version>2.1.7.RELEASE</version>
+            <version>2.2.4.RELEASE</version>
         </dependency>
         <!--lombok -->
         <dependency>

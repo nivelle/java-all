@@ -1,8 +1,5 @@
 package com.nivelle.spring.springcore.annotation;
 
-import com.nivelle.spring.pojo.Car;
-import com.nivelle.spring.pojo.Dog;
-import com.nivelle.spring.springcore.annotation.bean.BeanImported;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.*;
 
@@ -19,7 +16,6 @@ import org.springframework.context.annotation.*;
 @Configuration
 //返回true时将此类作为配置类，系统条件注解
 @Conditional(MyCondition.class)
-
 /**
  * @Import 导入另外一个配置类的方式注册bean, 也可以将一些普通java类注册成一个bean
  *
