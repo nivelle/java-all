@@ -1,8 +1,6 @@
 package com.nivelle.spring;
 
 import com.alibaba.dubbo.config.spring.context.annotation.EnableDubbo;
-import com.nivelle.spring.springcore.annotation.MyAnnotationImportBeanDefinitionRegistrar;
-import com.nivelle.spring.springcore.annotation.MyTypeFilter;
 import com.nivelle.spring.springcore.listener.contextevent.MyContextClosedEventListenerListener;
 import com.nivelle.spring.springcore.listener.contextevent.MyContextRefreshedEventListener;
 import com.nivelle.spring.springcore.listener.contextevent.MyContextStartedEventListener;
@@ -12,8 +10,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication

@@ -1,4 +1,4 @@
-# SpringBoot 之SpringMVC
+# SpringBoot 之 DispatcherServlet
 
 ## 1. ServletWebServerFactoryAutoConfiguration
 
@@ -135,3 +135,65 @@ public static class BeanPostProcessorsRegistrar implements ImportBeanDefinitionR
 - registration.setLoadOnStartup(webMvcProperties.getServlet().getLoadOnStartup());
 
 - multipartConfig.ifAvailable(registration::setMultipartConfig);
+
+## 3. DispatcherServlet 处理一个请求 
+
+- protected void doDispatch(HttpServletRequest request, HttpServletResponse response) throws Exception
+
+  - HandlerExecutionChain mappedHandler = null;//用于记录针对该请求的请求处理器 handler 以及有关的 HandlerInteceptor , 封装成一个HandlerExecutionChain, 在随后的逻辑中会被使用
+
+  - boolean multipartRequestParsed = false; //用于标记当前请求是否是一个文件上传请求
+  
+  - WebAsyncManager asyncManager = WebAsyncUtils.getAsyncManager(request);
+  
+  - ModelAndView mv = null;
+  
+  - Exception dispatchException = null;
+  
+  - processedRequest = checkMultipart(request);//检查请求是否文件上传请求
+  
+  - multipartRequestParsed = (processedRequest != request);//如果 processedRequest 和  request 不同，说明检测到了文件上传请求过程中才会出现的内容，现在把这个信息记录在 multipartRequestParsed
+  
+  - mappedHandler = getHandler(processedRequest);//这里根据请求自身，和 DispatcherServlet 的 handlerMappings 查找能够处理该请求的handler, 记录在 mappedHandler , 具体返回的类型是 HandlerExecutionChain,相当于 n 个 HandlerInterceptor + 1 个 handler 
+
+#### if (mappedHandler == null)
+
+  - noHandlerFound(processedRequest, response);//如果没有找到可以处理该请求的 handler ， 这里直接交给 noHandlerFound 处理,根据配置决定 抛出异常 或者返回 404
+  
+#### else
+
+  - HandlerAdapter ha = getHandlerAdapter(mappedHandler.getHandler());//根据所找到的 handler 和 DispatcherServlet 的 handlerAdapters 看看哪个 handlerAdapter可以执行这个 handler。
+  
+  - String method = request.getMethod();
+  
+  - boolean isGet = "GET".equals(method);
+ 
+#### if (isGet || "HEAD".equals(method)) 
+
+  - long lastModified = ha.getLastModified(request, mappedHandler.getHandler());
+  
+    - if (new ServletWebRequest(request, response).checkNotModified(lastModified) && isGet);// 如果是 GET/HEAD 模式，并且发现资源从上次访问到现在没被修改过，则直接返回
+  
+    - return
+  
+#### else
+
+  - if (!mappedHandler.applyPreHandle(processedRequest, response));//执行 mappedHandler 所有 HandlerInteceptor 的 preHandle 方法，如果有执行失败，在这里直接返回不再继续处理该请求
+  
+    - mv = ha.handle(processedRequest, response, mappedHandler.getHandler());//现在才真正由所找到的 HandlerAdapter  执行 所对应的 handler,返回结果是一个 ModelAndView 对象 mv， 或者 null
+  
+#### if (asyncManager.isConcurrentHandlingStarted()) return ;
+
+ - 	applyDefaultViewName(processedRequest, mv);//如果上面获取的 ModelAndView 对象 mv 不为 null， 并且没有含有 view，并且配置了缺省 view，这里应用缺省 view
+ 
+ - 	mappedHandler.applyPostHandle(processedRequest, response, mv);
+ 
+ - 	processDispatchResult(processedRequest, response, mappedHandler, mv, dispatchException);//处理 handler 结果 ModelAndView mv 1. 根据 view 名称 或者 异常找到最终要使用的 view 2. 渲染 view 3. 执行 mappedHandler 所有 HandlerInteceptor 的 afterCompletion 方法
+ 
+ - if (asyncManager.isConcurrentHandlingStarted()) && if (mappedHandler != null)
+ 
+   - mappedHandler.applyAfterConcurrentHandlingStarted(processedRequest, response);
+   
+ - if (multipartRequestParsed)
+ 
+   - cleanupMultipart(processedRequest);
