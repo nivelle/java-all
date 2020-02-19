@@ -135,8 +135,7 @@
             
                 - beanFactory.setAutowireCandidateResolver(new ContextAnnotationAutowireCandidateResolver());// providing support for qualifier annotations as well as for lazy resolution
             
-                - beanDefs.add();//设置一些基础的 beanPostProcess
-                 例如: internalConfigurationAnnotationProcessor(ConfigurationClassPostProcessor);internalAutowiredAnnotationProcessor;internalCommonAnnotationProcessor
+                - beanDefs.add();//设置一些基础的 beanPostProcess例如: internalConfigurationAnnotationProcessor(ConfigurationClassPostProcessor);internalAutowiredAnnotationProcessor;internalCommonAnnotationProcessor
                 
                   ;internalEventListenerProcessor;internalEventListenerFactory
 
