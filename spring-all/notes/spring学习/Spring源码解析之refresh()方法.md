@@ -123,7 +123,9 @@
               - this.reader.register(ClassUtils.toClassArray(this.annotatedClasses));
 
 ## 第五步:invokeBeanFactoryPostProcessors(beanFactory):Instantiate and invoke all registered BeanFactoryPostProcessor beans,respecting explicit order if given.Must be called before singleton instantiation.
-                                                    	
+      
+   ### 委托给:PostProcessorRegistrationDelegate.invokeBeanFactoryPostProcessors(beanFactory, getBeanFactoryPostProcessors());来实现功能
+                                                 	
    ### 两个接口:接口BeanDefinitionRegistryPostProcessor 继承自 BeanFactoryPostProcessor
 	
    - 如果beanFactory是 BeanDefinitionRegistry 先执行 BeanDefinitionRegistryPostProcessor的 postProcessBeanDefinitionRegistry方法:
