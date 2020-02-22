@@ -72,7 +72,7 @@ public class AnnotationTransactionAttributeSource extends AbstractFallbackTransa
       
       ```
 
-### AbstractFallbackTransactionAttributeSource
+### AbstractFallbackTransactionAttributeSource(抽象父类,真正实现解析注解属性)
    
 public abstract class AbstractFallbackTransactionAttributeSource implements TransactionAttributeSource 
 
