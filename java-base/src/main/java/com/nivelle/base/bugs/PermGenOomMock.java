@@ -8,7 +8,7 @@ import java.util.List;
 
 public class PermGenOomMock {
 
-    public static void main(String args[]){
+    public static void main(String []args){
         URL url =null;
         List<ClassLoader> classLoaderList = new ArrayList<ClassLoader>();
         try {
@@ -22,6 +22,5 @@ public class PermGenOomMock {
         }catch (Exception e){
             e.printStackTrace();
         }
-
     }
 }

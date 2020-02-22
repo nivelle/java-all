@@ -8,7 +8,7 @@ public class StackErrorMock {
         call();
     }
 
-    public static void main(String args[]){
+    public static void main(String []args){
         StackErrorMock stackErrorMock = new StackErrorMock();
 
         try

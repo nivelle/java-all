@@ -11,7 +11,8 @@ public class StringOomMock {
         for (int i=0;i< Integer.MAX_VALUE;i++){
             String str = base + base;
             base = str;
-            list.add(str.intern());//手动入常
+            //手动入常
+            list.add(str.intern());
         }
     }
 }
