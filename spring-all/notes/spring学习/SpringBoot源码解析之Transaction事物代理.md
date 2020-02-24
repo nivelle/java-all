@@ -7,19 +7,19 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 
 #### protected Object invokeWithinTransaction(Method method, @Nullable Class<?> targetClass,final InvocationCallback invocation) throws Throwable;//将目标方法调用包围在事务处理逻辑中
 
-  - TransactionAttributeSource tas = getTransactionAttributeSource();
+  - TransactionAttributeSource tas = getTransactionAttributeSource();// 如果transaction attribute为空,该方法就是非事务（非编程式事务）
   
   - final TransactionAttribute txAttr = (tas != null? tas.getTransactionAttribute(method, targetClass) : null);//获取目标方法上的事务属性 
   
-  - final PlatformTransactionManager tm = determineTransactionManager(txAttr);//// 确定要使用的事务管理器
+  - final PlatformTransactionManager tm = determineTransactionManager(txAttr);// 确定要使用的事务管理器
   
   - final String joinpointIdentification = methodIdentification(method, targetClass, txAttr);
   
-  - if (txAttr == null || !(tm instanceof CallbackPreferringPlatformTransactionManager));//该 if 分支针对 tm 类型不是 CallbackPreferringPlatformTransactionManager 的情况
+  - if (txAttr == null || !(tm instanceof CallbackPreferringPlatformTransactionManager));//该 if 分支针对 tm 类型不是 CallbackPreferringPlatformTransactionManager 的情况(标准声明式事务：如果事务属性为空 或者 非回调偏向的事务管理器)
   
     - TransactionInfo txInfo = createTransactionIfNecessary(tm, txAttr, joinpointIdentification);
     
-    - retVal = invocation.proceedWithInvocation();//执行目标方法
+    - retVal = invocation.proceedWithInvocation();//执行目标方法,这里就是一个环绕增强，在这个proceed前后可以自己定义增强实现
     
     - completeTransactionAfterThrowing(txInfo, ex);//异常时事务机制的处理:1. 该异常需要回滚事务，则回滚事务 2. 该异常无需回滚事务，则提交事务
     
@@ -31,7 +31,7 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
       ```
     - commitTransactionAfterReturning(txInfo);//目标方法正常执行时提交事务
 
-  - else //该 else 分支针对 tm 类型是 CallbackPreferringPlatformTransactionManager 的情况
+  - else //该 else 分支针对 tm 类型是 CallbackPreferringPlatformTransactionManager 的情况;// 编程式事务:(回调偏向)
   
     - Object result = ((CallbackPreferringPlatformTransactionManager) tm).execute(txAttr, status -> {TransactionInfo txInfo = prepareTransactionInfo(tm, txAttr, joinpointIdentification, status);
     
@@ -58,16 +58,20 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 
 #### protected TransactionInfo createTransactionIfNecessary(@Nullable PlatformTransactionManager tm,@Nullable TransactionAttribute txAttr, final String joinpointIdentification)
 
-  - if (txAttr != null && txAttr.getName() == null)
+  - if (txAttr != null && txAttr.getName() == null);// 如果还没有定义名字，把连接点的ID定义成事务的名称
   
-  - TransactionAttribute txAttr = new DelegatingTransactionAttribute(txAttr)
-  
-  - TransactionStatus status= tm.getTransaction(txAttr);
+    - TransactionAttribute txAttr = new DelegatingTransactionAttribute(txAttr)
+      
+      - return joinpointIdentification;
+      
+  - TransactionStatus status= tm.getTransaction(txAttr);//根据事务属性获取事务TransactionStatus，大道归一，都是调用PlatformTransactionManager.getTransaction()
   
   - return prepareTransactionInfo(tm, txAttr, joinpointIdentification, status);
   
 #### protected TransactionInfo prepareTransactionInfo(@Nullable PlatformTransactionManager tm,@Nullable TransactionAttribute txAttr, String joinpointIdentification,@Nullable TransactionStatus status)
 
+   **构造一个TransactionInfo事务信息对象，绑定当前线程：ThreadLocal<TransactionInfo>**
+    
   - TransactionInfo txInfo = new TransactionInfo(tm, txAttr, joinpointIdentification);
   
   - if (txAttr != null) =》txInfo.newTransactionStatus(status);
