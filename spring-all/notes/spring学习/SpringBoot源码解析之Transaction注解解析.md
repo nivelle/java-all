@@ -1,4 +1,4 @@
-# SpringBoot 之 事物分析
+# SpringBoot 之 事物注解
 
 **Spring 支持三个不同的事务注解**
 
@@ -8,6 +8,136 @@
 
 3. EJB 3 事务注解 javax.ejb.TransactionAttribute
 
+### TransactionAutoConfiguration //SpringBoot 事物自动注解
+
+**条件**:
+
+1. @Configuration
+
+2. @ConditionalOnClass(PlatformTransactionManager.class);// 仅在类 PlatformTransactionManager 存在于 classpath 上时生效
+
+3. @AutoConfigureAfter({ JtaAutoConfiguration.class, HibernateJpaAutoConfiguration.class,DataSourceTransactionManagerAutoConfiguration.class, Neo4jDataAutoConfiguration.class });//在指定自动配置类应用之后应用
+
+4. @EnableConfigurationProperties(TransactionProperties.class);//确保前缀为 spring.transaction 的事务有关属性配置项被加载到 bean TransactionProperties
+
+- public TransactionManagerCustomizers platformTransactionManagerCustomizers(ObjectProvider<PlatformTransactionManagerCustomizer<?>> customizers)// 定义 bean TransactionManagerCustomizers platformTransactionManagerCustomizers
+
+  - return new TransactionManagerCustomizers(customizers.orderedStream().collect(Collectors.toList()));
+
+- public static class TransactionTemplateConfiguration 
+
+**条件**:
+
+1. @Configuration //嵌套配置类
+
+2. @ConditionalOnSingleCandidate(PlatformTransactionManager.class);// 仅在只有一个 PlatformTransactionManager bean 时才生效
+
+
+  - public TransactionTemplate transactionTemplate(PlatformTransactionManager transactionManager);// 定义 bean TransactionTemplate transactionTemplate
+
+  **条件**:
+  1. @ConditionalOnMissingBean(TransactionOperations.class);//仅在该 bean 不存在时才生效 2. @Bean
+    
+   - return new TransactionTemplate(transactionManager);
+
+- public static class EnableTransactionManagementConfiguration
+
+条件:
+
+1. 	@Configuration(proxyBeanMethods = false)
+
+2. 	@ConditionalOnBean(PlatformTransactionManager.class);// 仅在 bean PlatformTransactionManager 存在时才生效
+
+3. 	@ConditionalOnMissingBean(AbstractTransactionManagementConfiguration.class);//仅在 bean AbstractTransactionManagementConfiguration 不存在时才生效
+
+
+  - public static class JdkDynamicAutoProxyConfiguration
+
+  条件:
+
+     1. @Configuration 
+
+     2. @EnableTransactionManagement(proxyTargetClass = false);//在属性 spring.aop.proxy-target-class 被明确设置为 false 时启用注解
+
+     3. @ConditionalOnProperty(prefix = "spring.aop", name = "proxy-target-class", havingValue = "false",matchIfMissing = false)     
+
+  - public static class CglibAutoProxyConfiguration
+
+  条件:
+
+     1. @Configuration
+
+     2. @EnableTransactionManagement(proxyTargetClass = true);//在属性 spring.aop.proxy-target-class 缺失或者被明确设置为 true 时启用注解
+
+     3. @ConditionalOnProperty(prefix = "spring.aop", name = "proxy-target-class", havingValue = "true", 
+   			matchIfMissing = true)
+
+
+---
+
+### @EnableTransactionManagement(proxyTargetClass = false)
+
+- boolean proxyTargetClass() default false;//proxyTargetClass = false表示是JDK动态代理支持接口代理。true表示是Cglib代理支持子类继承代理。
+
+- AdviceMode mode() default AdviceMode.PROXY;//事务通知模式(切面织入方式)，默认代理模式（同一个类中方法互相调用拦截器不会生效），可以选择增强型AspectJ
+
+- int order() default Ordered.LOWEST_PRECEDENCE;//连接点上有多个通知时，排序，默认最低。值越大优先级越低。
+
+#### @Import(TransactionManagementConfigurationSelector.class)
+
+- public class TransactionManagementConfigurationSelector extends AdviceModeImportSelector<EnableTransactionManagement>
+
+  - protected String[] selectImports(AdviceMode adviceMode)
+  
+    - PROXY: return new String[] {AutoProxyRegistrar.class.getName(),ProxyTransactionManagementConfiguration.class.getName()};
+
+    - ASPECTJ: return new String[] {determineTransactionAspectClass()};
+    
+      - determineTransactionAspectClass()
+      
+        - return (ClassUtils.isPresent("javax.transaction.Transactional", getClass().getClassLoader()) ?TransactionManagementConfigUtils.JTA_TRANSACTION_ASPECT_CONFIGURATION_CLASS_NAME :TransactionManagementConfigUtils.TRANSACTION_ASPECT_CONFIGURATION_CLASS_NAME);
+
+#### public class AutoProxyRegistrar implements ImportBeanDefinitionRegistrar 
+
+- AopConfigUtils.registerAutoProxyCreatorIfNecessary(registry);
+
+  - return registerOrEscalateApcAsRequired(InfrastructureAdvisorAutoProxyCreator.class, registry, source);//给容器中注册一个 InfrastructureAdvisorAutoProxyCreator 组件；利用后置处理器机制在对象创建以后，包装对象，返回一个代理对象（增强器），代理对象执行方法利用拦截器链进行调用；
+
+- AopConfigUtils.forceAutoProxyCreatorToUseClassProxying(registry);
+
+  - BeanDefinition definition = registry.getBeanDefinition(AUTO_PROXY_CREATOR_BEAN_NAME);//internalAutoProxyCreator
+  
+  - definition.getPropertyValues().add("exposeProxy", Boolean.TRUE);
+
+#### public class ProxyTransactionManagementConfiguration extends AbstractTransactionManagementConfiguration
+
+- public BeanFactoryTransactionAttributeSourceAdvisor transactionAdvisor(TransactionAttributeSource transactionAttributeSource,TransactionInterceptor transactionInterceptor)
+
+  - BeanFactoryTransactionAttributeSourceAdvisor advisor = new BeanFactoryTransactionAttributeSourceAdvisor();
+
+  - advisor.setTransactionAttributeSource(transactionAttributeSource);
+  
+  - advisor.setAdvice(transactionInterceptor);
+  
+  - return advisor;
+
+- public TransactionAttributeSource transactionAttributeSource()
+ 
+  - return new AnnotationTransactionAttributeSource();
+
+- public TransactionInterceptor transactionInterceptor(TransactionAttributeSource transactionAttributeSource)
+  
+  - TransactionInterceptor interceptor = new TransactionInterceptor();
+  
+  - interceptor.setTransactionAttributeSource(transactionAttributeSource);
+
+  - interceptor.setTransactionManager(this.txManager);
+
+  - return interceptor;
+
+
+---
+   
 ### AnnotationTransactionAttributeSource(分析事物注解最终组织成一个TransactionAttribute供随后使用)
 
 public class AnnotationTransactionAttributeSource extends AbstractFallbackTransactionAttributeSource

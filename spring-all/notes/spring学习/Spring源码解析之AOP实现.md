@@ -121,3 +121,29 @@
     - Object proxy = createProxy(bean.getClass(), beanName, specificInterceptors, new SingletonTargetSource(bean));
     
     - this.proxyTypes.put(cacheKey, proxy.getClass());
+    
+#### protected Object createProxy(Class<?> beanClass, @Nullable String beanName,@Nullable Object[] specificInterceptors, TargetSource targetSource)
+
+- if (this.beanFactory instanceof ConfigurableListableBeanFactory)//如果是ConfigurableListableBeanFactory接口（咱们DefaultListableBeanFactory就是该接口的实现类）则，暴露目标类
+
+  - AutoProxyUtils.exposeTargetClass((ConfigurableListableBeanFactory) this.beanFactory, beanName, beanClass);//给beanFactory->beanDefinition定义一个属性：k=AutoProxyUtils.originalTargetClass,v=需要被代理的bean class
+
+-  ProxyFactory proxyFactory = new ProxyFactory();
+
+-  proxyFactory.copyFrom(this);
+
+- if (!proxyFactory.isProxyTargetClass())
+
+  - if (shouldProxyTargetClass(beanClass, beanName))
+    
+    - proxyFactory.setProxyTargetClass(true);//代理工厂设置代理目标类
+  
+  - else 
+  
+    -evaluateProxyInterfaces(beanClass, proxyFactory);//否则设置代理接口（JDK）
+    
+- Advisor[] advisors = buildAdvisors(beanName, specificInterceptors);//把拦截器包装成增强（通知）
+
+- proxyFactory.addAdvisors(advisors);
+
+
