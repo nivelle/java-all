@@ -224,9 +224,30 @@ public final TransactionStatus getTransaction(TransactionDefinition definition) 
       
 ### commit
 
+- public final void commit(TransactionStatus status) throws TransactionException
 
+  - if (status.isCompleted());//如果事务已经完结，报错无法再次提交
+  
+    - throw new IllegalTransactionStateException("Transaction is already completed - do not call commit or rollback more than once per transaction");  
+  
+  - DefaultTransactionStatus defStatus = (DefaultTransactionStatus) status;
+  
+    - if (defStatus.isLocalRollbackOnly()) //如果事务明确标记为回滚
+    
+      - processRollback(defStatus);//执行回滚
+      
+  - if (!shouldCommitOnGlobalRollbackOnly() && defStatus.isGlobalRollbackOnly());//如果不需要全局回滚时提交 且 全局回滚
+  
+    - processRollback(defStatus);//执行回滚
+    
+    - if (status.isNewTransaction() || isFailEarlyOnGlobalRollbackOnly());//// 仅在最外层事务边界（新事务）或显式地请求时抛出“未期望的回滚异常”
+    
+      -  throw new UnexpectedRollbackException("Transaction rolled back because it has been marked as rollback-only");
 
-
+  - **processCommit(defStatus);**
+  
+    - 
+  
 ### rollback
 
 
