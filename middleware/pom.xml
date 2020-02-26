@@ -155,7 +155,17 @@
             <artifactId>protostuff-api</artifactId>
             <version>1.5.9</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-mongodb</artifactId>
+            <version>2.2.4.RELEASE</version>
+        </dependency>
 
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.8.6</version>
+        </dependency>
 
         <!-- Spring Boot HBase 依赖 结束-->
     </dependencies>

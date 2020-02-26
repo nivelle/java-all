@@ -261,7 +261,6 @@
             <artifactId>java-base</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
-
         <!--监控 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
