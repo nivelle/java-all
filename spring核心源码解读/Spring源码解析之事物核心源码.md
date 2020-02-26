@@ -20,7 +20,7 @@ public final TransactionStatus getTransaction(TransactionDefinition definition) 
 
 - if (isExistingTransaction(transaction)) ;//检查当前线程是否存在事务
 
-  - return handleExistingTransaction(definition, transaction, debugEnabled);//对于已经存在的事物，根据不同传播机制不同处理
+  - return **handleExistingTransaction(definition, transaction, debugEnabled);**//对于已经存在的事物，根据不同传播机制不同处理
     
     - if (definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_NEVER);//1.NERVER（不支持当前事务;如果当前事务存在，抛出异常）报错
     
@@ -35,6 +35,55 @@ public final TransactionStatus getTransaction(TransactionDefinition definition) 
         来更新到线程中
         
         ```
+        - **protected final SuspendedResourcesHolder suspend(Object transaction) throws TransactionException** 
+          
+          - if (TransactionSynchronizationManager.isSynchronizationActive())//**1.当前存在同步**
+          
+          - List<TransactionSynchronization> suspendedSynchronizations = doSuspendSynchronization();//执行注册方法，并全部取出，把当前线程事物设置为不同步状态，说明这个事物已经被挂起了
+          
+          - suspendedResources = doSuspend(transaction);//**在DataSource的状态下，是取出连接的持有者对象**
+
+          ```
+          String name = TransactionSynchronizationManager.getCurrentTransactionName();
+          TransactionSynchronizationManager.setCurrentTransactionName(null);
+          boolean readOnly = TransactionSynchronizationManager.isCurrentTransactionReadOnly();
+          TransactionSynchronizationManager.setCurrentTransactionReadOnly(false);
+          Integer isolationLevel = TransactionSynchronizationManager.getCurrentTransactionIsolationLevel();
+          TransactionSynchronizationManager.setCurrentTransactionIsolationLevel(null);
+          boolean wasActive = TransactionSynchronizationManager.isActualTransactionActive();
+          TransactionSynchronizationManager.setActualTransactionActive(false);
+          
+          return new SuspendedResourcesHolder(suspendedResources, suspendedSynchronizations, name, readOnly, isolationLevel, wasActive);
+          
+          ```
+          - catch(RuntimeException ex)
+          
+            - doResumeSynchronization(suspendedSynchronizations);//doSuspend failed - original transaction is still active...
+           
+          - (Error err)
+            
+            - doResumeSynchronization(suspendedSynchronizations);//doSuspend failed - original transaction is still active...
+          
+          - else if (transaction != null)//**2.没有同步但，事务不为空，挂起事务** 
+          
+            - Object suspendedResources = doSuspend(transaction);// Transaction active but no synchronization active.
+               
+              ##### 子类实现:DataSourceTransactionManager
+              
+              - **protected Object doSuspend(Object transaction)**
+              
+                - DataSourceTransactionObject txObject = (DataSourceTransactionObject) transaction;
+                
+                - txObject.setConnectionHolder(null);//1.**把当前事务的connectionHolder数据库连接持有者清空。**
+                
+                - return TransactionSynchronizationManager.unbindResource(this.dataSource);//2.**当前线程解绑datasource**.其实就是ThreadLocal移除对应变量（TransactionSynchronizationManager类中定义的private static final ThreadLocal<Map<Object, Object>> resources = new NamedThreadLocal<Map<Object, Object>>("Transactional resources");）
+                                                                                                        
+            - return new SuspendedResourcesHolder(suspendedResources);
+          
+          - else
+            
+            - return null;// Neither transaction nor synchronization active.
+
       - boolean newSynchronization = (getTransactionSynchronization() == SYNCHRONIZATION_ALWAYS);//创建一个空事务
  
       - return prepareTransactionStatus(definition, null, false, newSynchronization, debugEnabled, suspendedResources);//Create a new TransactionStatus for the given arguments,also initializing transaction synchronization as appropriate.
@@ -49,6 +98,51 @@ public final TransactionStatus getTransaction(TransactionDefinition definition) 
      
       - doBegin(transaction, definition);
       
+        ##### 子类实现:DataSourceTransactionManager
+        
+        ```
+        1.DataSourceTransactionObject“数据源事务对象”，设置ConnectionHolder，再给ConnectionHolder设置各种属性：自动提交、超时、事务开启、隔离级别。
+        
+        2.给当前线程绑定一个线程本地变量，key=DataSource数据源  v=ConnectionHolder数据库连接。
+        
+        ```
+        
+        - DataSourceTransactionObject txObject = (DataSourceTransactionObject) transaction;
+        
+        - Connection con = null;
+        
+        - if (!txObject.hasConnectionHolder() || txObject.getConnectionHolder().isSynchronizedWithTransaction());//如果事务还没有connection或者connection在事务同步状态，重置新的connectionHolder
+        
+        - Connection newCon = this.dataSource.getConnection();
+        
+        - txObject.setConnectionHolder(new ConnectionHolder(newCon), true);// 重置新的connectionHolder
+        
+        - txObject.getConnectionHolder().setSynchronizedWithTransaction(true);//设置新的连接为事务同步中
+        
+        - con = txObject.getConnectionHolder().getConnection();
+        
+        - Integer previousIsolationLevel = DataSourceUtils.prepareConnectionForTransaction(con, definition);
+        
+        - txObject.setPreviousIsolationLevel(previousIsolationLevel);//DataSourceTransactionObject设置事务隔离级别
+        
+        - if (con.getAutoCommit());//**如果是自动提交切换到手动提交**
+        
+          - txObject.setMustRestoreAutoCommit(true);
+          
+          - con.setAutoCommit(false);
+          
+        - prepareTransactionalConnection(con, definition);// 如果只读，执行sql设置事务只读
+        
+        - txObject.getConnectionHolder().setTransactionActive(true);// 设置connection持有者的事务开启状态
+        
+        - int timeout = determineTimeout(definition);
+        
+        -  txObject.getConnectionHolder().setTimeoutInSeconds(timeout);// 设置超时秒数
+        
+        - if (txObject.isNewConnectionHolder())
+        
+        - TransactionSynchronizationManager.bindResource(getDataSource(), txObject.getConnectionHolder());// 绑定connection持有者到当前线程
+        
       - prepareSynchronization(status, definition);
       
       - return status;
@@ -129,6 +223,9 @@ public final TransactionStatus getTransaction(TransactionDefinition definition) 
   - return prepareTransactionStatus(definition, null, true, newSynchronization, debugEnabled, null);
       
 ### commit
+
+
+
 
 ### rollback
 
