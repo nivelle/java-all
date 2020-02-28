@@ -246,8 +246,48 @@ public final TransactionStatus getTransaction(TransactionDefinition definition) 
 
   - **processCommit(defStatus);**
   
-    - 
+    - boolean beforeCompletionInvoked = false;
+    
+    - **try**
+    
+    - prepareForCommit(status);
+    
+    - triggerBeforeCommit(status);
+    
+    - beforeCompletionInvoked = true;
+    
+    -  boolean globalRollbackOnly = false;//新事务 或 全局回滚失败
+    
+    -  if (status.isNewTransaction() || isFailEarlyOnGlobalRollbackOnly())
+      
+       - globalRollbackOnly = status.isGlobalRollbackOnly();
+    
+    - if (status.hasSavepoint());//有保存点，即嵌套事务
+    
+      - status.releaseHeldSavepoint();//释放保存点
+    
+    - else if(status.isNewTransaction());//新事物
+    
+      - doCommit(status);//调用事务处理器提交事务
+      
+    - if (globalRollbackOnly)//非新事务，且全局回滚失败，但是提交时没有得到异常，抛出异常
+    
+      - throw new UnexpectedRollbackException("Transaction silently rolled back because it has been marked as rollback-only");
+   
+    - **catch(UnexpectedRollbackException ex)** 
+    
+      - triggerAfterCompletion(status, TransactionSynchronization.STATUS_ROLLED_BACK);// 触发完成后事务同步，状态为回滚
   
+    - **catch(TransactionException ex)**
+    
+      - if (isRollbackOnCommitFailure()) //提交失败回滚
+      
+        - doRollbackOnCommitException(status, ex);
+        
+      - else
+      
+        -
+        
 ### rollback
 
 

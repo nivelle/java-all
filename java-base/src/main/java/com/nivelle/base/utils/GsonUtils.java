@@ -1,4 +1,4 @@
-package com.nivelle.base;
+package com.nivelle.base.utils;
 
 import com.google.gson.*;
 

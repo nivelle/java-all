@@ -11,6 +11,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -30,6 +31,11 @@ public class TestController {
     MongoTemplate mongoTemplate;
 
 
+    /**
+     * 添加记录
+     *
+     * @return
+     */
     @RequestMapping("/add")
     public Object add() {
         Map<String, Object> data = Maps.newHashMap();
@@ -44,6 +50,11 @@ public class TestController {
         return ResponseResult.newResponseResult().setSuccess(result);
     }
 
+    /**
+     * 主键查询
+     *
+     * @return
+     */
     @RequestMapping("/find")
     public Object find() {
         Map result = mongoTemplate.findById("111", Map.class, CLOUD_TABLE_NAME);
@@ -51,7 +62,11 @@ public class TestController {
         return ResponseResult.newResponseResult().setSuccess(user.getName());
     }
 
-
+    /**
+     * 更新
+     *
+     * @return
+     */
     @RequestMapping("/update")
     public Object update() {
         Query query = Query.query(Criteria.where("_id").is("111"));
@@ -60,5 +75,21 @@ public class TestController {
         update.set("name", null);
         update.set("user.age", 2);
         return ResponseResult.newResponseResult().setSuccess(mongoTemplate.updateFirst(query, update, CLOUD_TABLE_NAME));
+    }
+
+    /**
+     * 查询集合
+     *
+     * @return
+     */
+    @RequestMapping("/findAll")
+    public Object findAll() {
+        List<Map> resultList = mongoTemplate.findAll(Map.class, CLOUD_TABLE_NAME);
+
+        Object object = resultList.get(1).get("user");
+        User user = (User)object;
+        String userName = user.getName();
+        return ResponseResult.newResponseResult().setSuccess(userName);
+
     }
 }
