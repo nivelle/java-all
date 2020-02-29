@@ -1,4 +1,4 @@
-# SpringBoot 之 事物核心源码
+# Spring 源码之事物核心源码
 
 ```
 public interface PlatformTransactionManager {
@@ -250,9 +250,21 @@ public final TransactionStatus getTransaction(TransactionDefinition definition) 
     
     - **try**
     
-    - prepareForCommit(status);
+    - prepareForCommit(status);//源码是空的，没有拓展目前。
     
-    - triggerBeforeCommit(status);
+    - triggerBeforeCommit(status);//提交前触发操作
+    
+      - if (status.isNewSynchronization())
+      
+        - TransactionSynchronizationUtils.triggerBeforeCommit(status.isReadOnly());
+        
+          - for (TransactionSynchronization synchronization : TransactionSynchronizationManager.getSynchronizations())
+          
+            - synchronization.beforeCommit(readOnly);
+            
+            ##### jdbc子类实现:
+            
+            - SqlSessionUtils.beforeCommit()->this.holder.getSqlSession().commit();
     
     - beforeCompletionInvoked = true;
     
@@ -286,12 +298,165 @@ public final TransactionStatus getTransaction(TransactionDefinition definition) 
         
       - else
       
-        -
+        - triggerAfterCompletion(status, TransactionSynchronization.STATUS_UNKNOWN);
+    
+    - **catch (RuntimeException ex)**
+    
+      - if (!beforeCompletionInvoked)//如果3个前置步骤未完成，调用前置的最后一步操作
+      
+        - triggerBeforeCompletion(status);
+        
+        ##### jdbc子类实现:
+        
+        - SqlSessionUtils.beforeCompletion->TransactionSynchronizationManager.unbindResource(sessionFactory);// 解绑当前线程的会话工厂
+        
+        - this.holder.getSqlSession().close();//关闭会话。
+                                            
+    - doRollbackOnCommitException(status, ex);// 提交异常回滚
+    
+    - **catch (Error err)**
+    
+      - if (!beforeCompletionInvoked)// 如果3个前置步骤未完成，调用前置的最后一步操作
+      
+        - triggerBeforeCompletion(status);
+      
+      - doRollbackOnCommitException(status, err);//提交异常回滚
+      
+    - triggerAfterCommit(status);
+    
+      - TransactionSynchronizationUtils.triggerAfterCommit();
+      
+        - invokeAfterCommit(TransactionSynchronizationManager.getSynchronizations());
+        
+        - for (TransactionSynchronization synchronization : synchronizations)
+        
+        - synchronization.afterCommit();
+          
+    - finally
+    
+      -  triggerAfterCompletion(status, TransactionSynchronization.STATUS_COMMITTED);//触发注册方法
+      
+        - if (status.isNewSynchronization())
+        
+          - List<TransactionSynchronization> synchronizations = TransactionSynchronizationManager.getSynchronizations();
+
+          - TransactionSynchronizationManager.clearSynchronization();
+
+          - if (!status.hasTransaction() || status.isNewTransaction())
+          
+          - invokeAfterCompletion(synchronizations, completionStatus);
+          
+            - TransactionSynchronizationUtils.invokeAfterCompletion(synchronizations, completionStatus);
+            
+              - for (TransactionSynchronization synchronization : synchronizations)
+              
+                - synchronization.afterCompletion(completionStatus);
+                
+                ```
+                1. 如果会话任然活着，关闭会话;
+                
+                2. 重置各种属性：SQL会话同步器（SqlSessionSynchronization）的SQL会话持有者（SqlSessionHolder）的referenceCount引用计数、synchronizedWithTransaction同步事务、rollbackOnly只回滚、deadline超时时间点。
+                
+                ```
+        
+        - else if (!synchronizations.isEmpty())
+        
+          - registerAfterCompletionWithExistingTransaction(status.getTransaction(), synchronizations);
+          
+            - invokeAfterCompletion(synchronizations, TransactionSynchronization.STATUS_UNKNOWN);
+            
+              - TransactionSynchronizationUtils.invokeAfterCompletion(synchronizations, completionStatus);
+
+    - finally
+    
+      - cleanupAfterCompletion(status);
+      
+      ```
+      1. 设置事务状态为已完成。
+      
+      2. 如果是新的事务同步，解绑当前线程绑定的数据库资源，重置数据库连接
+         
+      3. 如果存在挂起的事务（嵌套事务），唤醒挂起的老事务的各种资源：数据库资源、同步器。
+      
+      ```
+      
+        - status.setCompleted();//设置事务状态完成
+        
+        - if (status.isNewSynchronization());//如果是新的同步，清空当前线程绑定的除了资源外的全部线程本地变量：包括事务同步器、事务名称、只读属性、隔离级别、真实的事务激活状态
+        
+          - TransactionSynchronizationManager.clear();
+          
+        - if (status.isNewTransaction());//如果是新的事务同步
+        
+          - doCleanupAfterCompletion(status.getTransaction());
+          
+            - DataSourceTransactionObject txObject = (DataSourceTransactionObject) transaction;
+            
+            -  if (txObject.isNewConnectionHolder())// 如果是最新的连接持有者，解绑当前线程绑定的<数据库资源，ConnectionHolder>
+            
+               - TransactionSynchronizationManager.unbindResource(this.dataSource);
+               
+               - Connection con = txObject.getConnectionHolder().getConnection();// 重置数据库连接（隔离级别、只读）
+               
+               - if (txObject.isMustRestoreAutoCommit())
+               
+                 - con.setAutoCommit(true);
+                 
+                 - DataSourceUtils.resetConnectionAfterTransaction(con, txObject.getPreviousIsolationLevel());
+                 
+            - if (txObject.isNewConnectionHolder())
+            
+              - DataSourceUtils.releaseConnection(con, this.dataSource);// 资源引用计数-1，关闭数据库连接
+              
+            - txObject.getConnectionHolder().clear();// 重置连接持有者的全部属性
+          
+        - if (status.getSuspendedResources() != null)
+        
+          - resume(status.getTransaction(), (SuspendedResourcesHolder) status.getSuspendedResources());//唤醒挂起的事务和资源（重新绑定之前挂起的数据库资源，唤醒同步器，注册同步器到TransactionSynchronizationManager）
+           
         
 ### rollback
 
+- public final void rollback(TransactionStatus status) throws TransactionException
 
+  - if (status.isCompleted())
+  
+    -  throw new IllegalTransactionStateException("Transaction is already completed - do not call commit or rollback more than once per transaction");
 
-
-
-
+  - DefaultTransactionStatus defStatus = (DefaultTransactionStatus) status;
+  
+  - processRollback(defStatus);
+  
+    - riggerBeforeCompletion(status);// 解绑当前线程绑定的会话工厂，并关闭会话
+    
+    - if (status.hasSavepoint()) //1.如果有保存点，即嵌套式事务
+    
+      - status.rollbackToHeldSavepoint();//回滚到保存点
+      
+    - else if (status.isNewTransaction());//如果就是一个简单事务
+    
+      - doRollback(status);//回滚
+      
+        - DataSourceTransactionObject txObject = (DataSourceTransactionObject) status.getTransaction();
+        
+        - Connection con = txObject.getConnectionHolder().getConnection();
+        
+        - con.rollback();
+      
+    - else if (status.hasTransaction());//当前存在事务且没有保存点，即加入当前事务的
+      
+      -  if (status.isLocalRollbackOnly() || isGlobalRollbackOnParticipationFailure())//如果已经标记为回滚 或 当加入事务失败时全局回滚（默认true）
+      
+        - doSetRollbackOnly(status);//设置当前connectionHolder：当加入一个已存在事务时回滚
+                                                                                          
+    - catch (RuntimeException ex) //关闭会话，重置SqlSessionHolder属性
+    
+      - triggerAfterCompletion(status, TransactionSynchronization.STATUS_UNKNOWN);
+      
+    - catch (Error err)
+    
+      - triggerAfterCompletion(status, TransactionSynchronization.STATUS_UNKNOWN);
+      
+    - triggerAfterCompletion(status, TransactionSynchronization.STATUS_ROLLED_BACK);
+    
+    - cleanupAfterCompletion(status);//解绑当前线程
