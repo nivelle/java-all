@@ -101,9 +101,8 @@
 
 - AopConfigUtils.registerAutoProxyCreatorIfNecessary(registry);
 
-  - return registerOrEscalateApcAsRequired(InfrastructureAdvisorAutoProxyCreator.class, registry, source);
-  //给容器中注册一个 InfrastructureAdvisorAutoProxyCreator 组件；利用后置处理器机制在对象创建以后，包装对象，返回一个代理对象（增强器），代理对象执行方法利用拦截器链进行调用；
-  //[aop实现](Spring源码解析之AOP实现.md)
+  - return registerOrEscalateApcAsRequired(InfrastructureAdvisorAutoProxyCreator.class, registry, source);//给容器中注册一个 InfrastructureAdvisorAutoProxyCreator 组件;利用后置处理器机制在对象创建以后,包装对象，返回一个代理对象（增强器),代理对象执行方法利用拦截器链进行调用;//[aop实现](Spring源码解析之AOP实现.md)
+  
 - AopConfigUtils.forceAutoProxyCreatorToUseClassProxying(registry);
 
   - BeanDefinition definition = registry.getBeanDefinition(AUTO_PROXY_CREATOR_BEAN_NAME);//internalAutoProxyCreator

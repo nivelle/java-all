@@ -12,36 +12,36 @@
         
         - return registerOrEscalateApcAsRequired(AnnotationAwareAspectJAutoProxyCreator.class, registry, source);
         
-        **registry.containsBeanDefinition(internalAutoProxyCreator) == true** 
+          **registry.containsBeanDefinition(internalAutoProxyCreator) == true** 
         
-        - BeanDefinition apcDefinition = registry.getBeanDefinition(AUTO_PROXY_CREATOR_BEAN_NAME);
+          - BeanDefinition apcDefinition = registry.getBeanDefinition(AUTO_PROXY_CREATOR_BEAN_NAME);
         
-          - if (!cls.getName().equals(apcDefinition.getBeanClassName()))
+            - if (!cls.getName().equals(apcDefinition.getBeanClassName()))
             
-            - int currentPriority = findPriorityForClass(apcDefinition.getBeanClassName());   
+              - int currentPriority = findPriorityForClass(apcDefinition.getBeanClassName());   
              
-              - private static int findPriorityForClass(@Nullable String className) {
+                - private static int findPriorityForClass(@Nullable String className) {
                 
-                - for (int i = 0; i < APC_PRIORITY_LIST.size(); i++)
+                  - for (int i = 0; i < APC_PRIORITY_LIST.size(); i++)
                 
-                  ```
-                   static {
+                    ```
+                     static {
                    		// Set up the escalation list...
                    		APC_PRIORITY_LIST.add(InfrastructureAdvisorAutoProxyCreator.class);
                    		APC_PRIORITY_LIST.add(AspectJAwareAdvisorAutoProxyCreator.class);
                    		APC_PRIORITY_LIST.add(AnnotationAwareAspectJAutoProxyCreator.class);
-                   	}
-                  ``` 
+                      	}
+                    ``` 
                 
                 - Class<?> clazz = APC_PRIORITY_LIST.get(i);
                 
                 - if (clazz.getName().equals(className))  =》 return i;
 
-            - int requiredPriority = findPriorityForClass(cls);
+          - int requiredPriority = findPriorityForClass(cls);
             
-            **if (currentPriority < requiredPriority)//三种:如果有权限大于当前AnnotationAwareAspectJAutoProxyCreator的类则使用权限大的类**
+          **if (currentPriority < requiredPriority)//三种:如果有权限大于当前AnnotationAwareAspectJAutoProxyCreator的类则使用权限大的类**
             
-              - apcDefinition.setBeanClassName(cls.getName());
+          - apcDefinition.setBeanClassName(cls.getName());
 
         **registry.containsBeanDefinition(internalAutoProxyCreator) == false**
         
@@ -54,8 +54,8 @@
         - beanDefinition.setRole(BeanDefinition.ROLE_INFRASTRUCTURE);
         
         - registry.registerBeanDefinition(AUTO_PROXY_CREATOR_BEAN_NAME, beanDefinition);//org.springframework.aop.config.internalAutoProxyCreator 
-    - AnnotationAttributes enableAspectJAutoProxy =
-      				AnnotationConfigUtils.attributesFor(importingClassMetadata, EnableAspectJAutoProxy.class);
+        
+   - AnnotationAttributes enableAspectJAutoProxy =AnnotationConfigUtils.attributesFor(importingClassMetadata, EnableAspectJAutoProxy.class);
       				
      **enableAspectJAutoProxy!=null** 
    				

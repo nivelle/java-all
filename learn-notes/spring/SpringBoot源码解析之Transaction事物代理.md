@@ -19,7 +19,44 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
   
     - TransactionInfo txInfo = createTransactionIfNecessary(tm, txAttr, joinpointIdentification);
     
-    - retVal = invocation.proceedWithInvocation();//执行目标方法,这里就是一个环绕增强，在这个proceed前后可以自己定义增强实现
+    - retVal = invocation.proceedWithInvocation();//执行目标方法,这里就是一个环绕增强，在这个proceed前后可以自己定义增强实现;InvocationCallback的proceedWithInvocation(),InvocationCallback是父类的内部回调接口，子类中实现该接口供父类调用，子类TransactionInterceptor中invocation.proceed()。回调方法执行
+    
+      **子类实现: invocation.proceed()=> ReflectiveMethodInvocation => ProxyMethodInvocation=>MethodInvocation=>Invocation=>Joinpoint** 
+      
+        ```
+        ReflectiveMethodInvocation类实现了ProxyMethodInvocation接口，但是ProxyMethodInvocation继承了3层接口...ProxyMethodInvocation->MethodInvocation->Invocation->Joinpoint
+        
+        1. Joinpoint: 连接点接口,定义了执行接口:Object proceed() throws Throwable; 执行当前连接点，并跳到拦截器链上的下一个拦截器。
+           
+        2. Invocation: 调用接口,继承自Joinpoint，定义了获取参数接口: Object[] getArguments();是一个带参数的、可被拦截器拦截的连接点。
+           
+        3. MethodInvocation: 方法调用接口,继承自Invocation,定义了获取方法接口: Method getMethod(); 是一个带参数的可被拦截的连接点方法。
+           
+        4. ProxyMethodInvocation：代理方法调用接口，继承自MethodInvocation，定义了获取代理对象接口：Object getProxy();是一个由代理类执行的方法调用连接点方法。
+           
+        5. ReflectiveMethodInvocation：实现了ProxyMethodInvocation接口，自然就实现了父类接口的的所有接口。获取代理类，获取方法，获取参数，用代理类执行这个方法并且自动跳到下一个连接点。
+        
+        ```
+        
+        ##### public Object proceed() throws Throwable
+        
+        - if (this.currentInterceptorIndex == this.interceptorsAndDynamicMethodMatchers.size() - 1);// 启动时索引为-1，唤醒连接点，后续递增
+        
+          - return invokeJoinpoint();
+        
+          - Object interceptorOrInterceptionAdvice = this.interceptorsAndDynamicMethodMatchers.get(++this.currentInterceptorIndex);
+        
+          - if (interceptorOrInterceptionAdvice instanceof InterceptorAndDynamicMethodMatcher)
+        
+          - InterceptorAndDynamicMethodMatcher dm = (InterceptorAndDynamicMethodMatcher) interceptorOrInterceptionAdvice;
+        
+          - if (dm.methodMatcher.matches(this.method, this.targetClass, this.arguments))
+        
+            - return dm.interceptor.invoke(this);
+          
+          -  return proceed();// 动态匹配失败，跳过当前拦截，进入下一个（拦截器链）
+        
+        -  return ((MethodInterceptor) interceptorOrInterceptionAdvice).invoke(this);// 它是一个拦截器，所以我们只调用它:在构造这个对象之前，切入点将被静态地计算。  
     
     - completeTransactionAfterThrowing(txInfo, ex);//异常时事务机制的处理:1. 该异常需要回滚事务，则回滚事务 2. 该异常无需回滚事务，则提交事务
     
