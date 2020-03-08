@@ -277,3 +277,91 @@ explain select count(1) from t_order a left join t_order_ext b on a.order_id=b.o
 |  1 | SIMPLE      | b     | ref   | order_id      | order_id     | 4       | test.a.order_id |      1 | Using where; Using index; Not exists | 
 +----+-------------+-------+-------+---------------+--------------+---------+-----------------+--------+--------------------------------------+ 
 
+### Range checked for each record
+
+这种情况是mysql没有发现好的索引可用，速度比没有索引要快得多。
+
+mysql> explain select * from t_order t, t_order_ext s where s.order_id>=t.order_id and s.order_id<=t.order_id and t.express_type>5; 
++----+-------------+-------+-------+----------------------+--------------+---------+------+------+------------------------------------------------+ 
+| id | select_type | table | type  | possible_keys        | key          | key_len | ref  | rows | Extra                                          | 
++----+-------------+-------+-------+----------------------+--------------+---------+------+------+------------------------------------------------+ 
+|  1 | SIMPLE      | t     | range | PRIMARY,express_type | express_type | 1       | NULL |    1 | Using where                                    | 
+|  1 | SIMPLE      | s     | ALL   | order_id             | NULL         | NULL    | NULL |    1 | Range checked for each record (index map: 0x1) | 
++----+-------------+-------+-------+----------------------+--------------+---------+------+------+------------------------------------------------+ 
+
+### Using filesort
+
+
+在有排序子句的情况下很常见的一种情况。此时mysql会根据联接类型浏览所有符合条件的记录，并保存排序关键字和行指针，然后排序关键字并按顺序检索行。
+
+mysql> explain select * from t_order order by express_type; 
++----+-------------+---------+------+---------------+------+---------+------+--------+----------------+ 
+| id | select_type | table   | type | possible_keys | key  | key_len | ref  | rows   | Extra          | 
++----+-------------+---------+------+---------------+------+---------+------+--------+----------------+ 
+|  1 | SIMPLE      | t_order | ALL  | NULL          | NULL | NULL    | NULL | 100395 | Using filesort | 
++----+-------------+---------+------+---------------+------+---------+------+--------+----------------+ 
+
+
+### Using index
+
+这是性能很高的一种情况。当查询所需的数据可以直接从索引树中检索到时，就会出现。
+
+
+### Using temporary
+
+
+发生这种情况一般都是需要进行优化的。mysql需要创建一张临时表用来处理此类查询。
+
+mysql> explain select * from t_order a left join t_order_ext b on a.order_id=b.order_id group by b.order_id; 
++----+-------------+-------+------+---------------+----------+---------+-----------------+--------+---------------------------------+ 
+| id | select_type | table | type | possible_keys | key      | key_len | ref             | rows   | Extra                           | 
++----+-------------+-------+------+---------------+----------+---------+-----------------+--------+---------------------------------+ 
+|  1 | SIMPLE      | a     | ALL  | NULL          | NULL     | NULL    | NULL            | 100395 | Using temporary; Using filesort | 
+|  1 | SIMPLE      | b     | ref  | order_id      | order_id | 4       | test.a.order_id |      1 |                                 | 
++----+-------------+-------+------+---------------+----------+---------+-----------------+--------+---------------------------------+ 
+
+### Using where
+
+当有where子句时，extra都会有说明。
+
+### Using sort_union(...)/Using union(...)/Using intersect(...)
+
+ser_id是一个检索范围，此时mysql会使用sort_union函数来进行索引的合并。
+
+explain select * from t_order where order_id=100 or user_id>10; 
++----+-------------+---------+-------------+-----------------+-----------------+---------+------+------+------------------------------------------------+ 
+| id | select_type | table   | type        | possible_keys   | key             | key_len | ref  | rows | Extra                                          | 
++----+-------------+---------+-------------+-----------------+-----------------+---------+------+------+------------------------------------------------+ 
+|  1 | SIMPLE      | t_order | index_merge | PRIMARY,user_id | user_id,PRIMARY | 5,4     | NULL |    2 | Using sort_union(user_id,PRIMARY); Using where | 
++----+-------------+---------+-------------+-----------------+-----------------+---------+------+------+------------------------------------------------+ 
+
+### Using index for group-by
+
+表明可以在索引中找到分组所需的所有数据，不需要查询实际的表。
+
+
+mysql> explain select user_id from t_order group by user_id; 
++----+-------------+---------+-------+---------------+---------+---------+------+------+--------------------------+ 
+| id | select_type | table   | type  | possible_keys | key     | key_len | ref  | rows | Extra                    | 
++----+-------------+---------+-------+---------------+---------+---------+------+------+--------------------------+ 
+|  1 | SIMPLE      | t_order | range | NULL          | user_id | 5       | NULL |    3 | Using index for group-by | 
++----+-------------+---------+-------+---------------+---------+---------+------+------+--------------------------+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
