@@ -19,7 +19,7 @@ public class LinkedHashMapDemo {
          *
          *  accessOrder 代表迭代顺序，默认按插入顺序迭代
          *  1. true  代表按访问顺序迭代
-         *  2. false 代表按插入顺序迭代
+         *  2. false 代表按插入顺序迭代,默认值
          */
 
         /**
@@ -30,7 +30,7 @@ public class LinkedHashMapDemo {
         linkedHashMap.put(2, 2);
         System.out.println("linkedHashMap:" + linkedHashMap);
 
-        LinkedHashMap linkedHashMap1 = new LinkedHashMap(4, 0.5F);
+        LinkedHashMap linkedHashMap1 = new LinkedHashMap(4, 0.5F,false);
         linkedHashMap1.put(3, 3);
         linkedHashMap1.put(4, 4);
         System.out.println("linkedHashMap1:" + linkedHashMap1);
@@ -85,7 +85,7 @@ public class LinkedHashMapDemo {
 
 
         /**
-         * 默认是安装插入顺序遍历,accessOrder将按照访问顺讯。
+         * 默认是安装插入顺序遍历,accessOrder将按照访问顺序。
          * 构造函数 指定accessOrder= true 在元素被访问后将其移动到链表的末尾,最近最少使用的在前
          */
 
@@ -94,15 +94,19 @@ public class LinkedHashMapDemo {
         linkedHashMap4.put("b", 200);
         System.out.println(linkedHashMap4);
         linkedHashMap4.put("a", 300);
-        System.out.println("linkedHashMap4 插入顺序遍历:" + linkedHashMap4);
-
+        System.out.println("最近使用linkedHashMap4 插入顺序遍历:" + linkedHashMap4);
 
         LinkedHashMap linkedHashMap3 = new LinkedHashMap(16, 0.76F, true);
         linkedHashMap3.put("a", 100);
         linkedHashMap3.put("b", 200);
         System.out.println(linkedHashMap3);
         linkedHashMap3.put("a", 300);
-        System.out.println("linkedHashMap3 访问顺序遍历:" + linkedHashMap3);
+        System.out.println("最近最少使用linkedHashMap3 访问顺序遍历:" + linkedHashMap3);
+
+
+
+
+
 
 
     }

@@ -103,7 +103,7 @@
         
         - removeServiceConnectors();//在 service 启动后 protocal binding 尚未发生之前执行删除 service 中 connector 的逻辑。
         
-        - this.tomcat.start();//在这里启动了DispatcherServlet [Spring DispatcherServlet](./SpringBoot源码解析之DispatcherServlet.md)
+        - this.tomcat.start();//在这里启动了DispatcherServlet [Spring DispatcherServlet](SpringBoot源码解析之DispatcherServlet.md)
         
           ```
            1. 触发启动Tomcat容器中除了Connector之外的其他部分，Connector此处没被启动意味着该启动过程完成后，服务器还是不能接受来自网络的请求,因为Connector才是真正负责接受网络请求的入口。

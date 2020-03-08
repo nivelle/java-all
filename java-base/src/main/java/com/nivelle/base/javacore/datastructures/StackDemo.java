@@ -42,6 +42,13 @@ public class StackDemo {
 
         System.out.println("lastElement2 is:" + lastElement2);
 
-        Vector vector = new Vector<>();
     }
 }
+
+/**
+ * 基于数组实现的
+ */
+class ArrayStack{
+
+}
+

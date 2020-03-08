@@ -44,8 +44,4 @@ public class StackForQueue {
 
         return stack2.pop();
     }
-
-
-
-
 }

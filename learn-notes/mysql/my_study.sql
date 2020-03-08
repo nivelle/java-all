@@ -111,6 +111,7 @@ show index from activity_pv;
 3. mysql> explain select * from activity_pv where id =  (select id from activity_pv where id =9);
 
 mysql> explain select * from activity_pv where id =  (select id from activity_pv where id =7);
+
 ## 子查询的第一个select 其select type 为SUBQUERY
 +----+-------------+-------------+------------+-------+---------------+---------+---------+-------+------+----------+-------------+
 | id | select_type | table       | partitions | type  | possible_keys | key     | key_len | ref   | rows | filtered | Extra       |
