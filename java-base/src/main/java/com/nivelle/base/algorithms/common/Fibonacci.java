@@ -16,7 +16,7 @@ public class Fibonacci {
     }
 
     /**
-     * 可能会sof
+     * 可能会sof(递归规律 & 终止条件)
      *
      * @param n
      * @return
@@ -31,7 +31,8 @@ public class Fibonacci {
     }
 
     /**
-     * 动态规划
+     * 动态规划()
+     *
      * @param n
      * @return
      */
