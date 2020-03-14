@@ -122,65 +122,29 @@ show index from activity_pv;
 
 
 
-## explain 的用法
+## 删除整个表数据后整理表
 
-1.
 ```
-mysql> explain select * from activity_pv where id = 6 union select * from activity_pv where id =9;
-### 当通过union来连接多个查询结果时,第二个之后的select其select_type为UNION
+alter table A engine=InnoDB;
 
-+----+--------------+-------------+------------+-------+---------------+---------+---------+-------+------+----------+--------------------------------+
-| id | select_type  | table       | partitions | type  | possible_keys | key     | key_len | ref   | rows | filtered | Extra                          |
-+----+--------------+-------------+------------+-------+---------------+---------+---------+-------+------+----------+--------------------------------+
-|  1 | PRIMARY     | activity_pv | NULL       | const | PRIMARY       | PRIMARY | 8       | const |    1 |   100.00 | NULL                           |
-|  2 | UNION        | NULL        | NULL       | NULL  | NULL          | NULL    | NULL    | NULL  | NULL |     NULL | no matching row in const table |
-| NULL | UNION RESULT | <union1,2>  | NULL       | ALL   | NULL          | NULL    | NULL    | NULL  | NULL |     NULL | Using temporary                |
-+----+--------------+-------------+------------+-------+---------------+---------+---------+-------+------+----------+--------------------------------+
 ```
 
+## 查看当前的查询状态
 
-2.
-```
-mysql> explain select * from activity_pv where id in (select id from activity_pv where id = 6 union select id from activity_pv where id =7);
-### 当union作为子查询时,其中第二个union的select_type就是DEPENDENT UNION.第一个子查询的select_type则是DEPENDENT SUBQUERY.
-
-+----+--------------------+-------------+------------+-------+---------------+---------+---------+-------+------+----------+-----------------+
-| id | select_type        | table       | partitions | type  | possible_keys | key     | key_len | ref   | rows | filtered | Extra           |
-+----+--------------------+-------------+------------+-------+---------------+---------+---------+-------+------+----------+-----------------+
-|  1 | PRIMARY            | activity_pv | NULL       | ALL   | NULL          | NULL    | NULL    | NULL  |    3 |   100.00 | Using where     |
-|  2 | DEPENDENT SUBQUERY | activity_pv | NULL       | const | PRIMARY       | PRIMARY | 8       | const |    1 |   100.00 | Using index     |
-|  3 | DEPENDENT UNION    | activity_pv | NULL       | const | PRIMARY       | PRIMARY | 8       | const |    1 |   100.00 | Using index     |
-| NULL | UNION RESULT       | <union2,3>  | NULL       | ALL   | NULL          | NULL    | NULL    | NULL  | NULL |     NULL | Using temporary |
-+----+--------------------+-------------+------------+-------+---------------+---------+---------+-------+------+----------+-----------------+
 ```
 
+show processlist;
 
-3. 
-```
-mysql> explain select * from activity_pv where id =  (select id from activity_pv where id =9);
-
-mysql> explain select * from activity_pv where id =  (select id from activity_pv where id =7);
-
-## 子查询的第一个select 其select type 为SUBQUERY
-+----+-------------+-------------+------------+-------+---------------+---------+---------+-------+------+----------+-------------+
-| id | select_type | table       | partitions | type  | possible_keys | key     | key_len | ref   | rows | filtered | Extra       |
-+----+-------------+-------------+------------+-------+---------------+---------+---------+-------+------+----------+-------------+
-|  1 | PRIMARY     | activity_pv | NULL       | const | PRIMARY       | PRIMARY | 8       | const |    1 |   100.00 | NULL        |
-|  2 | SUBQUERY    | activity_pv | NULL       | const | PRIMARY       | PRIMARY | 8       | const |    1 |   100.00 | Using index |
-+----+-------------+-------------+------------+-------+---------------+---------+---------+-------+------+----------+-------------+
 ```
 
+## 可重复读情况下才有间隙锁,你如果把隔离级别设置为读提交的话，就没有间隙锁了。但同时，你要解决可能出现的数据和日志不一致问题，需要把 binlog 格式设置为 row。
 
-4.
-```
-mysql> explain select * from user_info u,sys_user_role ur where u.uid = ur.uid;
+- 原则 1：加锁的基本单位是 next-key lock。希望你还记得，next-key lock 是前开后闭区间。
 
-## 对于每个来自于前面的表的行组合,从该表中读取一行.这可能是最好的联接类型,除了const类型.
-+----+-------------+-------+------------+--------+---------------+---------+---------+-------------------+------+----------+-------+
-| id | select_type | table | partitions | type   | possible_keys | key     | key_len | ref               | rows | filtered | Extra |
-+----+-------------+-------+------------+--------+---------------+---------+---------+-------------------+------+----------+-------+
-|  1 | SIMPLE      | ur    | NULL       | ALL    | NULL          | NULL    | NULL    | NULL              |    1 |   100.00 | NULL  |
-|  1 | SIMPLE      | u     | NULL       | eq_ref | PRIMARY       | PRIMARY | 8       | javaguides.ur.uid |    1 |   100.00 | NULL  |
-+----+-------------+-------+------------+--------+---------------+---------+---------+-------------------+------+----------+-------+
-```
+- 原则 2：查找过程中访问到的对象才会加锁。
 
+- 优化 1：索引上的等值查询，给唯一索引加锁的时候，next-key lock 退化为行锁。
+
+- 优化 2：索引上的等值查询，向右遍历时且最后一个值不满足等值条件的时候，next-key lock 退化为间隙锁。
+
+- 一个 bug：唯一索引上的范围查询会访问到不满足条件的第一个值为止。
