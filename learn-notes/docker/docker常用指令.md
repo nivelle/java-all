@@ -1,5 +1,5 @@
 
-### docker 
+## docker hub
 
 ```
 https://hub.docker.com/
@@ -8,29 +8,41 @@ https://hub.docker.com/
 密码:fuxinzhong2
 
 ```
+---
 
-### 查看正在运行的容器
-
-```
-
-$ sudo docker ps
+## Docker版本
 
 ```
 
-- CONTAINER ID（container id ） ：顾名思义 ,容器ID的意思，可以通过这id找到唯一的对应容器
+$ docker --version
 
-- IMAGE （image）：该容器所使用的镜像
+```
+---
 
-- COMMAND （command）：启动容器时运行的命令
+## 避免输出sudo
+   
+```
+   
+这里把当前用户加入到docker组就可以直接使用命令，而不用每次都加sudo
+   
+$ sudo groupadd docker
+   
+改完后需要重新登陆用户
+   
+$ sudo gpasswd -a ${USER} docker
+   
+```
+---
+## 当前Docker宿主机的信息
 
-- CREATED （created）：容器的创建时间，显示格式为”**时间之前创建“
+```
 
-- STATUS （status）：容器现在的状态，状态有7种：created（已创建）|restarting（重启中）|running（运行中）|removing（迁移中）|paused（暂停）|exited（停止）|dead
+$ docker info
+```
 
-- PORTS （ports）:容器的端口信息和使用的连接类型（tcp\udp）
+---
 
-- NAMES （names）:镜像自动为容器创建的名字，也唯一代表一个容器
-
+## 镜像
 
 ### 查看本地镜像
 
@@ -39,8 +51,21 @@ $ sudo docker ps
 
 $ sudo docker images
 
-```
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+ubuntu              15.10               9b9cb95443b5        3 years ago         137MB
 
+```
+- REPOSITORY : 表示镜像的仓库源
+
+- TAG:镜像的标签(同一仓库源可以有多个 TAG，代表这个仓库源的不同个版本)
+
+- IMAGE ID：镜像ID
+
+- CREATED：镜像创建时间
+  
+- SIZE：镜像大小
+
+定义仓库源: REPOSITORY:TAG 
 
 ### 删除镜像
 
@@ -58,51 +83,6 @@ docker rmi <image id>
 
 docker rmi $(docker images | grep "^<none>" | awk "{print $3}")
 
-
-```
-
-
-### 从镜像中运行/停止一个新实例
-
-```
-
-$ sudo docker run/stop --help
-
-$ sudo docker run/stop container
-
-```
-
-### 删除容器
-
-```
-
-docker rm <docker id>
-
-```
-
-
-### 避免输出sudo
-
-```
-
-这里把当前用户加入到docker组就可以直接使用命令，而不用每次都加sudo
-
-$ sudo groupadd docker
-
-
-改完后需要重新登陆用户
-
-$ sudo gpasswd -a ${USER} docker
-
-```
-
-
-### Docker版本
-
-```
-
-$ sudo docker --version
-
 ```
 
 
@@ -117,19 +97,53 @@ $ docker search tutorial
 
 ```
 
+### 获取一个镜像
+
+```
+docker pull 镜像源:tag
+
+```
+
 ### 构建镜像
 
+#### 通过 Dockerfile 构建
 ```
 
 docker build -t imageName -f dockerfile 
 
 ```
 
-### 通过docker命令下载tutorial镜像
+- t: 指定要创建的目标镜像名
+
+- . //Dockerfile文件所在的目录，可以指定Dockerfile绝对路径
+
+#### 将container保存为一个image
 
 ```
 
-$ docker pull learn/tutorial
+$ docker commit [container] [image_name]
+
+```
+
+### 更新镜像
+
+更新镜像前，使用镜像创建容器。在容器中使用 **apt-get update**命令进行更新，在完成操作之后，输入 exit 命令来退出这个容器。
+                                               
+```
+docker commit -m="has update" -a="runoob" e218edb10161 runoob/ubuntu:v2
+```
+- m "描述信息"
+
+- a "镜像作者"
+
+- e218edb10161 “镜像ID”
+
+- runoob/ubuntu:v2 "镜像名"
+
+### 设置镜像标签
+
+```
+- docker tag imageId runoob/centos:dev
 
 ```
 
@@ -153,6 +167,59 @@ hello nivelle
   
 
 
+
+### 将image上传到仓库
+
+```
+
+$ docker push [image_name]
+```
+
+### 删除images
+
+
+```
+
+$ docker rmi [image id]
+
+```
+
+--- 
+
+## 容器
+
+### 查看正在运行的容器
+
+```
+
+$ docker ps
+
+```
+
+- CONTAINER ID（container id ） ：顾名思义 ,容器ID的意思，可以通过这id找到唯一的对应容器
+
+- IMAGE （image）：该容器所使用的镜像
+
+- COMMAND （command）：启动容器时运行的命令
+
+- CREATED （created）：容器的创建时间，显示格式为”**时间之前创建“
+
+- STATUS （status）：容器现在的状态，状态有7种：created（已创建）|restarting（重启中）|running（运行中）|removing（迁移中）|paused（暂停）|exited（停止）|dead
+
+- PORTS （ports）:容器的端口信息和使用的连接类型（tcp\udp）
+
+- NAMES （names）:镜像自动为容器创建的名字，也唯一代表一个容器
+
+
+### 删除容器
+
+```
+
+docker rm <docker id>
+
+```
+
+
 ### 在container里运行交互式命令，比如shell
 
 ```
@@ -165,7 +232,6 @@ eg:
 
 - root@93c84c575fd7:/# 
 
-
 ```
 - -t: 在新容器内指定一个伪终端或终端。
   
@@ -176,6 +242,14 @@ eg:
 - exit : 退出容器,返回当前主机
 
 - d: 启动模式（后台启动)
+
+- -p :内部端口:外部映射端口
+
+- -P :是容器内部端口随机映射到主机的高端口。
+
+- -- name:对容器进行命名
+
+
 
 ### 在container里运行后台任务
 
@@ -209,6 +283,14 @@ $ docker ps -a
 $ docker start [container]
 
 ```
+
+
+### 查看容器的端口映射情况
+
+```
+docker top zealous_darwin
+
+```
 ### 重启容器
 
 ```
@@ -231,6 +313,9 @@ $ docker run -itd --name ubuntu-test ubuntu /bin/bash
 注意：切换到后台任务以后无法用Ctrl-C退出
 
 $ docker attach [container]
+
+eg: ocker exec -it 93c84c575fd7 /bin/bash
+
 ```
 
 
@@ -271,60 +356,6 @@ $ docker rm [container]
 
 $ docker rm `docker ps -a -q` 删除所有容器，-q表示只返回容器的ID
 ```
-
-
-### 将container保存为一个image
-
-```
-
-$ docker commit [container] [image_name]
-```
-
-
-### 将image上传到仓库
-
-```
-
-$ docker push [image_name]
-```
-
-### 删除images
-
-
-```
-
-$ docker rmi [image id]
-```
-
-### 为容器指定名称，容器的名称是唯一
-
-
-```
-
-$ docker run --name edison -i -t ubuntu /bin/bash
-```
-
-### 有三种方式可以唯一指代容器
-
-
-```
-
-短UUID: 716d3c16dc65（12位）
-
-长UUID：716d3c16dc654230ada14f555faadd036474231dfca0ca44b597574a5c618565（64位）
-
-名称: edison
-```
-
-
-### 当前Docker宿主机的信息
-
-```
-
-$ docker info
-```
-
-
 ### 查看容器内部的进程信息
 
 ```
@@ -350,4 +381,43 @@ $ docker exec -d edison touch /home/haha
 $ docker exec -t -i edison /bin/bash
 
 ```
+
+
+### 为容器指定名称，容器的名称是唯一
+
+
+```
+
+$ docker run --name edison -i -t ubuntu /bin/bash
+```
+
+### 有三种方式可以唯一指代容器
+
+
+```
+短UUID: 716d3c16dc65（12位）
+
+长UUID：716d3c16dc654230ada14f555faadd036474231dfca0ca44b597574a5c618565（64位）
+
+名称: edison
+
+```
+
+## 新建网络
+
+#### docker 有一个连接系统允许将多个容器连接在一起，共享连接信息。
+  
+#### docker 连接会创建一个父子关系，其中父容器可以看到子容器的信息。
+ 
+```
+docker network create -d bridge 网络名
+```
+- -d：参数指定 Docker 网络类型，有 bridge、overlay。
+  
+
+docker run -itd --name test1 --network test-net ubuntu /bin/bash
+
+docker run -itd --name test2 --network test-net ubuntu /bin/bash
+
+运行两个容器,test1 和 test2 并通过test-net来进行连接
 
