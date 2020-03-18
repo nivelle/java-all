@@ -89,10 +89,20 @@ show databases;
 ```
 use databases;
 ```
+## 删除某个数据库
+
+```
+drop database databasesName;
+```
 
 ## 查看所有表
+```
 show tables;
-
+```
+## 删除表
+```
+drop table tableName;
+```
 ## 创建唯一索引
 
 ```
