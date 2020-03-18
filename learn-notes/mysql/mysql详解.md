@@ -240,7 +240,7 @@ show index from activity;
  
 (1) 共享/排它锁(Shared and Exclusive Locks)
     
-    - for update //排他当前读,加的是意向排它记录锁
+    - for update //排他当前读,加的是意向排它记录锁,读到所有已经提交的记录值
    
     - lock in share mode;//共享当前读,意向共读记录锁
 
@@ -341,4 +341,11 @@ MDL 不需要显式使用，在访问一个表的时候会被自动加上。MDL 
 - RR下,事务在第一个read操作时,建立Read view.注意不是 start transaction
 
 - RC下,事务在每次read操作时，都会建立Read view
+
+#### 幻读
+
+- 在可重复读隔离级别下，普通的查询是快照读，是不会看到别的事务插入的数据的。因此，幻读在“当前读”下才会出现。
+
+- 幻读仅仅指的是插入行，修改行不算幻读;
+
 
