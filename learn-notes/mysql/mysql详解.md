@@ -1,20 +1,9 @@
 
 ## 性能配置
 
-### 可重复读情况下才有间隙锁,你如果把隔离级别设置为读提交的话，就没有间隙锁了。但同时，你要解决可能出现的数据和日志不一致问题，需要把 binlog 格式设置为 row。
+### –skip-grant-tables :跳过权限验证
 
-- 原则 1：加锁的基本单位是 next-key lock。希望你还记得，next-key lock 是前开后闭区间。
-
-- 原则 2：查找过程中访问到的对象才会加锁。
-
-- 优化 1：索引上的等值查询，给唯一索引加锁的时候，next-key lock 退化为行锁。
-
-- 优化 2：索引上的等值查询，向右遍历时且最后一个值不满足等值条件的时候，next-key lock 退化为间隙锁。
-
-- 一个 bug：唯一索引上的范围查询会访问到不满足条件的第一个值为止。
-
-### –skip-grant-tables ：跳过权限验证
-
+### 增删改数据（DML),修改表结构的操作（DDL)
 
 ### set global slow_query_log = on;  //开启慢查询日志
 
@@ -35,6 +24,7 @@
 
 ```
 CREATE DATABASE javaguideslave;
+
 ```
 
 ### 指定编码
@@ -136,21 +126,23 @@ drop database databasesName;
 ### 初始化表
 
 ```
-DROP TABLE IF EXISTS `activity_pv`;
-CREATE TABLE `activity_pv` (
+DROP TABLE IF EXISTS `activity`;
+CREATE TABLE `activity` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
   `activity_id` varchar(32) NOT NULL default '' COMMENT '活动id',
   `position_type` tinyint(10) NOT NULL default 0 COMMENT '广告位置 1.活动页 2.首页',
   `ip` varchar (15) NOT NULL DEFAULT '' COMMENT 'ip地址',
-  `device_type` varchar(32) NOT NULL default '' COMMENT '设备类型',
+  `type` varchar(32) NOT NULL default '' COMMENT '设备类型',
   `device_no` varchar (32) NOT NULL default '' COMMENT '设备号',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 ```
 
 ### 查看所有表
+
 ```
 show tables;
 ```
@@ -159,10 +151,30 @@ show tables;
 drop table tableName;
 ```
 
-### 修改表
-````
-RENAME TABLE person TO person_other;
-````
+### 修改表名
+
+```
+alter table oldTableName rename to newTableName;
+```
+### 修改列
+
+```
+alter table tableName change oldName newName;
+
+```
+
+### 添加列
+
+```
+alter table tableName add column 列名 类型；
+
+```
+### 修改列属性
+
+```
+alter table 表名 modify name varchar(22);
+
+```
 
 ### 删除整个表数据后整理表
 
@@ -192,28 +204,30 @@ alter table A engine=InnoDB;
 ### 创建唯一索引
 
 ```
-create unique index uniq_device_no on activity_pv(`device_no`);
+create unique index uniq_device_no on activity(`device_no`);
+
 ```
 
 ### 创建联合索引
 
 ```
-CREATE INDEX device ON activity_pv (`device_type`,`device_no`);
+
+CREATE INDEX device ON activity (`type`,`device_no`);
 
 ```
 
 ### 查看索引
 
 ```
-show index from activity_pv;
+show index from activity;
 
 +-------------+------------+----------------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+---------+------------+
 | Table       | Non_unique | Key_name       | Seq_in_index | Column_name | Collation | Cardinality | Sub_part | Packed | Null | Index_type | Comment | Index_comment | Visible | Expression |
 +-------------+------------+----------------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+---------+------------+
-| activity_pv |          0 | PRIMARY        |            1 | id          | A         |           3 |     NULL |   NULL |      | BTREE      |         |               | YES     | NULL       |
-| activity_pv |          0 | uniq_device_no |            1 | device_no   | A         |           3 |     NULL |   NULL |      | BTREE      |         |               | YES     | NULL       |
-| activity_pv |          1 | device         |            1 | device_type | A         |           2 |     NULL |   NULL |      | BTREE      |         |               | YES     | NULL       |
-| activity_pv |          1 | device         |            2 | device_no   | A         |           3 |     NULL |   NULL |      | BTREE      |         |               | YES     | NULL       |
+| activity |          0 | PRIMARY        |            1 | id          | A         |           3 |     NULL |   NULL |      | BTREE      |         |               | YES     | NULL       |
+| activity |          0 | uniq_device_no |            1 | device_no   | A         |           3 |     NULL |   NULL |      | BTREE      |         |               | YES     | NULL       |
+| activity |          1 | device         |            1 | type | A         |           2 |     NULL |   NULL |      | BTREE      |         |               | YES     | NULL       |
+| activity |          1 | device         |            2 | device_no   | A         |           3 |     NULL |   NULL |      | BTREE      |         |               | YES     | NULL       |
 +-------------+------------+----------------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+---------+------------+
 
 ```
@@ -226,11 +240,26 @@ show index from activity_pv;
  
 (1) 共享/排它锁(Shared and Exclusive Locks)
     
-    - for update //查询语句后,排他当前读,加的是记录锁
+    - for update //排他当前读,加的是意向排它记录锁
    
-    - lock in share mode;//查询语句后,共享当前读
+    - lock in share mode;//共享当前读,意向共读记录锁
 
 (2)意向锁(Intention Locks)
+
+```
+意向锁之间的互斥关系:
+
+        IS        IX
+IS      兼容      兼容
+IX      兼容      兼容
+
+--------------------------------
+
+         S       X
+IS      兼容      互斥
+IX      互斥      互斥
+
+```
 
 (3)记录锁(Record Locks)
 
@@ -248,6 +277,54 @@ show index from activity_pv;
 
 (7)自增锁(Auto-inc Locks)
 
+```
+自增锁是一种特殊的表级别锁（table-level lock),专门针对事务插入AUTO_INCREMENT类型的列。
+
+最简单的情况，如果一个事务正在往表中插入记录，所有其他事务的插入必须等待，以便第一个事务插入的行，是连续的主键值。
+
+```
+
+#### MySQL 里面表级别的锁有两种：
+
+(1) 表锁 
+
+````
+表锁的语法是 lock tables … read/write
+
+如果在某个线程 A 中执行 lock tables t1 read, t2 write; 这个语句，则其他线程写 t1、读写 t2 的语句都会被阻塞。同时，线程 A 在执行 unlock tables 之前，也只能执行读 t1、读写 t2 的操作。连写 t1 都不允许，自然也不能访问其他表
+
+````
+
+(2)元数据锁（meta data lock，MDL)
+
+```
+MDL 不需要显式使用，在访问一个表的时候会被自动加上。MDL 的作用是，保证读写的正确性。
+
+```
+
+当对一个表做增删改查操作的时候，加 MDL 读锁；当要对表做结构变更操作的时候，加 MDL 写锁。
+
+#### 可重复读情况下才有间隙锁,你如果把隔离级别设置为读提交的话，就没有间隙锁了。但同时，你要解决可能出现的数据和日志不一致问题，需要把 binlog 格式设置为 row。
+
+- 原则 1：加锁的基本单位是 next-key lock。希望你还记得，next-key lock 是前开后闭区间。
+
+**更新一个范围内主键，如果不存在则会加存在的主键的间隙锁，此时另外一个事务插入则会阻塞；如果存在则会退化为行锁,此时另外一个事务插入则不会被阻塞了。**
+  
+- 原则 2：查找过程中访问到的对象才会加锁。
+
+- 优化 1：索引上的等值查询，给唯一索引加锁的时候，next-key lock 退化为行锁。
+
+- 优化 2：索引上的等值查询，向右遍历时且最后一个值不满足等值条件的时候，next-key lock 退化为间隙锁。
+
+- 一个 bug：唯一索引上的范围查询会访问到不满足条件的第一个值为止。
+
+
+### 死锁问题解决
+
+- 直接进入等待，直到超时。这个超时时间可以通过参数 **innodb_lock_wait_timeout** 来设置
+
+- 发起死锁检测，发现死锁后，主动回滚死锁链条中的某一个事务，让其他事务得以继续执行。将参数 **innodb_deadlock_detect** 设置为 on，表示开启这个逻辑。(加锁访问的行上有锁，他才要检测)
+
 ### 事务
 
 ```
@@ -258,3 +335,10 @@ show index from activity_pv;
 - commit or rollback;
 
 ```
+
+#### 隔离级别
+
+- RR下,事务在第一个read操作时,建立Read view.注意不是 start transaction
+
+- RC下,事务在每次read操作时，都会建立Read view
+
