@@ -1,10 +1,8 @@
 ## java 每天学
 
-## newmaster 分支为最新分支
-
 ### 姊妹项目:[java面试常见知识点汇总](http://nivelle.me/javaInterview/)
 
-## 该项目和 [vueGuides](https://github.com/nivelle/vueGuides)项目可搭配使用
+### 该项目和 [vueGuides](https://github.com/nivelle/vueGuides)项目可搭配使用
 
 ## 依赖环境: 
 
