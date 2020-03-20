@@ -114,13 +114,10 @@ public class StringDemo {
         System.out.println("切割字符串:" + string2.substring(0, 1));
 
         /**
-         * 字符串拼接
-         * 需要经过两次字符串复制:
-         * 1. char buf[] = Arrays.copyOf(value, len + otherLen);//buf[] 字符数组包括 string2字符串+加上新字符串的长度
-         *
-         * 2.str.getChars(buf, len);//"love jessy!".getChars(buf,len);
-         *
-         * 3.System.arraycopy(value, 0, dst, dstBegin, value.length);//love jessy! 这个字符串调用复制函数
+         * 字符串拼接,需要经过两次字符串复制:
+         * 1. char buf[] = Arrays.copyOf(value, len + otherLen); =>buf[] 字符数组包括 string2字符串+加上新字符串的长度
+         * 2.str.getChars(buf, len);=> "love jessy!".getChars(buf,len);
+         * 3.System.arraycopy(value, 0, dst, dstBegin, value.length); =>love jessy! 这个字符串调用复制函数
          */
         System.out.println("拼接字符串:" + string2.concat(" love jessy!"));
 
