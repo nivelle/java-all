@@ -77,7 +77,7 @@ public class FloatDemo {
 
         /**
          * floatToIntBits同样是一个本地方法，该方法主要是将一个IEEE 754标准的二进制形式对应的整型数转成一个浮点数。
-         * 可以看到其本地实现也是通过union来实现的，完成int转成float，最后再转成java的浮点型jfloat。
+         * 可以看到其本地实现也是通过union来实现的，完成int转成float，最后再转成java的浮点型float。
          */
         System.out.println("intBitsToFloat:" + Float.intBitsToFloat(01));
 

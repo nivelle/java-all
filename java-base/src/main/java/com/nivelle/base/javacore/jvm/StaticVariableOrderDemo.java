@@ -1,4 +1,4 @@
-package com.nivelle.base.javacore.loadclass;
+package com.nivelle.base.javacore.jvm;
 
 /**
  * 静态常量初始化不会触发类的初始化，静态属性和静态代码块按照顺序依次初始化

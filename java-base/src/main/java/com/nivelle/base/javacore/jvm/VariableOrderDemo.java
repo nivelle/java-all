@@ -1,4 +1,4 @@
-package com.nivelle.base.javacore.loadclass;
+package com.nivelle.base.javacore.jvm;
 
 /**
  * 成员变量初始化顺序

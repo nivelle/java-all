@@ -1,4 +1,4 @@
-package com.nivelle.base.javacore.loadclass;
+package com.nivelle.base.javacore.jvm;
 
 /**
  * 类加载顺序:

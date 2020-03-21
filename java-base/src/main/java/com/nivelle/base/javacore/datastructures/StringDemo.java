@@ -24,7 +24,8 @@ public class StringDemo {
     public static void main(String[] args) {
 
         /**
-         * 字符串比较
+         * String str = new String(“abc”) 这种方式，首先在编译类文件时，"abc"常量字符串将会放入到常量结构中，在类加载时，“abc"将会在常量池中创建；
+         * 其次，在调用 new 时，JVM 命令将会调用 String 的构造函数，同时引用常量池中的"abc” 字符串，在堆内存中创建一个 String 对象；最后，str 将引用 String 对象。
          */
         String string1 = new String("nivelle");
         String string2 = "nivelle";
@@ -34,6 +35,18 @@ public class StringDemo {
         System.out.println(string1.equals(string2));
         System.out.print("强制比较池常量:");
         System.out.println(string1.intern() == string2);
+
+
+        String a =new String("abc").intern();
+        String b = new String("abc").intern();
+
+        if(a==b) {
+            /**
+             * 1. 创建 a 变量时，调用 new Sting() 会在堆内存中创建一个 String 对象，String 对象中的 char 数组将会引用常量池中字符串。在调用 intern 方法之后，会去常量池中查找是否有等于该字符串对象的引用，有就返回引用。
+             * 2. 创建 b 变量时，调用 new Sting() 会在堆内存中创建一个 String 对象，String 对象中的 char 数组将会引用常量池中字符串。在调用 intern 方法之后，会去常量池中查找是否有等于该字符串对象的引用，有就返回引用。而在堆内存中的两个对象，由于没有引用指向它，将会被垃圾回收。所以 a 和 b 引用的是同一个对象。
+             */
+            System.err.println("a==b is true");
+        }
 
         /**
          * 字符串底层数据结构是字符串数组
@@ -113,11 +126,14 @@ public class StringDemo {
          */
         System.out.println("切割字符串:" + string2.substring(0, 1));
 
+
+
+
         /**
          * 字符串拼接,需要经过两次字符串复制:
          * 1. char buf[] = Arrays.copyOf(value, len + otherLen); =>buf[] 字符数组包括 string2字符串+加上新字符串的长度
-         * 2.str.getChars(buf, len);=> "love jessy!".getChars(buf,len);
-         * 3.System.arraycopy(value, 0, dst, dstBegin, value.length); =>love jessy! 这个字符串调用复制函数
+         *           2.str.getChars(buf, len);=> "love jessy!".getChars(buf,len);
+         *           3.System.arraycopy(value, 0, dst, dstBegin, value.length); =>love jessy! 这个字符串调用复制函数
          */
         System.out.println("拼接字符串:" + string2.concat(" love jessy!"));
 
@@ -293,4 +309,9 @@ public class StringDemo {
         return Integer.MAX_VALUE;
     }
 
+    /**
+     * 即使使用 + 号作为字符串的拼接，也一样可以被编译器优化成 StringBuilder 的方式。
+     *
+     * 在字符串常量中，默认会将对象放入常量池；在字符串变量中，对象是会创建在堆内存中，同时也会在常量池中创建一个字符串对象，String 对象中的 char 数组将会引用常量池中的 char 数组，并返回堆内存对象引用。
+     */
 }

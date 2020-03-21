@@ -1,4 +1,4 @@
-package com.nivelle.base.javacore.loadclass;
+package com.nivelle.base.javacore.jvm;
 
 import java.io.InputStream;
 

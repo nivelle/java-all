@@ -1,4 +1,4 @@
-package com.nivelle.base.javacore.loadclass;
+package com.nivelle.base.javacore.jvm;
 
 
 import java.io.*;
@@ -30,7 +30,7 @@ public class ConstructorDemo implements Cloneable, Serializable {
         System.out.println(constructor1);
         System.out.println("\n---------------------------\n");
 
-        System.out.println("使用Class类的newInstance方法创建对象：");
+        System.out.println("使用Class类的 newInstance 方法创建对象：");
         //对应类必须具有无参构造方法，且只有这一种创建方式
         ConstructorDemo constructor2 = ConstructorDemo.class.newInstance();
         System.out.println(constructor2);
@@ -52,13 +52,13 @@ public class ConstructorDemo implements Cloneable, Serializable {
         System.out.println("使用(反)序列化机制创建对象：");
         // 写对象
         ObjectOutputStream output = new ObjectOutputStream(
-                new FileOutputStream("constructordent.bin"));
+                new FileOutputStream("constructor5.bin"));
         output.writeObject(constructor4);
         output.close();
 
         // 读取对象
         ObjectInputStream input = new ObjectInputStream(new FileInputStream(
-                "constructordent.bin"));
+                "constructor5.bin"));
         ConstructorDemo constructor5 = (ConstructorDemo) input.readObject();
         System.out.println(constructor5);
 

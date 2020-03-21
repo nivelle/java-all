@@ -1,4 +1,4 @@
-package com.nivelle.base.javacore.loadclass;
+package com.nivelle.base.javacore.jvm;
 
 import java.lang.reflect.Constructor;
 
@@ -27,5 +27,17 @@ public class ClassForNameDemo {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+}
+class TestBean {
+
+    private String message = "jessy";
+
+    public TestBean(String message) {
+        this.message = message;
+    }
+
+    public String getMessage(){
+        return this.message;
     }
 }
