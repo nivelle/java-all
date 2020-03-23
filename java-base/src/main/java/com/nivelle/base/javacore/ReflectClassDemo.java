@@ -34,14 +34,11 @@ public class ReflectClassDemo {
 
     public static void main(String[] args) throws Exception {
 
-        Class driver = Class.forName("com.mysql.cj.jdbc.Driver");
-        System.out.println(driver);
-
-        Class userClass = Class.forName("com.nivelle.spring.pojo.User");
+        Class userClass = Class.forName(User.class.getName());
         System.out.println("反射获取的Class对象:" + userClass);
 
         //获取指定参数类型的构造函数,然后创建
-        Constructor constructor = userClass.getConstructor(int.class, String.class);
+        Constructor constructor = userClass.getConstructor(Integer.class, String.class);
         User userInstance = (User) constructor.newInstance(12, "ReflectTest");
         System.out.println(userInstance.getName());
 
@@ -75,15 +72,12 @@ public class ReflectClassDemo {
 
         //获取类加载信息
         String classLoaderName = user.getClass().getClassLoader().getClass().getName();
-        System.out.println("classLoader name is" + classLoaderName);
+        System.out.println("classLoader name is:" + classLoaderName);
         String classLoaderNameParent = user.getClass().getClassLoader().getParent().getClass().getName();
-        System.out.println("parent classLoader name is" + classLoaderNameParent);
+        System.out.println("parent classLoader name is:" + classLoaderNameParent);
         //如果父类为空则为bootStrapCloassLoader
-        String classLoaderNameParent2 = user.getClass().getClassLoader().getParent().getParent().getClass().getName();
-        System.out.println("parent classLoader name is" + classLoaderNameParent2);
-
-
-
+        Object classLoaderNameParent2 = user.getClass().getClassLoader().getParent().getParent();
+        System.out.println("parent classLoader name is:" + classLoaderNameParent2);
 
 
     }

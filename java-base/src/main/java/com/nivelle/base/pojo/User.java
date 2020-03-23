@@ -1,14 +1,7 @@
 package com.nivelle.base.pojo;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import java.io.Serializable;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class User implements Serializable {
 
     private Integer age;
@@ -43,4 +36,31 @@ public class User implements Serializable {
         return "UserDetail name is:" + this.name + "age is:" + this.age + "detail" + message;
     }
 
+    private String show(int age, String name) {
+        System.out.println(age + name);
+        return "success";
+    }
+
+    public Integer getAge() {
+        return age;
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public User(Integer age, String name) {
+        this.age = age;
+        this.name = name;
+    }
+
+    public User(){}
 }

@@ -40,7 +40,7 @@ cd /Users/nivellefu/IdeaProjects/javadaybyday/java-base/src/main/java/com/nivell
 java class文件指定的page路径+类名
 ```
 
-- javap <option><classes>;//根据classs字节码文件，反解析出当前类对应的code区（汇编指令），本地变量表，异常表和代码偏移量映射表，常量池等信息。
+- javap //根据classs字节码文件，反解析出当前类对应的code区（汇编指令），本地变量表，异常表和代码偏移量映射表，常量池等信息。
 
 
 ```
@@ -63,8 +63,6 @@ public class com.nivelle.base.pojo.javaclass.JvmExceptionDemo {
 
 - 引用类型: 类、接口、数组类和泛型参数,泛型参数会在编译过程中被擦除; 数组类是由 Java 虚拟机直接生成
 
-### java虚拟机的boolean类型
-
 - boolean 类型则被映射成 int 类型。具体来说，“true”被映射为整数 1,而“false”被映射为整数 0;
 
 ### java基本类型的大小
@@ -81,7 +79,7 @@ public class com.nivelle.base.pojo.javaclass.JvmExceptionDemo {
 ### 类的加载
 
 
-#### 类加载器加载类
+#### 加载类
 
 加载，是指查找字节流，并且据此创建类的过程
 
@@ -106,7 +104,7 @@ public class com.nivelle.base.pojo.javaclass.JvmExceptionDemo {
 
 #### 初始化
 
-为标记为常量值的字段赋值，以及执行 < clinit > 方法的过程。类的初始化仅会被执行一次，这个特性被用来实现单例的延迟初始化。
+**为标记为常量值的字段赋值，以及执行 < clinit > 方法的过程。类的初始化仅会被执行一次，这个特性被用来实现单例的延迟初始化。**
 
 - 如果要初始化一个静态字段，我们可以在声明时直接赋值，也可以在静态代码块中对其赋值
 
@@ -135,7 +133,6 @@ public class com.nivelle.base.pojo.javaclass.JvmExceptionDemo {
 (8). 当初次调用 MethodHandle 实例时，初始化该 MethodHandle 指向的方法所在的类。
 
 ### jvm 方法调用
-
 
 
 - 重写: 多态最重要的一种体现方，它允许子类在继承父类部分功能的同时，拥有自己独特的行为。
@@ -168,6 +165,6 @@ public class com.nivelle.base.pojo.javaclass.JvmExceptionDemo {
 
 ```
 
-- Java 虚拟机的动态绑定是通过方法表这一数据结构来实现的。方法表中每一个重写方法的索引值，与父类方法表中被重写的方法的索引值一致。
+- Java 虚拟机的动态绑定是通过**方法表**这一数据结构来实现的。方法表中每一个重写方法的索引值，与父类方法表中被重写的方法的索引值一致。
 
 - Java 虚拟机中的即时编译器会使用内联缓存来加速动态绑定。Java 虚拟机所采用的单态内联缓存将纪录调用者的动态类型，以及它所对应的目标方法。
