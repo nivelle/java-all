@@ -1,4 +1,4 @@
-package com.nivelle.base.pojo;
+package com.nivelle.base.pojo.javaclass;
 
 /**
  * java编译反编译demo

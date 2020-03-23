@@ -23,7 +23,7 @@
 
 前面的“.”不可少，它代表了我们为自己的java类建立的工作路径，其它的是jdk自带的标准类库路径。
 
-### java指令编译运行
+### java指令编译运行以及反汇编
 
 - 反编译：将 .class 文件逆向成 java源代码
 
@@ -32,63 +32,28 @@
 - javac;//编译
 
 ```
-
---help-extra, -X             输出额外选项的帮助
-  -implicit:{none,class}       指定是否为隐式引用文件生成类文件
-  -J<flag>                     直接将 <标记> 传递给运行时系统
-  --limit-modules <模块>(,<模块>)*
-        限制可观察模块的领域
-  --module <module-name>, -m <module-name>
-        只编译指定的模块, 请检查时间戳
-  --module-path <path>, -p <path>
-        指定查找应用程序模块的位置
-  --module-source-path <module-source-path>
-        指定查找多个模块的输入源文件的位置
-  --module-version <版本>        指定正在编译的模块版本
-  -nowarn                      不生成任何警告
-  -parameters                  生成元数据以用于方法参数的反射
-  -proc:{none,only}            控制是否执行注释处理和/或编译。
-  -processor <class1>[,<class2>,<class3>...]
-        要运行的注释处理程序的名称; 绕过默认的搜索进程
-  --processor-module-path <path>
-        指定查找注释处理程序的模块路径
-  --processor-path <path>, -processorpath <path>
-        指定查找注释处理程序的位置
-  -profile <profile>           请确保使用的 API 在指定的配置文件中可用
-  --release <release>          针对特定 VM 版本进行编译。支持的目标: 10, 6, 7, 8, 9
-  -s <directory>               指定放置生成的源文件的位置
-  -source <release>            提供与指定发行版的源兼容性
-  --source-path <path>, -sourcepath <path>
-        指定查找输入源文件的位置
-  --system <jdk>|none          覆盖系统模块位置
-  -target <release>            生成特定 VM 版本的类文件
-  --upgrade-module-path <path>
-        覆盖可升级模块位置
-  -verbose                     输出有关编译器正在执行的操作的消息
-  --version, -version          版本信息
-  -Werror                      出现警告时终止编译
+cd /Users/nivellefu/IdeaProjects/javadaybyday/java-base/src/main/java/com/nivelle/base/pojo/javaclass;javac -d . /Users/nivellefu/IdeaProjects/javadaybyday/java-base/src/main/java/com/nivelle/base/pojo/javaclass/JvmExceptionDemo.java
+```
+- java;//运行
 
 ```
-
-- java;//运行
+java class文件指定的page路径+类名
+```
 
 - javap <option><classes>;//根据classs字节码文件，反解析出当前类对应的code区（汇编指令），本地变量表，异常表和代码偏移量映射表，常量池等信息。
 
+
 ```
- -help  --help  -?        输出此用法消息
- -version                 版本信息，其实是当前javap所在jdk的版本信息，不是class在哪个jdk下生成的。
- -v  -verbose             输出附加信息（包括行号、本地变量表，反汇编等详细信息）
- -l                         输出行号和本地变量表
- -public                    仅显示公共类和成员
- -protected               显示受保护的/公共类和成员
- -package                 显示程序包/受保护的/公共类 和成员 (默认)
- -p  -private             显示所有类和成员
- -c                       对代码进行反汇编
- -s                       输出内部类型签名
- -sysinfo                 显示正在处理的类的系统信息 (路径, 大小, 日期, MD5 散列)
- -constants               显示静态最终常量
- -classpath <path>        指定查找用户类文件的位置
- -bootclasspath <path>    覆盖引导类文件的位置
+javap com.nivelle.base.pojo.javaclass/JvmExceptionDemo
+
+
+Compiled from "JvmExceptionDemo.java"
+public class com.nivelle.base.pojo.javaclass.JvmExceptionDemo {
+  public com.nivelle.base.pojo.javaclass.JvmExceptionDemo();
+  public void test();
+  public static void main(java.lang.String[]);
+}
+
  
 ```
 
