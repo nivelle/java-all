@@ -1,6 +1,97 @@
 
 ## JVM
 
+### Path,ClassPath,JAVA_HOME
+
+#### JAVA_HOME
+
+- 方便引用，配置path时，就是通过引用JAVA_HOME路径来实现的，这样避免了写很长一串的路径（比如在我的电脑中，path原路径是”C:\Program Files\Java\jdk1.8.0_131\bin”，通过指定JAVA_HOME，现在设定的path路径变成了”%JAVA_HOME%\bin”，更加简洁）
+
+- 更加安全，当JDK改变时，仅需要改变JAVA_HOME的路径即可，path和CLASSPATH由于引用了JAVA_HOME，其所对应的路径也会更改。如果不引用JAVA_HOME，则JDK路径改变时，需要手动去设定PATH和CLASSPATH的路径，一旦路径错误，则程序会崩溃。
+
+- 第三方软件（如tomcat，eclipse）都是引用约定好的JAVA_HOME变量，如果不指定JAVA_HOME，则将无法使用第三方软件。
+
+#### Path
+
+- 配置Path是为了在任意目录下都能使用java、javac命令。
+
+#### ClassPath
+
+- 配置CLASSPATH是为了引入一些已经写好的类。
+
+我们一般这样设置：.;%JAVA_HOME%\lib\dt.jar;%JAVA_HOME%\lib\tools.jar;
+
+前面的“.”不可少，它代表了我们为自己的java类建立的工作路径，其它的是jdk自带的标准类库路径。
+
+### java指令编译运行
+
+- 反编译：将 .class 文件逆向成 java源代码
+
+- 反汇编：根据编译后的结果，倒推源码编译的过程，这里就可以看出代码逻辑真实编译、执行过程的每一步，对于性能优化、问题追溯等具有十分强大的帮助
+
+- javac;//编译
+
+```
+
+--help-extra, -X             输出额外选项的帮助
+  -implicit:{none,class}       指定是否为隐式引用文件生成类文件
+  -J<flag>                     直接将 <标记> 传递给运行时系统
+  --limit-modules <模块>(,<模块>)*
+        限制可观察模块的领域
+  --module <module-name>, -m <module-name>
+        只编译指定的模块, 请检查时间戳
+  --module-path <path>, -p <path>
+        指定查找应用程序模块的位置
+  --module-source-path <module-source-path>
+        指定查找多个模块的输入源文件的位置
+  --module-version <版本>        指定正在编译的模块版本
+  -nowarn                      不生成任何警告
+  -parameters                  生成元数据以用于方法参数的反射
+  -proc:{none,only}            控制是否执行注释处理和/或编译。
+  -processor <class1>[,<class2>,<class3>...]
+        要运行的注释处理程序的名称; 绕过默认的搜索进程
+  --processor-module-path <path>
+        指定查找注释处理程序的模块路径
+  --processor-path <path>, -processorpath <path>
+        指定查找注释处理程序的位置
+  -profile <profile>           请确保使用的 API 在指定的配置文件中可用
+  --release <release>          针对特定 VM 版本进行编译。支持的目标: 10, 6, 7, 8, 9
+  -s <directory>               指定放置生成的源文件的位置
+  -source <release>            提供与指定发行版的源兼容性
+  --source-path <path>, -sourcepath <path>
+        指定查找输入源文件的位置
+  --system <jdk>|none          覆盖系统模块位置
+  -target <release>            生成特定 VM 版本的类文件
+  --upgrade-module-path <path>
+        覆盖可升级模块位置
+  -verbose                     输出有关编译器正在执行的操作的消息
+  --version, -version          版本信息
+  -Werror                      出现警告时终止编译
+
+```
+
+- java;//运行
+
+- javap <option><classes>;//根据classs字节码文件，反解析出当前类对应的code区（汇编指令），本地变量表，异常表和代码偏移量映射表，常量池等信息。
+
+```
+ -help  --help  -?        输出此用法消息
+ -version                 版本信息，其实是当前javap所在jdk的版本信息，不是class在哪个jdk下生成的。
+ -v  -verbose             输出附加信息（包括行号、本地变量表，反汇编等详细信息）
+ -l                         输出行号和本地变量表
+ -public                    仅显示公共类和成员
+ -protected               显示受保护的/公共类和成员
+ -package                 显示程序包/受保护的/公共类 和成员 (默认)
+ -p  -private             显示所有类和成员
+ -c                       对代码进行反汇编
+ -s                       输出内部类型签名
+ -sysinfo                 显示正在处理的类的系统信息 (路径, 大小, 日期, MD5 散列)
+ -constants               显示静态最终常量
+ -classpath <path>        指定查找用户类文件的位置
+ -bootclasspath <path>    覆盖引导类文件的位置
+ 
+```
+
 ### 数据类型
 
 - 基本类型
@@ -24,9 +115,6 @@
 
 ### 类的加载
 
-- -XX：+TraceClassLoading
-
-- javap -v;xi
 
 #### 类加载器加载类
 
