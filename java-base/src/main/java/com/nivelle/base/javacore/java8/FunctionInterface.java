@@ -8,4 +8,5 @@ public interface FunctionInterface<S,T> {
     //将一段功能逻辑赋给FunctionTest.convert,这个方法是具体功能的抽象
     T convert(S str);
 
+
 }

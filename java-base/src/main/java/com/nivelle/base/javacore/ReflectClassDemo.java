@@ -1,10 +1,17 @@
 package com.nivelle.base.javacore;
 
+import com.nivelle.base.javacore.jvm.InvokeExactDemo;
 import com.nivelle.base.pojo.User;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * 反射
@@ -32,7 +39,7 @@ public class ReflectClassDemo {
      * 4. 访问一些不能访问的变量或属性：破解别人代码
      */
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws Throwable {
 
         Class userClass = Class.forName(User.class.getName());
         System.out.println("反射获取的Class对象:" + userClass);
@@ -78,6 +85,15 @@ public class ReflectClassDemo {
         //如果父类为空则为bootStrapCloassLoader
         Object classLoaderNameParent2 = user.getClass().getClassLoader().getParent().getParent();
         System.out.println("parent classLoader name is:" + classLoaderNameParent2);
+
+        /**
+         * 方法句柄
+         */
+        InvokeExactDemo invokeExactDemo = new InvokeExactDemo();
+        invokeExactDemo.invokeExact();
+        invokeExactDemo.multipleBindTo();
+        invokeExactDemo.generateMethodTypesFromDescriptor();
+        invokeExactDemo.asVarargsCollector();
 
 
     }

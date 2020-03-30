@@ -1,13 +1,13 @@
 package com.nivelle.base.javacore.jvm;
 
 /**
- * jvm虚拟机学习
+ * jvm虚拟机参数配置学习
  *
  *
  * @author fuxinzhong
  * @date 2020/03/21
  */
-public class JvmTest {
+public class JvmArgumentsTest {
 
     public static void main(String[] args) {
 

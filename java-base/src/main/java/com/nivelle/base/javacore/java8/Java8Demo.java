@@ -27,22 +27,18 @@ public class Java8Demo {
         });
 
         System.out.println(names);
-
         List<String> names2 = Arrays.asList("peter", "anna", "mike", "xenia");
-
         names2.sort((x, y) -> x.compareTo(y));
-
-        System.out.println(names2);
+        System.err.println(names2);
 
         FunctionInterface<String, String> convertMethodUp = (x) -> x.toUpperCase();
-
         String convertedUp = convertMethodUp.convert("nivelle");
-        System.out.println(convertedUp);
+        System.err.println(convertedUp);
 
         //静态方法
         FunctionInterface<String, Integer> convertMethod1 = Integer::valueOf;
         Integer converted2 = convertMethod1.convert("456");
-        System.out.println(converted2);
+        System.err.println(converted2);
 
         //::方法引用
         MethodTest something = new MethodTest();
@@ -55,44 +51,39 @@ public class Java8Demo {
         Long converted4 = convertMethod3.convert("23");
         System.out.println(converted4);
 
-        // ::调用构造方法
+        //::调用构造方法
         MethodTestFactory<MethodTest> methodTestFactory = MethodTest::new;
         MethodTest methodTest = methodTestFactory.create("nivelle", 18);
         System.out.println(methodTest);
 
         //Lambda 访问的局部变量隐式是final的
         //不能访问接口默认实现的方法
-
-
-        //默认接口实现
-
+        /**
+         * 默认接口实现
+         */
         //1.判断 Predicates
         Predicate<String> predicate = (s) -> s.length() > 0;
-
-        System.out.println(predicate.test("nivelle"));
+        System.err.println(predicate.test("nivelle"));
 
         //2.函数 Functions
         //函数接收一个入参并返回一个结果。default方法被用于将多个功能函数链接在一起，（compose 之前执行、andThen 之后执行）
         Function<String, Integer> toInteger = Integer::valueOf;
-        System.out.println(toInteger.apply("789"));
+        System.err.println("functions Integer valueOf :" + toInteger.apply("789"));
         Function<String, String> backToString = toInteger.andThen(String::valueOf);
-        System.out.println(backToString.apply("101112"));
+        System.err.println("functions:" + backToString.apply("101112"));
 
         //3.生产 Suppliers
         Supplier<MethodTest> personSupplier = MethodTest::new;
         personSupplier.get();
 
         //4.消费 Consumers
-        Consumer<MethodTest> greeter = (p) -> System.out.println("Hello, " + p.getName());
+        Consumer<MethodTest> greeter = p -> System.out.println("Hello, " + p.getName());
         greeter.accept(new MethodTest("nivelle", 18));
 
         //比较 Comparators
-
         Comparator<MethodTest> comparator = (p1, p2) -> p1.getAge().compareTo(p2.getAge());
-
         MethodTest p1 = new MethodTest("jessy", 19);
         MethodTest p2 = new MethodTest("nivelle", 18);
-
         System.out.println(comparator.compare(p1, p2));
         System.out.println(comparator.reversed().compare(p1, p2));
 
@@ -104,7 +95,6 @@ public class Java8Demo {
         //optional.ifPresent((s) -> System.out.println(s.charAt(0)));
 
         //Stream
-
         List<String> stringCollection = new ArrayList<>();
         stringCollection.add("ddd2");
         stringCollection.add("aaa2");
@@ -119,15 +109,15 @@ public class Java8Demo {
         stringCollection
                 .stream()
                 .filter((s) -> s.startsWith("a"))
-                .forEach(System.out::println);
+                .forEach(System.err::println);
 
         //sorted
-        stringCollection.stream().sorted((x, y) -> x.compareTo(y)).filter(s -> s.startsWith("b")).forEach(System.out::println);
+        stringCollection.stream().sorted((x, y) -> x.compareTo(y)).filter(s -> s.startsWith("b")).forEach(System.err::println);
 
         //map:map是一种中间过程操作，借助函数表达式将元素转换成另一种形式。可以使用map将每个对象转换为另一种类型。最终输出的结果类型依赖于你传入的函数表达式。
-        stringCollection.stream().map(String::toUpperCase).sorted((x, y) -> x.compareTo(y)).forEach(System.out::println);
+        stringCollection.stream().map(String::toUpperCase).sorted((x, y) -> x.compareTo(y)).forEach(System.err::println);
 
-        System.err.println("映射然后去重复：" + stringCollection.stream().map(String::toLowerCase).distinct().collect(Collectors.toList()));
+        System.err.println("映射然后去重复:" + stringCollection.stream().map(String::toLowerCase).distinct().collect(Collectors.toList()));
 
         //Match 匹配 //任意一个元素满足
         boolean anyStartsWithA =
@@ -135,34 +125,33 @@ public class Java8Demo {
                         .stream()
                         .anyMatch((s) -> s.startsWith("a"));
 
-        System.out.println(anyStartsWithA);
+        System.err.println("任意一个匹配到a:" + anyStartsWithA);
         //所有元素满足
         boolean allStartsWithA =
                 stringCollection
                         .stream()
                         .allMatch((s) -> s.startsWith("b"));
 
-        System.out.println(allStartsWithA);
+        System.err.println("全部匹配到b:" + allStartsWithA);
         //没有元素满足
         boolean noneStartsWithZ =
                 stringCollection
                         .stream()
                         .noneMatch((s) -> s.startsWith("z"));
 
-        System.out.println(noneStartsWithZ);
+        System.err.println("没有元素匹配z:" + noneStartsWithZ);
 
         //计数
-        Long cout = stringCollection.stream().count();
-        System.out.println(cout);
+        Long count = stringCollection.stream().count();
+        System.out.println("元素个数:" + count);
 
-        //reduce 减少，终止型操作，通过给定的函数表达式来处理流中的前后两个元素、或者中间结果与下一个元素。并将最终返回的结果放入Optional
+        //reduce 减少,终止型操作,通过给定的函数表达式来处理流中的前后两个元素、或者中间结果与下一个元素。并将最终返回的结果放入Optional
         Optional<String> reduced =
                 stringCollection
                         .stream()
                         .sorted()
                         .reduce((s1, s2) -> s1 + "//" + s2);
-
-        reduced.ifPresent(System.out::println);
+        reduced.ifPresent(System.err::println);
 
 
         User user1 = new User(1, "nivelle");
@@ -176,11 +165,8 @@ public class Java8Demo {
         userList.add(user3);
         userList.add(user4);
 
-
         System.err.println("list转Map:" + userList.stream().collect(Collectors.toMap(User::getAge, a -> a, (k1, k2) -> k1)));
-
         System.err.println("根据age排序:" + userList.stream().sorted(Comparator.comparing(User::getAge)).collect(Collectors.toList()));
-
         System.err.println("根据age分组然:" + userList.stream().collect(Collectors.groupingBy(User::getAge)));
 
         List<String> lines = Arrays.asList(new String[]{

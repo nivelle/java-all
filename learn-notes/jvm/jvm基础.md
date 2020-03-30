@@ -38,6 +38,7 @@ cd /Users/nivellefu/IdeaProjects/javadaybyday/java-base/src/main/java/com/nivell
 
 ```
 java class文件指定的page路径+类名
+
 ```
 
 - javap //根据classs字节码文件，反解析出当前类对应的code区（汇编指令），本地变量表，异常表和代码偏移量映射表，常量池等信息。
@@ -182,8 +183,7 @@ public class com.nivelle.base.pojo.javaclass.JvmExceptionDemo {
 
 3. 方法内联:方法内联指的是编译器在编译一个方法时，将某个方法调用的目标方法也纳入编译范围内，并用其返回值替代原方法调用这么个过程
 
-
-
+### 内联函数就是指函数在被调用的地方直接展开，编译器在调用时不用像一般函数那样，参数压栈，返回时参数出栈以及资源释放等，这样提高了程序执行速度。Java不支持直接声明为内联函数的，如果想让他内联，则是由编译器说了算，你只能够向编译器提出请求。
 
 
 
