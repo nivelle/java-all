@@ -74,9 +74,9 @@
 
 ### -XX:ReservedCodeCacheSize=32m	Solaris 64-bit, amd64, -server x86: 48m, 1.5.0_06之前, Solaris 64-bit amd64: 1024m, 其他默认 32m	设置代码缓存的最大值，编译时用
 
-### -XX:SurvivorRatio=8	Solaris amd64: 6, Sparc in 1.3.1: 25, Solaris platforms 5.0以前: 32, 其他默认 8	Eden与Survivor的占用比例。例如8表示，一个survivor区占用 1/8 的Eden内存，即1/10的新生代内存，为什么不是1/9？因为我们的新生代有2个survivor，即S0和S1。所以survivor总共是占用新生代内存的 2/10，Eden与新生代的占比则为 8/10
+### -XX:SurvivorRatio=8	 其他默认 8	Eden与Survivor的占用比例。例如8表示，一个survivor区占用 1/8 的Eden内存，即1/10的新生代内存，为什么不是1/9？因为我们的新生代有2个survivor，即S0和S1。所以survivor总共是占用新生代内存的 2/10，Eden与新生代的占比则为 8/10
 
-### -XX:TargetSurvivorRatio=50	50	实际使用的survivor空间大小占比。默认是50%，最高90%
+### -XX:TargetSurvivorRatio=50	50	实际使用的survivor空间大小占比。默认是50%，最高90%(会导致晋级)
 
 ### -XX:ThreadStackSize=512	Sparc: 512, Solaris x86: 320 (5.0以前 256), Sparc 64 bit: 1024, Linux amd64: 1024 (5.0 以前 0), 其他默认 512.	线程堆栈大小
 
@@ -101,6 +101,8 @@
 - use TLAB allocation watermark pointer to gate when prefetch instructions are executed.
 
 ### -XX:+UseCompressedStrings	Java 6 update 21有一选项	其中，对于不需要16位字符的字符串，可以使用byte[] 而非char[]。对于许多应用，这可以节省内存，但速度较慢（5％-10％）
+
+### -XX:+UsePSAdaptiveSurvivorSizePolicy: 根据生成对象的速率，以及survivor区的使用情况动态调整Eden和Survivor的比例
 
 ### -XX:+OptimizeStringConcat	在Java 6更新20中引入	优化字符串连接操作在可能的情况下
 
@@ -166,4 +168,4 @@
 
 ### -XX:InitialTenuringThreshold=7	 	设置初始的对象在新生代中最大存活次数
 
-### -XX:MaxTenuringThreshold=	 	设置对象在新生代中最大的存活次数,最大值15,并行回收机制默认为15,CMS默认为4
+### -XX:MaxTenuringThreshold=15	 	设置对象在新生代中最大的存活次数,最大值15,并行回收机制默认为15,CMS默认为4(会导致晋级)
