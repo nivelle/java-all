@@ -1,6 +1,9 @@
 package com.nivelle.base.javacore.jvm;
 
 
+import com.nivelle.base.pojo.User;
+import sun.misc.Unsafe;
+
 import java.io.*;
 import java.lang.reflect.Constructor;
 
@@ -61,6 +64,12 @@ public class ConstructorDemo implements Cloneable, Serializable {
                 "constructor5.bin"));
         ConstructorDemo constructor5 = (ConstructorDemo) input.readObject();
         System.out.println(constructor5);
+
+        /**
+         * {@link com.nivelle.base.javacore.UnsafeClassDemo}
+         */
+        System.out.println("使用Unsafe机制创建对象：");
+
 
     }
 

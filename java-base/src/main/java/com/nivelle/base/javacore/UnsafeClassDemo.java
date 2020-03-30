@@ -100,7 +100,7 @@ public class UnsafeClassDemo {
     /**
      * 单例实现;
      * 当且仅当调用getUnsafe方法的类为引导类加载器所加载时才合法;
-     * <p>
+     *
      * 1.java -Xbootclasspath/a: ${path}   // 其中path为调用Unsafe相关方法的类所在jar包路径
      * 2.通过反射获取Unsafe实例
      */
