@@ -3,10 +3,7 @@ package com.nivelle.base.javacore.datastructures;
 import com.nivelle.base.pojo.enums.MyEnum;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
 
 /**
  * ArrayList
@@ -321,6 +318,40 @@ public class ArrayListDemo {
         list2.add("11");
         list2.sort(new CompareAble());
         System.out.println("排序之后的 list2 集合:" + list2);
+
+        /**
+         * iterator 是ArrayList的一个内部类。
+         */
+        Iterator<String> it = list2.iterator();
+        while (it.hasNext()) {
+            String str = it.next();
+            if (str.equals("9")) {
+                it.remove();
+            }
+        }
+        System.out.println("排序之后删除9后的集合:" + list2);
+        for (String s : list2) {
+            if (s.equals("10")) {
+                list2.remove(s);
+            }
+        }
+        System.out.println("排序之后删除10后的集合:" + list2);
+
+        for (String s : list2) {
+            if (s.equals("11")) {
+                list2.remove(s);
+            }
+        }
+        System.out.println("排序之后删除11后的集合:" + list2);
+
+        /**
+         * for(:)循环[这里指的不是for(;;)]是一个语法糖，这里会被解释为迭代器，在使用迭代器遍历时，ArrayList内部创建了一个内部迭代器iterator，在使用next()方法来取下一个元素时，会使用ArrayList里保存的一个用来记录List修改次数的变量modCount，与iterator保存了一个expectedModCount来表示期望的修改次数进行比较，如果不相等则会抛出异常；
+         *
+         * 而在在foreach循环中调用list中的remove()方法，会走到fastRemove()方法，该方法不是iterator中的方法，而是ArrayList中的方法，在该方法只做了modCount++，而没有同步到expectedModCount。
+         *
+         * 当再次遍历时，会先调用内部类iteator中的hasNext(),再调用next(),在调用next()方法时，会对modCount和expectedModCount进行比较，此时两者不一致，就抛出了ConcurrentModificationException异常。
+         */
+
     }
 
 
