@@ -2,7 +2,7 @@ package com.nivelle.spring.springboot.controllor;
 
 
 import com.nivelle.base.pojo.User;
-import com.nivelle.base.pojo.vo.ResponseResult;
+import com.nivelle.base.pojo.ResponseResult;
 import com.nivelle.spring.springboot.cache.UserFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

@@ -1,4 +1,4 @@
-package com.nivelle.base.pojo.vo;
+package com.nivelle.base.pojo;
 
 import lombok.Getter;
 import lombok.Setter;
