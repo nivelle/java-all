@@ -26,6 +26,8 @@ public class BootstrapApplication extends SpringBootServletInitializer {
     /**
      * 部署到阿里云后的启动日志
      *
+     * tail -f catalina.out
+     *
      * of web application directory [/home/tomcat/apache-tomcat-8.5.50/webapps/examples] has finished in [445] ms
      * 14-Jan-2020 00:17:08.649 信息 [main] org.apache.coyote.AbstractProtocol.start 开始协议处理句柄["http-nio-80"]
      * 14-Jan-2020 00:17:08.682 信息 [main] org.apache.coyote.AbstractProtocol.start 开始协议处理句柄["ajp-nio-8009"]
