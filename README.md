@@ -154,6 +154,9 @@ docker整合【下载:docker pull nivelle/nivelle:1.0.2】【运行:sudo docker 
 
 ⌛️ 乐观锁，悲观锁，事物，传播特性
 
+✅ 【mysql explain】
+
+
 #### HBase实践
 
 ✅【put】
@@ -187,6 +190,7 @@ docker整合【下载:docker pull nivelle/nivelle:1.0.2】【运行:sudo docker 
 
 ✅ 【SPI&SCI机制】
 
+✅ 【Tomcat调优】
 
 -------------------------
 
@@ -236,6 +240,7 @@ docker整合【下载:docker pull nivelle/nivelle:1.0.2】【运行:sudo docker 
 
 ✅【范型:范型类,范性方法,范型接口】
 
+✅【java序列化】
 
 #### JDK学习
 
