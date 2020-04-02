@@ -1,9 +1,6 @@
 package com.nivelle.base.javacore.jvm;
 
 
-import com.nivelle.base.pojo.User;
-import sun.misc.Unsafe;
-
 import java.io.*;
 import java.lang.reflect.Constructor;
 
@@ -11,6 +8,8 @@ import java.lang.reflect.Constructor;
  * 构造对象的方法
  */
 public class ConstructorDemo implements Cloneable, Serializable {
+
+    private static final long serialVersionUID = 2L;
 
     private Integer id;
 
@@ -53,6 +52,9 @@ public class ConstructorDemo implements Cloneable, Serializable {
         System.out.println("\n---------------------------\n");
 
         System.out.println("使用(反)序列化机制创建对象：");
+        /**
+         *
+         */
         // 写对象
         ObjectOutputStream output = new ObjectOutputStream(
                 new FileOutputStream("constructor5.bin"));
