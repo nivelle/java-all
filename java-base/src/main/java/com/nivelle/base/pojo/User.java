@@ -4,9 +4,9 @@ import java.io.Serializable;
 
 public class User implements Serializable {
 
-    private Integer age;
+    public int age;
 
-    private String name;
+    public String name;
 
 
     @Override
@@ -67,6 +67,10 @@ public class User implements Serializable {
     }
 
     public User() {
+    }
+
+    public User(String name) {
+        this.name = name;
     }
 
 }

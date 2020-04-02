@@ -1,7 +1,7 @@
 package com.nivelle.base.javacore.jvm;
 
 
-import com.nivelle.base.pojo.Bar;
+import com.nivelle.base.pojo.Son;
 
 /**
  * 构造函数初始化顺序
@@ -14,11 +14,11 @@ public class ConstructorInitializerOrderDemo {
      */
 
     public static void main(String... args) {
-        Bar bar = new Bar();
+        Son son = new Son();
         /**
          * 此时返回的是子类的方法，返回此时子类的j值:2
          */
-        System.out.println(bar.getValue());
+        System.out.println(son.getValue());
     }
 
 }

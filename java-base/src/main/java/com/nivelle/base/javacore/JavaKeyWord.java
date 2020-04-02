@@ -1,6 +1,6 @@
 package com.nivelle.base.javacore;
 
-import com.nivelle.base.pojo.Father;
+import com.nivelle.base.pojo.Parent;
 import com.nivelle.base.pojo.Son;
 import com.nivelle.base.pojo.User;
 
@@ -74,7 +74,7 @@ public class JavaKeyWord {
         System.out.println("4. list是ArrayList的实例,属于List接口的实现类:" + (list instanceof List));
 
         Son son = new Son(1, "nivelle", 10);
-        System.out.println("5. son是其父类的实现类:" + (son instanceof Father));
+        System.out.println("5. son是其父类的实现类:" + (son instanceof Parent));
 
         String[] strings = new String[]{};
         System.out.println("6. 数组类型是否是 Object 的子类型:" + (strings instanceof Object));
@@ -97,7 +97,7 @@ public class JavaKeyWord {
         System.out.println("参数不变:" + temp);
         //定义为final的变量不能改变
         //temp = 16;
-        System.out.println("默认的byte值:"+0);
+        System.out.println("默认的byte值:" + 0);
     }
 
     /**
@@ -118,13 +118,13 @@ public class JavaKeyWord {
      */
     public static void continueTest() {
         int i = 0;
-        while (i<=5) {
+        while (i <= 5) {
             if (i == 3) {
                 i++;
                 continue;
             }
             System.err.println(" i=" + i);
-            i+=1;
+            i += 1;
         }
         System.err.println("end i=" + i);
     }

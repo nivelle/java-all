@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 @AllArgsConstructor
-public class MethodTest {
+public class MethodFactoryImpl {
 
     private String name;
 

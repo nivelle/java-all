@@ -1,27 +1,19 @@
 package com.nivelle.base.pojo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- * 父类
+ * TODO:DOCUMENT ME!
+ *
+ * @author fuxinzhong
+ * @date 2020/04/02
  */
 public class Foo {
+    public String name;
+    public List<Bar> bars = new ArrayList<>();
 
-    int i = 1;
-
-    Foo() {
-        System.out.println(i);
-        /**
-         * 子类复写了该方法,这导致会调用子类方法，返回此时子类的i值：0
-         */
-        int x = getValue();
-        System.out.println(x);
+    public Foo(String name) {
+        this.name = name;
     }
-
-    {
-        i = 2;
-    }
-
-    protected int getValue() {
-        return i;
-    }
-
 }

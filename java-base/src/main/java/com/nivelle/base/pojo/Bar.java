@@ -1,24 +1,15 @@
 package com.nivelle.base.pojo;
 
 /**
- * 子类
+ * TODO:DOCUMENT ME!
+ *
+ * @author fuxinzhong
+ * @date 2020/04/02
  */
-public class Bar extends Foo {
+public class Bar {
+    public String name;
 
-    int j = 1;
-
-    public Bar() {
-        j = 2;
+    public Bar(String name) {
+        this.name = name;
     }
-
-    {
-        j = 3;
-    }
-
-    @Override
-    public int getValue() {
-        return j;
-    }
-
-
 }

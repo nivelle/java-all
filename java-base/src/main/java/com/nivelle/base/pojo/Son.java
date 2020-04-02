@@ -1,29 +1,34 @@
 package com.nivelle.base.pojo;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+/**
+ * 子类
+ */
+public class Son extends Parent {
 
-@ToString
-@Setter
-@Getter
-public class Son extends Father {
+    int j = 1;
 
-    private int score;
-
-    public Son(int age, String name, int score) {
-        /**
-         * 继承构造函数需要先实现父类的构造函数
-         */
-        super(age, name);
-        this.score = score;
+    public Son() {
+        j = 2;
     }
 
-    public int getScore() {
-        return score;
+    {
+        j = 3;
     }
 
-    public void setScore(int score) {
-        this.score = score;
+    @Override
+    public int getValue() {
+        return j;
     }
+
+    private int age;
+    private String name;
+    private int idNum;
+
+    public Son(int age, String name, int idNum) {
+        this.age = age;
+        this.name = name;
+        this.idNum = idNum;
+    }
+
+
 }
