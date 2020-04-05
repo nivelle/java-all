@@ -3,7 +3,7 @@
    
 1. 打印gc日志 -XX:+PrintGCDetails 
 
-2. -Djava.lang.Integer.IntegerCache.high=128;//控制integer缓存范围
+2. -Djava.lang.Integer.IntegerCache.high=128;//控制integer缓存范围 - XX:+AggressiveOpts也会将 IntegerCache.high 调整至 20000
 
 3. -Dsun.reflect.noInflation=true;//在反射调用一开始便会直接生成动态实现，而不会使用委派实现或者本地实现
 
@@ -105,6 +105,10 @@
 
 24. -XX:+OptimizeStringConcat	在Java 6更新20中引入	优化字符串连接操作在可能的情况下
 
+25. -XX:TieredStopAtLevel=1 使用C1进行编译
+
+26. -XX:+PrintBiasedLockingStatistics 打印各个锁的个数
+
 ## 调试参数:
 
 1. -XX:-CITime	 	打印发费在JIT编译上的时间
@@ -169,6 +173,18 @@
 
 31. -XX:MaxTenuringThreshold=15	 	设置对象在新生代中最大的存活次数,最大值15,并行回收机制默认为15,CMS默认为4(会导致晋级)
 
+32. -XX:+PrintInlining //将内联方法打印出来
+
+33. -XX:+UnlockDiagnosticVMOptions //解锁对JVM进行诊断的选项参数。默认是关闭的，开启后支持一些特定参数对JVM进行诊断
+
+34. -XX:+DoEscapeAnalysis开启逃逸分析,java8默认开启
+
+35. -XX:-DoEscapeAnalysis 关闭逃逸分析
+## 锁相关
+
+1. XX:BiasedLockingBulkRebiasThreshold  某一类锁对象的总撤销数超过了一个阈值,那么 Java 虚拟机会宣布这个类的偏向锁失效,撤销偏向锁需要到安全点
+
+2. XX:BiasedLockingBulkRevokeThreshold  Java 虚拟机会认为这个类已经不再适合偏向锁
 
 ## JVM启动参数
 
@@ -179,3 +195,4 @@ vim catalina.sh
 ```
 
 JAVA_OPTS=-XX:+PrintGCDetails -Xmx512M -Xms512M -XX:+HeapDumpOnOutOfMemoryError -XX:+UseSerialGC -XX:PermSize=32M -Xloggc:d:/gc.log"
+
