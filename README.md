@@ -4,6 +4,8 @@
 
 ### 该项目和 [vueGuides](https://github.com/nivelle/vueGuides)项目可搭配使用
 
+### java-notes 多数文章来自网上优秀文章摘要整合,仅供记录学习。
+
 ## 依赖环境: 
 
 
