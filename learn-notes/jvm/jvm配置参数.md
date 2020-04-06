@@ -109,6 +109,10 @@
 
 26. -XX:+PrintBiasedLockingStatistics 打印各个锁的个数
 
+27. -XX:PetenureSizeThreshold : 直接进入老年代的对象大小
+
+28。 -XX:+UseAdaptiveSizePolicy : JVM 将会动态调整 Java 堆中各个区域的大小以及进入老年代的年龄，–XX:NewRatio 和 -XX:SurvivorRatio 将会失效
+
 ## 调试参数:
 
 1. -XX:-CITime	 	打印发费在JIT编译上的时间
@@ -119,7 +123,7 @@
 
 4. -XX:HeapDumpPath=./java_pid<pid>.hprof	1.4.2 update 12, 5.0 update 7	指定HeapDump的文件路径或目录
 
-5. -XX:-HeapDumpOnOutOfMemoryError	1.4.2 update 12, 5.0 update 7	当抛出OOM时进行HeapDump
+5. -XX:-HeapDumpOnOutOfMemoryError	1.4.2 update 12, 5.0 update 7	当抛出OOM时进行HeapDump,表示当JVM发生OOM时，自动生成DUMP文件
 
 6. -XX:OnError=”<cmd args>;<cmd args>”	1.4.2 update 9	当发生错误时执行用户指定的命令
 
@@ -137,7 +141,7 @@
 
 13. -XX:-PrintGCDetails	1.4.0	打印GC详细信息
 
-14. -XX:-PrintGCTimeStamps	1.4.0	打印GC用时
+14. -XX:-PrintGCTimeStamps	1.4.0	打印GC用时;-XX:+PrintGCDateStamps 输出GC的时间戳（以日期的形式，如 2013-05-04T21:53:59.234+0800）
 
 15. -XX:-PrintTenuringDistribution	 	打印Tenuring年龄信息
 
@@ -180,6 +184,12 @@
 34. -XX:+DoEscapeAnalysis开启逃逸分析,java8默认开启
 
 35. -XX:-DoEscapeAnalysis 关闭逃逸分析
+
+36. -XX:+PrintHeapAtGC 在进行GC的前后打印出堆的信息
+
+37. -Xloggc:../logs/gc.log 日志文件的输出路径
+
+
 ## 锁相关
 
 1. XX:BiasedLockingBulkRebiasThreshold  某一类锁对象的总撤销数超过了一个阈值,那么 Java 虚拟机会宣布这个类的偏向锁失效,撤销偏向锁需要到安全点
@@ -196,3 +206,6 @@ vim catalina.sh
 
 JAVA_OPTS=-XX:+PrintGCDetails -Xmx512M -Xms512M -XX:+HeapDumpOnOutOfMemoryError -XX:+UseSerialGC -XX:PermSize=32M -Xloggc:d:/gc.log"
 
+-Xms：堆初始大小；
+
+-Xmx：堆最大值。
