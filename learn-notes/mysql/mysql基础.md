@@ -349,7 +349,7 @@ IX      互斥      互斥
 
 (3)记录锁(Record Locks):专门对所影响加锁
 
-(4)间隙锁(Gap Locks):索引项之间
+(4)间隙锁(Gap Locks):索引项之间  ( gap lock:innodb_locks_unsafe_for_binlog = disable)
 
    - 间隙锁的主要目的，就是为了防止其他事务在间隔中插入数据，以导致“不可重复读”。
    
@@ -359,9 +359,13 @@ IX      互斥      互斥
 
 (5)临键锁(Next-key Locks)
 
-(6)插入意向锁(Insert Intention Locks)
+(6)插入意向锁(Insert Intention Locks) 也是一种间隙锁，与间隙锁是互斥的。
 
 (7)自增锁(Auto-inc Locks)
+
+### 锁之间兼容矩阵
+
+![锁兼容矩阵.jpg](https://i.loli.net/2020/04/09/3Fvs2N6WiRaOBHl.jpg)
 
 ```
 自增锁是一种特殊的表级别锁（table-level lock),专门针对事务插入AUTO_INCREMENT类型的列。
@@ -400,19 +404,35 @@ MDL 不需要显式使用，在访问一个表的时候会被自动加上。MDL 
 
 - 优化 1：索引上的等值查询，给唯一索引加锁的时候，next-key lock 退化为行锁。
 
-- 优化 2：索引上的等值查询，向右遍历时且最后一个值不满足等值条件的时候，next-key lock 退化为间隙锁。
+- 优化 2：索引上的等值查询，向后遍历时且最后一个值不满足等值条件的时候，next-key lock 退化为间隙锁。
 
 - 一个 bug：唯一索引上的范围查询会访问到不满足条件的第一个值为止。
 
-只在可重复读以上隔离级别下的特定操作才会取得gap lock,next-key lock;在select ,update,delete时除了基于唯一索引的查询之外，其他索引查询时会获取gap lock 或 next-key lock,及锁住其扫描范围。
+只在可重复读以上隔离级别下的特定操作才会取得gap lock,next-key lock;在select ,update,delete时除了基于唯一索引的查询之外,其他索引查询时会获取gap lock 或 next-key lock,及锁住其扫描范围，主键缩影是不会使用间隙锁的;
 
 
-### 死锁问题解决
+### 死锁问题
+
+#### 查看死锁
+
+```
+use information_schema;
+
+select * from innodb_lock_waits;
+
+select * from innodb_locks;
+
+```
+
+#### 死锁解决
+
+比较条件： 互斥，占有且等待，不可强占，循环等待
 
 - 直接进入等待，直到超时。这个超时时间可以通过参数 **innodb_lock_wait_timeout** 来设置
 
-- 发起死锁检测，发现死锁后，主动回滚死锁链条中的某一个事务，让其他事务得以继续执行。将参数 **innodb_deadlock_detect** 设置为 on，表示开启这个逻辑。(加锁访问的行上有锁，他才要检测)
+- mysql 默认开启了死锁检测机制，发现死锁后，主动回滚死锁链条中锁定资源最少的一个事务，让其他事务得以继续执行。将参数 **innodb_deadlock_detect** 设置为 on，表示开启这个逻辑。(**加锁访问的行上有锁，他才要检测**)
 
+- 聚蔟索引更新和二级索引更新，如果是更新同一个索引值也可能引起死锁。
 ### 事务
 
 ```
@@ -451,5 +471,9 @@ MDL 不需要显式使用，在访问一个表的时候会被自动加上。MDL 
 - 避免行锁升级到表锁
 
 - 控制事务大小，减少锁定的资源量和锁定时间长度（小事务，懒事务）
+
+- 尽量使用主键更新
+
+- 设置锁等待超时等待参数
 
 
