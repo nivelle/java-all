@@ -2,6 +2,9 @@ package com.nivelle.base.javacore.thread;
 
 import java.util.concurrent.locks.ReentrantLock;
 
+/**
+ * @author nivellefu
+ */
 public class ThreadReentrantLock {
 
     private ReentrantLock lock = new ReentrantLock();
@@ -12,7 +15,7 @@ public class ThreadReentrantLock {
             System.out.println(Thread.currentThread().getName() + "do something synchronize");
             try {
                 anotherLock();
-                Thread.sleep(5000l);
+                Thread.sleep(5000L);
             } catch (InterruptedException e) {
                 System.out.println(Thread.currentThread().getName() + "interrupted");
                 Thread.currentThread().interrupt();

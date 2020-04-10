@@ -1,5 +1,8 @@
 package com.nivelle.base.javacore.thread;
 
+/**
+ * @author nivellefu
+ */
 public class ThreadPriority {
 
     public static void main(String[] args)  {

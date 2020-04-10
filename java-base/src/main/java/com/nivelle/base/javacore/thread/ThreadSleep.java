@@ -3,6 +3,7 @@ package com.nivelle.base.javacore.thread;
 
 /**
  * sleep
+ * @author nivellefu
  */
 public class ThreadSleep {
     public static void main(String[] args) {
@@ -13,7 +14,8 @@ public class ThreadSleep {
             if (i == 3) {
                 thread.start();
                 try {
-                    Thread.sleep(1);   // 使得thread必然能够马上得以执行14
+                    // 使得thread必然能够马上得以执行14
+                    Thread.sleep(1);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

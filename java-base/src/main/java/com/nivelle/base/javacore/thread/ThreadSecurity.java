@@ -1,6 +1,9 @@
 package com.nivelle.base.javacore.thread;
 
-public class ThreadSecurity{
+/**
+ * @author nivellefu
+ */
+public class ThreadSecurity {
 
     public static void main(String[] args) {
         Account account = new Account("123456", 1000);
@@ -24,11 +27,16 @@ class DrawMoneyRunnable implements Runnable {
         this.drawAmount = drawAmount;
     }
 
+    @Override
     public synchronized void run() {
-        if (account.getBalance() >= drawAmount) {  //余额大于要取的钱则可以运行
+        //余额大于要取的钱则可以运行
+        if (account.getBalance() >= drawAmount) {
             System.out.println("取钱成功， 取出钱数为：" + drawAmount);
             double balance = account.getBalance() - drawAmount;
-            account.setBalance(balance);//设置余额
+            /**
+             * 设置余额
+             */
+            account.setBalance(balance);
             System.out.println("余额为：" + balance);
         }
     }

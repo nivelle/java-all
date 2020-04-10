@@ -1,7 +1,6 @@
 package com.nivelle.base.javacore.datastructures;
 
 import com.nivelle.base.javacore.thread.MyAQSynchronizer;
-import com.nivelle.base.javacore.thread.MyAQSynchronizer;
 
 /**
  * AQS

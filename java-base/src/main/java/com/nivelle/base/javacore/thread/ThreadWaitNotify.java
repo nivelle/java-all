@@ -2,6 +2,7 @@ package com.nivelle.base.javacore.thread;
 
 /**
  * wait/notify
+ * @author nivellefu
  */
 public class ThreadWaitNotify{
 
@@ -27,7 +28,7 @@ class DrawMoneyThread extends Thread {
         this.account = account;
         this.amount = amount;
     }
-
+    @Override
     public void run() {
         for (int i = 0; i < 100; i++) {
             account.draw(amount, i);
@@ -146,7 +147,7 @@ class AccountSecurity {
             // 唤醒其他线程
             notifyAll();
 
-            System.out.println(Thread.currentThread().getName() + "-- 取钱 -- 执行完毕" + " -- i=" + i); // 3
+            System.out.println(Thread.currentThread().getName() + "-- 取钱 -- 执行完毕" + " -- i=" + i);
         }
     }
 

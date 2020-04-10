@@ -6,6 +6,8 @@ import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * condition
+ *
+ * @author nivellefu
  */
 public class ThreadCondition {
 
@@ -16,11 +18,9 @@ public class ThreadCondition {
         Thread thread1 = new Thread(() -> {
 
             lock.lock();
-
             try {
-                System.out.println(Thread.currentThread().getName() + "run");
-                System.out.println(Thread.currentThread().getName() + "wait for condition");
-
+                System.out.println(Thread.currentThread().getName() + "->run");
+                System.out.println(Thread.currentThread().getName() + "->wait for condition");
                 try {
                     condition.await();
                     System.out.println(Thread.currentThread().getName() + "continue");
@@ -45,7 +45,7 @@ public class ThreadCondition {
                 System.out.println(Thread.currentThread().getName() + "condition sleep 5 secs");
 
                 try {
-                    Thread.sleep(5000l);
+                    Thread.sleep(5000L);
                 } catch (InterruptedException e) {
                     System.err.println(Thread.currentThread().getName() + " interrupted");
                     Thread.currentThread().interrupt();

@@ -2,6 +2,7 @@ package com.nivelle.base.javacore.thread;
 
 /**
  * join
+ * @author nivellefu
  */
 public class ThreadJoin {
     public static void main(String[] args) {

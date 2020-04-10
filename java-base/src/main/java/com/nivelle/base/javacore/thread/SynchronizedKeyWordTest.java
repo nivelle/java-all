@@ -1,15 +1,18 @@
 package com.nivelle.base.javacore.thread;
 
+/**
+ * @author nivellefu
+ */
 public class SynchronizedKeyWordTest {
 
 
     public synchronized void execute(){
         try{
-            System.out.println(Thread.currentThread().getName()+"do something synchronize");
+            System.out.println(Thread.currentThread().getName()+" -> do something synchronize");
             try {
                 anotherLock();
                 Thread.sleep(5000l);
-
+                Thread.interrupted();
             }catch (InterruptedException e){
                 System.out.println(Thread.currentThread().getName()+"interrupted");
                 Thread.currentThread().interrupt();

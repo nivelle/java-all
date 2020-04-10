@@ -8,6 +8,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.util.Iterator;
 
+/**
+ * @Author nivelle
+ */
 @SpringBootApplication
 public class JavaBaseApplication {
 

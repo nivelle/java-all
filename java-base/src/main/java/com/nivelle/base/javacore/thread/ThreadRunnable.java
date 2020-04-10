@@ -2,6 +2,7 @@ package com.nivelle.base.javacore.thread;
 
 /**
  * runnable
+ * @author nivellefu
  */
 public class ThreadRunnable {
     public static void main(String[] args) {
