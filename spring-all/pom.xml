@@ -10,7 +10,7 @@
 
     <parent>
         <groupId>com.nivelle</groupId>
-        <artifactId>javaDayByDay</artifactId>
+        <artifactId>programDayByDay</artifactId>
         <version>1.0.1</version>
         <relativePath>../parent/pom.xml</relativePath>
     </parent>

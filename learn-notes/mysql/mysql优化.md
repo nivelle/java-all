@@ -32,3 +32,22 @@ select * from `demo`.`order` where id> (select id from `demo`.`order` order by o
 
 - 增加汇总统计
 
+### InnoDB 调优参数
+
+- innodb_buffer_pool_size : 默认8M
+
+- innodb_buffer_pool_instances
+
+- innodb_read_io_threads / innodb_write_io_threads
+
+- innodb_log_file_size
+
+- innodb_log_buffer_size
+
+- innodb_flush_log_at_trx_commit
+
+- max_connections
+
+- back_log
+
+- thread_cache_size
