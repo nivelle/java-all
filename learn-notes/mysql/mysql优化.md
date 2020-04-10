@@ -34,20 +34,93 @@ select * from `demo`.`order` where id> (select id from `demo`.`order` order by o
 
 ### InnoDB 调优参数
 
-- innodb_buffer_pool_size : 默认8M
+#### innodb_buffer_pool_size : 默认 128M
 
-- innodb_buffer_pool_instances
+ ```
+  mysql> SELECT @@innodb_buffer_pool_size; //134217728/1024*1024 = 128 M
+  +---------------------------+
+  | @@innodb_buffer_pool_size |
+  +---------------------------+
+  |                 134217728 |
+  +---------------------------+
+  
+  ```
 
-- innodb_read_io_threads / innodb_write_io_threads
+  1. IBP 默认的内存大小是 128M，我们可以通过参数 innodb_buffer_pool_size 来设置 IBP 的大小，IBP 设置得越大，InnoDB 表性能就越好。
+ 
+  2. 将 IBP 大小设置得过大也不好，可能会导致系统发生 SWAP 页交换。所以我们需要在 IBP 大小和其它系统服务所需内存大小之间取得平衡。
+ 
+  3. MySQL 推荐配置 IBP 的大小为服务器物理内存的 80%。
+  
+  4. InnoDB_buffer_pool_size参数同时提供为数据块和索引块做缓存.这个值设置的越高,访问表中数据需要的磁盘IO就越少
 
-- innodb_log_file_size
+#### innodb_buffer_pool_instances:默认1
 
-- innodb_log_buffer_size
+  1. InnoDB 中的 IBP 缓冲池被划分为了多个实例，对于具有数千兆字节的缓冲池的系统来说，将缓冲池划分为单独的实例可以减少不同线程读取和写入缓存页面时的争用，从而提高系统的并发性。
+  
+  2. 该参数项仅在将 innodb_buffer_pool_size 设置为 1GB 或更大时才会生效。
+  
+  3. 建议 innodb_buffer_pool_instances 的大小不超过 innodb_read_io_threads + innodb_write_io_threads 之和，建议实例和线程数量比例为 1:1。
 
-- innodb_flush_log_at_trx_commit
+#### innodb_read_io_threads （默认4）/ innodb_write_io_threads（默认4):
 
-- max_connections
+  1. 在默认情况下，MySQL 后台线程包括了主线程、IO 线程、锁线程以及监控线程等，其中读写线程属于 IO 线程，主要负责数据库的读取和写入操作，这些线程分别读取和写入 innodb_buffer_pool_instances 创建的各个内存页面
+  
+  ```
+  
+   SHOW GLOBAL STATUS LIKE 'Com_select';//读取数量
 
-- back_log
+   SHOW GLOBAL STATUS WHERE Variable_name IN ('Com_insert', 'Com_update', 'Com_replace', 'Com_delete');//写入数量
+   
+  ```
+  
+  2. 决定这两个参数数值的因素也有两个：cpu核数、应用场景中读写事务比例。
+  
 
-- thread_cache_size
+#### innodb_log_file_size: 默认48M
+
+  当日志文件大小已经超过我们参数设置的日志文件大小时，InnoDB 会自动切换到另外一个日志文件，由于重做日志是一个循环使用的环，在切换时，就需要将新的日志文件脏页的缓存数据刷新到磁盘中（触发检查点）。
+
+#### innodb_log_buffer_size: 默认16
+
+  ```
+  mysql> SELECT @@innodb_log_buffer_size;
+  +--------------------------+
+  | @@innodb_log_buffer_size |
+  +--------------------------+
+  |                 16777216 |
+  +--------------------------+
+
+  ```
+
+  这个参数决定了 InnoDB 重做日志缓冲池的大小,如果高并发中存在大量的事务，该值设置得太小，就会增加写入磁盘的 I/O 操作。我们可以通过增大该参数来减少写入磁盘操作，从而提高并发时的事务性能。
+
+#### innodb_flush_log_at_trx_commit:默认1 
+
+
+ 0: log buffer中的数据将以每秒一次的频率写入到log file中,且同时会进行文件系统到磁盘的同步操作，但是每个事务的commit并不会触发任何log buffer 到log file的刷新或者文件系统到磁盘的刷新操作;
+
+ 1: 在每次事务提交的时候将logbuffer 中的数据都会写入到log file,同时也会触发文件系统到磁盘的同步;
+
+ 2: 事务提交会触发log buffer 到log file的刷新，但并不会触发磁盘文件系统到磁盘的同步。此外，每秒会有一次文件系统到磁盘同步操作。
+
+
+#### max_connections: 默认151
+
+  控制允许连接到MySQL数据库的最大的连接数。
+
+#### back_log:默认 80 
+
+  MySQL能暂存的连接数量。当主要MySQL线程在一个很短时间内得到非常多的连接请求，这就起作用。如果MySQL的连接数据达到 max_connections时，新来的请求将会被存在堆栈中，以等待某一连接释放资源，该堆栈的数量即back_log，如果等待连接的数量超过 back_log，将不被授予连接资源。
+
+#### thread_cache_size:缓存线程数目大小，默认9
+
+  MySQL连接收到客户端连接时，需要生成线程处理连接。档连接断开的时候，线程并不会立刻销毁，而是对线程进行缓存，便于下一个连接使用，减少线程的创建和销毁，
+
+#### innodb_log_files_in_group:默认2
+
+#### innodb_file_per_table
+
+1. 关键参数，默认情况下配置为off。
+
+2. 控制innodb每一个表使用独立的表空间，默认情况下，所有的表都会建立在共享表空间当中。
