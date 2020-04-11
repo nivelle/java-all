@@ -1,12 +1,4 @@
----
-layout: post
-title:  Thread的中断机制
-date:   2017-12-19 00:06:05
-categories: java
-tags: interrupt
-excerpt: Thread的中断机制(interrupt)
-author: nivelle
----
+
 
 ### 定义
 

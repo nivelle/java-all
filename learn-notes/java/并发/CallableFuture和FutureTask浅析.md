@@ -1,12 +1,4 @@
----
-layout: post
-title:  Callable、Future和FutureTask浅析
-date:   2017-12-21 00:06:05
-categories: java
-tags: callable
-excerpt: Callable、Future和FutureTask浅析
-author: nivelle
----
+
 
 ### Callable<V>接口
 

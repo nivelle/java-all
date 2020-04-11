@@ -1,15 +1,4 @@
----
-layout: post
-title:  "volidate学习"
-date:   2018-08-24 01:06:05
-categories: 知识点
-tags: volidate
-excerpt: 同步原理
----
 
-
-* content
-{:toc}
 
 ### 特点
 

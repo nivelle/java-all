@@ -1,15 +1,4 @@
----
-layout: post
-title:  "threadLocal详解"
-date:   2018-08-24 01:06:05
-categories: 技术
-tags: 知识点
-excerpt: 知识点
----
 
-
-* content
-{:toc}
 
 ### 定义
 
