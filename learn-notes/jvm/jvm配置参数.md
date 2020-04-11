@@ -19,7 +19,7 @@
 
 9. -XX:+MaxFDLimit	限于Solaris,默认启用	设置java进程可用文件描述符为操作系统允许的最大值。
 
-10. -XX:PreBlockSpin=10	-XX:+UseSpinning 必须先启用，对于java6来说已经默认启用了，这里默认自旋10次	控制多线程自旋锁优化的自旋次数
+10. -XX:PreBlockSpin=10	-XX:+UseSpinning 必须先启用，对于java6来说已经默认启用了，这里默认自旋10次	控制多线程自旋锁优化的自旋次数（JDK1.7后，去掉此参数，由jvm控制）
 
 11. -XX:-RelaxAccessControlCheck	默认不启用	在Class校验器中，放松对访问控制的检查,作用与reflection里的setAccessible类似
 
@@ -79,7 +79,7 @@
 
 13. -XX:ThreadStackSize=512	Sparc: 512, Solaris x86: 320 (5.0以前 256), Sparc 64 bit: 1024, Linux amd64: 1024 (5.0 以前 0), 其他默认 512.	线程堆栈大小
 
-14. -XX:+UseBiasedLocking	JDK 5 update 6后引入，但需要手动启用, JDK6默认启用	启用偏向锁
+14. -XX:+UseBiasedLocking	JDK 5 update 6后引入，但需要手动启用, JDK6默认启用 **启用偏向锁（高并发时关闭，减少偏向锁撤销过程开销）**
 
 15. -XX:+UseFastAccessorMethods	默认启用	优化原始类型的getter方法性能(get/set:Primitive Type)
 
@@ -111,7 +111,9 @@
 
 27. -XX:PetenureSizeThreshold : 直接进入老年代的对象大小
 
-28。 -XX:+UseAdaptiveSizePolicy : JVM 将会动态调整 Java 堆中各个区域的大小以及进入老年代的年龄，–XX:NewRatio 和 -XX:SurvivorRatio 将会失效
+28. -XX:+UseAdaptiveSizePolicy : JVM 将会动态调整 Java 堆中各个区域的大小以及进入老年代的年龄，–XX:NewRatio 和 -XX:SurvivorRatio 将会失效
+
+29. -XX:+UseHeavyMonitors  //直接设置重量级锁,不采用偏向锁和轻量级锁
 
 ## 调试参数:
 
