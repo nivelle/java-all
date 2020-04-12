@@ -1,7 +1,7 @@
 package com.nivelle.base.pojo;
 
 /**
- * TODO:DOCUMENT ME!
+ *
  *
  * @author fuxinzhong
  * @date 2019/08/19

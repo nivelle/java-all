@@ -1,8 +1,8 @@
 package com.nivelle.base.javacore.thread;
 
-import java.util.concurrent.ArrayBlockingQueue;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Synchronized 方法
@@ -12,16 +12,25 @@ import java.util.concurrent.TimeUnit;
  */
 public class SynchronizedDemo {
 
+    public static ThreadPoolTaskExecutor threadPoolTaskExecutor = null;
+
+    static {
+        threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
+        threadPoolTaskExecutor.setCorePoolSize(5);
+        threadPoolTaskExecutor.setMaxPoolSize(10);
+        threadPoolTaskExecutor.setKeepAliveSeconds(200);
+        threadPoolTaskExecutor.setThreadNamePrefix("taskExecutor--");
+        threadPoolTaskExecutor.setWaitForTasksToCompleteOnShutdown(true);
+        threadPoolTaskExecutor.setAwaitTerminationSeconds(60);
+        threadPoolTaskExecutor.setQueueCapacity(5);
+        threadPoolTaskExecutor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+    }
 
     public static void main(String[] args) {
-        ThreadPoolExecutor executor =
-                new ThreadPoolExecutor(5, 10, 200, TimeUnit.MILLISECONDS,
-                        new ArrayBlockingQueue(5), new ThreadPoolExecutor.CallerRunsPolicy());
-
+        SynchronizedDemo synchronizedDemo = new SynchronizedDemo();
         Long count = new Long(1);
-
-        for (int i = 0; i < 50; i++) {
-            executor.execute(new SynchronizedTask(count));
+        for (int i = 0; i < 1; i++) {
+            SynchronizedDemo.threadPoolTaskExecutor.execute(new SynchronizedTask(count));
         }
     }
 }
