@@ -13,12 +13,13 @@ public class ThreadYield {
         for (int i = 0; i < 10; i++) {
             System.out.println("main thread i = " + i);
             if (i == 2) {
-                myThread1.start();
-                myThread2.start();
                 /**
                  * 当前main线程让出线程
                  */
+                myThread1.start();
+                myThread2.start();
                 Thread.yield();
+
             }
         }
     }

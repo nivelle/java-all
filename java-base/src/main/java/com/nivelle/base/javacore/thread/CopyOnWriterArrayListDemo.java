@@ -1,4 +1,4 @@
-package com.nivelle.base.javacore.datastructures;
+package com.nivelle.base.javacore.thread;
 
 
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -16,7 +16,7 @@ public class CopyOnWriterArrayListDemo {
     public static void main(String[] args) {
 
         /**
-         *  底层是通过ReentrantLock来实现线程安全
+         *  底层是通过 ReentrantLock 来实现线程安全
          *
          *  1. 内部持有一个ReentrantLock lock = new ReentrantLock();
          *

@@ -11,6 +11,6 @@ public class BooleanDemo {
     public static void main(String[] args) {
         boolean a = true;
         boolean b = true;
-        System.out.println(Boolean.logicalAnd(a, b));
+        System.out.println("与操作:" + Boolean.logicalAnd(a, b));
     }
 }

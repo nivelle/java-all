@@ -13,25 +13,25 @@ public abstract class HandlerUser {
 
     private HandlerUser next;
 
-    public HandlerUser setNext(HandlerUser next){
+    public HandlerUser setNext(HandlerUser next) {
         this.next = next;
         return next;
     }
 
-    public HandlerUser(int level){
+    public HandlerUser(int level) {
         this.level = level;
     }
 
     public abstract boolean resolve();
 
 
-    public boolean chainResolve(){
+    public boolean chainResolve() {
 
-        if(level==LEVEL){
+        if (level == LEVEL) {
             return resolve();
-        }else if(next!=null){
+        } else if (next != null) {
             return next.chainResolve();
-        }else {
+        } else {
             System.out.println("这个问题解决不了");
         }
         return false;

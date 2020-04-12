@@ -1,10 +1,13 @@
 package com.nivelle.base;
 
 import com.alibaba.dubbo.common.extension.ExtensionLoader;
+import com.nivelle.base.javacore.thread.TaskPoolConfig;
 import com.nivelle.base.spi.MySpi;
 import com.sun.tools.javac.util.ServiceLoader;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.ImportResource;
 
 import java.util.Iterator;
 
@@ -12,6 +15,7 @@ import java.util.Iterator;
  * @Author nivelle
  */
 @SpringBootApplication
+@Import({TaskPoolConfig.class})
 public class JavaBaseApplication {
 
     public static void main(String[] args) {

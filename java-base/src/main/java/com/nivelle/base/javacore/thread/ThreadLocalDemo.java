@@ -1,4 +1,4 @@
-package com.nivelle.base.javacore.datastructures;
+package com.nivelle.base.javacore.thread;
 
 import com.nivelle.base.pojo.User;
 import org.springframework.stereotype.Service;

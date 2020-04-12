@@ -2,9 +2,10 @@ package com.nivelle.base.javacore.thread;
 
 /**
  * wait/notify
+ *
  * @author nivellefu
  */
-public class ThreadWaitNotify{
+public class ThreadWaitNotify {
 
     public static void main(String[] args) {
         AccountSecurity account = new AccountSecurity("123456", 0);
@@ -28,6 +29,7 @@ class DrawMoneyThread extends Thread {
         this.account = account;
         this.amount = amount;
     }
+
     @Override
     public void run() {
         for (int i = 0; i < 100; i++) {
@@ -47,6 +49,7 @@ class DepositeMoneyThread extends Thread {
         this.amount = amount;
     }
 
+    @Override
     public void run() {
         for (int i = 0; i < 100; i++) {
             account.deposite(amount, i);
@@ -58,7 +61,9 @@ class AccountSecurity {
 
     private String accountNo;
     private double balance;
-    // 标识账户中是否已有存款
+    /**
+     * depositeMoneyThread
+     */
     private boolean flag = false;
 
     public AccountSecurity() {

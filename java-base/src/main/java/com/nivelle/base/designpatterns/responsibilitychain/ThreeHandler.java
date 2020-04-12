@@ -6,7 +6,7 @@ public class ThreeHandler extends HandlerUser {
         super(level);
     }
 
-
+    @Override
     public boolean resolve() {
 
         System.out.println("3解决了问题");

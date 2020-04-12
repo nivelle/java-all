@@ -113,7 +113,6 @@ public class LinkedListDemo {
         }
 
         System.out.println();
-
         /**
          * ListIterator 倒叙遍历
          */

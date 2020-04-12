@@ -7,7 +7,7 @@ public class TwoHandler extends HandlerUser {
         super(level);
     }
 
-
+    @Override
     public boolean resolve() {
 
         System.out.println("2解决了问题");

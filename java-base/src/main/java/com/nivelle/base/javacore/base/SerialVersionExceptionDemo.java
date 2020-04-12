@@ -1,4 +1,4 @@
-package com.nivelle.base.javacore;
+package com.nivelle.base.javacore.base;
 
 import java.io.*;
 

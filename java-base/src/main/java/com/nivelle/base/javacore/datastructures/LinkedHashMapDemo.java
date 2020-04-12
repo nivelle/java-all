@@ -103,11 +103,5 @@ public class LinkedHashMapDemo {
         linkedHashMap3.put("a", 300);
         System.out.println("最近最少使用linkedHashMap3 访问顺序遍历:" + linkedHashMap3);
 
-
-
-
-
-
-
     }
 }

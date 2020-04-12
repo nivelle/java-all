@@ -12,6 +12,6 @@ public class BigDecimalDemo {
 
     public static void main(String[] args) {
         BigDecimal bigDecimal = BigDecimal.ZERO;
-        System.out.println();
+        System.out.println(bigDecimal);
     }
 }

@@ -1,4 +1,4 @@
-package com.nivelle.base.javacore.datastructures;
+package com.nivelle.base.javacore.thread;
 
 import java.util.concurrent.locks.ReentrantLock;
 

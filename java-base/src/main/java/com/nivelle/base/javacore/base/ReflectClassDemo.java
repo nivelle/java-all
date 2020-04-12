@@ -1,4 +1,4 @@
-package com.nivelle.base.javacore;
+package com.nivelle.base.javacore.base;
 
 import com.nivelle.base.javacore.jvm.InvokeExactDemo;
 import com.nivelle.base.pojo.User;

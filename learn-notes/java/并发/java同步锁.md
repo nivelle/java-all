@@ -12,6 +12,8 @@
 
 ---
 
+![synchronizedandlock](https://i.loli.net/2020/04/12/IQrZ7HtVxqo2hF3.jpg)
+
 ### 相关知识点
 
 #### synchronized实现原理：
@@ -20,12 +22,14 @@
 2. 两个指令的执行是JVM通过调用操作系统的互斥原语mutex来实现，被阻塞的线程会被挂起、等待重新调度，会导致“用户态和内核态”两个态之间来回切换，对性能有较大影响。
 3. 对象头里面Mark Word 就是synchronized所使用的锁
 
+![synchronized底层实现](https://i.loli.net/2020/04/11/K1AgkXVqjBusywp.jpg)
+
+
 #### lock实现原理
 
 1. AQS 
 
-![synchronized底层实现](https://i.loli.net/2020/04/11/K1AgkXVqjBusywp.jpg)
-
+![AQS 获取锁流程.jpg](https://i.loli.net/2020/04/12/LDUm87RM9dn4P1k.jpg)
 
 ### 各种锁的特点
 

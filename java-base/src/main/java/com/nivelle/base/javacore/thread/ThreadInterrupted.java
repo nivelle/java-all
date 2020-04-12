@@ -3,7 +3,7 @@ package com.nivelle.base.javacore.thread;
 /**
  * @author nivellefu
  */
-public class SynchronizedKeyWordTest {
+public class ThreadInterrupted {
 
 
     public synchronized void execute(){
@@ -19,14 +19,14 @@ public class SynchronizedKeyWordTest {
             }
 
         }catch (Exception e){
-
+            System.err.println(e);
         }finally {
 
         }
     }
 
     public static void main(String args[]){
-        SynchronizedKeyWordTest reentrantLockTest = new SynchronizedKeyWordTest();
+        ThreadInterrupted reentrantLockTest = new ThreadInterrupted();
         new Thread(()->reentrantLockTest.execute()).start();
 
         new Thread(()->reentrantLockTest.execute()).start();
