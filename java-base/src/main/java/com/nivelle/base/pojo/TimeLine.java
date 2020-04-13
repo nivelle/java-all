@@ -1,15 +1,12 @@
 package com.nivelle.base.pojo;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 import java.util.Date;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@ToString
+/**
+ * @author nivellefu
+ */
 @Data
 public class TimeLine {
 

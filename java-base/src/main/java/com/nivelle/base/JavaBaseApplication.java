@@ -1,7 +1,7 @@
 package com.nivelle.base;
 
 import com.alibaba.dubbo.common.extension.ExtensionLoader;
-import com.nivelle.base.javacore.thread.TaskPoolConfig;
+import com.nivelle.base.javacore.datastructures.thread.TaskPoolConfig;
 import com.nivelle.base.spi.MySpi;
 import com.sun.tools.javac.util.ServiceLoader;
 import org.springframework.boot.SpringApplication;

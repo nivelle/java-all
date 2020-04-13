@@ -1,7 +1,7 @@
 package com.nivelle.base.javacore.jvm;
 
 
-import com.nivelle.base.javacore.base.UnsafeClassDemo;
+import com.nivelle.base.javacore.datastructures.atom.UnsafeClassDemo;
 
 import java.io.*;
 import java.lang.reflect.Constructor;
