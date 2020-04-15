@@ -1,6 +1,7 @@
 
 package com.nivelle.base.javacore.datastructures.collection;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -14,7 +15,7 @@ import java.util.Set;
  */
 public class HashMapDemo {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
 
         /**
          * 默认无参构造函数,初始化的加载因子:0.75
@@ -24,13 +25,14 @@ public class HashMapDemo {
         hashMap.put("1", "nivelle");
         hashMap.put("2", "jessy");
         System.out.println("无参初始化HashMap" + hashMap);
+        HashMap hashMapInit = new HashMap(4);
 
         /**
          * 指定 初始化数据,默认加载因子0.75
          *
          * 1.如果目标集合为空,则除以装载因子+1,然后和 threshold比较是否需要桶扩容
          *
-         * 2.如果目标集合不为空,则 直接判断是否需要扩容
+         * 2.如果目标集合不为空,则直接判断是否需要扩容
          */
         HashMap hashMap1 = new HashMap(hashMap);
         System.out.println("初始化参数是已经存在的HashMap" + hashMap1);
@@ -46,6 +48,7 @@ public class HashMapDemo {
 
         /**
          * 1. 集合元素的key的hashCode之和，这个方法继承之AbstractMap
+         *
          * 2. hashCode的具体求发是k的hashCode 异或 v的hashCode
          */
         int hash = hashMap2.hashCode();
@@ -125,17 +128,26 @@ public class HashMapDemo {
 
 
         /**
-         * 32位的hashCode值，通过与h>>>16然后让高位也参与到运算，然后再进行 (h-1)&hashCode
+         * HashMap hash值的求解：
+         *
+         *  1. key==null 则hashCode =0 ;
+         *
+         *  2. key.hashCode 然后32位的hashCode值，通过与h>>>16然后让高位也参与到运算，然后再进行 (h-1)&hashCode
          */
         String key = "8";
         int h;
         int hashCode = (key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16);
+        System.out.println("计算某个key的hash值:" + (key.hashCode()));
         System.out.println("计算某个key的hash值,然后用户后面定位:" + hashCode);
 
 
         /**
+         * HashMap 中指定hash值在数组中(桶)的位置求解:
+         *
          * HashMap 使用的方法很巧妙，它通过 hash & (table.length -1)来得到该对象的保存位，HashMap 底层数组的长度总是2的n次方，这是HashMap在速度上的优化。
          * 当 length 总是2的n次方时，hash & (length-1)运算等价于对 length 取模，也就是 hash%length，但是&比%具有更高的效率。
+         *
+         * todo hash&(length-1) = hash%length 前提是length 也就是数组长度是2的n次方
          */
         int hashCodeInt = 16;
         int tableLength = 64;
@@ -146,27 +158,47 @@ public class HashMapDemo {
 
 
         /**
-         * initialCapacity 会计算出一个最近的2的n次方作为threshold的初始值，加载因子会使用指定的加载因子
+
+         * tableSizeFor(initialCapacity) 扩容门槛:会计算出一个最近的2的n次方作为threshold的初始值，加载因子会使用指定的加载因子
+         *
+         * static final int tableSizeFor(int cap) {//大于输入参数且最近的2的整数次幂的数,最高位1后面的全部设置成1,然后+1成2的整数次幂
+         *         int n = cap - 1;
+         *         n |= n >>> 1;
+         *         n |= n >>> 2;
+         *         n |= n >>> 4;
+         *         n |= n >>> 8;
+         *         n |= n >>> 16;
+         *         return (n < 0) ? 1 : (n >= MAXIMUM_CAPACITY) ? MAXIMUM_CAPACITY : n + 1;
+         *     }
+         *
          */
-        HashMap hashMap4 = new HashMap(4,0.5F);
-        hashMap4.put(1,1);
-        hashMap4.put(2,2);
-        System.out.println(hashMap4);
+        HashMap hashMap4 = new HashMap(2, 0.5F);
+        hashMap4.put(1, 1);
+        hashMap4.put(2, 2);
+        hashMap4.put(3, 2);
+        hashMap4.put(4, 2);
+        hashMap4.put(5, 2);
+
+        System.out.println("initialCapacity is 1 and loadFactor is 0.5F:" + hashMap4);
+        Field filed = hashMap4.getClass().getDeclaredField("threshold");
+        filed.setAccessible(true);
+        System.out.println(filed.get(hashMap4));
 
         /**
          * 默认的遍历是无序的
          */
         HashMap hashMap5 = new HashMap();
-        hashMap5.put("name1","value1");
-        hashMap5.put("name2","value2");
-        hashMap5.put("name2","value2");
+        hashMap5.put("name1", "value1");
+        hashMap5.put("name2", "value2");
+        hashMap5.put("name2", "value2");
         Set<Map.Entry<String, String>> entries1 = hashMap5.entrySet();
         Iterator iterator1 = entries1.iterator();
-        while (iterator1.hasNext()){
-            Map.Entry entry = (Map.Entry)iterator1.next();
-            System.out.println("key="+entry.getKey());
+        while (iterator1.hasNext()) {
+            Map.Entry entry = (Map.Entry) iterator1.next();
+            System.out.println("key=" + entry.getKey());
         }
     }
 
-
 }
+
+

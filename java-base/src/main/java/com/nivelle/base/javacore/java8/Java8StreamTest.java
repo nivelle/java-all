@@ -344,7 +344,6 @@ public class Java8StreamTest {
 
         fooList.forEach(f -> IntStream.range(1, 4).forEach(i -> f.bars.add(new Bar("Bar" + i + " <- " + f.name))));
         fooList.stream().flatMap(f -> f.bars.stream()).forEach(b -> System.out.println(b.name));
-
     }
 
 
