@@ -1,4 +1,4 @@
-package com.nivelle.base.javacore.datastructures.lock;
+package com.nivelle.base.javacore.datastructures.synlock;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;

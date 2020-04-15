@@ -1,4 +1,4 @@
-package com.nivelle.base.javacore.datastructures.lock;
+package com.nivelle.base.javacore.datastructures.synlock;
 
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
