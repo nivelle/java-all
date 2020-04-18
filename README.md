@@ -282,6 +282,44 @@ docker整合【下载:docker pull nivelle/nivelle:1.0.2】【运行:sudo docker 
 
 ✅【Byte】
 
+✅【LongAccumulator】
+
+✅【LongAdder】
+
+✅【AtomicStampedReference】
+
+✅【AtomicInteger】
+
+✅【BigDecimal】
+
+✅【System】 
+
+✅【ArrayDeque】
+
+✅【HashSet】
+
+✅【LinkedHashMap】
+
+✅【PriorityQueue】
+
+✅【Stack】
+
+✅【TreeMap】
+
+✅【WeakHashMap】
+
+✅【TreeMap】
+
+✅【TreeMap】  
+
+✅【ArrayBlockingQueue】
+
+✅【LinkedBlockingQueue】
+
+✅【PriorityBlockingQueue】
+
+✅【SynchronizedQueue】
+
 #### 设计模式实践
 
 ✅ 【迭代器模式】

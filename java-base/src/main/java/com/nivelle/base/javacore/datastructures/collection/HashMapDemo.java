@@ -147,6 +147,8 @@ public class HashMapDemo {
          * HashMap 使用的方法很巧妙，它通过 hash & (table.length -1)来得到该对象的保存位，HashMap 底层数组的长度总是2的n次方，这是HashMap在速度上的优化。
          * 当 length 总是2的n次方时，hash & (length-1)运算等价于对 length 取模，也就是 hash%length，但是&比%具有更高的效率。
          *
+         * 1. 2^n 次方的数组长度-1 保证了length的高位都是0，低位都是1,与操作后得到了hash值地位且不越界
+         *
          * todo hash&(length-1) = hash%length 前提是length 也就是数组长度是2的n次方
          */
         int hashCodeInt = 16;
