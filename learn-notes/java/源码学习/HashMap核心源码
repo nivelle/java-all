@@ -123,8 +123,11 @@
 （5）搬移元素，原链表分化成两个链表，低位链表存储在原来桶的位置，高位链表搬移到原来桶的位置加旧容量的位置； 
 
 
- 优化点: 1. 容量变为原来的二倍后，二进制位就多了一位，这一位可能是0可能是1(0就是原位置,1就是原来的位置+原来的数组长度[oldCap])        
-        2. JDK1.7扩容采取的是头插法，数据会倒置。 但是1.8没有这么做
+### 优化点: 
+
+#### 容量变为原来的二倍后，二进制位就多了一位，这一位可能是0可能是1(0就是原位置,1就是原来的位置+原来的数组长度[oldCap])  
+       
+#### JDK1.7扩容采取的是头插法，数据会倒置，会产生环形链表或者丢失值； 但是1.8采用了尾插法，避免了环形链表，但是还是可能丢失值
          
    
 ```
@@ -188,7 +191,7 @@
                         //因为每次都扩容两倍，所以这里的第一个元素搬移到新桶的时候新桶肯定还没有元素
                         newTab[e.hash & (newCap - 1)] = e;
                     else if (e instanceof HashMap.TreeNode){
-                         //如果第一个元素是树节点，则把这颗树打散成两颗树插入到新桶中去                     
+                         //如果第一个元素是树节点，则把这颗树打散成两颗树插入到新桶中去(如果桶中节点小于6个则反树化)                     
                         ((HashMap.TreeNode<K,V>)e).split(this, newTab, j, oldCap);
                     }else { // preserve order
                         //如果这个链表不止一个元素且不是一颗树则分化成两个链表插入到新的桶中去
@@ -425,4 +428,293 @@ final void treeify(Node<K,V>[] tab) {
 ```        
 ### get(Object key)方法
 
+（1）计算key的hash值；
+
+（2）找到key所在的桶及其第一个元素；
+
+（3）如果第一个元素的key等于待查找的key，直接返回；
+
+（4）如果第一个元素是树节点就按树的方式来查找，否则按链表方式查找；
+
+```
+public V get(Object key) {
+        Node<K,V> e;
+        return (e = getNode(hash(key), key)) == null ? null : e.value;
+    }
+    
+
+final Node<K,V> getNode(int hash, Object key) {
+        Node<K,V>[] tab; 
+        Node<K,V> first;
+        Node<K,V> e; 
+        int n; 
+        K k;
+        //// 如果桶的数量大于0并且待查找的key所在的桶的第一个元素不为空         
+        if ((tab = table) != null && (n = tab.length) > 0 && (first = tab[(n - 1) & hash]) != null) {
+            //检查第一个元素是不是要查的元素，如果是直接返回            
+            if (first.hash == hash && ((k = first.key) == key || (key != null && key.equals(k)))){
+                return first;
+            }
+            //否则开始遍历该桶的链表
+            if ((e = first.next) != null) {
+                // 如果是树结构则走树结构的查找
+                if (first instanceof TreeNode)
+                    return ((TreeNode<K,V>)first).getTreeNode(hash, key);
+                do {
+                    //否则就遍历链表
+                    if (e.hash == hash &&((k = e.key) == key || (key != null && key.equals(k))))
+                        return e;
+                } while ((e = e.next) != null);
+            }
+        }
+        return null;
+    }    
+    
+```
+
+
+##### getTreeNode - > find
+
+```
+
+final TreeNode<K,V> getTreeNode(int h, Object k) {
+            return ((parent != null) ? root() : this).find(h, k, null);
+        }
+        
+        
+final TreeNode<K,V> find(int h, Object k, Class<?> kc) {
+            TreeNode<K,V> p = this; // 桶的首节点｜parent节点
+            do {
+                int ph; // parent hash 
+                int dir; //dierction 路径
+                K pk;
+                TreeNode<K,V> pl = p.left, pr = p.right, q;
+                if ((ph = p.hash) > h)
+                    p = pl; //目标节点在左子树
+                else if (ph < h)
+                    p = pr; //目标节点在右子树
+                else if ((pk = p.key) == k || (k != null && k.equals(pk)))
+                    return p; //若hash值相同则找到了，返回
+                else if (pl == null)//左子树为空查右子树                 
+                    p = pr;  
+                else if (pr == null)//右子树为空查左子树
+                    p = pl;
+                else if ((kc != null ||(kc = comparableClassFor(k)) != null) &&(dir = compareComparables(kc, k, pk)) != 0)
+                    p = (dir < 0) ? pl : pr; // 通过compare方法比较key值的大小决定使用左子树还是右子树                                             
+                else if ((q = pr.find(h, k, kc)) != null)//如果以上条件都不通过，则尝试在右子树查找
+                    return q;
+                else
+                    p = pl; //都没找到就在左子树查找
+            } while (p != null);
+            return null;
+        }
+```
 ### remove(Object key)方法
+
+（1）先查找元素所在的节点；
+
+（2）如果找到的节点是树节点，则按树的移除节点处理；
+
+（3）如果找到的节点是桶中的第一个节点，则把第二个节点移到第一的位置；
+
+（4）否则按链表删除节点处理；
+
+（5）修改size，调用移除节点后置处理等；
+
+```
+public V remove(Object key) {
+        Node<K,V> e;
+        return (e = removeNode(hash(key), key, null, false, true)) == null ?
+            null : e.value;
+    }
+  
+  
+  
+final Node<K,V> removeNode(int hash, Object key, Object value,boolean matchValue, boolean movable) {
+        Node<K,V>[] tab; 
+        Node<K,V> p; 
+        int n;
+        index;
+        // 如果桶的数量大于0且待删除的元素所在的桶的第一个元素不为空
+        if ((tab = table) != null && (n = tab.length) > 0 && (p = tab[index = (n - 1) & hash]) != null) {
+            Node<K,V> node = null;
+            Node<K,V> node e; 
+            K k;
+            V v;
+            if (p.hash == hash &&((k = p.key) == key || (key != null && key.equals(k)))){
+              node = p;//如果第一个元素正好就是要找的元素，赋值给node变量后续删除使用
+            }
+            //否则开始遍历查找节点
+            else if ((e = p.next) != null) {
+                if (p instanceof TreeNode){
+                    //如果第一个元素是树节点，则以树的方式查找需要删除的节点
+                     node = ((TreeNode<K,V>)p).getTreeNode(hash, key);
+                }
+                else {//否则遍历整个链表
+                    do {
+                        if (e.hash == hash &&((k = e.key) == key ||(key != null && key.equals(k)))) {
+                            node = e;
+                            break;
+                        }
+                        p = e;
+                    } while ((e = e.next) != null);
+                }
+            }
+            // 如果找到了元素，则看参数是否需要匹配value值，如果不需要匹配直接删除，如果需要匹配则看value值是否与传入的value相等
+            if (node != null && (!matchValue || (v = node.value) == value || (value != null && value.equals(v)))) {
+                if (node instanceof TreeNode){
+                    ((TreeNode<K,V>)node).removeTreeNode(this, tab, movable);//如果是树节点，调用树的删除方法（以node调用的，是删除自己）                                                                              
+                }
+                else if (node == p){
+                    tab[index] = node.next;// 如果待删除的元素是第一个元素，则把第二个元素移到第一的位置                                          
+                }else{
+                    p.next = node.next;// 否则删除node节点                                       
+                }
+                ++modCount;
+                --size;
+                afterNodeRemoval(node);// 删除节点后置处理                                       
+                return node;
+            }
+        }
+        return null;
+    }
+
+```
+
+### TreeNode.removeTreeNode(HashMap<K,V> map, Node<K,V>[] tab,boolean movable)
+
+```
+ final void removeTreeNode(HashMap<K,V> map, Node<K,V>[] tab,boolean movable) {
+            int n;
+            // 如果桶的数量为0直接返回
+            if (tab == null || (n = tab.length) == 0){
+                return;
+            }
+            // 节点在桶中的索引    
+            int index = (n - 1) & hash;
+            // 第一个节点，根节点，根左子节点
+            TreeNode<K,V> first = (TreeNode<K,V>)tab[index];
+            TreeNode<K,V> root = first;
+            TreeNode<K,V> rl;
+            // 后继节点，前置节点
+            TreeNode<K,V> succ = (TreeNode<K,V>)next;
+            TreeNode<K,V> pred = prev;
+            if (pred == null){
+                 // 如果前置节点为空，说明当前节点是根节点，则把后继节点赋值到第一个节点的位置，相当于删除了当前节点
+                 tab[index] = first = succ;
+               }
+            else{
+                 // 否则把前置节点的下个节点设置为当前节点的后继节点，相当于删除了当前节点
+                pred.next = succ;
+            }
+            // 如果后继节点不为空，则让后继节点的前置节点指向当前节点的前置节点，相当于删除了当前节点
+            if (succ != null){
+                succ.prev = pred;
+            }
+            // 如果第一个节点为空，说明没有后继节点了，直接返回
+            if (first == null){
+                return;
+            }
+            // 如果根节点的父节点不为空，则重新查找父节点
+            if (root.parent != null){            
+                root = root.root();
+            }
+            // 如果根节点为空，则需要反树化（将树转化为链表）            
+            if (root == null || root.right == null ||(rl = root.left) == null || rl.left == null) {
+                tab[index] = first.untreeify(map);  //如果需要移动节点且树的高度比较小，则需要反树化                                                       
+                return;
+            }
+            // 删除红黑树中的节点
+            TreeNode<K,V> p = this, pl = left, pr = right, replacement;
+            if (pl != null && pr != null) {
+                TreeNode<K,V> s = pr, sl;
+                while ((sl = s.left) != null) // find successor
+                    s = sl;
+                boolean c = s.red; s.red = p.red; p.red = c; // swap colors
+                TreeNode<K,V> sr = s.right;
+                TreeNode<K,V> pp = p.parent;
+                if (s == pr) { // p was s's direct parent
+                    p.parent = s;
+                    s.right = p;
+                }
+                else {
+                    TreeNode<K,V> sp = s.parent;
+                    if ((p.parent = sp) != null) {
+                        if (s == sp.left)
+                            sp.left = p;
+                        else
+                            sp.right = p;
+                    }
+                    if ((s.right = pr) != null)
+                        pr.parent = s;
+                }
+                p.left = null;
+                if ((p.right = sr) != null)
+                    sr.parent = p;
+                if ((s.left = pl) != null)
+                    pl.parent = s;
+                if ((s.parent = pp) == null)
+                    root = s;
+                else if (p == pp.left)
+                    pp.left = s;
+                else
+                    pp.right = s;
+                if (sr != null)
+                    replacement = sr;
+                else
+                    replacement = p;
+            }
+            else if (pl != null)
+                replacement = pl;
+            else if (pr != null)
+                replacement = pr;
+            else
+                replacement = p;
+            if (replacement != p) {
+                TreeNode<K,V> pp = replacement.parent = p.parent;
+                if (pp == null)
+                    root = replacement;
+                else if (p == pp.left)
+                    pp.left = replacement;
+                else
+                    pp.right = replacement;
+                p.left = p.right = p.parent = null;
+            }
+
+            TreeNode<K,V> r = p.red ? root : balanceDeletion(root, replacement);
+
+            if (replacement == p) {  // detach
+                TreeNode<K,V> pp = p.parent;
+                p.parent = null;
+                if (pp != null) {
+                    if (p == pp.left)
+                        pp.left = null;
+                    else if (p == pp.right)
+                        pp.right = null;
+                }
+            }
+            if (movable)
+                moveRootToFront(tab, r);
+        }
+
+```
+## 总结
+
+（1）HashMap是一种散列表，采用（数组 + 链表 + 红黑树）的存储结构；
+
+（2）HashMap的默认初始容量为16（1<<4），默认装载因子为0.75f，容量总是2的n次方；
+
+（3）HashMap扩容时每次容量变为原来的两倍；
+
+（4）当桶的数量小于64时不会进行树化，只会扩容；
+
+（5）当桶的数量大于64且单个桶中元素的数量大于8时，进行树化；
+
+（6）当单个桶中元素数量小于6时，进行反树化；
+
+（7）HashMap是非线程安全的容器；
+
+（8）HashMap查找添加元素的时间复杂度都为O(1)；
+
+
+来自: [彤哥读源码](https://mp.weixin.qq.com/s?__biz=Mzg2ODA0ODM0Nw==&mid=2247483711&idx=3&sn=f0743c914e26695eb9c0d4cb0cab5e99&scene=21#wechat_redirect)

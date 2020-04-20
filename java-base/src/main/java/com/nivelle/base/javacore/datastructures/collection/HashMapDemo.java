@@ -63,7 +63,6 @@ public class HashMapDemo {
         System.err.println("hashMap3的hashCode:" + (hashMap3Key ^ hashMap3Value));
         System.err.println("hashMap3的hashCode:" + hashMap3.hashCode());
 
-
         /**
          * 判断是否存在某个指定键/值
          */
@@ -78,6 +77,7 @@ public class HashMapDemo {
         System.out.println("移除后数据hashMap2:" + hashMap2);
         //不存在的键
         System.out.println("移除指定元素,返回关联的值:" + hashMap2.remove("8"));
+
 
         hashMap2.put("5", "xubing");
         hashMap2.put("6", "biliang");
