@@ -250,37 +250,52 @@ docker整合【下载:docker pull nivelle/nivelle:1.0.2】【运行:sudo docker 
 
 ✅【String】
 
+✅【Float】
+
+✅【Byte】
+
+✅【Long】
+
+--- 
+✅【BigDecimal】
+
 ✅【Enum】
+
+✅【Math】
+
+✅【System】 
+
+✅【Unsafe】
+
+✅【Reflection】
+
+---
 
 ✅【ArrayList】
 
-✅【HashMap】
-
 ✅【LinkedList】
+
+✅【HashMap】
 
 ✅【LinkedHashMap】
 
 ✅【TreeMap】
 
+✅【WeakHashMap】
+
+✅【HashSet】
+
+✅【Stack】
+
+---
+
 ✅【ThreadPool】
 
 ✅【ThreadLocal】
 
-✅【Unsafe】
-
-✅【Float】
-
-✅【Math】
-
 ✅【CountDownLatch】
 
-✅【Long】
-
 ✅【ConcurrentHashMap】
-
-✅【Reflection】
-
-✅【Byte】
 
 ✅【LongAccumulator】
 
@@ -290,27 +305,9 @@ docker整合【下载:docker pull nivelle/nivelle:1.0.2】【运行:sudo docker 
 
 ✅【AtomicInteger】
 
-✅【BigDecimal】
-
-✅【System】 
-
 ✅【ArrayDeque】
 
-✅【HashSet】
-
-✅【LinkedHashMap】
-
 ✅【PriorityQueue】
-
-✅【Stack】
-
-✅【TreeMap】
-
-✅【WeakHashMap】
-
-✅【TreeMap】
-
-✅【TreeMap】  
 
 ✅【ArrayBlockingQueue】
 
