@@ -49,7 +49,7 @@ public class Java8StreamTest {
      */
     public static void main(String[] args) {
 
-        Stream.of("a1", "a2", "a3")
+        Stream.of("a1", "a2", "a3").filter(x->x.equals("a2"))
                 .findFirst()
                 .ifPresent(System.err::println);
         /**

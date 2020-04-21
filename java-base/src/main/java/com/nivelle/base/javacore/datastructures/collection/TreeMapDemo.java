@@ -48,7 +48,9 @@ public class TreeMapDemo {
         hashMap.put(2, 2);
         hashMap.put(3, 3);
         hashMap.put(1, 1);
-
+        /**
+         * 通过hashMap构造红黑树,key必须实现Comparable接口
+         */
         TreeMap<Integer, Integer> treeMap4 = new TreeMap(hashMap);
         System.out.println("添加一个无序HashMap:" + treeMap4);
 
@@ -103,6 +105,14 @@ public class TreeMapDemo {
         System.out.println("小于toKey的NavigableMap:" + headMap);
         NavigableMap tailMap = treeMap4.tailMap(2, true);
         System.out.println("大于 fromKey的NavigableMap:" + tailMap);
+
+        int value = treeMap4.get(4);
+        System.out.println("get 方法:" + value);
+        int value2 = treeMap4.get(null);
+        System.out.println("get 方法:" + value2);
+
+        Collection collection = treeMap4.values();
+        System.out.println("collection is: " + collection);
 
 
     }

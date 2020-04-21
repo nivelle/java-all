@@ -21,3 +21,112 @@ public class TreeMap<K,V> extends AbstractMap<K,V> implements NavigableMap<K,V>,
 - 如果一个节点是红色的，则它的子节点必须是黑色的;
 
 - 从一个节点到该节点的子孙节点的所有路径上包含相同数目的黑节点(这里指到叶子节点的路径)
+
+## get
+
+```
+public V get(Object key) {
+    // 根据key查找元素
+    Entry<K,V> p = getEntry(key);
+        //找到返回值,否则返回null
+        return (p==null ? null : p.value);
+    }
+  
+
+//有自定义比较器使用自定义比较器，否则使用key实现的比较器接口  
+final Entry<K,V> getEntry(Object key) {
+        //如果比较器不为空,则使用该比较器遍历树结构来获取指定节点
+        if (comparator != null){
+            return getEntryUsingComparator(key);
+        }
+        if (key == null){
+            throw new NullPointerException();
+        }
+        //否则获取key实现的Comparable接口
+        @SuppressWarnings("unchecked")
+        Comparable<? super K> k = (Comparable<? super K>) key;
+        Entry<K,V> p = root;
+        //从root节点开始遍历找到指定节点
+        while (p != null) {
+            int cmp = k.compareTo(p.key);//比根节点小，左子树遍历
+            if (cmp < 0)
+                // 如果小于0从左子树查找
+                p = p.left;
+            else if (cmp > 0)//比根节点大，右子树遍历
+                p = p.right;
+            else
+                return p;
+        }
+        return null;
+    }
+   
+//使用自定义比较器
+final Entry<K,V> getEntryUsingComparator(Object key) {
+        @SuppressWarnings("unchecked")
+            K k = (K) key;
+        Comparator<? super K> cpr = comparator;
+        if (cpr != null) {
+            Entry<K,V> p = root;
+            while (p != null) {
+                int cmp = cpr.compare(k, p.key);
+                if (cmp < 0)
+                    p = p.left;
+                else if (cmp > 0)
+                    p = p.right;
+                else
+                    return p;
+            }
+        }
+        return null;
+    }
+```
+
+---
+
+### 左旋
+
+```
+//以p为支点进行左旋
+
+private void rotateLeft(Entry<K,V> p) {
+        if (p != null) {
+            //p的右节点
+            Entry<K,V> r = p.right;
+            
+            p.right = r.left;
+            if (r.left != null)
+                r.left.parent = p;
+            r.parent = p.parent;
+            if (p.parent == null)
+                root = r;
+            else if (p.parent.left == p)
+                p.parent.left = r;
+            else
+                p.parent.right = r;
+            r.left = p;
+            p.parent = r;
+        }
+    }
+
+```
+
+### 右旋
+
+```
+private void rotateRight(Entry<K,V> p) {
+        if (p != null) {
+            Entry<K,V> l = p.left;
+            p.left = l.right;
+            if (l.right != null) l.right.parent = p;
+            l.parent = p.parent;
+            if (p.parent == null)
+                root = l;
+            else if (p.parent.right == p)
+                p.parent.right = l;
+            else p.parent.left = l;
+            l.right = p;
+            p.parent = l;
+        }
+    }
+
+```
