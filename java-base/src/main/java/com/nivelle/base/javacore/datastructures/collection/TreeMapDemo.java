@@ -15,7 +15,7 @@ public class TreeMapDemo {
         /**
          * 默认按照key的自然顺序排序
          */
-        TreeMap treeMap = new TreeMap();
+        TreeMap<Integer, Integer> treeMap = new TreeMap();
         treeMap.put(1, 1);
         treeMap.put(6, 2);
         treeMap.put(9, 3);
@@ -108,12 +108,19 @@ public class TreeMapDemo {
 
         int value = treeMap4.get(4);
         System.out.println("get 方法:" + value);
-        int value2 = treeMap4.get(null);
-        System.out.println("get 方法:" + value2);
-
+        try {
+            int value2 = treeMap4.get(null);
+            System.out.println("get 方法:" + value2);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
         Collection collection = treeMap4.values();
         System.out.println("collection is: " + collection);
 
+        System.out.println("删除key=6之前的树:" + treeMap);
+        Integer toDelValue = treeMap.remove(6);
+        System.out.println("删除key=6的值:" + toDelValue);
+        System.out.println("删除key=6之后的树:" + treeMap);
 
     }
 
