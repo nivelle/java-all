@@ -15,8 +15,8 @@ public class ArrayListDemo {
 
     /**
      * public class ArrayList<E> extends AbstractList<E> implements List<E>, RandomAccess, Cloneable, java.io.Serializable
-     *
-     * @param args
+     * <p>
+     * elementData 是 transient修饰的，自定义了序列化
      */
     public static void main(String[] args) throws Exception {
         Object[] EMPTY_ELEMENTDATA = {};

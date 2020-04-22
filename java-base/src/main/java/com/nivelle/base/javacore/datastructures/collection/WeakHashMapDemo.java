@@ -64,7 +64,8 @@ public class WeakHashMapDemo {
 }
 
 
-/*
+/**
+ *
 public class WeakReference<T> extends Reference<T> {
     public WeakReference(T referent, ReferenceQueue<? super T> q) {
         super(referent, q);
@@ -133,8 +134,8 @@ private static class Entry<K, V> extends WeakReference<Object> implements Map.En
             }
         }
     }
-}*/
-
+}
+ **/
 
 
 

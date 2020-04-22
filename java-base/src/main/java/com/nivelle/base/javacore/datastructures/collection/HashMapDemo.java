@@ -174,6 +174,7 @@ public class HashMapDemo {
          *     }
          *
          */
+        //我们预估HashMap要存储n个元素，它的容量就应该指定为((n/0.75f) + 1),如果这个值小于16，那就直接使用16得了
         HashMap hashMap4 = new HashMap(2, 0.5F);
         hashMap4.put(1, 1);
         hashMap4.put(2, 2);
