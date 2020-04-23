@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 /**
  * 自定义 BeanDefinitionRegistryPostProcessor 在 InstantiationAwareBeanPostProcessor 创建实例之前执行
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/09/26
  */
 

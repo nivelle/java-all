@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * kafka 消息发送
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/07/25
  */
 @Service

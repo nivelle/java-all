@@ -3,7 +3,7 @@ package com.nivelle.base.javacore.innerclass;
 /**
  * 方法内部类
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/12/15
  */
 public class MethodInnerClass {

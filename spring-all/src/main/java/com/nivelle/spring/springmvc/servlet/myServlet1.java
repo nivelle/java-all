@@ -8,7 +8,7 @@ import java.io.IOException;
 /**
  * 自定义Servlet
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2020/01/15
  */
 public class myServlet1 extends HttpServlet {

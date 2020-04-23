@@ -3,7 +3,7 @@ package com.nivelle.base.javacore.datastructures.base;
 /**
  * System 系统默认方法
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2020/04/13
  */
 public class SystemDemo {

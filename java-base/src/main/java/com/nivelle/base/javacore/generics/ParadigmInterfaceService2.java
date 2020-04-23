@@ -3,7 +3,7 @@ package com.nivelle.base.javacore.generics;
 /**
  * 范型接口实现类2
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/11/12
  */
 public class ParadigmInterfaceService2 implements ParadigmInterface<String> {

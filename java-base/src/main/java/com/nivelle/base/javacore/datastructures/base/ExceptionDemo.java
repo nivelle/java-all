@@ -3,7 +3,7 @@ package com.nivelle.base.javacore.datastructures.base;
 /**
  * 异常学习
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/12/15
  */
 public class ExceptionDemo {

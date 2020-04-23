@@ -9,7 +9,7 @@ import java.util.function.Supplier;
 /**
  * java8Method学习例子
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2020/04/02
  */
 public class Java8MethodTest {

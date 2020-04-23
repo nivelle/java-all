@@ -3,7 +3,7 @@ package com.nivelle.base.spi;
 /**
  * SPI 机制
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/10/07
  */
 public class MySpiService1 implements MySpi{

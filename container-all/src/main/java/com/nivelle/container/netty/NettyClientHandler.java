@@ -5,7 +5,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 /**
  * 客户端入站业务处理器
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/11/12
  */
 public class NettyClientHandler extends SimpleChannelInboundHandler<String> {

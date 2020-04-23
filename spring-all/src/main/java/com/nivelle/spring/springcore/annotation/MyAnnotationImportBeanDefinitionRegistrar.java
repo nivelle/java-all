@@ -7,7 +7,7 @@ import java.lang.annotation.*;
 /**
  * 自定义注解 @Import 的用法
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/08/25
  */
 @Retention(RetentionPolicy.RUNTIME)

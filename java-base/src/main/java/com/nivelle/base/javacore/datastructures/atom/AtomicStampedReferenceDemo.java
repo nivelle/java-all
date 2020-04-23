@@ -5,7 +5,7 @@ import java.util.concurrent.atomic.AtomicStampedReference;
 /**
  * TODO:DOCUMENT ME!
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2020/04/13
  */
 public class AtomicStampedReferenceDemo {

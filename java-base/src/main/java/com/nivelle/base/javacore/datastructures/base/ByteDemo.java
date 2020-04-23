@@ -3,7 +3,7 @@ package com.nivelle.base.javacore.datastructures.base;
 /**
  * 位操作
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/10/31
  */
 public class ByteDemo {

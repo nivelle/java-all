@@ -6,7 +6,7 @@ import java.util.concurrent.atomic.LongAdder;
  *
  * LongAdder
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2020/04/12
  */
 public class LongAdderDemo {

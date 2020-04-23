@@ -5,7 +5,7 @@ import java.util.concurrent.CountDownLatch;
 /**
  * 自己实现一个 CountDownLatch
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/06/16
  */
 public class CountDownLatchDemo {

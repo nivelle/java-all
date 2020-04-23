@@ -19,7 +19,7 @@ import org.springframework.util.StringValueResolver;
  * <p>
  * 2. 通过实现 EmbeddedValueResolverAware 接口解析配置文件和类对应的属性值
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/09/25
  */
 @Configuration

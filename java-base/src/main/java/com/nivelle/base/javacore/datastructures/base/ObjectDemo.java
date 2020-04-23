@@ -3,7 +3,7 @@ package com.nivelle.base.javacore.datastructures.base;
 /**
  * 所有java类的父类
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/12/12
  */
 public class ObjectDemo {

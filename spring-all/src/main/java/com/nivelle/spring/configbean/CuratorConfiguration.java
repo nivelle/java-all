@@ -3,7 +3,7 @@ package com.nivelle.spring.configbean;
 /**
  * Curator
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/07/06
  */
 

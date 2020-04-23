@@ -3,7 +3,7 @@ package com.nivelle.base.javacore.datastructures.base;
 /**
  * boolean 类型
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2020/03/21
  */
 public class BooleanDemo {

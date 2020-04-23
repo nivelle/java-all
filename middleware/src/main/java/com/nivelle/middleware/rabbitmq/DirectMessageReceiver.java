@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 /**
  * rabbitMQ监听器
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/07/03
  */
 @Service

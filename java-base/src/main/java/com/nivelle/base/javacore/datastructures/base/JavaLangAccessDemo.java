@@ -8,7 +8,7 @@ import java.util.Stack;
 /**
  * SharedSecrets 和  JavaLangAccess的作用
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2020/01/15
  */
 public class JavaLangAccessDemo {

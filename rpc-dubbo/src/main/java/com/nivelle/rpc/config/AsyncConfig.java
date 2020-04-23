@@ -11,7 +11,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 /**
  * 开启异步执行功能,配置两个线程池
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/08/23
  */
 @Configuration

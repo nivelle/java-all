@@ -6,7 +6,7 @@ import java.util.Vector;
 /**
  * Stack
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/10/15
  */
 public class StackDemo {

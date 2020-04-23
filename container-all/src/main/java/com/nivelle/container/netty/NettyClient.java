@@ -12,7 +12,7 @@ import java.util.Scanner;
 /**
  * netty客户端
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/11/12
  */
 public class NettyClient {

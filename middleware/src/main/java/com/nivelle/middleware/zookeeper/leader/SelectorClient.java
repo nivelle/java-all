@@ -11,7 +11,7 @@ import java.io.Closeable;
 /**
  * 选主
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/07/09
  */
 

@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 /**
  * bigDecimal
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/10/13
  */
 public class BigDecimalDemo {

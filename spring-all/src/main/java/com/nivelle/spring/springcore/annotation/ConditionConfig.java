@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 /**
  * 条件注解
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2020/01/16
  */
 @Configuration

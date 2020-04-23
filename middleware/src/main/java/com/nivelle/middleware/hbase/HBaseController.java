@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 /**
  * HBASE使用实例
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/11/05
  */
 @Controller

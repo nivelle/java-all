@@ -10,7 +10,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  *
  * application.properties 配置默认的key实现原理
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2020/01/16
  */
 @ConfigurationProperties(prefix = "myConfig")

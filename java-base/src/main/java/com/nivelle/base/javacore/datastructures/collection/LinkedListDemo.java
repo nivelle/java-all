@@ -6,9 +6,9 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 
 /**
- * LinkedList
+ * LinkedList 双向列表
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/06/16
  */
 public class LinkedListDemo {

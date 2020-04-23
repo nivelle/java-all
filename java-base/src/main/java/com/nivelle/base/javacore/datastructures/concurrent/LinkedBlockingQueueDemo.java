@@ -5,7 +5,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 /**
  * TODO:DOCUMENT ME!
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2020/04/14
  */
 public class LinkedBlockingQueueDemo {

@@ -8,7 +8,7 @@ import java.util.StringJoiner;
 /**
  * String
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/06/16
  */
 public class StringDemo {

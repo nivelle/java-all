@@ -3,7 +3,7 @@ package com.nivelle.base.pojo;
 /**
  *
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/08/19
  */
 public class UserInfo {

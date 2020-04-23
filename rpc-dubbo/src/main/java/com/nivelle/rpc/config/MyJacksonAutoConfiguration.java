@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * MVC配置
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/08/19
  */
 @Configuration

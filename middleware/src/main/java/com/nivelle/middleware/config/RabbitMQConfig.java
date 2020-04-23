@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 /**
  * RabbitMQ配置
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/07/01
  */
 @Component

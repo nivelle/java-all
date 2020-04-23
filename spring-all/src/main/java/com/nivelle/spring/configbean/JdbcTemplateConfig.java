@@ -10,7 +10,7 @@ import javax.sql.DataSource;
 /**
  * 数据源(jdbcTemplate配置主从两个数据源)
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/08/08
  */
 @Configuration

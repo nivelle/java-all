@@ -3,7 +3,7 @@ package com.nivelle.spring.springcore.annotation.bean;
 /**
  * 条件注解bean
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2020/01/16
  */
 public class ConditionBean {

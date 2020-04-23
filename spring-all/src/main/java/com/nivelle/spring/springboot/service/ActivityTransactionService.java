@@ -6,7 +6,7 @@ import com.nivelle.spring.springboot.entity.ActivityPvEntity;
 /**
  * Spring AOP事物代理默认只能代理接口
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/08/10
  */
 public interface ActivityTransactionService {

@@ -7,7 +7,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 /**
  * Synchronized 方法
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/11/02
  */
 public class SynchronizedDemo {

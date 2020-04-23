@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Arrays 和 Collections
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/10/29
  */
 public class ArrayDemo {

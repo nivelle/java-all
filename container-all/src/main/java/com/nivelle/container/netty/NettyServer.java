@@ -10,7 +10,7 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 /**
  * netty服务端
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/11/12
  */
 public class NettyServer {

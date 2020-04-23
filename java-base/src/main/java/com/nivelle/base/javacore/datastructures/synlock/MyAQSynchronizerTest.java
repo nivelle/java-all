@@ -3,7 +3,7 @@ package com.nivelle.base.javacore.datastructures.synlock;
 /**
  * AQS
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/07/19
  */
 public class MyAQSynchronizerTest {

@@ -3,7 +3,7 @@ package com.nivelle.rpc.model;
 /**
  * TODO:DOCUMENT ME!
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/09/24
  */
 public class Cat {

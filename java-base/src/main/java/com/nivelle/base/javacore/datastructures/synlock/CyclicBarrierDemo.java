@@ -5,7 +5,7 @@ import java.util.concurrent.CyclicBarrier;
 /**
  * 自己实现一个 CyclicBarrier
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/06/16
  */
 public class CyclicBarrierDemo {

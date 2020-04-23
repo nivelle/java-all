@@ -10,7 +10,7 @@ import java.util.concurrent.Future;
 /**
  * 异步方法执行
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/08/23
  */
 @Service

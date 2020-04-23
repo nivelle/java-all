@@ -3,7 +3,7 @@ package com.nivelle.base.javacore.datastructures.atom;
 /**
  * TODO:DOCUMENT ME!
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2020/04/13
  */
 public class AtomicBoolean {

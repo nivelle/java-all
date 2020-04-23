@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * 优雅停机
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/07/25
  */
 @Slf4j

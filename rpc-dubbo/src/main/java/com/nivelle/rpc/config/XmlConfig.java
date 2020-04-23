@@ -5,7 +5,7 @@ import org.springframework.context.annotation.ImportResource;
 /**
  * 导入xml配置文件
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/08/21
  */
 @Configuration

@@ -3,7 +3,7 @@ package com.nivelle.base.javacore.jvm;
 /**
  * 反射lambad表达式原理
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2020/03/29
  */
 public class ReflectionLambda {

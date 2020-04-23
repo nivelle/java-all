@@ -3,7 +3,7 @@ package com.nivelle.middleware.zookeeper.lock;
 /**
  * curator
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/07/06
  */
 

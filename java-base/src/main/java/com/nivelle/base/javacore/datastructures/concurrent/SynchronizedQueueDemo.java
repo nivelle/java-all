@@ -5,7 +5,7 @@ import org.apache.tomcat.util.collections.SynchronizedQueue;
 /**
  * TODO:DOCUMENT ME!
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2020/04/14
  */
 public class SynchronizedQueueDemo {

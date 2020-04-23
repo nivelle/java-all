@@ -3,7 +3,7 @@ package com.nivelle.middleware.kafka;
 /**
  * consumer消费者
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/07/25
  */
 

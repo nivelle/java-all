@@ -3,7 +3,7 @@ package com.nivelle.base.javacore.innerclass;
 /**
  * 静态内部类
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/12/14
  */
 public class StaticInnerClass {

@@ -3,7 +3,7 @@ package com.nivelle.spring.pojo;
 import java.math.BigDecimal;
 
 /**
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/09/24
  */
 public class Car {

@@ -5,7 +5,7 @@ import java.util.concurrent.locks.AbstractQueuedSynchronizer;
 /**
  * AbstractQueuedSynchronizer
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/06/16
  */
 

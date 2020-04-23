@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  *
  * ConcurrentLinkedDeque
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2020/04/12
  */
 public class ConcurrentLinkedQueueDemo {

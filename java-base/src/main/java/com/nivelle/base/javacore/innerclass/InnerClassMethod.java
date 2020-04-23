@@ -1,7 +1,7 @@
 package com.nivelle.base.javacore.innerclass;
 
 /**
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/12/15
  */
 public class InnerClassMethod {

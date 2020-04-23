@@ -5,7 +5,7 @@
 https://hub.docker.com/
 
 账户: nivelle
-密码:fuxinzhong2
+密码:nivell2
 
 ```
 ---

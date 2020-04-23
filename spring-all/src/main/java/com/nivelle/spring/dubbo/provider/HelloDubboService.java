@@ -3,7 +3,7 @@ package com.nivelle.spring.dubbo.provider;
 /**
  * TODO:DOCUMENT ME!
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/08/16
  */
 public interface HelloDubboService {

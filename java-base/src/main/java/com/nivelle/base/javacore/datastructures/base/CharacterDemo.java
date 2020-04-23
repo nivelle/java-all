@@ -3,7 +3,7 @@ package com.nivelle.base.javacore.datastructures.base;
 /**
  * Character
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/12/16
  */
 public class CharacterDemo {

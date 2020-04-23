@@ -7,7 +7,7 @@ import java.util.Iterator;
 /**
  * HashSet
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/10/15
  */
 public class HashSetDemo {

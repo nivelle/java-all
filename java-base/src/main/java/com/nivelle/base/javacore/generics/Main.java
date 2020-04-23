@@ -3,7 +3,7 @@ package com.nivelle.base.javacore.generics;
 /**
  * 范型类
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/11/12
  */
 public class Main {

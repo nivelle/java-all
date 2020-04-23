@@ -2,7 +2,7 @@ package com.nivelle.spring.springcore.basics;
 
 /**
  * 通过BeanDefinitionRegisterPostProcess注入的Bean定义
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/09/27
  */
 public class Animal {

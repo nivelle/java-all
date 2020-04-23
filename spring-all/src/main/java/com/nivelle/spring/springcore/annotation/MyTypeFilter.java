@@ -13,7 +13,7 @@ import java.io.IOException;
 /**
  * 自定义扫描过滤条件
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/09/23
  */
 public class MyTypeFilter implements TypeFilter {

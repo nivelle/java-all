@@ -19,7 +19,7 @@ import java.util.Objects;
 /**
  * 事物方法，解决事物方法内部调用的问题
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/08/10
  */
 @Service

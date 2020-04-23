@@ -8,7 +8,7 @@ import java.lang.reflect.Field;
 /**
  * Unsafe
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/07/12
  */
 public class UnsafeClassDemo {

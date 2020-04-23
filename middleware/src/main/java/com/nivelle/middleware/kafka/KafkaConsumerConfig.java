@@ -20,7 +20,7 @@ import java.util.Map;
 /**
  * 消费者配置
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/12/04
  */
 @Configuration

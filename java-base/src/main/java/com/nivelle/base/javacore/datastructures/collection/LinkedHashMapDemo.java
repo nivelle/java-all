@@ -10,7 +10,7 @@ import java.util.Set;
  * <p>
  * LinkedHashMap内部维护了一个双向链表，能保证元素按插入的顺序访问，也能以访问顺序访问，可以用来实现LRU缓存策略。
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/06/16
  */
 public class LinkedHashMapDemo {

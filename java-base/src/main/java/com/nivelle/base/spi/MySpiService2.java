@@ -3,7 +3,7 @@ package com.nivelle.base.spi;
 /**
  * TODO:DOCUMENT ME!
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/10/07
  */
 public class MySpiService2 implements MySpi{

@@ -5,7 +5,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 /**
  * 开启 @ConfigurationProperties 自动注解功能
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2020/01/16
  */
 

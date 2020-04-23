@@ -1,10 +1,14 @@
 package com.nivelle.base.javacore.datastructures.collection;
 
 /**
- * TODO:DOCUMENT ME!
+ * TreeSet
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2020/04/13
  */
 public class TreeSetDemo {
+
+    public static void main(String[] args) {
+
+    }
 }

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 /**
  * 消息过滤器
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/12/02
  */
 @Component

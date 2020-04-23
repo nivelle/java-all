@@ -5,7 +5,7 @@ import java.util.concurrent.LinkedTransferQueue;
 /**
  * TODO:DOCUMENT ME!
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2020/04/14
  */
 public class LinkedTransferQueueDemo {

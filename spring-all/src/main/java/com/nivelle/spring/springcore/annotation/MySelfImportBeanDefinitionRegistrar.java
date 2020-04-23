@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  * ImportBeanDefinitionRegistrar 向容器注册 beanDefinition
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/08/25
  */
 public class MySelfImportBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar, EnvironmentAware {

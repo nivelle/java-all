@@ -9,7 +9,7 @@ import java.util.Date;
 /**
  * 服务端出站处理器
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/11/12
  */
 public class NettyServerHandler extends SimpleChannelInboundHandler<String> {

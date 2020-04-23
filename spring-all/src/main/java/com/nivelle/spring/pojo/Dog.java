@@ -3,7 +3,7 @@ package com.nivelle.spring.pojo;
 /**
  * 狗狗
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/09/23
  */
 public class Dog {

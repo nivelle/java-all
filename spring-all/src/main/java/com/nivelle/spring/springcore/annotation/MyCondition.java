@@ -8,7 +8,7 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
 /**
  * T
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/09/24
  */
 public class MyCondition implements Condition {

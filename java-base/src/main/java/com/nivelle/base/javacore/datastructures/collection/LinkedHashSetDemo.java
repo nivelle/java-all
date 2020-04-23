@@ -1,11 +1,12 @@
 package com.nivelle.base.javacore.datastructures.collection;
 
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 
 /**
  * linkedHashSet
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/10/15
  */
 public class LinkedHashSetDemo {
@@ -21,7 +22,7 @@ public class LinkedHashSetDemo {
 
     /**
      * 1. hashSet 无序,linkedHash有序
-     *
+     * <p>
      * 2. linkedHashSet继承自从 HashSet,所有构造方法调用的父类的HashSet的 构造方法,用linkedHashMap来构造linkedHashSet
      */
     public static void main(String[] args) {
@@ -40,7 +41,14 @@ public class LinkedHashSetDemo {
         linkedHashSet.add(2);
         System.out.println(linkedHashSet);
 
+        linkedHashSet.add(3);
+        linkedHashSet.add(0);
+        System.out.println("设置顺序访问" + linkedHashSet);
 
+        Iterator iterator = linkedHashSet.iterator();
+        while (iterator.hasNext()) {
+            System.out.println(iterator.next());
+        }
     }
 
 }

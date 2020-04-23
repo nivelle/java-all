@@ -6,7 +6,7 @@ import com.alibaba.dubbo.common.extension.SPI;
 /**
  * SPI 机制
  *
- * @author fuxinzhong
+ * @author nivell
  * @date 2019/10/07
  */
 @SPI
