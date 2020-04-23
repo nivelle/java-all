@@ -78,8 +78,6 @@ docker整合【下载:docker pull nivelle/nivelle:1.0.2】【运行:sudo docker 
 
 ✅ 【swagger:接口文档自动生成】
 
-✅ 【Nginx:反向代理】
-
 ✅ 【JdbcTemplate && Mybatis 多数据源配置整合】
 
 ✅ 【CorsFilter 解决跨域问题】
@@ -345,10 +343,13 @@ docker整合【下载:docker pull nivelle/nivelle:1.0.2】【运行:sudo docker 
 
 #### 基础学习
 
-✅ git
+✅【git】
 
-✅ linux
+✅【linux】
 
-✅ shell编程
+✅【shell编程】
 
-✅ docker学习
+✅【docker学习】
+
+✅【nginx】
+
