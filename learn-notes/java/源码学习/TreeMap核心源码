@@ -537,7 +537,7 @@ private void deleteEntry(Entry<K,V> p) {
 
 ```
 
-
+来自:[彤哥读源码](https://mp.weixin.qq.com/s?__biz=Mzg2ODA0ODM0Nw==&mid=2247483734&idx=4&sn=d2a8b4ae9d80d6381986de44338c1776&scene=21#wechat_redirect)
 
 
 
