@@ -387,7 +387,7 @@ public class ArrayListDemo {
         System.out.println(list3);
 
         /**
-         *  Arrays.asList 返回的list是一个内部类,没有remove,add等方法
+         *  Arrays.asList 返回的list是一个内部类,没有remove,add等方法 subList方法也是这样的
          *
          *  异常:java.lang.UnsupportedOperationException
          */
