@@ -6,26 +6,67 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 
 /**
- * LinkedList 双向列表
+ * LinkedList 双向队列
  *
  * @author nivell
  * @date 2019/06/16
  */
 public class LinkedListDemo {
-
+    /**
+     * LinkedList是一个以双向链表实现的List，它除了作为List使用，还可以作为队列或者栈来使用。
+     *
+     * public class LinkedList<E> extends AbstractSequentialList<E> implements List<E>, Deque<E>, Cloneable, java.io.Serializable
+     */
     public static void main(String[] args) {
-
+        /**
+         *  主要内部类:
+         *
+         *  private static class Node<E> {
+         *         E item;
+         *         Node<E> next;
+         *         Node<E> prev;
+         *
+         *         Node(Node<E> prev, E element, Node<E> next) {
+         *             this.item = element;
+         *             this.next = next;
+         *             this.prev = prev;
+         *         }
+         *     }
+         */
         LinkedList linkedList1 = new LinkedList();
 
         /**
          * 默认在队尾添加元素，如果队列为空则为第一个元素
          */
         linkedList1.add(1);
-        linkedList1.add(2);
+        /**
+         * public boolean add(E e) {
+         *         linkLast(e);
+         *         return true;
+         *     }
+         *
+         *
+         * void linkLast(E e) {
+         *         final Node<E> l = last;//队列尾节点
+         *         final Node<E> newNode = new Node<>(l, e, null);//创建新节点，新节点的前置节点是l尾节点
+         *         last = newNode; //新节点成尾节点
+         *         if (l == null)
+         *             first = newNode;//如果是第一个添加的元素,则first也设置为新节点
+         *         else
+         *             l.next = newNode;//否则把原尾节点的next设置为新节点
+         *         size++;
+         *         modCount++;
+         *
+         */
+        linkedList1.add(2);//默认添加到队尾巴
+
+        linkedList1.addFirst(2);
+
         System.out.println("linkedList1:" + linkedList1);
 
         /**
-         * 构造函数初始化集合，默认先调用无参数构造函数,然后调用addAll()方法添加初始数据,默认在队尾依次添加元素
+         * 构造函数初始化集合，默认先调用无参数构造函数,
+         * 然后调用addAll()方法添加初始数据,默认在队尾依次添加元素
          *
          * 若添加的集合为空则返回失败
          * */
@@ -45,6 +86,8 @@ public class LinkedListDemo {
         System.out.println("在 linkedList3 列表头部添加元素:" + linkedList3);
         linkedList3.addLast(3);
         System.out.println("在 linkedList3 列表尾部添加元素:" + linkedList3);
+
+
 
         /**
          * 若元素为空,则抛出异常
