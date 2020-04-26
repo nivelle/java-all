@@ -13,9 +13,11 @@ import java.util.ListIterator;
  */
 public class LinkedListDemo {
     /**
-     * LinkedList是一个以双向链表实现的List，它除了作为List使用，还可以作为队列或者栈来使用。
+     * 1. LinkedList是一个以双向链表实现的List，它除了作为List使用，还可以作为队列或者栈来使用。
      *
-     * public class LinkedList<E> extends AbstractSequentialList<E> implements List<E>, Deque<E>, Cloneable, java.io.Serializable
+     * 2. 在队列首尾添加元素很高效，时间复杂度为O(1)。在中间添加元素比较低效，首先要先找到插入位置的节点，再修改前后节点的指针，时间复杂度为O(n)。
+     *
+     * 3. public class LinkedList<E> extends AbstractSequentialList<E> implements List<E>, Deque<E>, Cloneable, java.io.Serializable
      */
     public static void main(String[] args) {
         /**
@@ -59,11 +61,80 @@ public class LinkedListDemo {
          *
          */
         linkedList1.add(2);//默认添加到队尾巴
-
-        linkedList1.addFirst(2);
+        /**
+         * public void addFirst(E e) {
+         *         linkFirst(e);
+         *     }
+         *
+         * private void linkFirst(E e) {
+         *         final Node<E> f = first;//获取首节点
+         *         final Node<E> newNode = new Node<>(null, e, f);//构建新节点，其next节点为原来的首节点;节点构造函数:Node(Node<E> prev, E element, Node<E> next)
+         *         first = newNode;//新节点赋值给当前首节点
+         *         if (f == null){
+         *             last = newNode;
+         *         } //如果尾节点为空,则新节点同时赋值给尾节点
+         *         else{
+         *             f.prev = newNode;//将原来首节点的prev设置为newNode
+         *         }
+         *         size++;
+         *         modCount++;
+         *     }
+         *
+         */
+        linkedList1.addFirst(3);
 
         System.out.println("linkedList1:" + linkedList1);
-
+        /**
+         * 在指定位置添加元素
+         *
+         *
+         * public void add(int index, E element) {
+         *         checkPositionIndex(index);
+         *
+         *         if (index == size){
+         *             linkLast(element);
+         *         }else{
+         *             linkBefore(element, node(index));
+         *         }
+         *     }
+         *
+         *  //在某个指定节点之前添加节点
+         *  void linkBefore(E e, Node<E> succ) {
+         *         // assert succ != null;
+         *         final Node<E> pred = succ.prev;// 待添加节点的前置节点, succ = node(index);=>index的前面添加节点e
+         *         final Node<E> newNode = new Node<>(pred, e, succ); // 新构建节点的前置节点是succ的前置节点，后置节点是succ，也就是要放在succ的前面
+         *         succ.prev = newNode;//后继节点succ的前置节点指向新加入的节点。
+         *         if (pred == null)
+         *             first = newNode;//如果前置节点为空，则新加入的节点及为首节点
+         *         else
+         *             pred.next = newNode;//原来succ前置节点的后置节点设置为新加入的节点
+         *         size++;
+         *         modCount++;
+         *     }
+         *
+         *  //根据index找到指定的节点
+         *  Node<E> node(int index) {
+         *         // assert isElementIndex(index);
+         *         // 因为是双向链表,根据index和size的大小比，判断是在前半段还是后半段（除以2）
+         *         if (index < (size >> 1)) { //在左半段,从前往后遍历
+         *             Node<E> x = first;
+         *             for (int i = 0; i < index; i++){
+         *                 x = x.next;
+         *             }
+         *             return x;
+         *         } else { //在后半段，从后往前遍历
+         *             Node<E> x = last;
+         *             for (int i = size - 1; i > index; i--){
+         *                 x = x.prev;
+         *             }
+         *             return x;
+         *         }
+         *     }
+         *
+         *
+         *
+         */
+        linkedList1.add(2,2);
         /**
          * 构造函数初始化集合，默认先调用无参数构造函数,
          * 然后调用addAll()方法添加初始数据,默认在队尾依次添加元素
@@ -88,7 +159,6 @@ public class LinkedListDemo {
         System.out.println("在 linkedList3 列表尾部添加元素:" + linkedList3);
 
 
-
         /**
          * 若元素为空,则抛出异常
          */
@@ -99,14 +169,25 @@ public class LinkedListDemo {
         Object lastElement = linkedList3.getLast();
         System.out.println("返回 linkedList3 的尾元素:" + lastElement);
         System.out.println("linkedList3 集合:" + linkedList3);
-
+        /**
+         * 删除首节点:
+         */
         Object removedFirstElement = linkedList3.removeFirst();
         System.out.println("返回 linkedList3 被移除的首部元素:" + removedFirstElement);
         System.out.println("linkedList3 集合:" + linkedList3);
-
+        /**
+         * 删除尾接节点：
+         */
         Object removedLastElement = linkedList3.removeLast();
         System.out.println("返回 linkedList3 被移除的尾部元素:" + removedLastElement);
         System.out.println("linkedList3 集合:" + linkedList3);
+
+        /**
+         * 删除指定节点元素
+         */
+        Object removedIndexElement = linkedList3.remove(2);
+        System.out.println("删除指定位置的元素,removedIndexElement:"+removedIndexElement);
+
 
         linkedList3.addFirst(0);
         System.out.println("添加一个首部元素:" + linkedList3);
@@ -154,7 +235,6 @@ public class LinkedListDemo {
         while (iterator.hasNext()) {
             System.out.print("倒序排序:" + iterator.next() + ";");
         }
-
         System.out.println();
         /**
          * ListIterator 倒叙遍历
