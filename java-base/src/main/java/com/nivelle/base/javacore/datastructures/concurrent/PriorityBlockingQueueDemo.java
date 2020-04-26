@@ -3,7 +3,7 @@ package com.nivelle.base.javacore.datastructures.concurrent;
 import java.util.concurrent.PriorityBlockingQueue;
 
 /**
- * TODO:DOCUMENT ME!
+ * 优先阻塞队列
  *
  * @author nivell
  * @date 2020/04/16

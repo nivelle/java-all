@@ -1,7 +1,7 @@
 package com.nivelle.base.javacore.datastructures.concurrent;
 
 /**
- * TODO:DOCUMENT ME!
+ * 延迟队列
  *
  * @author nivell
  * @date 2020/04/14

@@ -171,19 +171,99 @@ public class LinkedListDemo {
         System.out.println("linkedList3 集合:" + linkedList3);
         /**
          * 删除首节点:
+         *
+         * public E removeFirst() {
+         *         final Node<E> f = first;
+         *         if (f == null)
+         *             throw new NoSuchElementException();
+         *         return unlinkFirst(f);
+         *  }
+         *
+         * private E unlinkFirst(Node<E> f) {
+         *         // assert f == first && f != null;
+         *         final E element = f.item; //首节点的元素值
+         *         final Node<E> next = f.next;//首节点的后置节点
+         *         f.item = null;//首节点元素置为空
+         *         f.next = null; // help GC 首节点后置元素置为null
+         *         first = next;//first指向原首节点指向元素的后置节点
+         *         if (next == null){ //如果只有一个元素,删除了，把last也删除
+         *             last = null;
+         *         }else{
+         *             next.prev = null;//否则将后置节点的前置节点置为null
+         *         }
+         *         size--;
+         *         modCount++;
+         *         return element;
+         * }
          */
         Object removedFirstElement = linkedList3.removeFirst();
         System.out.println("返回 linkedList3 被移除的首部元素:" + removedFirstElement);
         System.out.println("linkedList3 集合:" + linkedList3);
         /**
          * 删除尾接节点：
+         *
+         * public E removeLast() {
+         *         final Node<E> l = last;
+         *         if (l == null)
+         *             throw new NoSuchElementException();
+         *         return unlinkLast(l);
+         *     }
+         *
+         * private E unlinkLast(Node<E> l) {
+         *         final E element = l.item;//获取尾节点
+         *         final Node<E> prev = l.prev;//获取尾节点的前置节点
+         *         l.item = null; //尾节点元素设置为null
+         *         l.prev = null; // help GC,取消读前置节点引用
+         *         last = prev;//last指向原来尾节点的前置节点
+         *         if (prev == null){
+         *             first = null; //如果前置节点为空，也及只有一个元素，则first也设置为null
+         *         }else{
+         *             prev.next = null;//原来尾节点的后置节点设置为空,prev是当前尾节点，next节点当然是null
+         *         }
+         *         size--;
+         *         modCount++;
+         *         return element;
+         *     }
+         *
          */
         Object removedLastElement = linkedList3.removeLast();
         System.out.println("返回 linkedList3 被移除的尾部元素:" + removedLastElement);
         System.out.println("linkedList3 集合:" + linkedList3);
 
         /**
-         * 删除指定节点元素
+         * 删除指定节点元素:
+         *
+         * public E remove(int index) {
+         *         checkElementIndex(index);
+         *         return unlink(node(index));
+         *     }
+         *
+         *
+         * E unlink(Node<E> x) {
+         *         // assert x != null;
+         *         final E element = x.item;//要删除节点元素值
+         *         final Node<E> next = x.next;//要删除节点的后置节点
+         *         final Node<E> prev = x.prev;//要删除节点的前置节点
+         *
+         *         if (prev == null) { //如果要删除节点的前置节点为null,则其本为first节点
+         *             first = next;//将要删除节点的后置节点设置为first节点
+         *         } else {
+         *             prev.next = next;//前置节点的后节点设置为要删除节点的后节点
+         *             x.prev = null;//要删除节点的前置节点置为null
+         *         }
+         *
+         *         if (next == null) {//如果要删除的节点的后置节点为null
+         *             last = prev;//将原来要删除节点的前置节点设置为last节点
+         *         } else {
+         *             next.prev = prev;//将要删除节点的后置节点的前置节点设置为要删除节点的前置节点
+         *             x.next = null;//要删除节点的后置节点设置为null
+         *         }
+         *
+         *         x.item = null;
+         *         size--;
+         *         modCount++;
+         *         return element;
+         *     }
          */
         Object removedIndexElement = linkedList3.remove(2);
         System.out.println("删除指定位置的元素,removedIndexElement:"+removedIndexElement);
@@ -247,5 +327,19 @@ public class LinkedListDemo {
         while (listIterator.hasPrevious()) {
             System.out.print("倒叙排序:" + listIterator.previous() + ";");
         }
+
+        /**
+         * （1）LinkedList是一个以双链表实现的List；
+         *
+         * （2）LinkedList还是一个双端队列，具有队列、双端队列、栈的特性；
+         *
+         * （3）LinkedList在队列首尾添加、删除元素非常高效，时间复杂度为O(1)；
+         *
+         * （4）LinkedList在中间添加、删除元素比较低效，时间复杂度为O(n)；
+         *
+         * （5）LinkedList不支持随机访问，所以访问非队列首尾的元素比较低效；
+         *
+         * （6）LinkedList在功能上等于ArrayList + ArrayDeque；
+         */
     }
 }

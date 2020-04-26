@@ -3,7 +3,7 @@ package com.nivelle.base.javacore.datastructures.concurrent;
 import org.apache.tomcat.util.collections.SynchronizedQueue;
 
 /**
- * TODO:DOCUMENT ME!
+ * 同步队列
  *
  * @author nivell
  * @date 2020/04/14

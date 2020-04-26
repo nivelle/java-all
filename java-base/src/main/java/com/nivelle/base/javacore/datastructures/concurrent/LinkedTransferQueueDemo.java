@@ -3,7 +3,7 @@ package com.nivelle.base.javacore.datastructures.concurrent;
 import java.util.concurrent.LinkedTransferQueue;
 
 /**
- * TODO:DOCUMENT ME!
+ * LinkedTransferQueue
  *
  * @author nivell
  * @date 2020/04/14

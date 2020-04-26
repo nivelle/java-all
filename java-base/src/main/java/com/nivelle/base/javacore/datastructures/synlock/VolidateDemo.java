@@ -7,4 +7,8 @@ package com.nivelle.base.javacore.datastructures.synlock;
  * @date 2020/04/14
  */
 public class VolidateDemo {
+
+    public static void main(String[] args) {
+
+    }
 }
