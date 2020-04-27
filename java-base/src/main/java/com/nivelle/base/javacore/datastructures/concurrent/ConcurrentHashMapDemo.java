@@ -30,12 +30,41 @@ public class ConcurrentHashMapDemo {
         final ConcurrentHashMap<AtomicInteger, String> concurrentHashMap = new ConcurrentHashMap(2);
 
         for (int i = 0; i < 1000; i++) {
-            executor.execute(new MyTask1(concurrentHashMap));
+            //executor.execute(new MyTask1(concurrentHashMap));
         }
+        ConcurrentHashMap concurrentHashMap1 = new ConcurrentHashMap(8);
+
+        ConcurrentHashMap concurrentHashMap2 = new ConcurrentHashMap(8, 0.75F);
+        /**
+         * concurrencyLevel: as estimated(估计) threads
+         */
+        ConcurrentHashMap concurrentHashMap3 = new ConcurrentHashMap(8, 0.75f, 16);
+
+        /**
+         * 初始化容量
+         */
+        int initialCapacity = 10;
+        int MAXIMUM_CAPACITY = 10;
+        int cap = ((initialCapacity >= (MAXIMUM_CAPACITY >>> 1)) ? MAXIMUM_CAPACITY : (initialCapacity + (initialCapacity >>> 1) + 1));
+        System.out.println(cap);
+        System.out.println(initialCapacity + (initialCapacity >>> 1) + 1);
+        System.out.println((initialCapacity >>> 1));
+
+        /**
+         * public V put(K key, V value) {
+         *         return putVal(key, value, false);// onlyIfAbsent:是否只有在不存在的时候添加
+         *  }
+         */
+        concurrentHashMap3.put(1, 1);
+        System.out.println(concurrentHashMap3);
+
+        int h = 1;
+        int HASH_BITS = 0x7fffffff;//
+        System.out.println("hash值:" + ((h ^ (h >>> 16)) & HASH_BITS));
+        System.out.println("hash值:" + ((h ^ (h >>> 16)) & Integer.MAX_VALUE));
 
     }
 }
-
 
 
 /**
@@ -49,6 +78,7 @@ class MyTask1 implements Runnable {
     public MyTask1(Map<AtomicInteger, String> map) {
         this.map = map;
     }
+
     @Override
     public void run() {
         try {
@@ -64,7 +94,6 @@ class MyTask1 implements Runnable {
         } catch (Exception e) {
             System.err.println(e.getStackTrace());
             System.err.println();
-            System.err.println(e.getMessage());
             System.err.println(e.getCause());
 
         }
