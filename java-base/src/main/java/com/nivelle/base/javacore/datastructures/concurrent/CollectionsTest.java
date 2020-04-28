@@ -1,5 +1,8 @@
 package com.nivelle.base.javacore.datastructures.concurrent;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Collections
  *
@@ -7,4 +10,10 @@ package com.nivelle.base.javacore.datastructures.concurrent;
  * @date 2020/04/14
  */
 public class CollectionsTest {
+
+    public static void main(String[] args) {
+        List list = Collections.emptyList();
+        list.add(1);
+        System.out.println(list);
+    }
 }

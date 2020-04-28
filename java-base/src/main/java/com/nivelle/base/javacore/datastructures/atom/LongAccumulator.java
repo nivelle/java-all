@@ -1,7 +1,7 @@
 package com.nivelle.base.javacore.datastructures.atom;
 
 /**
- * TODO:DOCUMENT ME!
+ * LongAccumulator
  *
  * @author nivell
  * @date 2020/04/13

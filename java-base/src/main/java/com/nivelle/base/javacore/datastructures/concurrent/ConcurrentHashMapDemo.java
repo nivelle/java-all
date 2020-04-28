@@ -63,6 +63,10 @@ public class ConcurrentHashMapDemo {
         System.out.println("hash值:" + ((h ^ (h >>> 16)) & HASH_BITS));
         System.out.println("hash值:" + ((h ^ (h >>> 16)) & Integer.MAX_VALUE));
 
+
+        System.out.println("获取元素:" + concurrentHashMap3.get(1));
+        System.out.println("删除元素:" + concurrentHashMap3.remove(1));
+
     }
 }
 
