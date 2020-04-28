@@ -2,6 +2,8 @@
 
 private transient volatile int sizeCtl;
 
+**sizeCtl的高16位存储着rs这个扩容邮戳 sizeCtl的低16位存储着扩容线程数加1，即(1+nThreads)**
+
 1. -1,表示有线程正在进行初始化操作
 
 2. - (1+ nThreads),表示有n个线程正在一起扩容
@@ -83,7 +85,7 @@ final V putVal(K key, V value, boolean onlyIfAbsent) {
                     if (tabAt(tab, i) == f) {
                         if (fh >= 0) {// 如果第一个元素的hash值大于等于0（说明不是在迁移，也不是树）那就是桶中的元素使用的是链表方式存储                                      
                             binCount = 1;// 桶中元素个数赋值为1                                        
-                            for (Node<K,V> e = f;; ++binCount) {
+                            for (Node<K,V> e = f;; ++binCount) {//遍历桶元素,遍历一次binCount+1
                                 K ek;
                                 if (e.hash == hash &&((ek = e.key) == key ||(ek != null && key.equals(ek)))) {// 如果找到了这个元素，则赋值了新值（onlyIfAbsent=false）                                                                                                              
                                     oldVal = e.val;
@@ -102,7 +104,7 @@ final V putVal(K key, V value, boolean onlyIfAbsent) {
                         }
                         else if (f instanceof TreeBin) {// 如果第一个元素是树节点                                                         
                             Node<K,V> p;
-                            binCount = 2;//桶中元素个数赋值为2
+                            binCount = 2;//如果为树,那么赋值桶中元素个数赋值为2
                             if ((p = ((TreeBin<K,V>)f).putTreeVal(hash, key,value)) != null) {//调用红黑树的插入方法插入元素,如果成功插入则返回null,否则返回寻找到的节点
                                 oldVal = p.val;
                                 if (!onlyIfAbsent){
@@ -132,44 +134,69 @@ final V putVal(K key, V value, boolean onlyIfAbsent) {
 ```
 
 ## addCount(long x,int check);//增加桶中元素个数,每次添加元素后，元素数量加1，并判断是否达到扩容门槛，达到了则进行扩容或协助扩容。
+
+（1）元素个数的存储方式类似于LongAdder类，存储在不同的段上，减少不同线程同时更新size时的冲突；
+
+（2）计算元素个数时把这些段的值及baseCount相加算出总的元素个数；
+
+（3）正常情况下sizeCtl存储着扩容门槛，扩容门槛为容量的0.75倍；
+
+（4）扩容时sizeCtl高位存储扩容邮戳(resizeStamp)，低位存储扩容线程数加1（1+nThreads）；
+
+（5）其它线程添加元素后如果发现存在扩容，也会加入的扩容行列中来；
                                          
 ```
+@param check if <0, don't check resize, if <= 1 only check if uncontended
 private final void addCount(long x, int check) {
         CounterCell[] as;
         long b;
         long s;
         //把数组的大小存储根据不同的线程存储到不同的段,并且有一个baseCount，优先更新baseCount，如果失败了再更新不同线程对应的段,这样可以保证尽量小的减少冲突
         if ((as = counterCells) != null ||!U.compareAndSwapLong(this, BASECOUNT, b = baseCount, s = b + x)) {
-            CounterCell a; long v; int m;
+            CounterCell a; 
+            long v; 
+            int m;
             boolean uncontended = true;
-            if (as == null || (m = as.length - 1) < 0 ||
-                (a = as[ThreadLocalRandom.getProbe() & m]) == null ||
-                !(uncontended =
-                  U.compareAndSwapLong(a, CELLVALUE, v = a.value, v + x))) {
-                fullAddCount(x, uncontended);
+            # 条件1:as为空
+            # 条件2:或者数组长度为0
+            # 条件3:当前线程所在cell为空
+            # 条件4:前线程的段上加数量失败
+            if (as == null || (m = as.length - 1) < 0 ||(a = as[ThreadLocalRandom.getProbe() & m]) == null ||!(uncontended =U.compareAndSwapLong(a, CELLVALUE, v = a.value, v + x))) {
+                ## 强制增加数量;不同线程对应不同的段都更新失败了;说明已经发生冲突了,那么就对counterCells进行扩容,以减少多个线程hash到同一个段的概率
+                fullAddCount(x, uncontended);//就是一个LongAdder的实现
                 return;
             }
-            if (check <= 1)
+            if (check <= 1){
                 return;
+            }
+            // 计算元素个数
             s = sumCount();
+                           
         }
         if (check >= 0) {
-            Node<K,V>[] tab, nt; int n, sc;
-            while (s >= (long)(sc = sizeCtl) && (tab = table) != null &&
-                   (n = tab.length) < MAXIMUM_CAPACITY) {
+            Node<K,V>[] tab;
+            Node<K,V>[] nt; 
+            int n; 
+            int sc;
+            //如果元素个数达到了扩容门槛,则进行扩容;正常情况下sizeCtl存储的是扩容门槛,即容量的0.75倍
+            while (s >= (long)(sc = sizeCtl) && (tab = table) != null && (n = tab.length) < MAXIMUM_CAPACITY) {
+                //rs是扩容时的一个邮戳标识
                 int rs = resizeStamp(n);
-                if (sc < 0) {
-                    if ((sc >>> RESIZE_STAMP_SHIFT) != rs || sc == rs + 1 ||
-                        sc == rs + MAX_RESIZERS || (nt = nextTable) == null ||
-                        transferIndex <= 0)
+                if (sc < 0) {// sc<0说明正在扩容中
+                    ## 扩容已经完成了，退出循环
+                    ## 正常应该只会触发nextTable==null这个条件                   
+                    if ((sc >>> RESIZE_STAMP_SHIFT) != rs || sc == rs + 1 ||sc == rs + MAX_RESIZERS || (nt = nextTable) == null ||transferIndex <= 0){
                         break;
-                    if (U.compareAndSwapInt(this, SIZECTL, sc, sc + 1))
+                    }
+                    if (U.compareAndSwapInt(this, SIZECTL, sc, sc + 1)){//扩容未完成，则当前线程加入迁移元素中并把扩容线程数加1
                         transfer(tab, nt);
+                    }
                 }
-                else if (U.compareAndSwapInt(this, SIZECTL, sc,
-                                             (rs << RESIZE_STAMP_SHIFT) + 2))
-                    transfer(tab, null);
-                s = sumCount();
+                //这里是触发扩容的那个线程进入的地方;sizeCtl的高16位存储着rs这个扩容邮戳sizeCtl的低16位存储着扩容线程数加1，即(1+nThreads)
+                else if (U.compareAndSwapInt(this, SIZECTL, sc, (rs << RESIZE_STAMP_SHIFT) + 2)){
+                    transfer(tab, null);// 进入迁移元素                                        
+                }
+                s = sumCount();// 重新计算元素个数                               
             }
         }
     }
@@ -181,7 +208,7 @@ private final void addCount(long x, int check) {
 
 （1）使用CAS锁控制只有**一个线程**初始化桶数组；
 
-（2）sizeCtl在初始化后存储的是扩容门槛；
+（2）sizeCtl 在初始化后存储的是扩容门槛；
 
 （3）扩容门槛写死的是桶数组大小的0.75倍，桶数组大小即map的容量，也就是最多存储多少个元素。
 
@@ -227,9 +254,9 @@ private final Node<K,V>[] initTable() {
 ```
 
 final Node<K,V>[] helpTransfer(Node<K,V>[] tab, Node<K,V> f) {
-        Node<K,V>[] nextTab; int sc;
-        if (tab != null && (f instanceof ForwardingNode) &&
-            (nextTab = ((ForwardingNode<K,V>)f).nextTable) != null) {
+        Node<K,V>[] nextTab; //迁移用的新数组
+        int sc;
+        if (tab != null && (f instanceof ForwardingNode) &&(nextTab = ((ForwardingNode<K,V>)f).nextTable) != null) {
             int rs = resizeStamp(tab.length);
             while (nextTab == nextTable && table == tab &&
                    (sc = sizeCtl) < 0) {
@@ -245,7 +272,6 @@ final Node<K,V>[] helpTransfer(Node<K,V>[] tab, Node<K,V> f) {
         }
         return table;
     }
-
 
 private final void transfer(Node<K,V>[] tab, Node<K,V>[] nextTab) {
         int n = tab.length, stride;
