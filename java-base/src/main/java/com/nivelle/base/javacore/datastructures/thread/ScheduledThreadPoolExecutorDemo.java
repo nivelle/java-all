@@ -3,7 +3,7 @@ package com.nivelle.base.javacore.datastructures.thread;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 /**
- * TODO:DOCUMENT ME!
+ * ScheduledThreadPoolExecutor
  *
  * @author nivell
  * @date 2020/04/14
