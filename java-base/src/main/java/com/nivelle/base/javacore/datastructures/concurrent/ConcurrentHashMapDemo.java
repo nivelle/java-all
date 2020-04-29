@@ -30,12 +30,34 @@ public class ConcurrentHashMapDemo {
         final HashMap<AtomicInteger, String> map = new HashMap(2);
         final ConcurrentHashMap<AtomicInteger, String> concurrentHashMap = new ConcurrentHashMap(2);
 
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 1; i++) {
             executor.execute(new MyTask1(concurrentHashMap));
         }
         ConcurrentHashMap concurrentHashMap1 = new ConcurrentHashMap(8);
+        concurrentHashMap1.putIfAbsent(1, 1);
+        concurrentHashMap1.putIfAbsent(2, 2);
+        concurrentHashMap1.putIfAbsent(3, 10);
+        ConcurrentHashMap<Integer, Integer> concurrentHashMap2 = new ConcurrentHashMap(8, 0.75F);
+        concurrentHashMap2.putAll(concurrentHashMap1);
+        System.out.println("直接添加一个集合:" + concurrentHashMap2);
+        /**
+         * computeIfAbsent 如果key不存在,则处理返回新value
+         */
+        Object value = concurrentHashMap2.computeIfAbsent(4, key -> {
+            return 4;
+        });
+        System.out.println("computeIfAbsent set value:" + value);
+        /**
+         * 与put一样，但是返回的是新值。 put返回的是旧值,没有则返回null
+         *
+         * 当key不存在时，执行value计算方法，计算value
+         */
+        Integer newValue = concurrentHashMap2.compute(4, (k, v) -> {
+            return k + v;
+        });
+        System.out.println("compute set value:" + newValue);
 
-        ConcurrentHashMap concurrentHashMap2 = new ConcurrentHashMap(8, 0.75F);
+        System.err.println("concurrentHashMap2 is:" + concurrentHashMap2);
         /**
          * concurrencyLevel: as estimated(估计) threads
          */
