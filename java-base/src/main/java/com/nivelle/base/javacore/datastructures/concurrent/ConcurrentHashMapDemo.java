@@ -1,5 +1,6 @@
 package com.nivelle.base.javacore.datastructures.concurrent;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
@@ -26,11 +27,11 @@ public class ConcurrentHashMapDemo {
          * 非线程安全:HashMap
          * 线程安全:concurrentHashMap
          */
-        //final HashMap<AtomicInteger, String> map = new HashMap(2);
+        final HashMap<AtomicInteger, String> map = new HashMap(2);
         final ConcurrentHashMap<AtomicInteger, String> concurrentHashMap = new ConcurrentHashMap(2);
 
         for (int i = 0; i < 1000; i++) {
-            //executor.execute(new MyTask1(concurrentHashMap));
+            executor.execute(new MyTask1(concurrentHashMap));
         }
         ConcurrentHashMap concurrentHashMap1 = new ConcurrentHashMap(8);
 
