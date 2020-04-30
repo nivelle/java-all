@@ -14,7 +14,7 @@ static final class Node {
         ## 等待状态标识,线程已经取消
         static final int CANCELLED =  1;
         /** waitStatus value to indicate successor's thread needs unparking */
-        ## 等待状态标识,后继节点需要唤醒
+        ## 等待状态标识,后继节点需要唤醒时，当前节点状态为-1
         static final int SIGNAL    = -1;
         /** waitStatus value to indicate thread is waiting on condition */
         ## 等待状态标识,一个线程在等待一个条件

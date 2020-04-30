@@ -88,7 +88,6 @@ public class ReentrantLockDemo {
         } catch (InterruptedException e) {
             System.err.println(e);
         }
-
         reentrantLock1.unlock();
 
     }
