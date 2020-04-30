@@ -3,7 +3,7 @@ package com.nivelle.base.javacore.datastructures.synlock;
 import java.util.concurrent.Phaser;
 
 /**
- * TODO:DOCUMENT ME!
+ * Phaser
  *
  * @author nivell
  * @date 2020/04/14

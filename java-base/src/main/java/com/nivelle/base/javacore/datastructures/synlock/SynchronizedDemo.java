@@ -1,8 +1,8 @@
 package com.nivelle.base.javacore.datastructures.synlock;
 
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-
+import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Synchronized 方法
@@ -11,26 +11,22 @@ import java.util.concurrent.ThreadPoolExecutor;
  * @date 2019/11/02
  */
 public class SynchronizedDemo {
-
-    public static ThreadPoolTaskExecutor threadPoolTaskExecutor = null;
+    public static ThreadPoolExecutor threadPoolExecutor;
 
     static {
-        threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
-        threadPoolTaskExecutor.setCorePoolSize(5);
-        threadPoolTaskExecutor.setMaxPoolSize(10);
-        threadPoolTaskExecutor.setKeepAliveSeconds(200);
-        threadPoolTaskExecutor.setThreadNamePrefix("taskExecutor--");
-        threadPoolTaskExecutor.setWaitForTasksToCompleteOnShutdown(true);
-        threadPoolTaskExecutor.setAwaitTerminationSeconds(60);
-        threadPoolTaskExecutor.setQueueCapacity(5);
-        threadPoolTaskExecutor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+        threadPoolExecutor = new ThreadPoolExecutor(10, 10, 200, TimeUnit.SECONDS, new SynchronousQueue<>());
     }
 
     public static void main(String[] args) {
         SynchronizedDemo synchronizedDemo = new SynchronizedDemo();
-        Long count = new Long(1);
-        for (int i = 0; i < 1; i++) {
-            SynchronizedDemo.threadPoolTaskExecutor.execute(new SynchronizedTask(count));
+        if (synchronizedDemo == null) {
+            System.out.println(synchronizedDemo + "is null");
+        } else {
+            System.out.println("main 方法里面corePoolSize:" + synchronizedDemo.threadPoolExecutor.getCorePoolSize());
+        }
+        int count = 1;
+        for (int i = 0; i < 20; i++) {
+            synchronizedDemo.threadPoolExecutor.execute(new SynchronizedTask(count));
         }
     }
 }
@@ -41,15 +37,15 @@ public class SynchronizedDemo {
  */
 class SynchronizedTask implements Runnable {
 
-    Long count;
+    int count;
 
-    public SynchronizedTask(Long count) {
+    public SynchronizedTask(int count) {
         this.count = count;
     }
 
     @Override
-    public synchronized void run() {
-        Long result = count++;
+    public void run() {
+        int result = count++;
         System.out.println("threadName:" + Thread.currentThread().getName() + ";current int:" + result);
         return;
     }

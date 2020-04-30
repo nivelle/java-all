@@ -1,14 +1,17 @@
 package com.nivelle.base.javacore.datastructures.synlock;
 
 /**
- * TODO:DOCUMENT ME!
+ * volatile
  *
  * @author nivell
  * @date 2020/04/14
  */
 public class VolidateDemo {
 
-    public static void main(String[] args) {
+    volatile int params;
 
+    public static void main(String[] args) {
+        VolidateDemo volidateDemo = new VolidateDemo();
+        System.out.println(volidateDemo.params);
     }
 }
