@@ -3,7 +3,7 @@ package com.nivelle.base.javacore.datastructures.atom;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * TODO:DOCUMENT ME!
+ * AtomicInteger
  *
  * @author nivell
  * @date 2020/04/13

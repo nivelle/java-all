@@ -3,7 +3,7 @@ package com.nivelle.base.javacore.datastructures.concurrent;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
- * TODO:DOCUMENT ME!
+ * LinkedBlockingQueue
  *
  * @author nivell
  * @date 2020/04/14

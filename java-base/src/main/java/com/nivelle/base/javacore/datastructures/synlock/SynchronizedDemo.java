@@ -44,7 +44,7 @@ class SynchronizedTask implements Runnable {
     }
 
     @Override
-    public void run() {
+    public synchronized void run() {
         int result = count++;
         System.out.println("threadName:" + Thread.currentThread().getName() + ";current int:" + result);
         return;
