@@ -95,3 +95,8 @@
   到了JDK1.6，发生了变化，对synchronize加入了很多优化措施，有自适应自旋，锁消除，锁粗化，轻量级锁，偏向锁等等。导致在JDK1.6上synchronize的性能并不比Lock差。
   官方也表示，他们也更支持synchronize，在未来的版本中还有优化余地，所以还是提倡在synchronized能实现需求的情况下，优先考虑使用synchronized来进行同步。
 
+### 其他详细比较
+
+![synchronizedVSReentrantCondition](https://s1.ax1x.com/2020/05/01/JOyBrj.png)
+
+
