@@ -78,7 +78,7 @@ public class PriorityQueueDemo {
                 queue[0] = e;
             }else{
                 //自下而上的堆化
-                siftUp(i, e);//否则，插入元素到数组size的位置，也就是最后一个元素的下一位,这里的size不是数组大小，而是数组个数;然后，再做自下而上的堆化
+                siftUp(i, e);//否则，插入元素到数组size的位置，也就是最后一个元素的下一位,这里的size不是数组大小，而是数组元素个数;然后，再做自下而上的堆化
              }
             return true;
          }

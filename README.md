@@ -296,6 +296,8 @@ docker整合【下载:docker pull nivelle/nivelle:1.0.2】【运行:sudo docker 
 
 ✅【ThreadPool】
 
+✅【scheduledThreadPoolExecutor】
+
 ✅【ThreadLocal】
 
 ✅【CountDownLatch】
@@ -325,7 +327,6 @@ docker整合【下载:docker pull nivelle/nivelle:1.0.2】【运行:sudo docker 
 ✅【ConcurrentSkipListMap】
 
 ✅【CopyOnWriteArrayList】
-
 
 ✅【CopyOnWriteArraySet】
 
