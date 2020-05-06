@@ -102,6 +102,8 @@ docker整合【下载:docker pull nivelle/nivelle:1.0.2】【运行:sudo docker 
 
 ✅ 【WebMvcConfigurer && @EnableWebMvc】
 
+✅ 【@Scheduled】
+
 --------------------
 
 ### middleware项目
@@ -296,7 +298,7 @@ docker整合【下载:docker pull nivelle/nivelle:1.0.2】【运行:sudo docker 
 
 ✅【ThreadPool】
 
-✅【scheduledThreadPoolExecutor】
+✅【ScheduledThreadPoolExecutor】
 
 ✅【ThreadLocal】
 
@@ -347,6 +349,10 @@ docker整合【下载:docker pull nivelle/nivelle:1.0.2】【运行:sudo docker 
 ✅【StampedLock】
 
 ✅【LockSupport】
+
+✅【FutureTask】
+
+✅【ForkJoin】
 
 
 #### 设计模式实践
