@@ -25,6 +25,20 @@ public class PriorityQueueDemo {
      * （7）由此可见，PriorityQueue是一个小顶堆
      *
      */
+
+    /**
+     * （1）PriorityQueue是一个小顶堆；
+     *
+     * （2）PriorityQueue是非线程安全的；
+     *
+     * （3）PriorityQueue不是有序的，只有堆顶存储着最小的元素；
+     *
+     * （4）入队就是堆的插入元素的实现；
+     *
+     * （5）出队就是堆的删除元素的实现；
+     *
+     *  (6) 入队自下而上的堆调整；出队自上而下的堆调整；
+     */
     public static void main(String[] args) {
 
         /**
@@ -196,17 +210,41 @@ public class PriorityQueueDemo {
         }
          **/
 
-
         /**
-         * （1）PriorityQueue是一个小顶堆；
+         * private void siftDown(int k, E x) {
+         *         if (comparator != null)
+         *             siftDownUsingComparator(k, x);
+         *         else
+         *             siftDownComparable(k, x);
+         *     }
          *
-         * （2）PriorityQueue是非线程安全的；
-         *
-         * （3）PriorityQueue不是有序的，只有堆顶存储着最小的元素；
-         *
-         * （4）入队就是堆的插入元素的实现；
-         *
-         * （5）出队就是堆的删除元素的实现；
+         *  ## k =0 ; x = 堆尾元素
+         *  private void siftDownComparable(int k, E x) {
+         *         Comparable<? super E> key = (Comparable<? super E>)x;
+         *         ## 中间位置
+         *         int half = size >>> 1;        // loop while a non-leaf
+         *         while (k < half) {
+         *             ## k 乘以 2的1次方 + 1
+         *             int child = (k << 1) + 1; // assume left child is least
+         *             ## 左节点
+         *             Object c = queue[child];
+         *             ## 右节点
+         *             int right = child + 1;
+         *             ## 选择左右节点中值小的元素
+         *             if (right < size && ((Comparable<? super E>) c).compareTo((E) queue[right]) > 0){
+         *                 c = queue[child = right];
+         *             }
+         *             ## 如果key比根节点子节点还小，则退出循环
+         *             if (key.compareTo((E) c) <= 0){
+         *                 break;
+         *             }
+         *             queue[k] = c;
+         *             k = child;
+         *         }
+         *         ## 否则直接赋值到数组k位置为key值
+         *         queue[k] = key;
+         *     }
          */
+
     }
 }

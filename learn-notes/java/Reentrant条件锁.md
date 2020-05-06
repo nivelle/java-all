@@ -9,14 +9,25 @@ public Condition newCondition() {
 
 ## ReentrantLock.Sync.newCondition()
 final ConditionObject newCondition() {
-            return new ConditionObject();
+     return new ConditionObject();
 }
 
 ## AbstractQueuedSynchronizer.ConditionObject.ConditionObject()
 public ConditionObject() {}
+     
+```
 
+## 核心属性
 
-       
+- 条件锁中也维护了一个队列，为了和AQS的队列区分，我这里称为条件队列，firstWaiter是队列的头节点，lastWaiter是队列的尾节点
+
+```
+/** First node of condition queue. */
+private transient Node firstWaiter;
+
+/** Last node of condition queue. */
+private transient Node lastWaiter;
+
 ```
 
 ## condition.await方法
@@ -29,13 +40,10 @@ public final void await() throws InterruptedException {
                 throw new InterruptedException();
             }
             ## 添加新节点到Condition队列中,并返回该节点
-            Node node = addConditionWaiter();
-            
-            ## 完全释放当前线程获取的锁
-            ## 因为锁是可重入的,所以这里要把所获取的锁都释放
+            Node node = addConditionWaiter();            
+            ## 完全释放当前线程获取的锁;因为锁是可重入的,所以这里要把所获取的锁都释放
             int savedState = fullyRelease(node);
-            int interruptMode = 0;
-            
+            int interruptMode = 0;            
             ## 是否在同步队列中
             while (!isOnSyncQueue(node)) {
                 ## 阻塞当前线程
@@ -101,14 +109,41 @@ final int fullyRelease(Node node) {
                 throw new IllegalMonitorStateException();
             }
         } finally {
-            if (failed)
+            if (failed){
                 node.waitStatus = Node.CANCELLED;
+            }
         }
+}
+## AbstractQueuedLongSynchronizer
+public final boolean release(long arg) {
+        if (tryRelease(arg)) {
+            Node h = head;
+            if (h != null && h.waitStatus != 0){
+                unparkSuccessor(h);
+            }
+            return true;
+        }
+        return false;
+ }
+ 
+ ## ReentrantLock
+protected final boolean tryRelease(int releases) {
+             int c = getState() - releases;
+             if (Thread.currentThread() != getExclusiveOwnerThread()){
+                 throw new IllegalMonitorStateException();
+             }
+             boolean free = false;
+             if (c == 0) {
+                 free = true;
+                 setExclusiveOwnerThread(null);
+             }
+             setState(c);
+             return free;
 }
 
 ## AbstractQueuedSynchronizer.isOnSyncQueue
 final boolean isOnSyncQueue(Node node) {
-        ## 如果等待状态是CONDITION，或者前一个指针为空，返回false
+        ## 如果等待状态是 CONDITION 或者 前一个指针为空，返回false
         ## 说明还没有移到AQS的队列中
         if (node.waitStatus == Node.CONDITION || node.prev == null){
             return false;

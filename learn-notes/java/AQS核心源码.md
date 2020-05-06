@@ -197,7 +197,7 @@ protected final boolean tryAcquire(int acquires) {
 
 ### AbstractQueuedSynchronizer.addWaiter()//调用这个方法，说明上面尝试获取锁失败了
 private Node addWaiter(Node mode) {//mode= Node.EXCLUSIVE
-        ## 新建一个节点
+        ## 新建一个节点,初始化的waitStatus是默认值0，在下一个节点进来 acquireQueued 方法里面修改状态，同时阻塞下一个进来排队的线程。
         Node node = new Node(Thread.currentThread(), mode);
         ## 这里先尝试把新节点加到尾节点后面,如果成功了就返回新节点;如果没成功再调用enq()方法不断尝试
         Node pred = tail;
@@ -223,7 +223,8 @@ private Node enq(final Node node) {
             Node t = tail;
             ## 如果尾节点为null,说明还未初始化
             if (t == null) {
-                ## 初始化头节点和尾节点
+                ## 头节点理论上代表获取锁的线程，但是它不属于队列。所以head节点的thread=null,状态初始为0，然后有后继节点尝试获取锁的时候则被设置为-1
+                ## 初始化头节点和尾节点(new Node()方法可见，head 是不包含线程的假节点)，第一次进入这个方法的时候初始化了等待队列，第二次自旋循环才能跳出
                 if (compareAndSetHead(new Node()))
                     tail = head;
             } else {
@@ -239,7 +240,8 @@ private Node enq(final Node node) {
         }
     }
 
-### AbstractQueuedSynchronizer.acquireQueued() //调用上面的addWaiter()方法使得新节点已经成功入队,这个方法是尝试让当前节点来获取锁的(arg=1)
+### 调用上面的addWaiter()方法成功使得新节点已经成功入队,下面这个方法是尝试让当前节点来获取锁的(arg=1)
+### AbstractQueuedSynchronizer.acquireQueued() 
 final boolean acquireQueued(final Node node, int arg) {
         ## 失败标识
         boolean failed = true;
@@ -253,6 +255,7 @@ final boolean acquireQueued(final Node node, int arg) {
                 ## 如果当前节点的前一个节点为head节点,则说明轮到自己获取锁了
                 ## 调用ReentrantLock.FairSync.tryAcquire()方法再次尝试获取锁
                 if (p == head && tryAcquire(arg)) {
+                    ## 重新这只头节点，断开原来头节点
                     ## 尝试获取锁成功,这里同时只会有一个线程在执行，所以不需要CAS更新;将当前节点设置为新的头节点
                     setHead(node);
                     ## 并把节点从链表中删除,已经获取锁了
@@ -260,9 +263,10 @@ final boolean acquireQueued(final Node node, int arg) {
                     failed = false;//未失败
                     return interrupted;
                 }
-                ## 是否需要阻塞, parkAndCheckInterrupt是真正的阻塞方法
+                ## 只有在前置节点设置为-1时才调用parkAndCheckInterrupt方法
+                ## 是否需要阻塞, parkAndCheckInterrupt是真正的阻塞方法，唤醒后的线程重新执行上面的for循环
                 if (shouldParkAfterFailedAcquire(p, node) && parkAndCheckInterrupt()){
-                    interrupted = true;//如果中断了
+                    interrupted = true;//中断了
                 }
             }
         } finally {
@@ -276,17 +280,14 @@ final boolean acquireQueued(final Node node, int arg) {
     
 
 ### AbstractQueuedSynchronizer.shouldParkAfterFailedAcquire()
-
-这个方法在acquireQueued 方法循环里使用，第一次调用会把前一个节点的等待状态设置为SIGNAL,并返回false,第二次调用才会返回true
-
+### 这个方法在acquireQueued 方法循环里使用，第一次调用如果前置节点不为SIGNAL（-1）则会把它设置为-1,会把前一个节点的等待状态设置为SIGNAL,并返回false,
+### 第二次调用才会返回true
 private static boolean shouldParkAfterFailedAcquire(Node pred, Node node) {
-        ## 上一个节点的等待状态,注意Node的waitStatus字段我们在上面创建Node的时候并没有指定,也就是说使用的是默认值0
-                
+        ## 上一个节点的等待状态,注意Node的waitStatus字段我们在上面创建Node的时候并没有指定,也就是说使用的是默认值        
         ## static final int CANCELLED =  1;            
         ## static final int SIGNAL    = -1;        
         ## static final int CONDITION = -2;
-        ## static final int PROPAGATE = -3;
-                
+        ## static final int PROPAGATE = -3;                
         int ws = pred.waitStatus;
         if (ws == Node.SIGNAL){ ## 如果等待状态为SIGNAL(等待唤醒),直接返回true
             /*
@@ -474,7 +475,7 @@ protected final boolean tryRelease(int releases) {
             return free;
 }
 
-## 唤醒后继节点
+## 释放锁后唤醒后继节点
 private void unparkSuccessor(Node node) {
         /*
          * If status is negative (i.e., possibly needing signal) try
@@ -494,7 +495,7 @@ private void unparkSuccessor(Node node) {
          */
         ## 头节点的下一个节点
         Node s = node.next;
-        ## 如果下一个节点为空，或者其等待状态大于0（实际为已取消）
+        ## 如果下一个节点为空，或者其等待状态大于0（已取消）
         if (s == null || s.waitStatus > 0) {
             s = null;
             ## 从尾节点向前遍历取到队列最前面的那个状态不是已取消状态的节点

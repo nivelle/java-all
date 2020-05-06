@@ -1,10 +1,12 @@
 package com.nivelle.base.javacore.datastructures.concurrent;
 
+import com.nivelle.base.pojo.PriorityBlockingQueueComparator;
+
 import java.lang.reflect.Field;
 import java.util.concurrent.PriorityBlockingQueue;
 
 /**
- * 权重阻塞队列
+ * 优先阻塞队列
  *
  * @author nivell
  * @date 2020/04/16
@@ -94,7 +96,7 @@ public class PriorityBlockingQueueDemo {
          *         }
          *         return true;
          *     }
-         *  ## 默认比较器
+         *  ## 默认比较器(自下而上的堆化)
          *  private static <T> void siftUpComparable(int k, T x, Object[] array) {
          *         Comparable<? super T> key = (Comparable<? super T>) x;
          *         while (k > 0) {
@@ -260,5 +262,16 @@ public class PriorityBlockingQueueDemo {
         } catch (InterruptedException e) {
             System.out.println(e);
         }
+        /**
+         * （1）PriorityBlockingQueue整个入队出队的过程与PriorityQueue基本是保持一致的；
+         *
+         * （2）PriorityBlockingQueue使用一个锁+一个notEmpty条件控制并发安全；
+         *
+         * （3）PriorityBlockingQueue扩容时使用一个单独变量的CAS操作来控制只有一个线程进行扩容；
+         *
+         * （4）入队使用自下而上的堆化；
+         *
+         * （5）出队使用自上而下的堆化；
+         */
     }
 }

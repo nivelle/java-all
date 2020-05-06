@@ -188,7 +188,7 @@ public class ByteDemo {
         /**
          * 输入2的n次方
          */
-        System.out.println("2的n次方:" + (2 << 4));
+        System.out.println("2的n次方:" + (2 << 1));
 
 
     }
