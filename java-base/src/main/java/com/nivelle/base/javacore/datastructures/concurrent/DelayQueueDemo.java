@@ -12,7 +12,11 @@ import java.util.concurrent.TimeUnit;
  * @date 2020/04/14
  */
 public class DelayQueueDemo {
-
+    /**
+     * DelayQueue是java并发包下的延时阻塞队列，常用于实现定时任务。
+     *
+     * 延时队列主要使用优先级队列来实现，并辅以重入锁和条件来控制并发安全
+     */
     public static void main(String[] args) {
         /**
          * public class DelayQueue<E extends Delayed> extends AbstractQueue<E> implements BlockingQueue<E>
