@@ -173,6 +173,8 @@ protected final boolean tryAcquire(int acquires) {
             ## 如果当前同步状态值等于0,说明没有线程占有锁
             if (c == 0) {
                 ## 如果没有其它线程在排队，那么当前线程尝试更新state的值为1;如果成功了,则说明当前线程获取了锁【非公平锁则不用!hasQueuedPredecessors()】
+                ## hasQueuedPredecessors：判断当前线程是否位于CLH同步队列中的第一个。如果是则返回flase，否则返回true
+                ## 判断当前节点在等待队列中是否有前驱节点的判断，如果有前驱节点说明有线程比当前线程更早的请求资源，根据公平性，当前线程请求资源失败。如果当前节点没有前驱节点的话，才有做后面的逻辑判断的必要性
                 if (!hasQueuedPredecessors() && compareAndSetState(0, acquires)) {
                     ## 当前线程获取了锁，把自己设置到exclusiveOwnerThread变量中
                     setExclusiveOwnerThread(current);
@@ -608,7 +610,7 @@ static final class FairSync extends Sync
 
 ```
 
-
+来自: [彤哥读源码](https://mp.weixin.qq.com/s?__biz=Mzg2ODA0ODM0Nw==&mid=2247483746&idx=1&sn=a6b5bea0cb52f23e93dd223970b2f6f9&scene=21#wechat_redirect)
 
 
 

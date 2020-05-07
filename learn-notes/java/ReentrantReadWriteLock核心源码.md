@@ -8,10 +8,11 @@ public void lock() {
    sync.acquireShared(1);
 }
 
+## 共享模式获取资源
 ## AbstractQueuedSynchronizer.acquireShared()
 public final void acquireShared(int arg) {
         ## 尝试获取共享锁(返回1表示成功,返回-1表示失败)
-        if (tryAcquireShared(arg) < 0){
+        if (tryAcquireShared(arg) < 0){//模版方法，这里以读写锁为例
             ## 失败了就可能要排队
             doAcquireShared(arg);
         }
@@ -27,10 +28,12 @@ protected final int tryAcquireShared(int unused) {
             if (exclusiveCount(c) != 0 && getExclusiveOwnerThread() != current){
                 return -1;
             }
-            ## 读锁被获取的次数
+            ## 读锁被获取的次数（state高16位）
             int r = sharedCount(c);
-            ## 下面说明此时还没有写锁,尝试去更新state的值获取读锁,读锁是否需要排队(是否是公平模式)
-            if (!readerShouldBlock() && r < MAX_COUNT && compareAndSetState(c, c + SHARED_UNIT)) {
+            
+            ## readerShouldBlock:如果是当前线程尝试获取锁则返回true
+            ## 下面说明此时还没有写锁,尝试去更新state的值获取读锁,读锁是否需要排队(是否是公平模式:公平模式需要排队，非公平模式不需要排毒)           
+            if (!readerShouldBlock() && r < MAX_COUNT && compareAndSetState(c, c + SHARED_UNIT)) { ## SHARED_UNIT = 1<<16 = 65535
                 ## 读锁获取成功
                 if (r == 0) {
                     ## 如果之前还没有线程获取读书，记录第一个读者为当前线程
@@ -60,7 +63,63 @@ protected final int tryAcquireShared(int unused) {
             ## 通过这个方法再去尝试获取读锁(如果之前其它线程获取了写锁，一样返回-1表示失败)
             return fullTryAcquireShared(current);
 }
-
+## ReentrantReadWriteLock.Sync.fullTryAcquireShared
+final int fullTryAcquireShared(Thread current) {
+            /*
+             * This code is in part redundant with that in
+             * tryAcquireShared but is simpler overall by not
+             * complicating tryAcquireShared with interactions between
+             * retries and lazily reading hold counts.
+             */
+            HoldCounter rh = null;
+            for (;;) {
+                int c = getState();
+                if (exclusiveCount(c) != 0) {
+                    if (getExclusiveOwnerThread() != current)
+                        return -1;
+                    // else we hold the exclusive lock; blocking here
+                    // would cause deadlock.
+                } else if (readerShouldBlock()) {
+                    // Make sure we're not acquiring read lock reentrantly
+                    if (firstReader == current) {
+                        // assert firstReaderHoldCount > 0;
+                    } else {
+                        if (rh == null) {
+                            rh = cachedHoldCounter;
+                            if (rh == null || rh.tid != getThreadId(current)) {
+                                rh = readHolds.get();
+                                if (rh.count == 0)
+                                    readHolds.remove();
+                            }
+                        }
+                        if (rh.count == 0)
+                            return -1;
+                    }
+                }
+                if (sharedCount(c) == MAX_COUNT)
+                    throw new Error("Maximum lock count exceeded");
+                if (compareAndSetState(c, c + SHARED_UNIT)) {
+                    if (sharedCount(c) == 0) {
+                        firstReader = current;
+                        firstReaderHoldCount = 1;
+                    } else if (firstReader == current) {
+                        firstReaderHoldCount++;
+                    } else {
+                        if (rh == null)
+                            rh = cachedHoldCounter;
+                        if (rh == null || rh.tid != getThreadId(current))
+                            rh = readHolds.get();
+                        else if (rh.count == 0)
+                            readHolds.set(rh);
+                        rh.count++;
+                        cachedHoldCounter = rh; // cache for release
+                    }
+                    return 1;
+                }
+            }
+        }
+ 
+## 实现上和acquire()方法差不多，就是多判断了是否还有剩余资源，挨个唤醒后继节点              
 ## AbstractQueuedSynchronizer.doAcquireShared()
 private void doAcquireShared(int arg) {
         ## 进入AQS的队列中
@@ -69,7 +128,7 @@ private void doAcquireShared(int arg) {
         try {
             boolean interrupted = false;
             for (;;) {
-                ## 当前节点的前一个节点
+                ## 当前节点的前置节点
                 final Node p = node.predecessor();
                 ## 如果前一个节点是头节点
                 if (p == head) {
@@ -99,6 +158,7 @@ private void doAcquireShared(int arg) {
         }
 }
 
+## 设置头节点，且如果还有剩余资源，唤醒后继节点获取资源
 ## AbstractQueuedSynchronizer.setHeadAndPropagate()
 private void setHeadAndPropagate (Node node, int propagate) {
         ## h为旧的头节点
@@ -233,20 +293,39 @@ private void doReleaseShared() {
 
 ### WriteLock.lock()
 
+
 ```
 ## java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock.unlock()
 public void lock() {
             sync.acquire(1);
 }
 
+## 独占模式获取资源
 ## java.util.concurrent.locks.AbstractQueuedSynchronizer.acquire()
 public final void acquire(int arg) {
          ##先尝试获取锁;如果失败，则会进入队列中排队，后面的逻辑跟ReentrantLock一模一样了
         if (!tryAcquire(arg) && acquireQueued(addWaiter(Node.EXCLUSIVE), arg)){
             selfInterrupt();
-            }
-    }        
- 
+        }
+}   
+
+```     
+1）tryAcquire()尝试获取资源。
+
+2）如果获取失败，则通过addWaiter(Node.EXCLUSIVE), arg)方法把当前线程添加到等待队列队尾，并标记为独占模式。
+
+3）插入等待队列后，并没有放弃获取资源，acquireQueued()自旋尝试获取资源。根据前置节点状态状态判断是否应该继续获取资源。如果前驱是头结点，继续尝试获取资源；
+
+4）在每一次自旋获取资源过程中，失败后调用shouldParkAfterFailedAcquire(Node, Node)检测当前节点是否应该park()。若返回true，则调用parkAndCheckInterrupt()中断当前节点中的线程。若返回false，则接着自旋获取资源。当acquireQueued(Node,int)返回true，则将当前线程中断；false则说明拿到资源了。
+
+5）在进行是否需要挂起的判断中，如果前置节点是SIGNAL状态，就挂起，返回true。如果前置节点状态为CANCELLED，就一直往前找，直到找到最近的一个处于正常等待状态的节点，并排在它后面，返回false，acquireQueed()接着自旋尝试，回到3）。
+
+6）前置节点处于其他状态，利用CAS将前置节点状态置为SIGNAL。当前置节点刚释放资源，状态就不是SIGNAL了，导致失败，返回false。但凡返回false，就导致acquireQueed()接着自旋尝试。
+
+7）最终当tryAcquire(int)返回false，acquireQueued(Node,int)返回true，调用selfInterrupt()，中断当前线程。
+
+
+```
 ## java.util.concurrent.locks.ReentrantReadWriteLock.Sync.tryAcquire()
 protected final boolean tryAcquire(int acquires) {
            
@@ -280,6 +359,9 @@ protected final boolean tryAcquire(int acquires) {
         }    
 
 ```
+
+
+
 ### WriteLock.unlock()
 
 ```
@@ -320,3 +402,4 @@ protected final boolean tryRelease(int releases) {
 
 ```
 
+来自: [彤哥读源码](https://mp.weixin.qq.com/s?__biz=Mzg2ODA0ODM0Nw==&mid=2247483746&idx=1&sn=a6b5bea0cb52f23e93dd223970b2f6f9&scene=21#wechat_redirect)

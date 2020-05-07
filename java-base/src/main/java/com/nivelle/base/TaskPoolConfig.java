@@ -1,4 +1,4 @@
-package com.nivelle.base.javacore.datastructures.thread;
+package com.nivelle.base;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,5 +1,7 @@
 package com.nivelle.base.javacore.datastructures.base;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * 位操作
  *
@@ -7,12 +9,34 @@ package com.nivelle.base.javacore.datastructures.base;
  * @date 2019/10/31
  */
 public class ByteDemo {
+    private static final int COUNT_BITS = Integer.SIZE - 3;
+    private static final int CAPACITY = (1 << COUNT_BITS) - 1;
+
+    // runState is stored in the high-order bits
+    private static final int RUNNING = -1 << COUNT_BITS;
+    private static final int SHUTDOWN = 0 << COUNT_BITS;
+    private static final int STOP = 1 << COUNT_BITS;
+    private static final int TIDYING = 2 << COUNT_BITS;
+    private static final int TERMINATED = 3 << COUNT_BITS;
+
+    // Packing and unpacking ctl
+    private static int runStateOf(int c) {
+        return c & ~CAPACITY;
+    }
+
+    private static int workerCountOf(int c) {
+        return c & CAPACITY;
+    }
+
+    private static int ctlOf(int rs, int wc) {
+        return rs | wc;
+    }
 
     /**
      * 1. &表示按位与,只有两个位同时为1,才能得到1,
-     *
-     *  todo 0x代表16进制数,0xff表示的数二进制1111 1111 占一个字节.和其进行&操作的数,最低8位,不会发生变化.
-     *
+     * <p>
+     * todo 0x代表16进制数,0xff表示的数二进制1111 1111 占一个字节.和其进行&操作的数,最低8位,不会发生变化.
+     * <p>
      * 2. Java中使用补码来表示负数，具体就是除符号位之外，剩余位取反加1，符号位不变还是1（符号位0-正数，1-负数）
      */
     public static void main(String[] args) {
@@ -115,7 +139,7 @@ public class ByteDemo {
          *  将一个运算对象的各二进制位全部左移若干位(左边的二进制位丢弃,右边补0),
          *  若左移舍弃的高位不包含1,则左移一位相当于乘以2
          */
-        System.out.println("左移1位:" + (2 << 1));
+        System.out.println("左移1位:" + (1 << 1));
 
 
         int negativeNum = -11;
@@ -188,9 +212,24 @@ public class ByteDemo {
         /**
          * 输入2的n次方
          */
-        System.out.println("2的n次方:" + (2 << 1));
+        System.out.println("1乘以2的n次方:" + (1 << 2));
+
+        System.out.println(1 << 16);
 
 
+        System.out.println("RUNNING:" + RUNNING);
+        System.out.println("SHUTDOWN:" + SHUTDOWN);
+        System.out.println("STOP:" + STOP);
+        System.out.println("TIDYING:" + TIDYING);
+        System.out.println("TERMINATED:" + TERMINATED);
+        System.out.println("runStateOf:" + runStateOf(1));
+        System.out.println("workerCountOf:" + workerCountOf(1));
+        System.out.println("ctlOf:" + ctlOf(2, 4));
+        System.out.println("COUNT_BITS:" + COUNT_BITS);
+        System.out.println("CAPACITY:" + CAPACITY);
+
+        AtomicInteger ctl = new AtomicInteger(ctlOf(RUNNING, 0)) ;
+        System.out.println(ctl);
     }
 
 }

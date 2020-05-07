@@ -4,7 +4,7 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * ThreadPool
+ * ThreadPool 线程池模型
  *
  * @author nivell
  * @date 2019/06/16
@@ -18,7 +18,7 @@ public class ThreadPoolDemo {
         /**
          * ThreadPoolExecutor 工作流程:
          *
-         * 1. 线程池数目先增加至 corthreadLocal.remove();ePoolSize 大小限制数目
+         * 1. 线程池数目先增加至corePoolSize 大小限制数目
          * 2. 将任务添加至阻塞队列，至阻塞队列大小限制此时线程数目不再增加(若添加失败也会增加线程)
          * 3. 线程继续增加,最终达到 maximumPoolSize大小限制的数目
          * 4. 超出的任务数目采取拒绝策略
@@ -89,7 +89,7 @@ public class ThreadPoolDemo {
     public static void executorsThreadFactory(ThreadLocal threadLocal) {
 
         /**
-         * 线程池默认提供的线程工程实现,创建的线程优先级为Thread.NORMAL = 5;非守护线程；
+         * 线程池默认提供的线程工厂实现,创建的线程优先级为Thread.NORMAL = 5;非守护线程；
          *
          * if a ThreadFactory ails to create a thread when asked by returning null from {@code newThread}, the executor will continue, but might not be able to execute any tasks.
          */

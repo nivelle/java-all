@@ -3,7 +3,7 @@
 - Condition的队列和AQS的队列不完全一样:
 
 ```
-AQS的队列头节点是不存在任何值的,是一个虚节点;
+AQS的队列头节点是不存在任何值的(thread=null),是一个虚节点;
 
 Condition的队列头节点是存储着实实在在的元素值的,是真实节点
 
@@ -16,9 +16,9 @@ Condition的队列头节点是存储着实实在在的元素值的,是真实节�
 
 2. 移到AQS的队列中时等待状态会更改为0(AQS队列节点的初始等待状态为0)
 
-3. 在AQS队列中如果需要阻塞，会把它上一个节点的等待状态设置为SIGNAL(-1)
+3. 在AQS队列中如果需要阻塞，会把它上一个节点的等待状态设置为 SIGNAL(-1)
 
-4. 不管在Condition队列还是AQS队列中，已取消的节点的等待状态都会设置为CANCELLED（1）
+4. 不管在Condition队列还是AQS队列中，已取消的节点的等待状态都会设置为 CANCELLED（1）
 
 ```
 
@@ -81,16 +81,17 @@ public final void await() throws InterruptedException {
             int interruptMode = 0;            
             ## 是否在同步队列中
             while (!isOnSyncQueue(node)) {
-                ## 阻塞当前线程
+                ## 阻塞当前线程,线程变成wainting状态
                 LockSupport.park(this);
-                ## 上面部分是调用await()时释放自己占有的锁,并阻塞自己等待条件的出现
-                
-                ## 下面部分是条件已经出现，尝试去获取锁
                 if ((interruptMode = checkInterruptWhileWaiting(node)) != 0){
                     break;
                 }
             }
-            ## 尝试获取锁;如果没获取到会再次阻塞
+            ## 上面部分是调用await()时释放自己占有的锁,并阻塞自己等待条件的出现
+                            
+            ## 下面部分是条件已经出现(signal)，尝试去获取锁；说明中断状态发生变化
+            
+            ## 尝试获取锁;如果没获取到会再次阻塞;当前线程执行了signal方法会经过这个，也就是重新将当前线程加入同步队列中
             if (acquireQueued(node, savedState) && interruptMode != THROW_IE){
                 interruptMode = REINTERRUPT;
             }
@@ -257,15 +258,18 @@ private boolean findNodeFromTail(Node node) {
 
 ## 检查中断状态
 private int checkInterruptWhileWaiting(Node node) {
-            return Thread.interrupted() ?(transferAfterCancelledWait(node) ? THROW_IE : REINTERRUPT) :0;
-        }
+    ## checkInterruptWhileWaiting()：判断在阻塞过程中是否被中断。如果返回THROW_IE，则表示线程在调用signal()之前中断的；
+    ## 如果返回REINTERRUPT，则表明线程在调用signal()之后中断；如果返回0则表示没有被中断。   
+    return Thread.interrupted() ?(transferAfterCancelledWait(node) ? THROW_IE : REINTERRUPT) :0;
+  }
 ## 设置等待条件状态
 final boolean transferAfterCancelledWait(Node node) {
         if (compareAndSetWaitStatus(node, Node.CONDITION, 0)) {
             ## 设置到同步队列而且是取消状态
             enq(node);
             return true;
-        }       
+        }
+}       
  
 ## 是否抛出中断异常 
 private void reportInterruptAfterWait(int interruptMode)
@@ -274,7 +278,7 @@ private void reportInterruptAfterWait(int interruptMode)
                 throw new InterruptedException();
             else if (interruptMode == REINTERRUPT)
                 selfInterrupt();
-        }                
+}                
 ```
 
 ## condition.signal 方法 
@@ -295,6 +299,7 @@ public final void signal() {
             }    
 }
 
+## 将条件队列的头节点从条件队列转移到等待队列,并且,将该节点从条件队列删除
 ## AbstractQueuedSynchronizer.ConditionObject.doSignal
 private void doSignal(Node first) {
             do {
@@ -307,16 +312,15 @@ private void doSignal(Node first) {
                ## 转移节点到AQS队列中
             } while (!transferForSignal(first) && (first = firstWaiter) != null);
 }
-
+## 将节点放入等待队列并唤醒,并不需要在条件队列中移除,因为条件队列每次插入时都会把状态不为CONDITION的节点清理出去
 ## AbstractQueuedSynchronizer.transferForSignal
 final boolean transferForSignal(Node node) {
         ## 把节点状态改为0,也就是说即将移到AQS队列中
-        ## 如果失败了，说明节点已经被改成取消状态了
-        ## 返回false，通过上面的循环可知会寻找下一个可用节点
+        ## 如果失败了，说明节点已经被改成取消状态了,返回false，通过上面的循环可知会寻找下一个可用节点
         if (!compareAndSetWaitStatus(node, Node.CONDITION, 0)){
             return false;
         }
-        ##调用AQS的入队方法把节点移动到AQS队列中，这里的enq()返回值是node的上一个节点，也就是旧的尾节点
+        ##调用AQS的入队方法把节点移动到AQS队列中，这里的 enq()返回值是node的上一个节点，也就是旧的尾节点
         Node p = enq(node);
         ## 获取上一个节点的等待状态
         int ws = p.waitStatus;
@@ -326,7 +330,9 @@ final boolean transferForSignal(Node node) {
             LockSupport.unpark(node.thread);
         }
         ## 如果更新上一个节点的等待状态为SIGNAL成功了，则返回true,这时上面的的循环不成立了，退出循环，也即只通知了一个节点
-        ## 此时当前节点还时阻塞状态，也就是调用个signal()的时候并不会真正唤醒一个节点只是把节点从条件队列移到了AQS队列
+        ## 此时当前节点还时阻塞状态,也就是调用个signal()的时候并不会真正唤醒一个节点只是把节点从条件队列移到了AQS队列
         return true;
 }
 ```
+
+来自: [彤哥读源码](https://mp.weixin.qq.com/s?__biz=Mzg2ODA0ODM0Nw==&mid=2247483746&idx=1&sn=a6b5bea0cb52f23e93dd223970b2f6f9&scene=21#wechat_redirect)
