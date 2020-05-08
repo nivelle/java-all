@@ -3,10 +3,7 @@ package com.nivelle.base.javacore.datastructures.thread;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 
-/**
- * @author nivellefu  Callable 执行demo
- */
-public class ThreadCallable {
+public class ThreadTargetDemo {
     public static void main(String[] args) {
         Callable<Integer> myCallable = new MyCallable();
         //使用FutureTask来包装MyCallable对象
@@ -29,6 +26,18 @@ public class ThreadCallable {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        for (int i = 0; i < 100; i++) {
+            System.out.println(Thread.currentThread().getName() + " " + i);
+            if (i == 30) {
+                MyRunnableDemo myRunnable = new MyRunnableDemo();
+                Thread thread1 = new Thread(myRunnable);
+                // 将myRunnable作为Thread target创建新的线程
+                Thread thread2 = new Thread(myRunnable);
+                thread1.start();
+                thread2.start();
+            }
+        }
     }
 }
 
@@ -46,5 +55,16 @@ class MyCallable implements Callable<Integer> {
             sum += i;
         }
         return sum;
+    }
+}
+
+class MyRunnableDemo implements Runnable {
+    private int i = 0;
+
+    @Override
+    public void run() {
+        for (i = 0; i < 100; i++) {
+            System.out.println(Thread.currentThread().getName() + " " + i);
+        }
     }
 }

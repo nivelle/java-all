@@ -1,4 +1,4 @@
-package com.nivelle.base.javacore.datastructures.thread;
+package com.nivelle.base.javacore.datastructures.synlock;
 
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
@@ -9,7 +9,7 @@ import java.util.concurrent.locks.ReentrantLock;
  *
  * @author nivellefu
  */
-public class ThreadCondition {
+public class ThreadConditionLockDemo {
 
     public static void main(String args[]) {
         ReentrantLock lock = new ReentrantLock();
