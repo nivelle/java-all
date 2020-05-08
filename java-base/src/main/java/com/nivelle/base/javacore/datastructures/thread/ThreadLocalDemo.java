@@ -11,8 +11,6 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class ThreadLocalDemo {
-
-
     /**
      * This class provides thread-local variables【线程局部变量】These variables differ from
      * their normal counterparts【同行】 in that each thread that accesses one (via its
@@ -23,34 +21,47 @@ public class ThreadLocalDemo {
      * <p>
      * ThreadLocal 实例通常是类中的 private static 字段，它们希望将状态与某一个线程（例如，用户 ID 或事务 ID）相关联。
      */
-
     /**
      * 1. 线程有个 threadLocal.ThreadLocalMap threadLocals = null; 的成员变量
-     *
+     * <p>
      * 2. threadLocal作为key,要保存的线程变量为值
-     *
      */
 
     public static void main(String[] args) {
-
         /**
          * 每个线程保留一个副本,线程安全。
          */
         User user = new User(1, "nivelle");
-        ThreadLocal threadLocal = ThreadLocal.withInitial(() -> user.getAge());
+        ThreadLocal threadLocal1 = ThreadLocal.withInitial(() -> 0);
+
+        ThreadLocal threadLocal2 = ThreadLocal.withInitial(() -> "one");
+
+
+        System.out.println(Thread.currentThread().getName() + ":" + threadLocal1.get());
+
+        System.out.println(Thread.currentThread().getName() + ":" + threadLocal2.get());
+
         new Thread(() -> {
-            threadLocal.set(1);
-            System.out.println(Thread.currentThread().getName() + ":" + threadLocal.get());
+            threadLocal1.set(1);//此动作的线程是thread1
+            System.out.println(Thread.currentThread().getName() + ":" + threadLocal1.get());
         }, "thread1").start();
         new Thread(() -> {
-            threadLocal.set(2);
-            System.out.println(Thread.currentThread().getName() + ":" + threadLocal.get());
+            threadLocal1.set(2);
+            threadLocal2.set("two");
+            System.out.println(Thread.currentThread().getName() + ":" + threadLocal1.get());
+            System.out.println(Thread.currentThread().getName() + ":" + threadLocal2.get());
+
         }, "thread2").start();
         new Thread(() -> {
-            threadLocal.set(3);
-            System.out.println(Thread.currentThread().getName() + ":" + threadLocal.get());
+            threadLocal1.set(3);
+            threadLocal2.set("three");
+            System.out.println(Thread.currentThread().getName() + ":" + threadLocal1.get());
+            System.out.println(Thread.currentThread().getName() + ":" + threadLocal2.get());
+
         }, "thread3").start();
-        System.out.println(Thread.currentThread().getName() + ":" + threadLocal.get());
+        System.out.println(Thread.currentThread().getName() + ":" + threadLocal1.get());
+        System.out.println(Thread.currentThread().getName() + ":" + threadLocal2.get());
+
     }
 
     /**

@@ -13,6 +13,7 @@ public class ThreadTargetDemo {
             if (i == 3) {
                 //FutureTask对象作为Thread对象的target创建新的线程
                 Thread thread = new Thread(futureTask);
+                thread.setName("myCallable thread");
                 thread.start();
             }
         }
@@ -26,14 +27,16 @@ public class ThreadTargetDemo {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 10; i++) {
             System.out.println(Thread.currentThread().getName() + " " + i);
-            if (i == 30) {
+            if (i == 3) {
                 MyRunnableDemo myRunnable = new MyRunnableDemo();
                 Thread thread1 = new Thread(myRunnable);
+                thread1.setName("myRunnable thread1");
                 // 将myRunnable作为Thread target创建新的线程
                 Thread thread2 = new Thread(myRunnable);
+                thread2.setName("myRunnable thread2");
+
                 thread1.start();
                 thread2.start();
             }

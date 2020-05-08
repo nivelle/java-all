@@ -7,4 +7,8 @@ package com.nivelle.base.javacore.datastructures.thread;
  * @date 2020/05/06
  */
 public class FutureTaskDemo {
+
+    public static void main(String[] args) {
+
+    }
 }
