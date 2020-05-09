@@ -13,9 +13,9 @@ import java.util.concurrent.locks.LockSupport;
  */
 public class ScheduledThreadPoolExecutorDemo {
     /**
-     * （1）指定某个时刻执行任务，是通过延时队列的特性来解决的;
+     * （1）指定某个时刻执行任务,是通过延时队列的特性来解决的;
      * <p>
-     * （2）重复执行，是通过在任务执行后再次把任务加入到队列中来解决的。
+     * （2）重复执行,是通过在任务执行后再次把任务加入到队列中来解决的。
      */
     public static void main(String[] args) throws Exception {
         ScheduledThreadPoolExecutor scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(5);
@@ -53,6 +53,7 @@ public class ScheduledThreadPoolExecutorDemo {
             System.out.println("winter:" + System.currentTimeMillis());
             LockSupport.parkNanos(TimeUnit.SECONDS.toNanos(1));
         }, 1, 2, TimeUnit.SECONDS);
+
     }
 
     /**
@@ -79,10 +80,10 @@ public class ScheduledThreadPoolExecutorDemo {
      *
      * ## triggerTime:触发时间计算
      * long triggerTime(long delay) {
-     *         return now() + ((delay < (Long.MAX_VALUE >> 1)) ? delay : overflowFree(delay));
+     *      return now() + ((delay < (Long.MAX_VALUE >> 1)) ? delay : overflowFree(delay));
      *  }
      *
-     * ## ScheduledThreadPoolExecutor.
+     * ## ScheduledThreadPoolExecutor.delayedExecute(RunnableScheduledFuture task)
      * private void delayedExecute(RunnableScheduledFuture<?> task) {
      *         ## 如果线程池关闭了,执行拒绝策略
      *         if (isShutdown()){
@@ -100,7 +101,7 @@ public class ScheduledThreadPoolExecutorDemo {
      *             }
      *         }
      *   }
-     *
+     *  ## 保证有足够的线程执行任务
      *  void ensurePrestart() {
      *         int wc = workerCountOf(ctl.get());
      *         ## 创建工作线程,这里没有传入firstTask参数，因为上面先把任务扔到队列中去了,另外没用上maxPoolSize参数，所以最大线程数量在定时线程池中实际是没有用的

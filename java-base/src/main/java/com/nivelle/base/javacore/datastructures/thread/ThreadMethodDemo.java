@@ -50,9 +50,16 @@ public class ThreadMethodDemo {
          *     }
          */
         // main线程调用 myThread的join方法，join并不是myThread的逻辑
-        System.out.println("当前线程:" + Thread.currentThread().getName()+"调用myThread的join方:");
+        System.out.println("当前线程:" + Thread.currentThread().getName() + "调用myThread的join方:");
         myThread.join();
         System.out.println("守护线程 demo 结束");
+        System.out.println("thread yield demo 方法开始");
+        /**
+         * 使当前线程从执行状态（运行状态）变为可执行态（就绪状态）。cpu会从众多的可执行态里选择，也就是说，当前也就是刚刚的那个线程还是有可能会被再次执行到的，并不是说一定会执行其他线程而该线程在下一次中不会执行到了。
+         */
+        Thread.yield();
+        System.out.println(Thread.currentThread().getName() + "让出CPU执行权限");
+        System.out.println("thread yield demo 方法结束");
 
         System.out.println("线程锁 中断 demo 开始");
         System.out.println("线程锁 中断 demo 结束");
@@ -93,7 +100,6 @@ public class ThreadMethodDemo {
                  */
                 myThread1.start();
                 myThread2.start();
-                Thread.yield();
             }
         }
         System.out.println("thread 优先级 demo 结束");
@@ -114,10 +120,17 @@ public class ThreadMethodDemo {
             }
         }
         System.out.println("thread sleep demo 结束");
+        System.out.println("thread interrupt demo 开始");
+        /**
+         * Thread提供了interrupt方法，中断线程的执行:
+         *
+         * 1. 如果线程堵塞在object.wait、Thread.join和Thread.sleep，将会抛出InterruptedException,同时清除线程的中断状态;
+         *
+         * 2. 如果线程堵塞在java.nio.channels.InterruptibleChannel的IO上，Channel将会被关闭，线程被置为中断状态，并抛出java.nio.channels.ClosedByInterruptException；
+         *
+         * 3. 如果线程堵塞在java.nio.channels.Selector上，线程被置为中断状态，select方法会马上返回，类似调用wakeup的效果；
+         */
 
-        System.out.println("thread yield demo 方法开始");
-        Thread.yield();
-        System.out.println("thread yield demo 方法结束");
 
     }
 }
