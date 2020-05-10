@@ -18,7 +18,7 @@ import java.util.Arrays;
 @SpringBootApplication
 @EnableDubbo
 //@EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class})
-@ComponentScan(basePackages = {"com.nivelle.rpc.model","com.nivelle.base","com.nivelle.rpc.*.*"},includeFilters ={})
+@ComponentScan(basePackages = {"com.nivelle.rpc.model","com.nivelle.base.*.*","com.nivelle.rpc.**"},includeFilters ={})
 @EnableAsync
 @EnableSwagger2 //swagger2支持
 public class RpcDubboApplication {

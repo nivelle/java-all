@@ -1,14 +1,3 @@
----
-layout: post
-title:  "Nginx基础学习(一)"
-date:   2018-09-29 00:06:05
-categories: nginx
-tags: Nginx基础
-excerpt: Nginx配置
----
-
-* content
-{:toc}
 
 ### nginx初步指令
 

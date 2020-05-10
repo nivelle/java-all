@@ -18,8 +18,8 @@ import org.springframework.stereotype.Component;
 public class CustomTomcatConfig implements WebServerFactoryCustomizer<ConfigurableServletWebServerFactory> {
     @Override
     public void customize(ConfigurableServletWebServerFactory server) {
-        server.setPort(9090);
-        server.setContextPath("/dubbo");
+        server.setPort(8099);
+        server.setContextPath("/rpc");
         ((TomcatServletWebServerFactory) server).addConnectorCustomizers((Connector connector) -> {
             Http11NioProtocol protocol = (Http11NioProtocol) connector.getProtocolHandler();
             protocol.setMaxConnections(200);

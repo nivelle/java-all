@@ -1,15 +1,3 @@
----
-layout: post
-title:  "Zookeeper学习(二)之zk基础"
-date:   2016-04-12 01:06:05
-categories: 分布式
-tags: zk
-excerpt: zk
----
-
-
-* content
-{:toc}
 
 ### Zookeeper介绍
 
