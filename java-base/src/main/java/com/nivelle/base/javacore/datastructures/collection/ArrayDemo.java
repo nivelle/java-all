@@ -19,13 +19,13 @@ public class ArrayDemo {
 
 
         /**
-         * 严格意义上说返回的是数组的一个视图
+         * 严格意义上说返回的是数组的一个视图，共享底层源数组
          *
          * （1）该方法不适用于基本数据类型（byte,short,int,long,float,double,boolean）
          *
          * （2）该方法将数组与列表链接起来，当更新其中之一时，另一个自动更新
          *
-         * （3）不支持add和remove方法
+         * （3）不支持add和remove方法(该ArrayList是Arrays的一个内部类)
          */
         int[] intArray = {5, 1, 2, 3, 4, 0};
         List list = Arrays.asList(intArray);

@@ -30,5 +30,13 @@ public class Son extends Parent {
         this.idNum = idNum;
     }
 
-
+    @Override
+    public String toString() {
+        return "Son{" +
+                "j=" + j +
+                ", age=" + age +
+                ", name='" + name + '\'' +
+                ", idNum=" + idNum +
+                '}';
+    }
 }

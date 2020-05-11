@@ -1,6 +1,6 @@
 package com.nivelle.spring.dubboprovider;
 
-import com.nivelle.base.spi.MySpi;
+import com.nivelle.base.dubbospi.MySpi;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;

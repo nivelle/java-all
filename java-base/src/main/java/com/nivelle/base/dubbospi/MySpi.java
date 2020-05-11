@@ -1,10 +1,10 @@
-package com.nivelle.base.spi;
+package com.nivelle.base.dubbospi;
 
 import com.alibaba.dubbo.common.extension.Adaptive;
 import com.alibaba.dubbo.common.extension.SPI;
 
 /**
- * SPI 机制
+ * Dubbo SPI 机制
  *
  * @author nivell
  * @date 2019/10/07

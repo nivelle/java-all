@@ -1,7 +1,7 @@
-package com.nivelle.base.spi;
+package com.nivelle.base.dubbospi;
 
 /**
- * TODO:DOCUMENT ME!
+ * Dubbo spi机制
  *
  * @author nivell
  * @date 2019/10/07
