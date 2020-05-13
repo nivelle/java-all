@@ -48,6 +48,18 @@ public class ArrayDemo {
 
         /**
          * Collection.toArray() 方法返回的是当前集合的拷贝,修改不会修改源信息
+         *
+         *  public Object[] toArray() {
+         *         // Estimate size of array; be prepared to see more or fewer elements
+         *         Object[] r = new Object[size()];
+         *         Iterator<E> it = iterator();
+         *         for (int i = 0; i < r.length; i++) {
+         *             if (! it.hasNext()) // fewer elements than expected
+         *                 return Arrays.copyOf(r, i);
+         *             r[i] = it.next();
+         *         }
+         *         return it.hasNext() ? finishToArray(r, it) : r;
+         *     }
          */
         Object[] objects = integerList.toArray();
         objects[2] = 3;
@@ -116,6 +128,8 @@ public class ArrayDemo {
             }
         });
     }
+
+
 
 
 }

@@ -401,7 +401,7 @@ public class ArrayListDemo {
         System.out.println();
 
         /**
-         * Arrays.asList 返回的list底层是源数组,是源数组的一个视图
+         * Arrays.asList 返回的list底层是源数组,是源数组的一个视图,修改视图数组，源数组改变，内部类数组指向源数组
          */
         list3.set(3, "5");
 

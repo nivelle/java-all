@@ -50,10 +50,10 @@ public interface ScheduledExecutorService extends ExecutorService {
     ## 在指定延时后执行一次,有返回值
     public <V> ScheduledFuture<V> schedule(Callable<V> callable,long delay, TimeUnit unit);
 
-    ## 在指定延时后开始执行，并在之后以指定时间间隔重复执行（间隔不包含任务执行的时间),相当于之后的延时以任务开始计算
+    ## 在指定延时后开始执行，并在之后以指定时间间隔重复执行（间隔不包含任务执行的时间),上一个任务开始的时间计时，period时间过去后，检测上一个任务是否执行完毕，如果上一个任务执行完毕，则当前任务立即执行，如果上一个任务没有执行完毕，则需要等上一个任务执行完毕后立即执行
     public ScheduledFuture<?> scheduleAtFixedRate(Runnable command,long initialDelay,long period,TimeUnit unit);
 
-    ## 在指定延时后开始执行，并在之后以指定延时重复执行（间隔包含任务执行的时间),相当于之后的延时以任务结束计算
+    ## 在指定延时后开始执行，并在之后以指定延时重复执行（间隔包含任务执行的时间),以上一个任务结束时开始计时,period时间过去后,立即执行
     public ScheduledFuture<?> scheduleWithFixedDelay(Runnable command,long initialDelay,long delay,TimeUnit unit);
 
 }
@@ -78,7 +78,7 @@ private final class Worker extends AbstractQueuedSynchronizer implements Runnabl
             ## 这个unlock方法会在runWorker方法中一开始就调用,这是为了确保Worker构造出来之后,没有任何线程能够得到它的锁,除非调用了runWorker之后,其他线程才能获得Worker的锁
             setState(-1); // inhibit interrupts until runWorker
             this.firstTask = firstTask;
-            ## 这里把Worker本身作为Runnable传给线程
+            ## 这里把Worker本身作为Runnable传给线程(worker就是线程要执行的任务)
             ## 重写了Runable的run方法，也就是用的是worker的runWorker方法
             this.thread = getThreadFactory().newThread(this);
         }
@@ -189,7 +189,7 @@ private final class Worker extends AbstractQueuedSynchronizer implements Runnabl
 ### ThreadPoolExecutor.execute(Runnable command)
 
 ```
-## 提交任务，任务并非立即执行
+## 提交任务,任务并非立即执行
 public void execute(Runnable command) {
         ## 任务不能为空
         if (command == null){
@@ -220,14 +220,17 @@ public void execute(Runnable command) {
                 addWorker(null, false);
             }
         }
-        ## 任务入队列失败，尝试创建非核心工作线程
+        ## 任务入队列失败，尝试创建非核心工作线程。(看第二个参数)
         else if (!addWorker(command, false)){
             reject(command);
         }
     }
-    
+ 
+```   
 ## 这个方法主要用来创建一个工作线程，并启动之,其中会做线程池状态、工作线程数量等各种检测。 
-## 第二个参数为true表示添加到核心线程   
+## 第二个参数为true表示创建核心线程，false表示创建非核心线程
+
+```  
 private boolean addWorker(Runnable firstTask, boolean core) {
         retry:
         for (;;) {
@@ -264,7 +267,7 @@ private boolean addWorker(Runnable firstTask, boolean core) {
                 }
             }
         }
-        ## 走到这一步说明cas操作成功了，线程池线程数量+1
+        ## 走到这一步说明cas操作成功了，线程池线程数量+1(addWorker调用前提是已经判定能添加)
         
         ##  任务是否成功启动标识
         boolean workerStarted = false;
@@ -326,8 +329,12 @@ private boolean addWorker(Runnable firstTask, boolean core) {
         }
         return workerStarted;
     }
-    
+
+```
+
 ## ThreadPoolExecutor.runWorker(Worker w)
+## worker里面的线程重复使用。真正执行任务，也就是在addWorker里面t.start()运行的任务，这个线程的run()方法里面的任务worker
+```
 final void runWorker(Worker w) {
         ## 得到当前线程
         Thread wt = Thread.currentThread();
@@ -341,7 +348,7 @@ final void runWorker(Worker w) {
         try {
            ## 如果worker中的任务不为空，继续执行，否则使用getTask获得任务。一直死循环，除非得到的任务为空才退出 
             while (task != null || (task = getTask()) != null) {
-                ## 如果拿到了任务，给自己上锁，表示当前Worker已经要开始执行任务了，已经不是闲置Worker(
+                ## 如果拿到了任务，给自己上锁，表示当前Worker已经要开始执行任务了，已经不是闲置Worker
                 w.lock();
                 ## 在执行任务之前先做一些处理:
                 ## 1. 如果线程池已经处于STOP状态并且当前线程没有被中断，中断线程 
@@ -383,13 +390,16 @@ final void runWorker(Worker w) {
             processWorkerExit(w, completedAbruptly);
         }
     }
+```
 
-## 一个worker里面可以在执行完一个任务后置为空,然后再添加一个未执行的任务
+## 一个worker里面可以在执行完一个任务后置为空(task=null),然后再添加一个未执行的任务
 ## 如果发生了以下四件事中的任意一件，那么Worker需要被回收:
 ## 1. Worker个数比线程池最大大小要大
 ## 2. 线程池处于STOP状态
 ## 3. 线程池处于SHUTDOWN状态并且阻塞队列为空
-## 4. 使用超时时间从阻塞队列里拿数据，并且超时之后没有拿到数据(allowCoreThreadTimeOut || workerCount > corePoolSize)
+## 4. 使用超时时间从阻塞队列里拿数据,并且超时之后没有拿到数据(allowCoreThreadTimeOut || workerCount > corePoolSize)
+
+```
 private Runnable getTask() {
         ##  如果使用超时时间并且也没有拿到任务的标识
         boolean timedOut = false; // Did the last poll() time out?
@@ -400,7 +410,7 @@ private Runnable getTask() {
             ## 获取线程池状态
             int rs = runStateOf(c);
             ## 如果线程池是SHUTDOWN状态并且阻塞队列为空的话，worker数量减一，直接返回null
-            ## (SHUTDOWN状态还会处理阻塞队列任务，但是阻塞队列为空的话就结束了),如果线程池是STOP状态的话,worker数量减1，直接返回null(STOP状态不处理阻塞队列任务)
+            ## (SHUTDOWN状态还会处理阻塞队列任务，但是阻塞队列为空的话就结束了),如果线程池是STOP状态的话,worker数量减1,直接返回null(STOP状态不处理阻塞队列任务)
             ## 开始回收闲置Worker（控制变量-1）
             // Check if queue empty only if necessary.
             if (rs >= SHUTDOWN && (rs >= STOP || workQueue.isEmpty())) {
@@ -443,10 +453,12 @@ private Runnable getTask() {
             }
         }
     }
-    
-## 如果getTask返回的是null，那说明阻塞队列已经没有任务并且当前调用getTask的Worker需要被回收，那么会调用processWorkerExit方法进行回收   
+ ```
+## 如果getTask返回的是null，那说明阻塞队列已经没有任务并且当前调用getTask的Worker需要被回收，那么会调用processWorkerExit方法进行回收  
+## 回收不用的worker
+``` 
 private void processWorkerExit(Worker w, boolean completedAbruptly) {
-        ## 如果Worker没有正常结束流程调用processWorkerExit方法，worker数量减一。
+        ## 如果Worker非正常结束流程调用processWorkerExit方法，worker数量减一。
         ## 如果是正常结束的话，在getTask方法里worker数量已经减一了
         if (completedAbruptly) {// If abrupt, then workerCount wasn't adjusted
             decrementWorkerCount();
@@ -485,8 +497,10 @@ private void processWorkerExit(Worker w, boolean completedAbruptly) {
             addWorker(null, false);
         }
     }  
-    
-## 在回收Worker的时候线程池会尝试结束自己的运行，tryTerminate方法    
+```
+## 在回收Worker的时候线程池会尝试结束自己的运行，tryTerminate方法  
+
+```
 final void tryTerminate() {
         for (;;) {
             int c = ctl.get();

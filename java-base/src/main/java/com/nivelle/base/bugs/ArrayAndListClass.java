@@ -46,9 +46,8 @@ public class ArrayAndListClass {
 
         System.out.println("子类向上转型parentArrayNew:" + parentArrayNew[0]);
 
-
         List<Son> sonList = Arrays.asList(sonArray);
-        System.out.println("Arrays asList 设置Arrays.list底层 数组为入参数组类型" + sonList.getClass());
+        System.out.println("Arrays asList 设置Arrays.list底层 数组为入参数组类型也就是用范行来表示数组元素类型:" + sonList.getClass());
         /**
          * 返回底层数组的copy,类型保持
          */
@@ -63,7 +62,7 @@ public class ArrayAndListClass {
         List<String> list = Arrays.asList(array);
         System.err.println("Arrays内部的list类型:" + list.getClass());
         /**
-         * ## Arrays.ArrayList
+         * ## Arrays.ArrayList 内部的list底层是个范性数组
          * public Object[] toArray() {
          *     return a.clone();//ArrayList=>private final E[] a; => private static class ArrayList<E> extends AbstractList<E>
          * }
@@ -83,6 +82,12 @@ public class ArrayAndListClass {
         List<Son> dataList = new ArrayList();
         dataList.add(new Son(1, "1", 1));
         dataList.add(new Son(2, "2", 2));
+        /**
+         * public Object[] toArray() {
+         *         //java.util.ArrayList 底层是个Object[]数组
+         *         return Arrays.copyOf(elementData, size);
+         *     }
+         */
         Object[] listToArray = dataList.toArray();
         System.err.println("list to Array:" + listToArray.getClass());
         listToArray[0] = new Son(3, "3", 3);
@@ -92,5 +97,6 @@ public class ArrayAndListClass {
         System.out.println("listToArray[1] is:" + listToArray[1]);
 
     }
+
 
 }
