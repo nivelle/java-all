@@ -26,7 +26,7 @@ public class JavaBaseApplication {
         if (iterator.hasNext()) {
             System.err.println(iterator.next());
         }
-        serviceLoader.forEach(MySpi::sayHelloSpi);
+        //serviceLoader.forEach(MySpi::sayHelloSpi);
 
         /**
          * dubbo的spi机制

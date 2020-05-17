@@ -1,4 +1,4 @@
-package com.nivelle.base.javacore.proxy;
+package com.nivelle.base.javacore.reflect.cglib;
 
 import org.springframework.cglib.proxy.Enhancer;
 import org.springframework.cglib.proxy.MethodInterceptor;

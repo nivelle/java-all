@@ -1,6 +1,6 @@
-package com.nivelle.base.javacore.proxy;
+package com.nivelle.base.javacore.reflect.cglib;
 
-public class CGlibProxy {
+public class CGlibProxyMain {
 
     public static void main(String[] args)
     {
