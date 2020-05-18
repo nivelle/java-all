@@ -16,6 +16,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <version.jackson.core>2.10.0</version.jackson.core>
+    </properties>
     <groupId>com.nivelle</groupId>
     <artifactId>container-all</artifactId>
     <version>1.0.2</version>
@@ -55,6 +59,16 @@
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>
             <version>4.1.43.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>${version.jackson.core}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${version.jackson.core}</version>
         </dependency>
     </dependencies>
 
