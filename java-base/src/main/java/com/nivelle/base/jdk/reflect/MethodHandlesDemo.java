@@ -89,5 +89,16 @@ public class MethodHandlesDemo {
         System.out.println(mh.type());
     }
 
+    public static void main(String[] args) throws Throwable {
+        /**
+         * 方法句柄
+         */
+        MethodHandlesDemo invokeExactDemo = new MethodHandlesDemo();
+        invokeExactDemo.invokeExact();
+        invokeExactDemo.multipleBindTo();
+        invokeExactDemo.generateMethodTypesFromDescriptor();
+        invokeExactDemo.asVarargsCollector();
+    }
+
 
 }

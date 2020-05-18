@@ -65,6 +65,7 @@ public class FutureTaskDemo {
      * }
      *
      * ## AbstractExecutorService.newTaskFor
+     * ## public interface RunnableFuture<V> extends Runnable, Future<V>
      * protected <T> RunnableFuture<T> newTaskFor(Runnable runnable, T value) {
      *         return new FutureTask<T>(runnable, value);
      * }
@@ -95,12 +96,12 @@ public class FutureTaskDemo {
      *                     setException(ex);
      *                 }
      *                 if (ran){
-     *                     ## 处理结果
+     *                     ## 设置处理结果
      *                     set(result);
      *                 }
      *             }
      *         } finally {
-     *             ## 置空runner
+     *             ## 置空runner(The thread running the callable; CASed during run())
      *             runner = null;
      *             ## 处理中断
      *             int s = state;
@@ -112,36 +113,36 @@ public class FutureTaskDemo {
      *
      * ##FutureTask.set()设置处理结果
      * protected void set(V v) {
-     *         ## 设置处理任务处理状态为: COMPLETING(1) 完成
+     *         ## 设置处理任务处理状态从New 为: COMPLETING(state = 1) 完成
      *         if (UNSAFE.compareAndSwapInt(this, stateOffset, NEW, COMPLETING)) {
-     *             ## 返回值置为传进来的结果（outcome为调用get()方法时返回的）
+     *             ## 返回值置为传进来的结果（Object outcome 为调用get()方法时返回的）;/** The result to return or exception to throw from get()
      *             outcome = v;
-     *             ## 最终的状态设置为NORMAL
+     *             ## 设置完返回值后,设置最终的状态设置为 NORMAL
      *             UNSAFE.putOrderedInt(this, stateOffset, NORMAL); // final state
      *             ## 调用完成方法
      *             finishCompletion();
      *         }
      *     }
      *
-     * ##FutureTask.setException()处理异常
+     * ##FutureTask.setException()处理异常情况
      * protected void setException(Throwable t) {
-     *         ## 将状态从NEW置为COMPLETING
+     *         ## 将状态从NEW置为COMPLETING,异常也是COMPLETING(state=1状态)
      *         if (UNSAFE.compareAndSwapInt(this, stateOffset, NEW, COMPLETING)) {
      *             ## 返回值置为传进来的异常（outcome为调用get()方法时返回的）
      *             outcome = t;
-     *             ## 最终的状态设置为EXCEPTIONAL
+     *             ## 最终的状态设置为EXCEPTIONAL,设置终态为(EXCEPTIONAL =3 )
      *             UNSAFE.putOrderedInt(this, stateOffset, EXCEPTIONAL); // final state
      *             ## 调用完成方法
      *             finishCompletion();
      *         }
      *     }
      *
-     * ##FutureTask.finishCompletion()
-     * ## Removes and signals all waiting threads, invokes done(), and nulls out callable
+     * ## Removes and signals all waiting threads【移除和唤醒所有等待的线程】 invokes done(), and nulls out callable.
+     * ## FutureTask.finishCompletion(),处理正常情况和异常情况
      * private void finishCompletion() {
      *         ## 如果队列不为空（这个队列实际上为调用者线程）
      *         for (WaitNode q; (q = waiters) != null;) {
-     *             ## 置空队列
+     *             ## 设置等待队列为空
      *             if (UNSAFE.compareAndSwapObject(this, waitersOffset, q, null)) {
      *                 for (;;) {
      *                     ## 调用者线程
@@ -151,9 +152,12 @@ public class FutureTaskDemo {
      *                         ## 如果调用者线程不为空，则唤醒它
      *                         LockSupport.unpark(t);
      *                     }
+     *
      *                     WaitNode next = q.next;
-     *                     if (next == null)
+     *                     ## 如果都唤醒了，则退出
+     *                     if (next == null){
      *                         break;
+     *                     }
      *                     q.next = null; // unlink to help gc
      *                     q = next;
      *                 }
@@ -170,17 +174,17 @@ public class FutureTaskDemo {
      *
      * （1）FutureTask有一个状态state控制任务的运行过程,正常运行结束state从NEW->COMPLETING->NORMAL,异常运行结束state从NEW->COMPLETING->EXCEPTIONAL;
      *
-     * （2）FutureTask保存了运行任务的线程 runner，它是线程池中的某个线程;
+     * （2）FutureTask保存了运行任务的线程 runner,它是线程池中的某个线程;
      *
-     * （3）调用者线程是保存在waiters队列中的，它是什么时候设置进去的呢？
+     * （3）调用者线程是保存在waiters队列中的,它是get()方法调用时，如果状态不为 COMPLETING时设置为等待
      *
-     * （4）任务执行完毕，除了设置状态state变化之外，还要唤醒调用者线程。
+     * （4）任务执行完毕,除了设置状态state变化之外,还要唤醒调用者线程。
      *
      *
      * ## FutureTask.get()
      * public V get() throws InterruptedException, ExecutionException {
      *         int s = state;
-     *         ## 如果状态小于等于COMPLETING，则进入队列等待
+     *         ## 如果状态小于等于 COMPLETING，则进入队列等待
      *         if (s <= COMPLETING){
      *             s = awaitDone(false, 0L);
      *         }
@@ -190,18 +194,17 @@ public class FutureTaskDemo {
      *
      * ##FutureTask.awaitDone(boolean timed,long nanos)
      * ## 如果任务状态小于等于COMPLETING，则进入队列等待
-     * private int awaitDone(boolean timed, long nanos)
-     *         throws InterruptedException {
+     * private int awaitDone(boolean timed, long nanos) throws InterruptedException {
      *         final long deadline = timed ? System.nanoTime() + nanos : 0L;
      *         WaitNode q = null;
      *         boolean queued = false;
      *         for (;;) {
-     *             ## 处理中断
+     *             ## 处理中断(会清除终端状态)
      *             if (Thread.interrupted()) {
      *                 removeWaiter(q);
      *                 throw new InterruptedException();
      *             }
-     *             ## 4. 如果状态大于COMPLETING了，则跳出循环并返回;这是自旋的出口
+     *             ## 4. 如果调用等待方法时返回状态大于COMPLETING了,则跳出循环并返回;这是自旋的出口
      *             int s = state;
      *             if (s > COMPLETING) {
      *                 if (q != null){
@@ -209,27 +212,30 @@ public class FutureTaskDemo {
      *                 }
      *                 return s;
      *             }
-     *             ## 如果状态等于COMPLETING，说明任务快完成了，就差设置状态到NORMAL或EXCEPTIONAL和设置结果了;这时候就让出CPU，优先完成任务
+     *             ## 如果状态等于 COMPLETING，说明任务快完成了，就差设置状态到NORMAL或EXCEPTIONAL和设置结果了;这时候就让出CPU，优先完成任务
      *             else if (s == COMPLETING){
      *                 Thread.yield();
      *             }
      *             ## 1. 如果队列为空
      *             else if (q == null){
-     *                 ## 初始化队列（WaitNode中记录了调用者线程）
+     *                 ## 初始化队列节点（WaitNode中记录了调用者线程）
      *                 q = new WaitNode();
      *             }
-     *             ## 2. 未进入队列
+     *             ## 2. 等待节点进入队列（第二次循环queued是false）,后续线程还会入队
      *             else if (!queued){
-     *                 ## 尝试入队
+     *                 ## 尝试入队,设置q.next 为 waiters
+     *                 ## waiter队列首位
      *                 queued = UNSAFE.compareAndSwapObject(this, waitersOffset,q.next = waiters, q);
      *             }
      *             ## 超时处理
      *             else if (timed) {
      *                 nanos = deadline - System.nanoTime();
+     *                 ## 如果超时了还没获取结果，则从等待队列移除，返回当前线程任务的状态
      *                 if (nanos <= 0L) {
      *                     removeWaiter(q);
      *                     return state;
      *                 }
+     *                 ## 阻塞线程
      *                 LockSupport.parkNanos(this, nanos);
      *             }
      *             ## 3. 阻塞当前线程（调用者线程）
@@ -238,6 +244,20 @@ public class FutureTaskDemo {
      *             }
      *         }
      *     }
+     *
+     *  ## awaitDone 流程：
+     *
+     * （1）第一次循环，状态为NEW，直接到1处，初始化队列并把调用者线程封装在WaitNode中；
+     *
+     * （2）第二次循环，状态为NEW，队列不为空，到2处，让包含调用者线程的WaitNode入队；
+     *
+     * （3）第三次循环，状态为NEW，队列不为空，且已入队，到3处，阻塞调用者线程；
+     *
+     * （4）假设过了一会任务执行完毕了，根据run()方法的分析最后会unpark调用者线程，也就是3处会被唤醒；
+     *
+     * （5）第四次循环，状态肯定大于COMPLETING了，退出循环并返回；
+     *
+     *
      *
      * ## FutureTask.report(int s)
      * private V report(int s) throws ExecutionException {

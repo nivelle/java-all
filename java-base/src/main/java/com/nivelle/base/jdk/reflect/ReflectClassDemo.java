@@ -79,14 +79,7 @@ public class ReflectClassDemo {
         Object classLoaderNameParent2 = user.getClass().getClassLoader().getParent().getParent();
         System.out.println("parent classLoader name is:" + classLoaderNameParent2);
 
-        /**
-         * 方法句柄
-         */
-        MethodHandlesDemo invokeExactDemo = new MethodHandlesDemo();
-        invokeExactDemo.invokeExact();
-        invokeExactDemo.multipleBindTo();
-        invokeExactDemo.generateMethodTypesFromDescriptor();
-        invokeExactDemo.asVarargsCollector();
+
 
 
     }
