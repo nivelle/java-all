@@ -230,6 +230,9 @@ public class ByteDemo {
 
         AtomicInteger ctl = new AtomicInteger(ctlOf(RUNNING, 0)) ;
         System.out.println(ctl);
+
+
+        System.out.println(0>>2);
     }
 
 }

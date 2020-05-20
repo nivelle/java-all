@@ -6,7 +6,7 @@ import java.lang.reflect.Field;
 import java.util.concurrent.PriorityBlockingQueue;
 
 /**
- * 优先阻塞队列
+ * 优先级阻塞队列
  *
  * @author nivell
  * @date 2020/04/16
@@ -226,11 +226,12 @@ public class PriorityBlockingQueueDemo {
          *         }
          *     }
          *
-         *  ## 堆化
+         *  ## 自顶向下堆化(小顶堆)
          *  private static <T> void siftDownComparable(int k, T x, Object[] array, int n) {
          *         if (n > 0) {
+         *             ## x是堆尾元素
          *             Comparable<? super T> key = (Comparable<? super T>)x;
-         *             int half = n >>> 1;           // loop while a non-leaf
+         *             int half = n >>> 1;           // loop while a non-leaf 除以2
          *             ## 只需要遍历到叶子节点就够了
          *             while (k < half) {
          *                 ## 左子节点
@@ -247,7 +248,7 @@ public class PriorityBlockingQueueDemo {
          *                 if (key.compareTo((T) c) <= 0){
          *                     break;
          *                 }
-         *                 ## 否则，交换key与左右子节点中最小的节点的位置
+         *                 ## 否则,交换key与左右子节点中最小的节点的位置,保证中间最小
          *                 array[k] = c;
          *                 k = child;
          *             }
