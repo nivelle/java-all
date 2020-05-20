@@ -14,11 +14,14 @@ public class MyHandler implements InvocationHandler {
 
     /**
      * 为object参数创建代理
-     * * @return
+     * @return
      */
     public DynamicService getProxy() {
+        //要代理类的类加载器
         ClassLoader classLoader = this.dynamicService.getClass().getClassLoader();
+        //要代理类的接口列表
         Class[] interfaces = this.dynamicService.getClass().getInterfaces();
+        //创建代理类
         DynamicService proxyObject = (DynamicService) Proxy.newProxyInstance(classLoader, interfaces, this);
         return proxyObject;
     }

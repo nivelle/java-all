@@ -1,24 +1,23 @@
 ## public class Proxy implements java.io.Serializable 
-## 创建代理对象
+## 静态方法创建代理对象
 
 ```
-public static Object newProxyInstance(ClassLoader loader,Class<?>[] interfaces,InvocationHandler h)
-        throws IllegalArgumentException
+public static Object newProxyInstance(ClassLoader loader,Class<?>[] interfaces,InvocationHandler h) throws IllegalArgumentException
     {
-        ## 验证传入的InvocationHandler是否为空
+        ## 验证传入的InvocationHandler(调用处理器)是否为空
         Objects.requireNonNull(h);
         ## 克隆代理类实现的接口
         final Class<?>[] intfs = interfaces.clone();
         ## 获得安全管理器
         final SecurityManager sm = System.getSecurityManager();
-        ##检查创建代理类所需的权限
+        ## 检查创建代理类所需的权限
         if (sm != null) {
             checkProxyAccess(Reflection.getCallerClass(), loader, intfs);
         }
 
         /*
          * Look up or generate the designated proxy class.
-         * ##查找或者生成特定的代理类（如果缓存中存在，则直接获取） 
+         * ##通过类加载器和接口列表查找或者生成特定的代理类（如果缓存中存在，则直接获取） 
          */
         Class<?> cl = getProxyClass0(loader, intfs);
 
@@ -30,7 +29,7 @@ public static Object newProxyInstance(ClassLoader loader,Class<?>[] interfaces,I
             if (sm != null) {
                 checkNewProxyPermission(Reflection.getCallerClass(), cl);
             }
-            ## 获取参数类型是InvocationHandler.class的代理类构造器
+            ## 获取参数类型是 InvocationHandler.class 的代理类构造函数
             final Constructor<?> cons = cl.getConstructor(constructorParams);
             final InvocationHandler ih = h;
             ## 如果代理类是不可访问的, 就使用特权将它的构造器设置为可访问
@@ -42,8 +41,7 @@ public static Object newProxyInstance(ClassLoader loader,Class<?>[] interfaces,I
                     }
                 });
             }
-            ## 传入InvocationHandler实例去构造一个代理类的实例,所有代理类都继承自
-            ## Proxy,而Proxy构造方法需要InvocationHandler实例作为参数
+            ## 传入InvocationHandler实例去构造一个代理类的实例,所有代理类都继承自Proxy,而Proxy构造方法需要InvocationHandler实例作为参数
             return cons.newInstance(new Object[]{h});
         } catch (IllegalAccessException|InstantiationException e) {
             throw new InternalError(e.toString(), e);
@@ -77,15 +75,12 @@ private static Class<?> getProxyClass0(ClassLoader loader,Class<?>... interfaces
 
 ```
 
-### 代理类工厂
+### 代理类创建工厂
 
 ```
-private static final class ProxyClassFactory
-        implements BiFunction<ClassLoader, Class<?>[], Class<?>>
-    {
+private static final class ProxyClassFactory implements BiFunction<ClassLoader, Class<?>[], Class<?>>{
         // prefix for all proxy class names(代理类名称前缀)
         private static final String proxyClassNamePrefix = "$Proxy";
-
         // next number to use for generation of unique proxy class names
         ## 用原子类来生成代理类的序号, 保证序号唯一
         private static final AtomicLong nextUniqueNumber = new AtomicLong();
@@ -104,16 +99,15 @@ private static final class ProxyClassFactory
                     interfaceClass = Class.forName(intf.getName(), false, loader);
                 } catch (ClassNotFoundException e) {
                 }
-                ## intf是否可以由指定的类加载进行加载
+                ## intf 是否可以由指定的类加载进行加载,如果不能加载则抛出异常
                 if (interfaceClass != intf) {
-                    throw new IllegalArgumentException(
-                        intf + " is not visible from class loader");
+                    throw new IllegalArgumentException(intf + " is not visible from class loader");
                 }
                 /*
                  * Verify that the Class object actually represents an
                  * interface.
                  */
-                 ## intf是否是一个接口
+                 ## intf是否是一个接口,如果不是接口则抛出异常。
                 if (!interfaceClass.isInterface()) {
                     throw new IllegalArgumentException(
                         interfaceClass.getName() + " is not an interface");
@@ -121,15 +115,14 @@ private static final class ProxyClassFactory
                 /*
                  * Verify that this interface is not a duplicate.
                  */
-                ## intf在数组中是否有重复
+                ## intf在数组中是否有重复,如果重复抛出异常
                 if (interfaceSet.put(interfaceClass, Boolean.TRUE) != null) {
-                    throw new IllegalArgumentException(
-                        "repeated interface: " + interfaceClass.getName());
+                    throw new IllegalArgumentException("repeated interface: " + interfaceClass.getName());
                 }
             }
-
-            String proxyPkg = null;     // package to define proxy class in 生成代理类的包名
-            ## 代理类的访问标志, 默认是public final
+            // package to define proxy class in 生成代理类的包名
+            String proxyPkg = null;     
+            ## 代理类的访问标志, 默认是 public final
             int accessFlags = Modifier.PUBLIC | Modifier.FINAL;
 
             /*
@@ -151,15 +144,14 @@ private static final class ProxyClassFactory
                     if (proxyPkg == null) {
                         proxyPkg = pkg;
                     } else if (!pkg.equals(proxyPkg)) {
-                        throw new IllegalArgumentException(
-                            "non-public interfaces from different packages");
+                        throw new IllegalArgumentException("non-public interfaces from different packages");
                     }
                 }
             }
 
             if (proxyPkg == null) {
                 // if no non-public proxy interfaces, use com.sun.proxy package
-                ## package 如果没有非公共代理接口，那生成的代理类都放到默认的包下：com.sun.proxy
+                ## package 如果没有非公共代理接口,那生成的代理类都放到默认的包下: com.sun.proxy
                 proxyPkg = ReflectUtil.PROXY_PACKAGE + ".";
             }
 
@@ -173,13 +165,11 @@ private static final class ProxyClassFactory
             /*
              * Generate the specified proxy class.
              */
-             ## 这里是核心, 用ProxyGenerator来生成字节码, 该类放在sun.misc包下
-            byte[] proxyClassFile = ProxyGenerator.generateProxyClass(
-                proxyName, interfaces, accessFlags);
+             ## 这里是核心, 用 ProxyGenerator 来生成字节码, 该类放在sun.misc包下
+            byte[] proxyClassFile = ProxyGenerator.generateProxyClass(proxyName, interfaces, accessFlags);
             try {
                 ## 根据二进制文件生成相应的Class实例
-                return defineClass0(loader, proxyName,
-                                    proxyClassFile, 0, proxyClassFile.length);
+                return defineClass0(loader, proxyName,proxyClassFile, 0, proxyClassFile.length);
             } catch (ClassFormatError e) {
                 /*
                  * A ClassFormatError here means that (barring bugs in the
@@ -195,9 +185,13 @@ private static final class ProxyClassFactory
 
 ```
 
-### ProxyGenerator.generateProxyClass //生成代理类核心代码
+### ProxyGenerator.generateProxyClass //生成代理类核心代码,并写入磁盘
 
 ```
+@param var0 : 代理类名
+@param var1 : 代理类接口数组
+@param var2 : 访问限制 public 或则 final
+
 public static byte[] generateProxyClass(final String var0, Class<?>[] var1, int var2) {
         //构造ProxyGenerator对象
         ProxyGenerator var3 = new ProxyGenerator(var0, var1, var2);
@@ -234,7 +228,7 @@ public static byte[] generateProxyClass(final String var0, Class<?>[] var1, int 
 ```
 
 ### ProxyGenerator.generateClassFile
-
+### 生成代理类字节码文件,并返回字节码数组
 ```
 private byte[] generateClassFile() {
         //1、将所有的方法组装成ProxyMethod对象
@@ -252,28 +246,24 @@ private byte[] generateClassFile() {
             var4 = var1[var3];
             Method[] var5 = var4.getMethods();
             int var6 = var5.length;
-
             for(int var7 = 0; var7 < var6; ++var7) {
                 Method var8 = var5[var7];
                 this.addProxyMethod(var8, var4);
             }
         }
-
         Iterator var11 = this.proxyMethods.values().iterator();
-
         List var12;
         while(var11.hasNext()) {
             var12 = (List)var11.next();
+            //校验返回类型
             checkReturnTypes(var12);
         }
-
-        //2、组装要生成的class文件的所有的字段信息和方法信息
+        //2、组装要生成的 class文件的所有的字段信息和方法信息
         Iterator var15;
         try {
             //添加构造器方法
             this.methods.add(this.generateConstructor());
             var11 = this.proxyMethods.values().iterator();
-
             //遍历缓存中的代理方法
             while(var11.hasNext()) {
                 var12 = (List)var11.next();

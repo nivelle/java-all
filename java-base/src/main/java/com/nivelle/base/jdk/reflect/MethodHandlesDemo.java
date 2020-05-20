@@ -98,6 +98,9 @@ public class MethodHandlesDemo {
         invokeExactDemo.multipleBindTo();
         invokeExactDemo.generateMethodTypesFromDescriptor();
         invokeExactDemo.asVarargsCollector();
+        invokeExactDemo.asFixedArity();
+        invokeExactDemo.asSpreader();
+
     }
 
 

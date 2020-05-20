@@ -36,11 +36,13 @@ public class StringDemo {
         System.out.print("强制比较池常量:");
         System.out.println(string1.intern() == string2);
 
+        int lastIndexOf4 = string1.lastIndexOf(46);
+        System.out.println("lastIndexOf4 is:" + lastIndexOf4);
+        String a = new String("abc").intern();
 
-        String a =new String("abc").intern();
         String b = new String("abc").intern();
 
-        if(a==b) {
+        if (a == b) {
             /**
              * 1. 创建 a 变量时，调用 new Sting() 会在堆内存中创建一个 String 对象，String 对象中的 char 数组将会引用常量池中字符串。在调用 intern 方法之后，会去常量池中查找是否有等于该字符串对象的引用，有就返回引用。
              * 2. 创建 b 变量时，调用 new Sting() 会在堆内存中创建一个 String 对象，String 对象中的 char 数组将会引用常量池中字符串。在调用 intern 方法之后，会去常量池中查找是否有等于该字符串对象的引用，有就返回引用。而在堆内存中的两个对象，由于没有引用指向它，将会被垃圾回收。所以 a 和 b 引用的是同一个对象。
@@ -125,8 +127,6 @@ public class StringDemo {
          * 底层利用了: public String(char value[], int offset, int count) 构造函数
          */
         System.out.println("切割字符串:" + string2.substring(0, 1));
-
-
 
 
         /**
@@ -250,7 +250,7 @@ public class StringDemo {
         System.out.println("s2==s3:" + (s2 == s3));
 
         Integer maxLength = maxStringLenth();
-        System.err.println("java运行时字符串最大长度:" +maxLength);
+        System.err.println("java运行时字符串最大长度:" + maxLength);
         String maxString = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" +
                 "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" +
                 "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" +

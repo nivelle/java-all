@@ -2,7 +2,7 @@
 
 ```
 public Object invoke(Object obj, Object... args)throws IllegalAccessException, IllegalArgumentException,InvocationTargetException{
-        ## override表示此对象是否重写语言级访问检查。初始化为“false”
+        ## override 表示此对象是否重写语言级访问检查,初始化为“false”
         if (!override) {
             ## 检查是否为public
             if (!Reflection.quickCheckMemberAccess(clazz, modifiers)) {
@@ -20,7 +20,7 @@ public Object invoke(Object obj, Object... args)throws IllegalAccessException, I
 
 ```
 
-### acquireMethodAccessor
+### acquireMethodAccessor 方法访问器
 ```
 private MethodAccessor acquireMethodAccessor() {
         // First check to see if one has been created yet, and take it
@@ -30,15 +30,19 @@ private MethodAccessor acquireMethodAccessor() {
         if (tmp != null) {
             methodAccessor = tmp;
         } else {
-            ## 否则就制造一个并传播到根部
+            ## 否则就制造一个方法访问器并传播到根部
             // Otherwise fabricate one and propagate it up to the root
             tmp = reflectionFactory.newMethodAccessor(this);
             setMethodAccessor(tmp);
         }
-
         return tmp;
     }
     
 ```
 
-### private static native Object invoke0(Method var0, Object var1, Object[] var2);
+### 最后是访问访问器来执行反射调用
+
+ ```
+ private static native Object invoke0(Method var0, Object var1, Object[] var2);
+ 
+ ```

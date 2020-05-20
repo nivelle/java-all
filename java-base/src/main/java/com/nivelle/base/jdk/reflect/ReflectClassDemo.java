@@ -1,6 +1,8 @@
 package com.nivelle.base.jdk.reflect;
 
 import com.nivelle.base.pojo.User;
+import sun.reflect.CallerSensitive;
+import sun.reflect.Reflection;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -31,7 +33,7 @@ public class ReflectClassDemo {
      * 3. 分析类文件：毕竟能得到类中的方法等等
      * 4. 访问一些不能访问的变量或属性：破解别人代码
      */
-
+    @CallerSensitive
     public static void main(String[] args) throws Throwable {
 
         Class userClass = Class.forName(User.class.getName());
@@ -68,7 +70,7 @@ public class ReflectClassDemo {
         //通过反射方法调用类的方法
         Method method = user.getClass().getDeclaredMethod("showDetail", String.class);
         Object result = method.invoke(user, "fuck");
-        System.out.println("通过反射调用方法:"+result.toString());
+        System.out.println("通过反射调用方法:" + result.toString());
 
         //获取类加载信息
         String classLoaderName = user.getClass().getClassLoader().getClass().getName();
@@ -79,8 +81,29 @@ public class ReflectClassDemo {
         Object classLoaderNameParent2 = user.getClass().getClassLoader().getParent().getParent();
         System.out.println("parent classLoader name is:" + classLoaderNameParent2);
 
+        /**
+         * Reflection.getCallerClass()此方法的调用者必须有权限，需要什么样的权限呢？
+         * 1.由bootstrap class loader加载的类可以调用
+         * 2. 由extension class loader加载的类可以调用
+         *
+         * 都知道用户路径的类加载都是由 application class loader进行加载的，换句话说就是用户自定义的一些类中无法调用此方法
+         *
+         * Reflection.getCallerClass()方法调用所在的方法必须用@CallerSensitive进行注解，通过此方法获取class时会跳过链路上所有的有@CallerSensitive注解的方法的类，直到遇到第一个未使用该注解的类，避免了用Reflection.getCallerClass(int n) 这个过时方法来自己做判断。
+         */
 
-
+        /**
+         * 0 和小于0  -   返回 Reflection类
+         *
+         * 1  -   返回自己的类
+         *
+         * 2  -    返回调用者的类
+         *
+         * 3. 4. ....层层上传。
+         */
+        Class callerClass = Reflection.getCallerClass(1);
+        System.out.println("获取调用者的类:" + callerClass);
+        Class callerClass2 = Reflection.getCallerClass();
+        System.out.println("获取调用者的类2:" + callerClass2);
 
     }
 }
