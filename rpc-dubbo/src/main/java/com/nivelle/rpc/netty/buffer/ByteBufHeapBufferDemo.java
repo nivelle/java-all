@@ -42,7 +42,7 @@ public class ByteBufHeapBufferDemo {
 	/**
 	 * 打印出Buffer的信息
 	 * 
-	 * @param buffer
+	 * @param
 	 */
 	private static void printBuffer(byte[] array, int offset, int len) {
 		System.out.println("array：" + array);
