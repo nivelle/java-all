@@ -65,7 +65,6 @@ public class NonBlockingEchoServer {
 						socketChannel.configureBlocking(false);
 						// 客户端注册到Selector
 						SelectionKey clientKey = socketChannel.register(selector, SelectionKey.OP_WRITE | SelectionKey.OP_READ);
-
 						// 分配缓存区
 						ByteBuffer buffer = ByteBuffer.allocate(100);
 						clientKey.attach(buffer);
@@ -76,10 +75,7 @@ public class NonBlockingEchoServer {
 						SocketChannel client = (SocketChannel) key.channel();
 						ByteBuffer output = (ByteBuffer) key.attachment();
 						client.read(output);
-
-						System.out.println(client.getRemoteAddress() 
-								+ " -> NonBlockingEchoServer is readable" + output.toString());
-
+						System.out.println(client.getRemoteAddress() + " -> NonBlockingEchoServer is readable" + output.toString());
 						key.interestOps(SelectionKey.OP_WRITE);
 					}
 
@@ -89,12 +85,8 @@ public class NonBlockingEchoServer {
 						ByteBuffer output = (ByteBuffer) key.attachment();
 						output.flip();
 						client.write(output);
-
-						System.out.println("NonBlockingEchoServer is writable  -> "
-								+ client.getRemoteAddress() + "：" + output.toString());
-
+						System.out.println("NonBlockingEchoServer is writable  -> " + client.getRemoteAddress() + "：" + output.toString());
 						output.compact();
-
 						key.interestOps(SelectionKey.OP_READ);
 					}
 				} catch (IOException ex) {

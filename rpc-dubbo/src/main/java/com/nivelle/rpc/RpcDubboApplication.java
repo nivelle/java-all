@@ -1,12 +1,10 @@
 package com.nivelle.rpc;
 
 import com.alibaba.dubbo.config.spring.context.annotation.EnableDubbo;
-import com.nivelle.rpc.model.Cat;
+import com.nivelle.rpc.dubbo.model.Cat;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -18,7 +16,7 @@ import java.util.Arrays;
 @SpringBootApplication
 @EnableDubbo
 //@EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class})
-@ComponentScan(basePackages = {"com.nivelle.rpc.model","com.nivelle.base.*.*","com.nivelle.rpc.**"},includeFilters ={})
+@ComponentScan(basePackages = {"com.nivelle.rpc.dubbo.model", "com.nivelle.base.*.*", "com.nivelle.rpc.**"}, includeFilters = {})
 @EnableAsync
 @EnableSwagger2 //swagger2支持
 public class RpcDubboApplication {
@@ -27,6 +25,7 @@ public class RpcDubboApplication {
         SpringApplication springApplication = new SpringApplication(RpcDubboApplication.class);
         springApplication.run(args);
     }
+
 
     @Bean
     public CommandLineRunner commandLineRunner(ApplicationContext ctx) {

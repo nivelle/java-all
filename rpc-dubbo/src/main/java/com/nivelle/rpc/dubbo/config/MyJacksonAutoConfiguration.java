@@ -1,4 +1,4 @@
-package com.nivelle.rpc.config;
+package com.nivelle.rpc.dubbo.config;
 
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;

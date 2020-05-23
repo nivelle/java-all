@@ -1,4 +1,4 @@
-package com.nivelle.rpc.service.other;
+package com.nivelle.rpc.dubbo.service.other;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;

@@ -1,8 +1,8 @@
-package com.nivelle.rpc.model;
+package com.nivelle.rpc.dubbo.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.nivelle.rpc.config.LocalDateTimeConverter;
+import com.nivelle.rpc.dubbo.config.LocalDateTimeConverter;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -28,7 +28,6 @@ public class DateTimeInfo {
      */
     @JsonSerialize(using = LocalDateTimeConverter.class)
     private LocalDateTime dateTime1;
-
     /**
      * 将LocalDateTime字段以指定格式化日期的方式返回给前端
      */

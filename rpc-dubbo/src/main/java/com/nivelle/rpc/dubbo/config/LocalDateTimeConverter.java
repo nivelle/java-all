@@ -1,4 +1,4 @@
-package com.nivelle.rpc.config;
+package com.nivelle.rpc.dubbo.config;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;

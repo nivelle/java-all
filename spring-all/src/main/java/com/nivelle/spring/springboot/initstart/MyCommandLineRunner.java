@@ -1,4 +1,4 @@
-package com.nivelle.rpc.initstart;
+package com.nivelle.spring.springboot.initstart;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;

@@ -1,8 +1,7 @@
 package com.nivelle.rpc;
-
-import com.nivelle.rpc.model.DateTimeInfo;
-import com.nivelle.rpc.service.ConcreteService;
-import com.nivelle.rpc.service.other.AsyncService;
+import com.nivelle.rpc.dubbo.model.DateTimeInfo;
+import com.nivelle.rpc.dubbo.service.other.AsyncService;
+import com.nivelle.rpc.dubbo.service.other.ConcreteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +20,6 @@ public class RpcTestController {
 
     @Autowired
     AsyncService asyncService;
-
 
     /**
      * 必须添加了@Component 或则 @Service才能添加到spring容器中,但是通过 ImportBeanDefinitionRegistrar实现动态注入bean

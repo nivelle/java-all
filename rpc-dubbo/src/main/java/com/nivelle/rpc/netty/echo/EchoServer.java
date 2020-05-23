@@ -39,12 +39,9 @@ public class EchoServer {
 			.childHandler(new EchoServerHandler()) // 指定ChannelHandler
 			.option(ChannelOption.SO_BACKLOG, 128) // 设置的ServerChannel的一些选项
 			.childOption(ChannelOption.SO_KEEPALIVE, true); // 设置的ServerChannel的子Channel的选项
- 
 			// 绑定端口，开始接收进来的连接
-			ChannelFuture f = b.bind(port).sync(); 
-
+			ChannelFuture f = b.bind(port).sync();
 			System.out.println("EchoServer已启动，端口：" + port);
-
 			// 等待服务器 socket 关闭 。
 			// 在这个例子中，这不会发生，但你可以优雅地关闭你的服务器。
 			f.channel().closeFuture().sync();

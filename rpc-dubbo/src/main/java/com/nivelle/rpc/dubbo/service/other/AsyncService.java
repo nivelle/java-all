@@ -1,4 +1,4 @@
-package com.nivelle.rpc.service.other;
+package com.nivelle.rpc.dubbo.service.other;
 
 import java.util.concurrent.Future;
 

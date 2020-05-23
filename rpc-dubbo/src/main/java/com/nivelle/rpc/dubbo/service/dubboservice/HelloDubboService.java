@@ -1,7 +1,7 @@
-package com.nivelle.spring.dubbo.provider;
+package com.nivelle.rpc.dubbo.service.dubboservice;
 
 /**
- * TODO:DOCUMENT ME!
+ * dubbo service
  *
  * @author nivell
  * @date 2019/08/16

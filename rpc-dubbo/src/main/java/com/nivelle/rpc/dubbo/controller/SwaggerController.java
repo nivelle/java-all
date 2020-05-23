@@ -1,4 +1,4 @@
-package com.nivelle.rpc.controller;
+package com.nivelle.rpc.dubbo.controller;
 
 import com.google.common.collect.Lists;
 import com.nivelle.base.pojo.Menu;

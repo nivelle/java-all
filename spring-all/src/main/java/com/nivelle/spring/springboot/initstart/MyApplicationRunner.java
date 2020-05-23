@@ -1,4 +1,4 @@
-package com.nivelle.rpc.initstart;
+package com.nivelle.spring.springboot.initstart;
 
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;

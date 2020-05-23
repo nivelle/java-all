@@ -1,4 +1,4 @@
-package com.nivelle.rpc.service;
+package com.nivelle.rpc.dubbo.service.other;
 
 import org.springframework.stereotype.Service;
 

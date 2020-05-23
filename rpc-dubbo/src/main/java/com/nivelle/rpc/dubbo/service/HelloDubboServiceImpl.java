@@ -1,7 +1,7 @@
-package com.nivelle.rpc.service;
+package com.nivelle.rpc.dubbo.service;
 
 import com.alibaba.dubbo.config.annotation.Service;
-import com.nivelle.rpc.service.dubboservice.HelloDubboService;
+import com.nivelle.rpc.dubbo.service.dubboservice.HelloDubboService;
 
 import java.net.InetAddress;
 
@@ -15,7 +15,6 @@ import java.net.InetAddress;
 
 @Service(version = "${helloDubbo.service.version}")
 public class HelloDubboServiceImpl implements HelloDubboService {
-
     @Override
     public String sayHello(String name) {
         try {

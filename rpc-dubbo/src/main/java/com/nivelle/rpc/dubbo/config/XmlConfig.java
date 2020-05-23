@@ -1,4 +1,4 @@
-package com.nivelle.rpc.config;
+package com.nivelle.rpc.dubbo.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
