@@ -1,4 +1,4 @@
-package com.nivelle.rpc.netty;
+package com.nivelle.rpc.netty.base;
 
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -16,8 +16,9 @@ public class NettyClientFilter extends ChannelInitializer<SocketChannel> {
     @Override
     protected void initChannel(SocketChannel ch) throws Exception {
         ChannelPipeline ph = ch.pipeline();
-        /*
+        /**
          * 解码和编码，应和服务端一致
+         *
          * */
         ph.addLast("decoder", new StringDecoder());
         ph.addLast("encoder", new StringEncoder());

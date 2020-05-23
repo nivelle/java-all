@@ -1,7 +1,8 @@
-package com.nivelle.rpc.netty;
+package com.nivelle.rpc.netty.base;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+
 /**
  * 客户端入站业务处理器
  *
@@ -11,7 +12,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 public class NettyClientHandler extends SimpleChannelInboundHandler<String> {
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, String msg) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, String msg) {
         System.out.println("客户端接受的消息: " + msg);
     }
 

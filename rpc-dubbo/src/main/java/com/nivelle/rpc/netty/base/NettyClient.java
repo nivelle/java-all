@@ -1,4 +1,4 @@
-package com.nivelle.rpc.netty;
+package com.nivelle.rpc.netty.base;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;

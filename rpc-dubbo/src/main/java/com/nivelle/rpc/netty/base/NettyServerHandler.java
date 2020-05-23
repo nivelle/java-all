@@ -1,4 +1,4 @@
-package com.nivelle.rpc.netty;
+package com.nivelle.rpc.netty.base;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;

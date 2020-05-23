@@ -1,8 +1,4 @@
-/**
- * Welcome to https://waylau.com
- */
 package com.nivelle.rpc.socket.nio;
-
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -12,7 +8,6 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 import java.util.Set;
-
 
 public class NonBlockingEchoServer {
 	public static int DEFAULT_PORT = 7;

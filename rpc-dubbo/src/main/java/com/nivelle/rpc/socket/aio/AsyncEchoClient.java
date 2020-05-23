@@ -1,6 +1,3 @@
-/**
- * Welcome to https://waylau.com
- */
 package com.nivelle.rpc.socket.aio;
 
 import java.io.BufferedReader;
@@ -10,13 +7,6 @@ import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
-
-/**
- * Async Echo Client.
- * 
- * @since 1.0.0 2019年9月30日
- * @author <a href="https://waylau.com">Way Lau</a>
- */
 public class AsyncEchoClient {
 
 	/**

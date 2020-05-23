@@ -1,6 +1,3 @@
-/**
- * Welcome to https://waylau.com
- */
 package com.nivelle.rpc.socket.net;
 
 import java.io.BufferedReader;

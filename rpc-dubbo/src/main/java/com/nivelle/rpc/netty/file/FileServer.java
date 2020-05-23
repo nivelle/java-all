@@ -44,13 +44,6 @@ public class FileServer {
 		    .channel(NioServerSocketChannel.class)
 		    .option(ChannelOption.SO_BACKLOG, 100)
 		    .childHandler(new ChannelInitializer<SocketChannel>() {
-				/*
-				 * (non-Javadoc)
-				 * 
-				 * @see
-				 * io.netty.channel.ChannelInitializer#initChannel(io
-				 * .netty.channel.Channel)
-				 */
 				public void initChannel(SocketChannel ch)
 					throws Exception {
 				    ch.pipeline().addLast(
