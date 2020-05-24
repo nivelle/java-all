@@ -38,6 +38,7 @@ $ sudo gpasswd -a ${USER} docker
 ```
 
 $ docker info
+
 ```
 
 ---
@@ -49,7 +50,7 @@ $ docker info
 
 ```
 
-$ sudo docker images
+$ docker images
 
 REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
 ubuntu              15.10               9b9cb95443b5        3 years ago         137MB
@@ -69,9 +70,7 @@ ubuntu              15.10               9b9cb95443b5        3 years ago         
 
 ### 删除镜像
 
-
 ```
-
 docker rmi <image id>
 
 ```
@@ -86,7 +85,7 @@ docker rmi $(docker images | grep "^<none>" | awk "{print $3}")
 ```
 
 
-### 搜索Docker Image
+### 搜索 docker Image
 
 ```
 $ docker search tutorial
@@ -106,9 +105,9 @@ docker pull 镜像源:tag
 
 ### 构建镜像
 
-#### 通过 Dockerfile 构建
-```
+#### 通过 Dockerfile 文件构建镜像
 
+```
 docker build -t imageName -f dockerfile 
 
 ```
@@ -121,9 +120,21 @@ docker build -t imageName -f dockerfile
 
 ```
 
-$ docker commit [container] [image_name]
+docker commit [container] [image_name]
+
+eg: docker commit -m="has update" -a="runoob" e218edb10161 runoob/ubuntu:v2
 
 ```
+
+- -m: 提交的描述信息
+
+- -a: 指定镜像作者
+
+- e218edb10161：容器 ID
+  
+- runoob/ubuntu:v2: 指定要创建的目标镜像名
+  
+
 
 ### 更新镜像
 
@@ -143,7 +154,7 @@ docker commit -m="has update" -a="runoob" e218edb10161 runoob/ubuntu:v2
 ### 设置镜像标签
 
 ```
-- docker tag imageId runoob/centos:dev
+- docker tag imageId[镜像id] runoob/centos[镜像源名]:dev[tag名称]
 
 ```
 
@@ -171,7 +182,6 @@ hello nivelle
 ### 将image上传到仓库
 
 ```
-
 $ docker push [image_name]
 ```
 
@@ -305,6 +315,14 @@ $ docker run -itd --name ubuntu-test ubuntu /bin/bash
 
 ```
 
+- -i: 交互式操作
+
+- -t: 终端。
+
+- ubuntu: ubuntu 镜像。
+
+- /bin/bash：放在镜像名后的是命令，这里我们希望有个交互式 Shell，因此用的是 /bin/bash。
+
 
 ### 在使用 -d 参数时，容器启动后会进入后台。此时想要进入容器
 
@@ -359,7 +377,6 @@ $ docker rm `docker ps -a -q` 删除所有容器，-q表示只返回容器的ID
 ### 查看容器内部的进程信息
 
 ```
-
 $ docker top [container]
 ```
 
@@ -410,14 +427,29 @@ $ docker run --name edison -i -t ubuntu /bin/bash
 #### docker 连接会创建一个父子关系，其中父容器可以看到子容器的信息。
  
 ```
-docker network create -d bridge 网络名
+docker network create -d bridge test-net(网络名)
+
 ```
 - -d：参数指定 Docker 网络类型，有 bridge、overlay。
   
-
+```
 docker run -itd --name test1 --network test-net ubuntu /bin/bash
 
 docker run -itd --name test2 --network test-net ubuntu /bin/bash
 
-运行两个容器,test1 和 test2 并通过test-net来进行连接
+运行两个容器,test1 d test2 并通过test-net来进行连接
 
+```
+
+```
+docker run -d -p 127.0.0.1:5001:5000 training/webapp python app.py
+
+```
+可以通过访问 127.0.0.1:5001 来访问容器的 5000 端口。默认都是绑定 tcp 端口，如果要绑定 UDP 端口，可以在端口后面加上 /udp
+
+-P :是容器内部端口随机映射到主机的高端口。
+
+-p : 是容器内部端口绑定到指定的主机端口。
+
+---
+##  

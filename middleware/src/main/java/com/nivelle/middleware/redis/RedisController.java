@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 public class RedisController {
 
     @Autowired
-    RedisCommandService redisCommandService;
+    RedisServiceApi redisCommandService;
 
     /*****************************************key操作********************************************************/
 
