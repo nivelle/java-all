@@ -1,4 +1,4 @@
-package com.nivelle.middleware.kafka;
+package com.nivelle.middleware.hbase;
 
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.HConstants;
