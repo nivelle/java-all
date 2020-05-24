@@ -1,4 +1,4 @@
-package com.nivelle.middleware.config;
+package com.nivelle.middleware.zookeeper;
 
 /**
  * Curator

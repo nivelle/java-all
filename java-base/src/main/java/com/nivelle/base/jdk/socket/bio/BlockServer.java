@@ -1,4 +1,4 @@
-package com.nivelle.rpc.socket.net;
+package com.nivelle.base.jdk.socket.bio;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -7,7 +7,7 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class BlockingEchoServer {
+public class BlockServer {
 
     public static int DEFAULT_PORT = 7;
 
@@ -28,12 +28,10 @@ public class BlockingEchoServer {
         try {
             // 服务器监听
             serverSocket = new ServerSocket(port);
-            System.out.println(
-                    "BlockingEchoServer已启动，端口：" + port);
+            System.out.println("BlockingEchoServer已启动，端口：" + port);
 
         } catch (IOException e) {
-            System.out.println(
-                    "BlockingEchoServer启动异常，端口：" + port);
+            System.out.println("BlockingEchoServer启动异常，端口：" + port);
             System.out.println(e.getMessage());
         }
 
@@ -52,12 +50,10 @@ public class BlockingEchoServer {
 
                 // 发送信息给客户端
                 out.println(inputLine);
-                System.out.println(
-                        "BlockingEchoServer -> " + clientSocket.getRemoteSocketAddress() + ":" + inputLine);
+                System.out.println("BlockingEchoServer -> " + clientSocket.getRemoteSocketAddress() + ":" + inputLine);
             }
         } catch (IOException e) {
-            System.out.println(
-                    "BlockingEchoServer异常!" + e.getMessage());
+            System.out.println("BlockingEchoServer异常!" + e.getMessage());
         }
     }
 

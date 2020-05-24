@@ -1,5 +1,5 @@
 
-package com.nivelle.rpc.socket.nio;
+package com.nivelle.base.jdk.socket.nio;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,7 +9,7 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 
-public class NonBlockingEchoClient {
+public class NoBlockClient {
 
     /**
      * @param args
@@ -42,7 +42,13 @@ public class NonBlockingEchoClient {
             String userInput;
             while ((userInput = stdIn.readLine()) != null) {
                 writeBuffer.put(userInput.getBytes());
+                /**
+                 * 设置为可读模式
+                 */
                 writeBuffer.flip();
+                /**
+                 *  将position设回0，所以你可以重读Buffer中的所有数据。limit保持不变，仍然表示能从Buffer中读取多少个元素（byte、char等）。
+                 */
                 writeBuffer.rewind();
                 /**
                  * 写消息到管道

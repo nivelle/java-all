@@ -136,4 +136,5 @@ public class Consumer {
      * clientIdPrefix：消费者Id前缀
      * beanRef：真实监听容器的BeanName，需要在 BeanName前加 "__"
      */
+
 }

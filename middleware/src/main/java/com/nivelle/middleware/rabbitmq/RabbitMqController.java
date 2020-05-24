@@ -1,6 +1,5 @@
 package com.nivelle.middleware.rabbitmq;
 
-import com.nivelle.middleware.config.RabbitMQConfig;
 import com.nivelle.middleware.pojo.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;

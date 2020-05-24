@@ -1,13 +1,7 @@
-package com.nivelle.rpc.socket.buffer;
+package com.nivelle.base.jdk.base;
 
 import java.nio.ByteBuffer;
 
-/**
- * ByteBuffer Demo.
- * 
- * @since 1.0.0 2019年10月7日
- * @author <a href="https://waylau.com">Way Lau</a>
- */
 public class ByteBufferDemo {
 
 	/**

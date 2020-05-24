@@ -1,4 +1,4 @@
-package com.nivelle.middleware.config;
+package com.nivelle.middleware.rabbitmq;
 
 
 import com.nivelle.middleware.rabbitmq.DirectMessageReceiver;

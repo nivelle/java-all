@@ -1,4 +1,4 @@
-package com.nivelle.middleware.config;
+package com.nivelle.middleware.redis;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
