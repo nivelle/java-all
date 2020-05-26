@@ -14,8 +14,7 @@ public class BlockClient {
      */
     public static void main(String[] args) {
         if (args.length != 2) {
-            System.err.println(
-                    "用法: java BlockingEchoClient <host name> <port number>");
+            System.err.println("用法: java BlockingEchoClient <host name> <port number>");
             System.exit(1);
         }
 

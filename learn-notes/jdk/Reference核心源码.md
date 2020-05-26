@@ -4,7 +4,7 @@
 
 ## Reference 生命周期状态
 
-- Active:每个引用的创建之初都是活动状态，直到下次 GC 的时候引用的强弱关系发生变化，同时不同的引用根据不同的策略改变状态；
+- Active:每个引用的创建之初都是活动状态,直到下次 GC 的时候引用的强弱关系发生变化,同时不同的引用根据不同的策略改变状态;
 
 - Pending:正准备加入引用链表;
 
@@ -19,11 +19,13 @@
 ```
 1. private T referent;//引用指向的对象，即需要Reference包装的对象;
 
-2. volatile ReferenceQueue<? super T> queue;//虽然ReferenceQueue的名字里面有队列，但是它的内部却没有包含任何队列和链表的结构；他的内部封装了单向链表的添加，删除和遍历等操作，实际作用相当于事件监听器；
+   ##虽然ReferenceQueue的名字里面有队列，但是它的内部却没有包含任何队列和链表的结构;
+   ## 他的内部封装了单向链表的添加,删除和遍历等操作，实际作用相当于事件监听器；
+2. volatile ReferenceQueue<? super T> queue;
 
 3. volatile Reference next;//引用单向链表
-
-4. transient private Reference<T> discovered; //单向链表，由 JVM 维护；在 GC 标记的时候，当引用强弱关系达到一定条件时，由 JVM 添加；需要注意的是这个字段是 transient 修饰的，但是 Reference 类声明的时候却没有实现 Serializable 接口，这是因为 Reference 子类的子类可能实现 Serializable 接口，另外一般情况下也不建议实现 Serializable 接口；
+   ## ##单向链表，由 JVM 维护;在 GC 标记的时候,当引用强弱关系达到一定条件时,由 JVM 添加;需要注意的是这个字段是 transient 修饰的，但是 Reference 类声明的时候却没有实现 Serializable 接口，这是因为 Reference 子类的子类可能实现 Serializable 接口，另外一般情况下也不建议实现 Serializable 接口；
+4. transient private Reference<T> discovered; 
 
 5. private static Reference<Object> pending = null;//表示正在排队等待入队的引用
 
@@ -51,7 +53,7 @@
         ## 启动该线程
         handler.start();
 
-        // provide access in SharedSecrets
+        // 通过JVM推测获取堆栈信息
         SharedSecrets.setJavaLangRefAccess(new JavaLangRefAccess() {
             @Override
             public boolean tryHandlePendingReference() {
@@ -100,6 +102,8 @@ private static class ReferenceHandler extends Thread {
 ```
 ### tryHandlePending,清理无效的reference
 
+#### Reference里有个静态字段 pending,同时还通过静态代码块启动了Reference-handler thread。当一个Reference的referent被回收时，垃圾回收器会把 reference 添加到pending这个链表里，然后Reference-handler thread不断的读取pending中的reference，把它加入到对应的ReferenceQueue中
+
 ```
 static boolean tryHandlePending(boolean waitForNotify) {
         Reference<Object> r;
@@ -129,8 +133,8 @@ static boolean tryHandlePending(boolean waitForNotify) {
             }
         } catch (OutOfMemoryError x) {
             // Give other threads CPU time so they hopefully drop some live references
-            // and GC reclaims some space.
-            // Also prevent CPU intensive spinning in case 'r instanceof Cleaner' above
+            // and GC reclaims【回收】 some space.
+            // Also prevent【防止】 CPU intensive【密集】 spinning【旋转】 in case 'r instanceof Cleaner' above
             // persistently throws OOME for some time...
             Thread.yield();
             // retry

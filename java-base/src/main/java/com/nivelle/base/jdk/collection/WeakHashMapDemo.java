@@ -94,15 +94,13 @@ private static class Entry<K, V> extends WeakReference<Object> implements Map.En
         this.next = next;
     }
 
-###
-    删除失效的 Entry
-
+    ### 删除失效的 Entry
     （1）当key失效的时候gc会自动把对应的Entry添加到这个引用队列中;
     （2）所有对map的操作都会直接或间接地调用到这个方法先移除失效的Entry,比如getTable(),size(),resize();
     （3）这个方法的目的就是遍历引用队列，并把其中保存的Entry从map中移除掉，具体的过程请看类注释;
     （4）从这里可以看到移除Entry的同时把value也一并置为null帮助gc清理元素,防御性编程。
 
-    private void expungeStaleEntries() {
+ private void expungeStaleEntries() {
         //遍历队列，返回可用的引用对象,同时从队列中移除
         for (Object x; (x = queue.poll()) != null; ) {
             synchronized (queue) {
