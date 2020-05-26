@@ -6,11 +6,19 @@
 
 - Active:每个引用的创建之初都是活动状态,直到下次 GC 的时候引用的强弱关系发生变化,同时不同的引用根据不同的策略改变状态;
 
+  queue = ReferenceQueue with which instance is registered, orReferenceQueue.NULL if it was not registered with a queue; next =null
+  
 - Pending:正准备加入引用链表;
 
+  queue = ReferenceQueue with which instance is registered; next = this
+  
 - Enqueued:已经加入引用链表,相当于已经注册成功等待处理;
 
+  queue = ReferenceQueue.ENQUEUED; next = Following instance in queue, or this if at end of list.
+
 - Inactive:所有的引用对象的终点,可回收状态;
+
+  queue = ReferenceQueue.NULL; next = this
 
 
 
@@ -19,12 +27,13 @@
 ```
 1. private T referent;//引用指向的对象，即需要Reference包装的对象;
 
-   ##虽然ReferenceQueue的名字里面有队列，但是它的内部却没有包含任何队列和链表的结构;
+   ## 虽然ReferenceQueue的名字里面有队列，但是它的内部却没有包含任何队列和链表的结构;
    ## 他的内部封装了单向链表的添加,删除和遍历等操作，实际作用相当于事件监听器；
 2. volatile ReferenceQueue<? super T> queue;
 
 3. volatile Reference next;//引用单向链表
-   ## ##单向链表，由 JVM 维护;在 GC 标记的时候,当引用强弱关系达到一定条件时,由 JVM 添加;需要注意的是这个字段是 transient 修饰的，但是 Reference 类声明的时候却没有实现 Serializable 接口，这是因为 Reference 子类的子类可能实现 Serializable 接口，另外一般情况下也不建议实现 Serializable 接口；
+   ##单向链表，由 JVM 维护;在 GC 标记的时候,当引用强弱关系达到一定条件时,由 JVM 添加;需要注意的是这个字段是 transient 修饰的，
+   # 但是 Reference 类声明的时候却没有实现 Serializable 接口，这是因为 Reference 子类的子类可能实现 Serializable 接口，另外一般情况下也不建议实现 Serializable 接口；
 4. transient private Reference<T> discovered; 
 
 5. private static Reference<Object> pending = null;//表示正在排队等待入队的引用
@@ -187,10 +196,41 @@ boolean enqueue(Reference<? extends T> r) { /* Called only by Reference class */
     }
 ```
 
-### reallyPoll 出队相关操作
+### remove
 
 ```
-private Reference<? extends T> reallyPoll() {       /* Must hold lock */
+public Reference<? extends T> remove(long timeout)throws IllegalArgumentException, InterruptedException
+        {
+        if (timeout < 0) {
+            throw new IllegalArgumentException("Negative timeout value");
+        }
+        synchronized (lock) {
+            ## 从队列中取出一个元素
+            Reference<? extends T> r = reallyPoll();
+            ## 如果不为空则直接返回
+            if (r != null) return r;
+            long start = (timeout == 0) ? 0 : System.nanoTime();
+            for (;;) {
+                ## 否则等待，由enqueue时notify唤醒 
+                lock.wait(timeout);
+                r = reallyPoll();
+                if (r != null) return r;
+                if (timeout != 0) {
+                    long end = System.nanoTime();
+                    timeout -= (end - start) / 1000_000;
+                    if (timeout <= 0) return null;
+                    start = end;
+                }
+            }
+        }
+    }
+
+```
+#### reallyPoll 出队相关操作
+
+```
+private Reference<? extends T> reallyPoll() {
+        ## 获取头元素 
         Reference<? extends T> r = head;
         if (r != null) {
             @SuppressWarnings("unchecked")
