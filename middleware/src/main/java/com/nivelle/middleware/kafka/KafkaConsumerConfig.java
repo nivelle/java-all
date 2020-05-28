@@ -69,6 +69,10 @@ public class KafkaConsumerConfig {
      *
      * 8. connections.max.idle.ms: kafka会定期关闭空闲socket导致下次consumer处理请求时需要重新创建连向broker的socket连接。当前默认值是9分钟，如果用户实际环境中不在乎这些socket资源开销，比较推荐该参数值为-1，即不要关闭这些空连接。
      *
+     * 9. replica.lag.time.max.ms: 默认值10秒，副本滞后的最大时间。
+     *
+     * 10. min.insync.replicas:min.insync.replicas这个参数设定ISR中的最小副本数是多少，默认值为1，当且仅当request.required.acks参数设置为-1时，此参数才生效
+     *
      *
      */
     public Map<String, Object> ConsumerConfigs() {

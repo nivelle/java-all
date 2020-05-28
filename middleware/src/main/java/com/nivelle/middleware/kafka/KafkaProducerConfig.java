@@ -53,6 +53,7 @@ public class KafkaProducerConfig {
      *
      * 6. request.timeout.ms:当produce发送请求给broker后，broker需要在规定的时间范围内将处理结果返还给produce。默认30s,如果broker在30秒内都没有给produce发送响应，那么producer就会认为该请求超时了，并在回调函数中显示地抛出TimeoutException异常交由用户处理。
      *
+     * 7. log.index.interval.bytes:默认值4kb，kafka分区至少写入4KB 日志才添加一个索引项。
      */
     public Map<String, Object> producerConfigs() {
 
