@@ -382,6 +382,9 @@ docker整合【下载:docker pull nivelle/nivelle:1.0.2】【运行:sudo docker 
 
 ✅ 【抽象工厂模式】
 
+✅ 【观察者模式】
+
+
 -------------------------
 
 #### 基础学习
