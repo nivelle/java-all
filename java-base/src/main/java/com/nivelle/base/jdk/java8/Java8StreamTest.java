@@ -6,6 +6,9 @@ import com.nivelle.base.pojo.Foo;
 import com.nivelle.base.pojo.User;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -49,7 +52,7 @@ public class Java8StreamTest {
      */
     public static void main(String[] args) {
 
-        Stream.of("a1", "a2", "a3").filter(x->x.equals("a2"))
+        Stream.of("a1", "a2", "a3").filter(x -> x.equals("a2"))
                 .findFirst()
                 .ifPresent(System.err::println);
         /**
@@ -344,6 +347,35 @@ public class Java8StreamTest {
 
         fooList.forEach(f -> IntStream.range(1, 4).forEach(i -> f.bars.add(new Bar("Bar" + i + " <- " + f.name))));
         fooList.stream().flatMap(f -> f.bars.stream()).forEach(b -> System.out.println(b.name));
+
+
+        User user11 = new User(1, "nivelle");
+        User user22 = new User(2, "nivelle");
+        User user33 = new User(2, "nivelle");
+        User user44 = new User(100, "jessy");
+        List<User> testList = Lists.newArrayList();
+        testList.add(user11);
+        testList.add(user22);
+        testList.add(user33);
+        testList.add(user44);
+        Map<String, Long> countMap = testList.stream().collect(
+                Collectors.groupingBy(User::getName, Collectors.counting()));
+        System.out.println("分组测试计数测试：" + countMap);
+
+
+        List<User> distList = testList.stream().filter(distinctByKey(p -> p.getName())).collect(Collectors.toList());
+        System.out.println(distList.size());
+
+        Map<String, Long> countMap1 = testList.stream().collect(
+                Collectors.groupingBy(User::getName, Collectors.summingLong(User::getAge)));
+        System.out.println(countMap1);
+        long totalAge = testList.stream().collect(Collectors.summingLong(x->x.getAge()));
+        System.out.println(totalAge);
+    }
+
+    public static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
+        Set<Object> seen = ConcurrentHashMap.newKeySet();
+        return t -> seen.add(keyExtractor.apply(t));
     }
 
 
