@@ -1,4 +1,4 @@
-package com.nivelle.rpc.netty.echo;
+package com.nivelle.rpc.netty.udp;
 
 import java.io.BufferedReader;
 import java.io.IOException;

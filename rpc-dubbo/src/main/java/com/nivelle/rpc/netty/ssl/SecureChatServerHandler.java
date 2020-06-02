@@ -1,4 +1,4 @@
-package com.nivelle.rpc.netty.securechat;
+package com.nivelle.rpc.netty.ssl;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;

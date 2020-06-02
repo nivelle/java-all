@@ -1,4 +1,4 @@
-package com.nivelle.rpc.netty.websocketchat;
+package com.nivelle.rpc.netty.websocket;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;

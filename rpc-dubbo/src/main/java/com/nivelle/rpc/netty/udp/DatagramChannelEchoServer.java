@@ -1,7 +1,7 @@
 /**
  * Welcome to https://waylau.com
  */
-package com.nivelle.rpc.netty.echo;
+package com.nivelle.rpc.netty.udp;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;

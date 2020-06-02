@@ -1,4 +1,4 @@
-package com.nivelle.rpc.netty.securechat;
+package com.nivelle.rpc.netty.ssl;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.EventLoopGroup;

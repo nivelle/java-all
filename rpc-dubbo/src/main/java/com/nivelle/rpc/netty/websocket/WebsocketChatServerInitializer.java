@@ -1,4 +1,4 @@
-package com.nivelle.rpc.netty.websocketchat;
+package com.nivelle.rpc.netty.websocket;
 
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;

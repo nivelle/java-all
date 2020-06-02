@@ -1,4 +1,4 @@
-package com.nivelle.rpc.netty.echo;
+package com.nivelle.rpc.netty.udp;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;

@@ -19,9 +19,9 @@ public class NettyClient {
     public static String host = "127.0.0.1";
     public static int port = 6789;
     /**
-     * 反应器类型：通过nio方式来接收连接和处理连接
+     * 反应器类型：通过nio方式来接收连接和处理连接(单线程模式)
      */
-    private static EventLoopGroup groupBoss = new NioEventLoopGroup();
+    private static EventLoopGroup groupBoss = new NioEventLoopGroup(1);
 
     /**
      * 启动类:组装类和集成器

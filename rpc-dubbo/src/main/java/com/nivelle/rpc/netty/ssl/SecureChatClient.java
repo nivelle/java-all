@@ -1,4 +1,4 @@
-package com.nivelle.rpc.netty.securechat;
+package com.nivelle.rpc.netty.ssl;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -12,9 +12,7 @@ import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
-/**
- * Simple SSL chat client 
- */
+
 public final class SecureChatClient {
 
     static final String HOST = System.getProperty("host", "127.0.0.1");

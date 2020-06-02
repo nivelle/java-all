@@ -33,16 +33,26 @@ public class BlockServer {
             System.out.println(e.getMessage());
         }
         try {
-            // 接受客户端建立链接，生成Socket实例
+            /**
+             * ServerSocket上的accept()方法将会一直阻塞到一个连接建立❶，随后返回一个新的Socket用于客户端和服务器之间的通信。该ServerSocket将继续监听传入的连接
+             */
             Socket clientSocket = serverSocket.accept();
             // 接收客户端的信息
             BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             String inputLine;
             //输出流 响应给请求
             PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+            /**
+             * “readLine()方法将会阻塞，直到在❸处一个由换行符或者回车符结尾的字符串被读取”
+             */
             while ((inputLine = in.readLine()) != null) {
+                System.out.println("收到数据：" + inputLine);
+                if (inputLine.equals("quit")) {
+                    System.out.println("响应退出");
+                    break;
+                }
                 // 发送信息给客户端
-                out.println(inputLine);
+                out.println("服务端收到信息:" + inputLine);
                 System.out.println("发送信息给客户端 -> " + clientSocket.getRemoteSocketAddress() + ":" + inputLine);
             }
         } catch (IOException e) {

@@ -15,7 +15,12 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
  */
 public class NettyServer {
     private static final int port = 6789;
+    /**
+     * 主从多线程模式
+     */
+    //仅处理acceptor, 不设置线程的话 线程数会通过CPU来计算
     private static EventLoopGroup boss = new NioEventLoopGroup(1);
+    //worker
     private static EventLoopGroup worker = new NioEventLoopGroup();
 
     private static ServerBootstrap b = new ServerBootstrap();
@@ -36,7 +41,7 @@ public class NettyServer {
              * 开启TCP心跳检测机制
              */
             b.option(ChannelOption.SO_KEEPALIVE,true);
-            // 异步地绑定服务器；调用 sync()方法阻塞  等待直到绑定完成
+            // 异步地绑定服务器,调用 sync()方法阻塞  等待直到绑定完成
             ChannelFuture f = b.bind(port).sync();
             System.out.println("服务端启动成功,端口是:" + port);
             // 获取 Channel 的  CloseFuture，并且阻塞当前线程直到它完成
