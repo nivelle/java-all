@@ -7,9 +7,6 @@ import io.netty.buffer.Unpooled;
 
 public class ByteBufCompositeBufferDemo {
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 
 		// 创建一个堆缓冲区
@@ -46,12 +43,6 @@ public class ByteBufCompositeBufferDemo {
 
 		}
 	}
-
-	/**
-	 * 打印出Buffer的信息
-	 * 
-	 * @param buffer
-	 */
 	private static void printBuffer(byte[] array, int offset, int len) {
 		System.out.println("array：" + array);
 		System.out.println("array->String：" + new String(array));

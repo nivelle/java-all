@@ -43,6 +43,7 @@ public class NoBlockServer {
 
         while (true) {
             try {
+                //阻塞直到有事件触发
                 selector.select();
             } catch (IOException e) {
                 System.out.println("NonBlockingEchoServer异常!" + e.getMessage());
@@ -71,10 +72,10 @@ public class NoBlockServer {
                         SocketChannel client = (SocketChannel) key.channel();
                         ByteBuffer output = (ByteBuffer) key.attachment();
                         client.read(output);
-                        System.out.println(client.getRemoteAddress() + " -> 可读事件发生:" + output.toString());
+                        System.out.println("远程ip地址:" + client.getRemoteAddress() + " -> 可读事件发生:" + output.toString());
                         key.interestOps(SelectionKey.OP_WRITE);
                         String string = new String(output.array());
-                        System.out.println(string.intern());
+                        System.out.println("可读事件发生时的消息内容:" + string.intern());
                     }
 
                     // 可写
@@ -83,7 +84,7 @@ public class NoBlockServer {
                         ByteBuffer output = (ByteBuffer) key.attachment();
                         output.flip();
                         client.write(output);
-                        System.out.println("可写事件发生:" + client.getRemoteAddress() + "：" + output.toString());
+                        System.out.println("远程ip地址:" + "可写事件发生:" + client.getRemoteAddress() + "写的内容是：" + output.toString());
                         output.compact();
                         key.interestOps(SelectionKey.OP_READ);
                     }

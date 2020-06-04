@@ -27,24 +27,19 @@ public class NoBlockClient {
         SocketChannel socketChannel = null;
         try {
             socketChannel = SocketChannel.open();
+            //绑定ip和端口
             socketChannel.connect(new InetSocketAddress(hostName, portNumber));
         } catch (IOException e) {
             System.err.println("NonBlockingEchoClient异常： " + e.getMessage());
             System.exit(1);
         }
-
         ByteBuffer writeBuffer = ByteBuffer.allocate(32);
         ByteBuffer readBuffer = ByteBuffer.allocate(32);
-        /**
-         *接受终端输入
-         */
         try (BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in))) {
             String userInput;
             while ((userInput = stdIn.readLine()) != null) {
                 writeBuffer.put(userInput.getBytes());
-                /**
-                 * 设置为可读模式
-                 */
+                //设置为可读模式
                 writeBuffer.flip();
                 /**
                  *  将position设回0，所以你可以重读Buffer中的所有数据。limit保持不变，仍然表示能从Buffer中读取多少个元素（byte、char等）。

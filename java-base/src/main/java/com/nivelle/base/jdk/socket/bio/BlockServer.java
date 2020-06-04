@@ -12,7 +12,7 @@ public class BlockServer {
     public static int DEFAULT_PORT = 8080;
 
     /**
-     * @param args
+     * 1. 阻塞IO的读、写、连接都会阻塞整个线程
      */
     public static void main(String[] args) {
 
@@ -33,30 +33,40 @@ public class BlockServer {
             System.out.println(e.getMessage());
         }
         try {
-            /**
-             * ServerSocket上的accept()方法将会一直阻塞到一个连接建立❶，随后返回一个新的Socket用于客户端和服务器之间的通信。该ServerSocket将继续监听传入的连接
-             */
-            Socket clientSocket = serverSocket.accept();
-            // 接收客户端的信息
-            BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            String inputLine;
-            //输出流 响应给请求
-            PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
-            /**
-             * “readLine()方法将会阻塞，直到在❸处一个由换行符或者回车符结尾的字符串被读取”
-             */
-            while ((inputLine = in.readLine()) != null) {
+            //意味着主线程一直在循环运行
+            //某个连接处理导致服务端无法响应. 由于整个接收请求和处理请求都是在同一个线程里（本示例是主线程）当处理客户端请求这一步发生了阻塞，或者说慢了，后来的所有连接请求都会被阻塞住
+            while (true) {
+                /**
+                 * ServerSocket上的accept()方法将会一直阻塞到一个连接建立❶，随后返回一个新的Socket用于客户端和服务器之间的通信。该ServerSocket将继续监听传入的连接
+                 *
+                 * 如果accept 在循环外面的话，则会阻塞其他链接，第一个线程处理未结束则其他链接
+                 */
+                Socket clientSocket = serverSocket.accept();
+                // 接收客户端的信息
+                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                //输出流 响应给请求
+                PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+                /**
+                 * “readLine()方法将会阻塞，直到在❸处一个由换行符或者回车符结尾的字符串被读取”
+                 */
+                String inputLine = in.readLine();
                 System.out.println("收到数据：" + inputLine);
                 if (inputLine.equals("quit")) {
                     System.out.println("响应退出");
                     break;
                 }
-                // 发送信息给客户端
-                out.println("服务端收到信息:" + inputLine);
+                //使用线程也可以使用线程池
+//                new Thread(() -> {
+//                    // 发送信息给客户端
+//                    out.println(Thread.currentThread().getName()+"处理服务端收到的信息:" + inputLine);
+//                    System.out.println("发送信息给客户端 -> " + clientSocket.getRemoteSocketAddress() + ":" + inputLine);
+//                }).start();
+
+                out.println(Thread.currentThread().getName()+"处理服务端收到的信息:" + inputLine);
                 System.out.println("发送信息给客户端 -> " + clientSocket.getRemoteSocketAddress() + ":" + inputLine);
             }
         } catch (IOException e) {
-            System.out.println("发送信息给客户端 异常!" + e.getMessage());
+            System.out.println("发送信息给客户端 异常!" + e);
         }
     }
 

@@ -1,17 +1,8 @@
-/**
- * Welcome to https://waylau.com
- */
 package com.nivelle.rpc.netty.buffer;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
-/**
- * ByteBuf with Direct Buffer Mode Demo.
- * 
- * @since 1.0.0 2019年10月7日
- * @author <a href="https://waylau.com">Way Lau</a>
- */
 public class ByteBufDirectBufferDemo {
 
 	/**
@@ -42,11 +33,6 @@ public class ByteBufDirectBufferDemo {
 		}
 	}
 
-	/**
-	 * 打印出Buffer的信息
-	 * 
-	 * @param buffer
-	 */
 	private static void printBuffer(byte[] array, int offset, int len) {
 		System.out.println("array：" + array);
 		System.out.println("array->String：" + new String(array));
