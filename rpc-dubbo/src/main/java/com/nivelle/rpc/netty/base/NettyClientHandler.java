@@ -1,7 +1,9 @@
 package com.nivelle.rpc.netty.base;
 
+import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.util.CharsetUtil;
 
 /**
  * 客户端入站业务处理器
@@ -18,8 +20,9 @@ public class NettyClientHandler extends SimpleChannelInboundHandler<String> {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        System.out.println("正在连接... ");
-        super.channelActive(ctx);
+        System.out.println("客户端正在连接... ");
+        ctx.writeAndFlush(Unpooled.copiedBuffer("netty rocks", CharsetUtil.UTF_8));
+
     }
 
     @Override

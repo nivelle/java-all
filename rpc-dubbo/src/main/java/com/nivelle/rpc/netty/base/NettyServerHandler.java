@@ -21,16 +21,16 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String> {
      * 收到消息时，返回信息
      */
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, String msg)
-            throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, String msg) {
         // 收到消息直接打印输出
-        System.out.println("收到的消息:" + msg + "当前条数目:" + (++count));
+        System.out.println("服务端收到的消息:" + msg + "当前条数目:" + (++count));
         //服务端断开的条件
         if ("quit".equals(msg)) {
             ctx.close();
         }
         // 返回客户端消息
-        ctx.writeAndFlush("收到消息:" + msg + ",当前的时间是:" + new Date());
+        ctx.writeAndFlush("服务端返回消息给客户端:" + msg + ",当前的时间是:" + new Date());
+        ctx.fireChannelRead(msg);
     }
 
     /**
@@ -40,6 +40,6 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String> {
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         System.out.println("连接的客户端地址:" + ctx.channel().remoteAddress());
         ctx.writeAndFlush("客户端" + InetAddress.getLocalHost().getHostName() + "成功与服务端建立连接！ ");
-        super.channelActive(ctx);
     }
+
 }

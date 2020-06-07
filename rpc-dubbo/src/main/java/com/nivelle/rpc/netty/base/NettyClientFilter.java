@@ -22,6 +22,7 @@ public class NettyClientFilter extends ChannelInitializer<SocketChannel> {
          * */
         ph.addLast("decoder", new StringDecoder());
         ph.addLast("encoder", new StringEncoder());
+        //在 ChannelPipeline 中安装 ChannelHandler
         ph.addLast("handler", new NettyClientHandler());
     }
 }

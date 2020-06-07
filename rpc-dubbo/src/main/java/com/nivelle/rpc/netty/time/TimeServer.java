@@ -9,12 +9,6 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 
-/**
- * Time Server.
- * 
- * @since 1.0.0 2019年10月7日
- * @author <a href="https://waylau.com">Way Lau</a>
- */
 public class TimeServer {
 
     private int port;

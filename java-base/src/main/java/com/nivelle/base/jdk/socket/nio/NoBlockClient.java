@@ -41,21 +41,13 @@ public class NoBlockClient {
                 writeBuffer.put(userInput.getBytes());
                 //设置为可读模式
                 writeBuffer.flip();
-                /**
-                 *  将position设回0，所以你可以重读Buffer中的所有数据。limit保持不变，仍然表示能从Buffer中读取多少个元素（byte、char等）。
-                 */
+                // 将position设回0，所以你可以重读Buffer中的所有数据。limit保持不变，仍然表示能从Buffer中读取多少个元素（byte、char等）。
                 writeBuffer.rewind();
-                /**
-                 * 写消息到管道
-                 */
+                 //写消息到管道
                 socketChannel.write(writeBuffer);
-                /**
-                 *管道读消息
-                 */
+                //管道读消息
                 socketChannel.read(readBuffer);
-                /**
-                 *清理缓冲区
-                 */
+                 //清理缓冲区
                 writeBuffer.clear();
                 readBuffer.clear();
                 System.out.println("echo: " + userInput);

@@ -40,17 +40,11 @@ public class AsyncEchoClient {
 				writeBuffer.put(userInput.getBytes());
 				writeBuffer.flip();
 				writeBuffer.rewind();
-
-				// 写消息到管道
 				socketChannel.write(writeBuffer);
-
-				// 管道读消息
 				socketChannel.read(readBuffer);
-
-				// 清理缓冲区
 				writeBuffer.clear();
 				readBuffer.clear();
-				System.out.println("echo: " + userInput);
+				System.out.println("发送消息: " + userInput);
 			}
 		} catch (UnknownHostException e) {
 			System.err.println("不明主机，主机名为： " + hostName);
