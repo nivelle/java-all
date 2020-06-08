@@ -1,4 +1,4 @@
-package com.nivelle.rpc.netty.heartbeat;
+package com.nivelle.rpc.netty.base.server;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;

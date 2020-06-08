@@ -1,10 +1,11 @@
-package com.nivelle.rpc.netty.base;
+package com.nivelle.rpc.netty.base.server;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
 import java.net.InetAddress;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * 服务端出站处理器
@@ -23,13 +24,13 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, String msg) {
         // 收到消息直接打印输出
-        System.out.println("服务端收到的消息:" + msg + "当前条数目:" + (++count));
+        System.out.println("NettyServerHandler可读时收到消息:" + msg + "当前条数目:" + (++count));
         //服务端断开的条件
         if ("quit".equals(msg)) {
             ctx.close();
         }
         // 返回客户端消息
-        ctx.writeAndFlush("服务端返回消息给客户端:" + msg + ",当前的时间是:" + new Date());
+        ctx.writeAndFlush("NettyServerHandler call back client:" + "DiscardServerHandler 收到数据"+msg + ",当前的时间是:" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         ctx.fireChannelRead(msg);
     }
 
@@ -39,7 +40,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String> {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         System.out.println("连接的客户端地址:" + ctx.channel().remoteAddress());
-        ctx.writeAndFlush("客户端" + InetAddress.getLocalHost().getHostName() + "成功与服务端建立连接！ ");
+        ctx.writeAndFlush("NettyServerHandler 建立连接时:" + ",当前的时间是:" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
     }
 
 }

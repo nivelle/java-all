@@ -1,4 +1,4 @@
-package com.nivelle.rpc.netty.base;
+package com.nivelle.rpc.netty.base.client;
 
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
@@ -21,8 +21,7 @@ public class NettyClientHandler extends SimpleChannelInboundHandler<String> {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         System.out.println("客户端正在连接... ");
-        ctx.writeAndFlush(Unpooled.copiedBuffer("netty rocks", CharsetUtil.UTF_8));
-
+        ctx.writeAndFlush(Unpooled.copiedBuffer("客户端建立链接后默认发送消息", CharsetUtil.UTF_8));
     }
 
     @Override

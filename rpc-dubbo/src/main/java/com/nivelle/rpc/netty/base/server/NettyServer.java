@@ -1,4 +1,4 @@
-package com.nivelle.rpc.netty.base;
+package com.nivelle.rpc.netty.base.server;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -6,6 +6,8 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.logging.LogLevel;
+import io.netty.handler.logging.LoggingHandler;
 
 /**
  * netty服务端
@@ -36,13 +38,17 @@ public class NettyServer {
              * 设置nio类型的通道
              */
             b.channel(NioServerSocketChannel.class);
-
+            /**
+             * 指定ChannelInitializer 每个连接都调用它
+             */
             b.childHandler(new NettyServerFilter());
             //b.childHandler(new DiscardServerHandler());
             /**
              * 开启TCP心跳检测机制
              */
-            b.option(ChannelOption.SO_KEEPALIVE,true);
+            b.option(ChannelOption.SO_KEEPALIVE, true);
+            b.option(ChannelOption.SO_BACKLOG, 100)
+                    .handler(new LoggingHandler(LogLevel.INFO));
             // 异步地绑定服务器,调用 sync()方法阻塞  等待直到绑定完成
             ChannelFuture f = b.bind(port).sync();
             System.out.println("服务端启动成功,端口是:" + port);

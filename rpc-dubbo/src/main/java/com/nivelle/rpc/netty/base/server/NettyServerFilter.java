@@ -1,4 +1,4 @@
-package com.nivelle.rpc.netty.base;
+package com.nivelle.rpc.netty.base.server;
 
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -23,11 +23,13 @@ public class NettyServerFilter extends ChannelInitializer<SocketChannel> {
         // 解码和编码，应和客户端一致
         ph.addLast("decoder", new StringDecoder());
         ph.addLast("encoder", new StringEncoder());
-
+        //添加一个ChannelInboundHandlerAdapter 以拦截和处理事件
         ph.addLast(new NettyServerHandler());
 
         //将自定义的 ChannelHandler 添加到Channel的ChannelPipeline中
         ph.addLast(new DiscardServerHandler());
+
+        ph.addLast(new TimeServerHandler());
 
         /**
          * 1. DelimiterBasedFrameDecoder 是基于消息边界方式进行粘包拆包处理的。
@@ -40,5 +42,6 @@ public class NettyServerFilter extends ChannelInitializer<SocketChannel> {
         ph.addLast(new FixedLengthFrameDecoder(2));
         //字节解码器 ,其中2是规定一行数据最大的字节数。  用于解决拆包问题
         ph.addLast(new LineBasedFrameDecoder(3));
+
     }
 }
