@@ -7,6 +7,9 @@ import io.netty.handler.codec.FixedLengthFrameDecoder;
 import io.netty.handler.codec.LineBasedFrameDecoder;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
+import io.netty.handler.timeout.IdleStateHandler;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * 服务端过滤器
@@ -16,6 +19,10 @@ import io.netty.handler.codec.string.StringEncoder;
  */
 public class NettyServerFilter extends ChannelInitializer<SocketChannel> {
 
+
+    private static final int READ_IDLE_TIME_OUT = 4; // 读超时
+    private static final int WRITE_IDLE_TIME_OUT = 5;// 写超时
+    private static final int ALL_IDLE_TIME_OUT = 7; // 所有超时
     @Override
     protected void initChannel(SocketChannel ch) throws Exception {
         ChannelPipeline ph = ch.pipeline();
@@ -42,6 +49,7 @@ public class NettyServerFilter extends ChannelInitializer<SocketChannel> {
         ph.addLast(new FixedLengthFrameDecoder(2));
         //字节解码器 ,其中2是规定一行数据最大的字节数。  用于解决拆包问题
         ph.addLast(new LineBasedFrameDecoder(3));
-
+        ph.addLast(new IdleStateHandler(READ_IDLE_TIME_OUT, WRITE_IDLE_TIME_OUT, ALL_IDLE_TIME_OUT, TimeUnit.SECONDS));
+        ph.addLast(new HeartbeatServerHandler());
     }
 }

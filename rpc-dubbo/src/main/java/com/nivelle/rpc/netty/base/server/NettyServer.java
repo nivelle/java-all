@@ -47,6 +47,13 @@ public class NettyServer {
              * 开启TCP心跳检测机制
              */
             b.option(ChannelOption.SO_KEEPALIVE, true);
+            /**
+             * ChannelOption.SO_BACKLOG对应的是tcp/ip协议listen函数中的backlog参数，函数listen(int socketfd,int backlog)用来初始化服务端可连接队列,
+             *
+             * 服务端处理客户端连接请求是顺序处理的，所以同一时间只能处理一个客户端连接，多个客户端来的时候，服务端将不能处理的客户端连接请求放在队列中等待处理,
+             *
+             * backlog参数指定了队列的大小
+             */
             b.option(ChannelOption.SO_BACKLOG, 100)
                     .handler(new LoggingHandler(LogLevel.INFO));
             // 异步地绑定服务器,调用 sync()方法阻塞  等待直到绑定完成

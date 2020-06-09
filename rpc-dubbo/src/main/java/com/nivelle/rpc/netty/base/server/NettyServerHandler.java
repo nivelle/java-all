@@ -3,7 +3,6 @@ package com.nivelle.rpc.netty.base.server;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
-import java.net.InetAddress;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -30,7 +29,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String> {
             ctx.close();
         }
         // 返回客户端消息
-        ctx.writeAndFlush("NettyServerHandler call back client:" + "DiscardServerHandler 收到数据"+msg + ",当前的时间是:" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        ctx.writeAndFlush("NettyServerHandler call back client:" + "DiscardServerHandler 收到数据" + msg + ",当前的时间是:" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         ctx.fireChannelRead(msg);
     }
 

@@ -55,6 +55,9 @@ public class NoBlockServer {
                 iterator.remove();
                 try {
                     // 可连接
+                    /**
+                     * “请求在接受新连接并创建Channel时获得通知”
+                     */
                     if (key.isAcceptable()) {
                         ServerSocketChannel server = (ServerSocketChannel) key.channel();
                         SocketChannel socketChannel = server.accept();
@@ -66,6 +69,12 @@ public class NoBlockServer {
                         // 分配缓存区
                         ByteBuffer buffer = ByteBuffer.allocate(100);
                         clientKey.attach(buffer);
+                    }
+                    /**
+                     * “请求在建立一个连接时获得通知”
+                     */
+                    if (key.isConnectable()) {
+                        System.out.println("OP_CONNECT 事件：" + key);
                     }
                     // 可读
                     if (key.isReadable()) {
