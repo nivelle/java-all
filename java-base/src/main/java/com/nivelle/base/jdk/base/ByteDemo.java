@@ -233,6 +233,7 @@ public class ByteDemo {
 
 
         System.out.println(0>>2);
+
     }
 
 }

@@ -371,6 +371,9 @@ public class Java8StreamTest {
         System.out.println(countMap1);
         long totalAge = testList.stream().collect(Collectors.summingLong(x->x.getAge()));
         System.out.println(totalAge);
+
+
+
     }
 
     public static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
@@ -394,6 +397,8 @@ public class Java8StreamTest {
         //不会改变数据源
         users.forEach(System.out::println);
     }
+
+
 
 
 }
