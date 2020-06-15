@@ -55,13 +55,17 @@ Date:   Mon Jun 15 18:41:15 2020 +0800
 
 - git log --follow [文件路径] //显示某个文件的版本历史，包括文件改名
 
-- 
+- git log [tag] HEAD --pretty=format:%s //显示某个commit之后的所有变动，每个commit占据一行
+
+- git log -5 --pretty --oneline //显示过去5次提交
+
+- git diff //显示缓存区与工作区不同
 
 ### 撤销
 
 - git checkout [file];//恢复暂存区的指定文件到工作区 撤销了 add 操作
 
-- git reset [commit] //重置当前分支的指针为指定commit，同时重置暂存区，但工作区不变
+- git reset [commit] //重置当前分支的指针为指定commit,同时重置暂存区,但工作区不变
 
 - git stash ;//暂时将未提交的变化移除，稍后再移入
 
@@ -100,17 +104,17 @@ Date:   Mon Jun 15 18:41:15 2020 +0800
 
 - git reset -- hard [commitId];//重置当前分支的HEAD为指定commit，同时重置暂存区和工作区，与指定commit一致
 
-#### branch
+### branch
 
 ```
 git  chekout -b <新分支名> //新建一个分支，并切换到该分支
 
 ```
 
-#### tag
+### tag
 
 
-#### remote
+### remote
 
 - git remote -v ;//显示所有远程分支
 ```
@@ -127,6 +131,5 @@ origin  git@github.com:nivelle/programdayandnight.git (push)
 
 - git push [remote] --all ;//推送所有分支到远程仓库
 
-
-
+- git blame [file] ;//显示指定文件是什么人在什么时间修改过
 
