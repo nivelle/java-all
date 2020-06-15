@@ -71,6 +71,8 @@ git status
 
 ```
 
+- git revert [commit] ;//新建一个commit，用来撤销指定commit;后者的所有变化都将被前者抵消，并且应用到当前分支
+
 #### branch
 
 ```
