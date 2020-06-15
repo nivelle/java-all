@@ -1,5 +1,6 @@
 
-#### branch
+[阮一峰的网络日志 ](http://www.ruanyifeng.com/blog/2015/12/git-cheat-sheet.html)
+#### 信息查看
 
 - git status //git status 命令用于查看项目的当前状态。
               
@@ -29,4 +30,23 @@ git status
 
 ```
 
+#### 撤销
+
+```
+git checkout [file];//恢复暂存区的指定文件到工作区 撤销了 add 操作
+
+```
+
+```
+git reset [commit] //重置当前分支的指针为指定commit，同时重置暂存区，但工作区不变
+```
+
+#### branch
+
+```
+git  chekout -b <新分支名> //新建一个分支，并切换到该分支
+```
+
 #### tag
+
+
