@@ -1,4 +1,4 @@
-package com.nivelle.spring.springboot.shutdown;
+package com.nivelle.spring.springcore.listener.springevent;
 
 
 import lombok.extern.slf4j.Slf4j;

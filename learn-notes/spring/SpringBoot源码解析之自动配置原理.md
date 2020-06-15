@@ -31,14 +31,14 @@
          - AnnotationAttributes attributes = getAttributes(annotationMetadata);
        
          - List<String> configurations = getCandidateConfigurations(annotationMetadata, attributes);
-         
-           - List<String> configurations = SpringFactoriesLoader.loadFactoryNames(getSpringFactoriesLoaderFactoryClass(),getBeanClassLoader());//自动配置加载默认的
-             
-             - loadSpringFactories(classLoader).getOrDefault(factoryTypeName, Collections.emptyList());//加载META-INF/spring.factories下的自动配置
-
-         - configurations = removeDuplicates(configurations);//使用 LinkedHashSet实现移除冲突的配置
-
-         - Set<String> exclusions = getExclusions(annotationMetadata, attributes);//获取配置除外的配置
+             //自动配置加载默认的
+           - List<String> configurations = SpringFactoriesLoader.loadFactoryNames(getSpringFactoriesLoaderFactoryClass(),getBeanClassLoader());
+               //加载META-INF/spring.factories下的自动配置
+             - loadSpringFactories(classLoader).getOrDefault(factoryTypeName, Collections.emptyList());
+           //使用 LinkedHashSet实现移除冲突的配置
+         - configurations = removeDuplicates(configurations);
+           //获取配置除外的配置
+         - Set<String> exclusions = getExclusions(annotationMetadata, attributes);
        
          - checkExcludedClasses(configurations, exclusions);//检查要排除的配置是否是自动配置，否则跑出异常
        
@@ -68,7 +68,7 @@
 ### 3. 应用启动时 ConfigurationClassPostProcessor 的注册 [SpringBoot run()方法prepareContext创建BeanDefinitionReader时构造ConfigurationClassPostProcessor注册](./SpringBoot源码解析之run()方法.md)
 
 
-1. **ConfigurationClassPostProcessor被设计用来发现所有的配置类和相关的Bean定义并注册到容器，它在所有BeanFactoryPostProcessor中具备最高执行优先级，因为其他BeanFactoryPostProcessor需要基于注册了Bean定义工作。**
+1. **ConfigurationClassPostProcessor 被设计用来发现所有的配置类和相关的Bean定义并注册到容器，它在所有BeanFactoryPostProcessor中具备最高执行优先级，因为其他BeanFactoryPostProcessor需要基于注册了Bean定义工作。**
 
 2. **ConfigurationClassPostProcessor.postProcessBeanFactory()会将识别这些配置类中定义的bean并将它们注册到容器。**
 

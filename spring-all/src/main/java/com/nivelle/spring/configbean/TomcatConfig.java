@@ -1,6 +1,6 @@
 package com.nivelle.spring.configbean;
 
-import com.nivelle.spring.springboot.shutdown.GracefulShutdown;
+import com.nivelle.spring.springcore.listener.springevent.GracefulShutdown;
 import org.apache.catalina.connector.Connector;
 import org.apache.coyote.http11.Http11NioProtocol;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;

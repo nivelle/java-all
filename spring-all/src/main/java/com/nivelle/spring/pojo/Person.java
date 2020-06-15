@@ -1,4 +1,4 @@
-package com.nivelle.spring.springboot.validparams;
+package com.nivelle.spring.pojo;
 
 
 import javax.validation.constraints.Min;

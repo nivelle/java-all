@@ -1,7 +1,8 @@
-package com.nivelle.spring.springboot.validparams;
+package com.nivelle.spring.springboot.controllor;
 
 
 import com.nivelle.base.pojo.ResponseResult;
+import com.nivelle.spring.pojo.Person;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
@@ -24,7 +25,7 @@ public class ValidDataControllor {
 
 
     @PostMapping(value = "savePerson", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseResult savePerson(@RequestBody @Validated  Person rerson) {
+    public ResponseResult savePerson(@RequestBody @Validated Person rerson) {
 
         LOG.info("保存用户请求参数person={}", rerson);
         //范性放在变量处
