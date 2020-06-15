@@ -3,9 +3,8 @@
 
 ### 状态查询
 
-- git status //git status 命令用于查看项目的当前状态。
+- git status //git status 显示有变更的文件。
               
-
 ```
 git status
 
@@ -31,6 +30,32 @@ git status
 
 
 ```
+
+- git log;//显示当前分支的版本历史
+
+- git log --stat;//显示commit历史，以及每次commit发生变更的文件
+
+```
+commit d108fe6ebdc55f43ef8aceba62cba5ef7d386614 (HEAD -> gitlearn)
+commit d108fe6ebdc55f43ef8aceba62cba5ef7d386614 (HEAD -> gitlearn)
+Author: fuxinzhong <fuxinzhong@zhangyue.com>
+commit d108fe6ebdc55f43ef8aceba62cba5ef7d386614 (HEAD -> gitlearn)
+commit d108fe6ebdc55f43ef8aceba62cba5ef7d386614 (HEAD -> gitlearn)
+Author: fuxinzhong <fuxinzhong@zhangyue.com>
+Date:   Mon Jun 15 18:41:15 2020 +0800
+
+    Revert "git revert测试"
+    
+    This reverts commit cf2a85d7d1e93fcc3fb1060a9e44dc4555795676.
+
+ "learn-notes/git/git\345\237\272\347\241\200\346\214\207\344\273\244.md" | 2 --
+ 1 file changed, 2 deletions(-)
+
+```
+
+- git log --follow [文件路径] //显示某个文件的版本历史，包括文件改名
+
+- 
 
 ### 撤销
 
@@ -71,6 +96,10 @@ git status
 
 ```
 
+- git revert [commitId] ;//新建一个commit，用来撤销指定commit;后者的所有变化都将被前者抵消，并且应用到当前分支
+
+- git reset -- hard [commitId];//重置当前分支的HEAD为指定commit，同时重置暂存区和工作区，与指定commit一致
+
 #### branch
 
 ```
@@ -81,7 +110,22 @@ git  chekout -b <新分支名> //新建一个分支，并切换到该分支
 #### tag
 
 
+#### remote
 
+- git remote -v ;//显示所有远程分支
+```
+gitlearn        https://github.com/nivelle/programdayandnight.git (fetch)
+gitlearn        https://github.com/nivelle/programdayandnight.git (push)
+master  https://github.com/nivelle/programdayandnight.git (fetch)
+master  https://github.com/nivelle/programdayandnight.git (push)
+origin  git@github.com:nivelle/programdayandnight.git (fetch)
+origin  git@github.com:nivelle/programdayandnight.git (push)
+
+```
+
+- git push [remote] --force;//强行推送当前分支到远程仓库，即使有冲突
+
+- git push [remote] --all ;//推送所有分支到远程仓库
 
 
 
