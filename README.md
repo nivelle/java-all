@@ -389,7 +389,7 @@ docker整合【下载:docker pull nivelle/nivelle:1.0.2】【运行:sudo docker 
 
 #### 基础学习
 
-✅【git】
+✅【git】基础指令
 
 ✅【linux】
 
