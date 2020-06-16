@@ -59,7 +59,13 @@ Date:   Mon Jun 15 18:41:15 2020 +0800
 
 - git log -5 --pretty --oneline //显示过去5次提交
 
-- git diff //显示缓存区与工作区不同
+- git diff : 比较工作区和暂存区之间的差异（git add）
+
+- git diff HEAD [ <path> … ] ：比较工作区与最新本地仓库之间的差异
+  
+- git diff --cached [ <path>… ] ：比较暂存区与最新本地仓库（本地仓库最近一次commit的内容）的差异
+
+
 
 ### 撤销
 
@@ -117,6 +123,7 @@ git  chekout -b <新分支名> //新建一个分支，并切换到该分支
 ### remote
 
 - git remote -v ;//显示所有远程分支
+
 ```
 gitlearn        https://github.com/nivelle/programdayandnight.git (fetch)
 gitlearn        https://github.com/nivelle/programdayandnight.git (push)
@@ -133,3 +140,14 @@ origin  git@github.com:nivelle/programdayandnight.git (push)
 
 - git blame [file] ;//显示指定文件是什么人在什么时间修改过
 
+### 增删文件
+
+- git add [file1] [file2] ... // 添加指定文件到暂存区
+
+- git add [dir] // 添加指定目录到暂存区，包括子目录
+
+- git rm [file1] [file2] ... //删除工作区文件，并且将这次删除放入暂存区
+
+- git rm --cached [file] //停止追踪指定文件，但该文件会保留在工作区
+
+- git mv [file-original] [file-renamed] // git mv [file-original] [file-renamed]
