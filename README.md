@@ -2,13 +2,11 @@
 
 ### 姊妹项目:[java面试常见知识点汇总](http://nivelle.me/javaInterview/)
 
-### 该项目和 [vueGuides](https://github.com/nivelle/vueGuides)项目可搭配使用
+### 该项目和 [vueGuides](https://github.com/nivelle/vueGuides)可搭配使用
 
 ### java-notes 多数文章来自网上优秀文章摘要整合,仅供记录学习。
 
 ## 依赖环境: 
-
-
 **Mysql版本:8.0.16;**
 **Kafka版本:2.2.1;** 
 **RabbitMQ版本:3.7.15;** 
@@ -389,7 +387,7 @@ docker整合【下载:docker pull nivelle/nivelle:1.0.2】【运行:sudo docker 
 
 #### 基础学习
 
-✅【git】指令学习
+✅【git 指令学习】
 
 ✅【linux】
 
