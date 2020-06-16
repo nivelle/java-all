@@ -140,7 +140,7 @@ origin  git@github.com:nivelle/programdayandnight.git (push)
 
 - git blame [file] ;//显示指定文件是什么人在什么时间修改过
 
-### 增删文件
+### 提交删除
 
 - git add [file1] [file2] ... // 添加指定文件到暂存区
 
@@ -151,3 +151,7 @@ origin  git@github.com:nivelle/programdayandnight.git (push)
 - git rm --cached [file] //停止追踪指定文件，但该文件会保留在工作区
 
 - git mv [file-original] [file-renamed] // git mv [file-original] [file-renamed]
+
+- git commit -a //提交工作区自上次commit之后的变化，直接到仓库区
+
+- git commit -v //提交时显示所有diff信息
