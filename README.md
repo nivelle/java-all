@@ -2,7 +2,7 @@
 
 ### 姊妹项目:[java面试常见知识点汇总](http://nivelle.me/javaInterview/)
 
-### 该项目和 [vueGuides](https://github.com/nivelle/vueGuides)项目可搭配使用
+### 该项目和 [vueGuides](https://github.com/nivelle/vueGuides)可搭配使用
 
 ### java-notes 多数文章来自网上优秀文章摘要整合,仅供记录学习。
 
