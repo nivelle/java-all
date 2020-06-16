@@ -59,11 +59,11 @@ Date:   Mon Jun 15 18:41:15 2020 +0800
 
 - git log -5 --pretty --oneline //显示过去5次提交
 
-- git diff : 比较工作区和暂存区之间的差异（git add）
+- git diff :  比较工作区和暂存区之间的差异（git add ./ 之后无差别）
 
-- git diff HEAD [ <path> … ] ：比较工作区与最新本地仓库之间的差异
+- git diff HEAD [ <path> … ]:比较工作区与最新本地仓库之间的差异
   
-- git diff --cached [ <path>… ] ：比较暂存区与最新本地仓库（本地仓库最近一次commit的内容）的差异
+- git diff --cached [ <path>… ]:比较暂存区与最新本地仓库（本地仓库最近一次commit的内容）的差异
 
 
 
@@ -112,13 +112,50 @@ Date:   Mon Jun 15 18:41:15 2020 +0800
 
 ### branch
 
-```
-git  chekout -b <新分支名> //新建一个分支，并切换到该分支
+- git branch;//列出所有本地分支
 
-```
+- git  checkout -b <新分支名> //新建一个分支，并切换到该分支
+
+- git branch -r //列出所有远程分支
+
+- git branch -a //列出所有本地分支和远程分支
+
+- git branch [branch-name] // 新建一个分支，但依然停留在当前分支
+
+- git branch [branch] [commit] // 新建一个分支，指向指定commit
+
+- git branch --track [本地分支] gitlearn2  [远程分支]remotes/origin/gitlearn //新建一个分支，与指定的远程分支建立追踪关系
+
+- git checkout [branch-name] //切换到指定分支，并更新工作区
+
+- git branch --set-upstream [branch] [remote-branch] //建立追踪关系，在现有分支与指定的远程分支之间 
+
+- git merge [branch] //合并指定分支到当前分支
+
+- git cherry-pick [commit] // 选择一个commit，合并进当前分支
+
+- git branch -d [branch-name] //删除一个分子
+
+- git push origin --delete [branch-name] //删除远程分支
+
 
 ### tag
 
+- git tag //列出所有的tag
+
+- git tag [tag] //在当前commit新建一个tag
+
+- git tag [tag] [commit] //在指定commit新建一个tag 
+
+- git tag -d [tag] //删除本地tag
+
+- git push origin :refs/tags/[tagName] //删除远程tag
+
+- git show [tagName] //查看一个tag的信息
+
+- git push [remote] [tag] //提交指定tag eg: git push origin tag v1.0.0
+
+- git checkout -b [branch] [tag];//新建分支指向某个tag也就是某个commit
 
 ### remote
 
@@ -155,3 +192,5 @@ origin  git@github.com:nivelle/programdayandnight.git (push)
 - git commit -a //提交工作区自上次commit之后的变化，直接到仓库区
 
 - git commit -v //提交时显示所有diff信息
+
+- git commit --amend -m [message] // 使用一次新的commit，替代上一次提交;如果代码没有任何新变化，则用来改写上一次commit的提交信息
