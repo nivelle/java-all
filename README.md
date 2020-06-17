@@ -387,9 +387,13 @@ docker整合【下载:docker pull nivelle/nivelle:1.0.2】【运行:sudo docker 
 
 #### 基础学习
 
+<<<<<<< HEAD
 ✅【git 指令学习】
+=======
+✅【git 基础指令】
+>>>>>>> a813c34b7b6d2dffd415b3dddf49fbdb47abb615
 
-✅【linux】
+✅【linux 基础指令】
 
 ✅【shell编程】
 
