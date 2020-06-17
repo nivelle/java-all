@@ -118,25 +118,9 @@ Date:   Mon Jun 15 18:41:15 2020 +0800
 
 - git branch -r //列出所有远程分支
 
-- git branch -a //列出所有本地分支和远程分支
+- git pull --rebase //表示把你的本地当前分支里的每个提交(commit)取消掉，并且把它们临时 保存为补丁(patch)(这些补丁放到".git/rebase"目录中),然后把本地当前分支更新 为最新的"origin"分支，最后把保存的这些补丁应用到本地当前分支上
 
-- git branch [branch-name] // 新建一个分支，但依然停留在当前分支
-
-- git branch [branch] [commit] // 新建一个分支，指向指定commit
-
-- git branch --track [本地分支] gitlearn2  [远程分支]remotes/origin/gitlearn //新建一个分支，与指定的远程分支建立追踪关系
-
-- git checkout [branch-name] //切换到指定分支，并更新工作区
-
-- git branch --set-upstream [branch] [remote-branch] //建立追踪关系，在现有分支与指定的远程分支之间 
-
-- git merge [branch] //合并指定分支到当前分支
-
-- git cherry-pick [commit] // 选择一个commit，合并进当前分支
-
-- git branch -d [branch-name] //删除一个分子
-
-- git push origin --delete [branch-name] //删除远程分支
+- git rebase 
 
 
 ### tag
