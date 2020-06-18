@@ -1,138 +1,143 @@
 
-### nginx初步指令
+### nginx 基础指令
+
+#### 启动
+```
+ nginx -s start;
 
 ```
-# 启动
-nginx -s start;
-# 重新启动，热启动，修改配置重启不影响线上
+#### 重新启动，热启动，修改配置重启不影响线上
+
+```
 nginx -s reload;
-# 关闭
+
+```
+#### 关闭
+
+```
 nginx -s stop;
-# 修改配置后，可以通过下面的命令测试是否有语法错误
+
+```
+#### 修改配置后，可以通过下面的命令测试是否有语法错误
+```
 nginx -t;
 
+```
+
+### web服务器的 nginx.conf 配置文件解读
+
+#### 指定执行 nginx的 worker process的用户
+```
+user  nobody;
 
 ```
 
-### web服务器的 nginx.conf配置文件解读
+#### 工作进程数,通常将其设成CPU的个数或者内核数
 
 ```
-#user  nobody;
-##定义拥有和运行Nginx服务的Linux系统用户
-
 worker_processes  1;
-##定义单进程。通常将其设成CPU的个数或者内核数
 
-#error_log  logs/error.log;
-#error_log  logs/error.log  notice;
-#error_log  logs/error.log  info;
-##定义Nginx在哪里打日志
+```
 
+#### 定义 nginx 在哪里打日志
 
-#pid        logs/nginx.pid;
-##Nginx写入主进程ID（PID）
+```
+error_log(关键字)    <FILE>(日志文件)    <LEVEL>(错误日志级别);
 
-events { ## 配置影响nginx服务器或与用户的网络连接。有每个进程的最大连接数，选取哪种事件驱动模型处理连接请求，是否允许同时接受多个网路连接，开启多个网络连接序列化等。
-    accept_mutex on;   #设置网路连接序列化，防止惊群现象发生，默认为on
-    multi_accept on;  #设置一个进程是否同时接受多个网络连接，默认为off
-    #use epoll;      #事件驱动模型，select|poll|kqueue|epoll|resig|/dev/poll|eventport
-    worker_connections  1024;
-    ##通过worker_connections和worker_processes计算maxclients。
-    ##max_clients = worker_processes * worker_connections
+1. 关键字：其中关键字error_log不能改变
+
+2. 日志文件：可以指定任意存放日志的目录
+
+3. 错误日志级别：常见的错误日志级别有[debug | info | notice | warn | error | crit | alert | emerg]，级别越高记录的信息越少。
+
+生产场景一般是 warn | error | crit 这三个级别之一
+
+```
+
+#### pid  logs/nginx.pid; //nginx 进程ID（PID）
+
+#### 配置影响 nginx 服务器或与用户的网络连接。有每个进程的最大连接数,选取哪种事件驱动模型处理连接请求,是否允许同时接受多个网路连接,开启多个网络连接序列化等。
+
+```
+events { 
+    accept_mutex on;   // 设置网路连接序列化，防止惊群现象发生，默认为on
+    multi_accept on;  //设置一个进程是否同时接受多个网络连接，默认为off
+    use epoll;      //事件驱动模型，select|poll|kqueue|epoll|resig|/dev/poll|eventport
+    worker_connections  1024; //通过worker_connections和worker_processes计算maxclients。单个工作进程可以允许同时建立外部连接的数量
+    max_clients = worker_processes * worker_connections 
 }
 
+```
+##### worker_connections,connections不是随便设置的，而是与两个指标有重要关联，一是内存，二是操作系统级别的“进程最大可打开文件数”
 
-http {
-    include       mime.types;
-    ##在/opt/nginx/conf/mime.types写的配置将在http模块中解析,文件扩展名与文件类型映射表 
+- 内存:每个连接数分别对应一个read_event、一个write_event事件，一个连接数大概占用232字节，2个事件总占用96字节，那么一个连接总共占用328字节，通过数学公式可以算出100000个连接数大概会占用 31M = 100000 * 328 / 1024 / 1024，当然这只是nginx启动时，connections连接数所占用的nginx。
     
-    default_type  application/octet-stream; #默认文件类型，默认为text/plain
 
-    #log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
-    #                  '$status $body_bytes_sent "$http_referer" '
-    #                  '"$http_user_agent" "$http_x_forwarded_for"';
 
-    #access_log  logs/access.log  main;
+- 进程最大可打开文件数：进程最大可打开文件数受限于操作系统，可通过 ulimit -n 命令查询，以前是1024，现在是65535,
+             nginx提供了worker_rlimit_nofile指令，这是除了ulimit的一种设置可用的描述符的方式。 该指令与使用ulimit对用户的设置是同样的效果。此指令的值将覆盖ulimit的值，如：worker_rlimit_nofile 20960;
+             设置ulimits：ulimit -SHn 65535
+           
 
-    sendfile        on;
-    ##如果是为了获取本地存储的静态化文件，sendfile可以加速服务端，但是如果是反向代理，那么该功能就失效了。允许sendfile方式传输文件，默认为off，可以在http块，server块，location块
-    #tcp_nopush     on; ##在 nginx 中，tcp_nopush 配置和 tcp_nodelay "互斥"。它可以配置一次发送数据的包大小。也就是说，它不是按时间累计  0.2 秒后发送包，而是当包累计到一定大小后就发送。在 nginx 中，tcp_nopush 必须和sendfile 搭配使用。
-    #keepalive_timeout  0;
-    keepalive_timeout  65;
-    ##设置保持客户端连接时间,#连接超时时间，默认为75s，可以在http，server，location块。
-    sendfile_max_chunk 100k;  #每个进程每次调用传输数量不能大于设定的值，默认为0，即不设上限。
-    #gzip  on; ##告诉服务端用gzip压缩
+
+```
+http {
+    include       mime.types;  // 在/opt/nginx/conf/mime.types写的配置将在http模块中解析,文件扩展名与文件类型映射表 
+    
+    default_type  application/octet-stream; // 默认文件类型，默认为text/plain
+
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" ' '$status $body_bytes_sent "$http_referer" ' '"$http_user_agent" "$http_x_forwarded_for"';
+
+    access_log  logs/access.log  main;
+
+    sendfile        on; //如果是为了获取本地存储的静态化文件，sendfile可以加速服务端，但是如果是反向代理，那么该功能就失效了。允许sendfile方式传输文件，默认为off，可以在http块，server块，location块
+    
+    tcp_nopush     on; //在 nginx 中，tcp_nopush 配置和 tcp_nodelay "互斥"。它可以配置一次发送数据的包大小。也就是说，它不是按时间累计  0.2 秒后发送包，而是当包累计到一定大小后就发送。在 nginx 中，tcp_nopush 必须和sendfile 搭配使用。
+    
+    keepalive_timeout  65; //设置保持客户端连接时间,#连接超时时间，默认为75s，可以在http，server，location块。
+    
+    sendfile_max_chunk 100k; // 每个进程每次调用传输数量不能大于设定的值，默认为0，即不设上限。
+    
+    gzip  on; //告诉服务端用gzip压缩
     
     upstream mysvr {   
       server 127.0.0.1:7878;
-      server 192.168.10.121:3333 backup;  #热备
+      server 192.168.10.121:3333 backup;  //热备
     }
     
     
-    server { ##如果你想对虚拟主机进行配置，可以在单独的文件中配置server模块，然后include进来
-        keepalive_requests 120; #单连接请求上限次数。
-        listen       8080;  ##告诉Nginx TCP端口，监听HTTP连接。listen 80; 和 listen *:80;是一样的
+    server { //如果你想对虚拟主机进行配置，可以在单独的文件中配置server模块，然后include进来
+        keepalive_requests 120; //单连接请求上限次数。
+        listen       8080;  //告诉Nginx TCP端口，监听HTTP连接。listen 80; 和 listen *:80;是一样的
         server_name  localhost;
-        ##定义虚拟主机的名字
-        #charset koi8-r;
-        #access_log  logs/host.access.log  main;
+        
+        charset koi8-r;//定义虚拟主机的名字
+        access_log  logs/host.access.log  main;
 
-        location / { ##location模块可以配置nginx如何反应资源请求  #请求的url过滤，正则匹配，~为区分大小写，~*为不区分大小写。
-            ## root   html;
-            ## index  index.html index.htm;
-           proxy_pass  http://mysvr;  #请求转向mysvr 定义的服务器列表
-           deny 127.0.0.1;  #拒绝的ip
-           allow 172.18.5.54; #允许的ip       
-            
+        location / { //location模块可以配置nginx如何反应资源请求  #请求的url过滤，正则匹配，~为区分大小写，~*为不区分大小写。
+           root   html;
+           index  index.html index.htm;
+           proxy_pass  http://mysvr;  //请求转向mysvr 定义的服务器列表;http:// + upstream名称
+           deny 127.0.0.1;  //拒绝的ip
+           allow 172.18.5.54; //允许的ip         
         }
 
-        #error_page  404              /404.html;
+        error_page  404              //404.html;
 
-        # redirect server error pages to the static page /50x.html
-        #
+        redirect server error pages to the static page /50x.html
+       
         error_page   500 502 503 504  /50x.html;
         location = /50x.html {
             root   html;
         }
 
-        # proxy the PHP scripts to Apache listening on 127.0.0.1:80
-        #
-        #location ~ \.php$ {
-        #    proxy_pass   http://127.0.0.1;
-        #}
-
-        # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
-        #
-        #location ~ \.php$ {
-        #    root           html;
-        #    fastcgi_pass   127.0.0.1:9000;
-        #    fastcgi_index  index.php;
-        #    fastcgi_param  SCRIPT_FILENAME  /scripts$fastcgi_script_name;
-        #    include        fastcgi_params;
-        #}
-
         # deny access to .htaccess files, if Apache's document root
         # concurs with nginx's one
         #
-        #location ~ /\.ht {
-        #    deny  all;
-        #}
+        location ~ /\.ht {
+            deny  all;
+        }
     }
-
-
-    # another virtual host using mix of IP-, name-, and port-based configuration
-    #
-    #server {
-    #    listen       8000;
-    #    listen       somename:8080;
-    #    server_name  somename  alias  another.alias;
-
-    #    location / {
-    #        root   html;
-    #        index  index.html index.htm;
-    #    }
-    #}
-
 
     # HTTPS server
     #
@@ -157,10 +162,7 @@ http {
     include servers/*;
 }
 
-
 ```
-
-
 
 
 #### 主要关键词
@@ -169,18 +171,16 @@ http {
 
 
 ```
-    # 完全匹配  =
-    # 大小写敏感 ~
-    # 忽略大小写 ~*
-    
-    根目录设置:
 
-    location / {
+完全匹配  =;大小写敏感 ~;忽略大小写 ~*
+    
+根目录设置:
+
+ location / {
     root /home/barret/test/;
     
     主页设置:
-    index /html/index.html /php/index.php;
-    
+    index /html/index.html /php/index.php;   
 }
 
 ```
@@ -203,7 +203,6 @@ redirect：返回302临时重定向，浏览器地址会显示跳转后的URL地
 
 permanent：返回301永久重定向，浏览器地址栏会显示跳转后的URL地址
 
-
 ---
 
 
@@ -217,7 +216,8 @@ location / {
     add_header Cache-Control no-cache; ## nginx配置文件通过使用add_header指令来设置response header
     
     /**
-    HTTP header 中的 Host 含义为所请求的目的主机名。当 nginx 作为反向代理使用，而后端真实 web 服务器设置有类似 防盗链功能 ，或者根据 HTTP header 中的 Host 字段来进行 路由 或 过滤 功能的话，若作为反向代理的 nginx 不重写请求头中的 Host 字段，将会导致请求失败。
+        HTTP header 中的 Host 含义为所请求的目的主机名。当 nginx 作为反向代理使用，而后端真实 web 服务器设置有类似 防盗链功能 ，或者根据 HTTP header 中的 Host 字段来进行 路由 或 过滤 功能的话，
+        若作为反向代理的 nginx 不重写请求头中的 Host 字段，将会导致请求失败。
     **/
     proxy_set_header   Host local.baidu.com;
     /**
@@ -237,40 +237,35 @@ location / {
 
 ```
 
-#### 负载均衡
+#### upstream(负载均衡)
 
-Nginx提供了两种负载均衡策略：内置策略和扩展策略。内置策略为轮询，加权轮询，Ip hash。扩展策略，就是自己实现一套策略。
-大家可以通过upstream这个配置，写一组被代理的服务器地址，然后配置负载均衡的算法。
+##### Nginx提供了两种负载均衡策略:内置策略和扩展策略。大家可以通过upstream这个配置，写一组被代理的服务器地址，然后配置负载均衡的算法。
 
 - 热备
-
-当一台服务器发生事故时，才启用第二台服务器给提供服务。
-比如127.0.0.1 挂了，就启动192.168.10.121。
 
 ```
 upstream mysvr { 
       server 127.0.0.1:7878; 
-      server 192.168.10.121:3333 backup;  #热备     
+      server 192.168.10.121:3333 backup;  //热备  当一台服务器发生事故时，才启用第二台服务器给提供服务。比如127.0.0.1 挂了，就启动192.168.10.121。
     }
 
 ```
 - 轮询
+
 ```
 upstream mysvr { 
-      server 127.0.0.1:7878;
-      server 192.168.10.121:3333;       
+      server 127.0.0.1:7878; 
+      server 192.168.10.121:3333; //Nginx 轮询的默认权重是1。 所以请求顺序就是ABABAB....交替
+     
     }
 ```
-Nginx 轮询的默认权重是1。 所以请求顺序就是ABABAB....交替
 
 
 - 加权轮询
 
-根据权重大小，分发给不同服务器不同数量请求。如下配置的请求顺序为：ABBABBABBABB.....。可以针对不同服务器的性能，配置不同的权重。
-
 ```
 upstream mysvr { 
-      server 127.0.0.1:7878 weight=1;
+      server 127.0.0.1:7878 weight=1; //根据权重大小，分发给不同服务器不同数量请求。如下配置的请求顺序为：ABBABBABBABB.....。可以针对不同服务器的性能，配置不同的权重。
       server 192.168.10.121:3333 weight=2;
 }
 
@@ -278,15 +273,47 @@ upstream mysvr {
 
 - ip_hash
 
-让相同客户端ip请求相同的服务器。对客户端请求的ip进行hash操作，然后根据hash结果将同一个客户端ip的请求分发给同一台服务器进行处理，可以解决session不共享的问题。
-
 ```
 upstream mysvr { 
-      server 127.0.0.1:7878; 
+      server 127.0.0.1:7878;  //让相同客户端ip请求相同的服务器。对客户端请求的ip进行hash操作，然后根据hash结果将同一个客户端ip的请求分发给同一台服务器进行处理，可以解决session不共享的问题。
       server 192.168.10.121:3333;
       ip_hash;
     }
 
 ```
 
-**代码配置来之:**([樂浩beyond](https://www.jianshu.com/p/734ef8e5a712))
+- fair
+
+```
+upstream mysvr { 
+      server 127.0.0.1:7878;  // 按后端服务器的响应时间来分配请求，响应时间短的优先分配。与weight分配策略类似。                              
+      server 192.168.10.121:3333;
+      fair;
+    }
+    
+```
+
+- url_hash
+
+```
+upstream mysvr{ 
+      server 127.0.0.1:7878;  // 按访问url的hash结果来分配请求，使每个url定向到同一个后端服务器，后端服务器为缓存时比较有效。                                                              
+      server 192.168.10.121:3333;
+      hash $request_uri; 
+      hash_method crc32; 
+}
+
+```
+
+##### upstream还可以为每个设备设置状态值，这些状态值的含义分别如下：
+
+- down 表示单前的server暂时不参与负载.
+  
+- weight 默认为1.weight越大，负载的权重就越大。
+  
+- max_fails ：允许请求失败的次数默认为1.当超过最大次数时，返回proxy_next_upstream 模块定义的错误.
+  
+- fail_timeout : max_fails次失败后，暂停的时间。
+  
+- backup： 其它所有的非backup机器down或者忙的时候，请求backup机器。所以这台机器压力会最轻。
+  
