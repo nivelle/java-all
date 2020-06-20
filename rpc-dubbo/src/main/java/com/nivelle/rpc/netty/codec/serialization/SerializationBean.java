@@ -5,7 +5,6 @@ import java.io.Serializable;
 /**
  * 说明：一个用户 POJO
  *
- * @author <a href="http://www.waylau.com">waylau.com</a> 2015年11月7日 
  */
 public class SerializationBean implements Serializable{
 

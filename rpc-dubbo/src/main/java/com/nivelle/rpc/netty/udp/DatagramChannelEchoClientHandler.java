@@ -5,12 +5,7 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.util.CharsetUtil;
 
-/**
- * DatagramChannel Echo Client Handler.
- * 
- * @since 1.0.0 2019年10月24日
- * @author <a href="https://waylau.com">Way Lau</a>
- */
+
 public class DatagramChannelEchoClientHandler extends ChannelInboundHandlerAdapter {
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) {

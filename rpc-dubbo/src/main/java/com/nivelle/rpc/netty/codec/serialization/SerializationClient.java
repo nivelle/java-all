@@ -9,9 +9,7 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 
 /**
  * 说明：序列化-客户端
- *
- * @author <a href="https://waylau.com">waylau.com</a> 2015年11月7日 
- */
+ **/
 public class SerializationClient {
 
     public static void main(String[] args) throws Exception{

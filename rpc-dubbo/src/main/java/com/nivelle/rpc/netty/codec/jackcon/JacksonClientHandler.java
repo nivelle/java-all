@@ -1,16 +1,10 @@
-/**
- * 
- */
+
 package com.nivelle.rpc.netty.codec.jackcon;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
-/**
- * 说明：处理器
- *
- * @author <a href="http://www.waylau.com">waylau.com</a> 2015年11月7日
- */
+
 public class JacksonClientHandler extends
 		SimpleChannelInboundHandler<Object> {
 

@@ -3,11 +3,7 @@ package com.nivelle.rpc.netty.codec.jackcon;
 import java.util.List;
 import java.util.Map;
 
-/**
- * 说明：一个用户 POJO
- *
- * @author <a href="http://www.waylau.com">waylau.com</a> 2015年11月9日 
- */
+
 public class JacksonBean {
  
 	private int age;

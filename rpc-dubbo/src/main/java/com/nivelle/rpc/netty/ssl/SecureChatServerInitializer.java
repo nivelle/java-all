@@ -9,9 +9,6 @@ import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import io.netty.handler.ssl.SslContext;
 
-/**
- * Creates a newly configured {@link ChannelPipeline} for a new channel.
- */
 public class SecureChatServerInitializer extends ChannelInitializer<SocketChannel> {
 
     private final SslContext sslCtx;

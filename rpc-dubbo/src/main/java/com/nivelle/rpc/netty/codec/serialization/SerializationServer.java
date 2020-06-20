@@ -11,9 +11,7 @@ import io.netty.handler.logging.LoggingHandler;
 
 /**
  * 说明：序列化服务器
- *
- * @author <a href="http://www.waylau.com">waylau.com</a> 2015年11月6日 
- */
+ **/
 public final class SerializationServer {
 
     static final int PORT = 8082;

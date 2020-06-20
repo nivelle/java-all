@@ -9,9 +9,6 @@ import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
 
-/**
- * Simple SSL chat server  
- */
 public final class SecureChatServer {
 
     static final int PORT = Integer.parseInt(System.getProperty("port", "8992"));

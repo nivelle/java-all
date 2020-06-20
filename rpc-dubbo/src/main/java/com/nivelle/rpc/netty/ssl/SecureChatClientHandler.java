@@ -3,9 +3,7 @@ package com.nivelle.rpc.netty.ssl;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
-/**
- * Handles a client-side channel.
- */
+
 public class SecureChatClientHandler extends SimpleChannelInboundHandler<String> {
 
     public void messageReceived(ChannelHandlerContext ctx, String msg) {

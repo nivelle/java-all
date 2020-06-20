@@ -12,11 +12,6 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 
 
-/**
- * 说明：Jackson json-客户端
- *
- * @author <a href="http://www.waylau.com">waylau.com</a> 2015年11月7日 
- */
 public class JacksonClient {
 
     public static void main(String[] args) throws Exception{

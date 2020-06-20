@@ -9,7 +9,6 @@ import java.util.concurrent.Executors;
 /**
  * 说明：自定义协议客户端性能测试
  *
- * @author <a href="http://www.waylau.com">waylau.com</a> 2015年11月5日
  */
 public class ProtocolClientTest {
 

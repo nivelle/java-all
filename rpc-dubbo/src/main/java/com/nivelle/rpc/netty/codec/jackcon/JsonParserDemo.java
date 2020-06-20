@@ -13,9 +13,7 @@ import com.fasterxml.jackson.core.JsonToken;
 
 /**
  * 说明：
- *
- * @author <a href="http://www.waylau.com">waylau.com</a> 2015年11月8日
- */
+ **/
 public class JsonParserDemo {
 
 	private static final String FILE_PATH = "d:\\user.json";

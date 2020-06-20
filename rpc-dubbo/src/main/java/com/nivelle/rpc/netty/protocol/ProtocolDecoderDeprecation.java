@@ -1,6 +1,4 @@
-/**
- * 
- */
+
 package com.nivelle.rpc.netty.protocol;
 
 import java.util.List;
@@ -12,7 +10,6 @@ import io.netty.handler.codec.ByteToMessageDecoder;
 /**
  * 说明：
  *
- * @author <a href="http://www.waylau.com">waylau.com</a> 2015年11月10日
  */
 public class ProtocolDecoderDeprecation extends ByteToMessageDecoder {
 

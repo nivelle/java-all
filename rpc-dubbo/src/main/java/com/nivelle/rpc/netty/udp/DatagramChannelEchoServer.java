@@ -1,6 +1,4 @@
-/**
- * Welcome to https://waylau.com
- */
+
 package com.nivelle.rpc.netty.udp;
 
 import io.netty.bootstrap.Bootstrap;
@@ -10,12 +8,6 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 
-/**
- * DatagramChannel Echo Server.
- * 
- * @since 1.0.0 2019年10月22日
- * @author <a href="https://waylau.com">Way Lau</a> 
- */
 public class DatagramChannelEchoServer {
 
 	public static int DEFAULT_PORT = 7;

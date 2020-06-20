@@ -4,12 +4,6 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.socket.DatagramPacket;
 
-/**
- * DatagramChannel Echo Server Handler.
- * 
- * @since 1.0.0 2019年10月24日
- * @author <a href="https://waylau.com">Way Lau</a>
- */
 public class DatagramChannelEchoServerHandler extends ChannelInboundHandlerAdapter {
 
 	@Override

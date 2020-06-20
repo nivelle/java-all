@@ -7,7 +7,6 @@ import io.netty.channel.ChannelPipeline;
 /**
  * 说明：序列化服务器初始化
  *
- * @author <a href="http://www.waylau.com">waylau.com</a> 2015年11月6日
  */
 public class JacksonServerHandlerInitializer extends
 		ChannelInitializer<Channel> {

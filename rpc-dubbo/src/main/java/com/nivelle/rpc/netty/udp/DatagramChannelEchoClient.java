@@ -18,12 +18,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 
-/**
- * DatagramChannel Echo Client.
- * 
- * @since 1.0.0 2019年10月22日
- * @author <a href="https://waylau.com">Way Lau</a>
- */
+
 public final class DatagramChannelEchoClient {
 
 	public static void main(String[] args) throws Exception {

@@ -1,6 +1,4 @@
-/**
- * 
- */
+
 package com.nivelle.rpc.netty.protocol;
 
 import io.netty.bootstrap.ServerBootstrap;
@@ -12,11 +10,6 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 
-/**
- * 说明：自定义协议服务端
- *
- * @author <a href="http://www.waylau.com">waylau.com</a> 2015年11月5日 
- */
 public class ProtocolServer {
 
 	private int port;
