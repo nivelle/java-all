@@ -19,10 +19,18 @@ import java.util.concurrent.TimeUnit;
  */
 public class NettyServerFilter extends ChannelInitializer<SocketChannel> {
 
-
-    private static final int READ_IDLE_TIME_OUT = 4; // 读超时
-    private static final int WRITE_IDLE_TIME_OUT = 5;// 写超时
-    private static final int ALL_IDLE_TIME_OUT = 7; // 所有超时
+    /**
+     * 读超时
+     */
+    private static final int READ_IDLE_TIME_OUT = 4;
+    /**
+     * 写超时
+     */
+    private static final int WRITE_IDLE_TIME_OUT = 5;
+    /**
+     * 所有超时
+     */
+    private static final int ALL_IDLE_TIME_OUT = 7;
     @Override
     protected void initChannel(SocketChannel ch) throws Exception {
         ChannelPipeline ph = ch.pipeline();
@@ -32,12 +40,9 @@ public class NettyServerFilter extends ChannelInitializer<SocketChannel> {
         ph.addLast("encoder", new StringEncoder());
         //添加一个ChannelInboundHandlerAdapter 以拦截和处理事件
         ph.addLast(new NettyServerHandler());
-
         //将自定义的 ChannelHandler 添加到Channel的ChannelPipeline中
         ph.addLast(new DiscardServerHandler());
-
         ph.addLast(new TimeServerHandler());
-
         /**
          * 1. DelimiterBasedFrameDecoder 是基于消息边界方式进行粘包拆包处理的。
          * 2. FixedLengthFrameDecoder 是基于固定长度消息进行粘包拆包处理的。

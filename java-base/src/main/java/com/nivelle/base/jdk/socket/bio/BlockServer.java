@@ -7,6 +7,9 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+/**
+ * @author jiangsuyao
+ */
 public class BlockServer {
 
     public static int DEFAULT_PORT = 8080;
@@ -34,14 +37,18 @@ public class BlockServer {
         }
         try {
             //意味着主线程一直在循环运行
-            //某个连接处理导致服务端无法响应. 由于整个接收请求和处理请求都是在同一个线程里（本示例是主线程）当处理客户端请求这一步发生了阻塞，或者说慢了，后来的所有连接请求都会被阻塞住
+            //某个连接处理导致服务端无法响应. 由于整个接收请求和处理请求都是在同一个线程里（本示例是主线程）当处理客户端请求这一步发生了阻塞，
+            // 或者说慢了，后来的所有连接请求都会被阻塞住
+
+            /**
+             * ServerSocket上的accept()方法将会一直阻塞到一个连接建立❶，随后返回一个新的Socket用于客户端和服务器之间的通信。
+             *
+             * 该ServerSocket将继续监听传入的连接 如果accept 在循环外面的话，则会阻塞其他链接，第一个线程处理未结束则其他链接阻塞
+             */
+            Socket clientSocket = serverSocket.accept();
+
             while (true) {
-                /**
-                 * ServerSocket上的accept()方法将会一直阻塞到一个连接建立❶，随后返回一个新的Socket用于客户端和服务器之间的通信。该ServerSocket将继续监听传入的连接
-                 *
-                 * 如果accept 在循环外面的话，则会阻塞其他链接，第一个线程处理未结束则其他链接
-                 */
-                Socket clientSocket = serverSocket.accept();
+                System.out.println("当前连接的地址：" + clientSocket.getInetAddress());
                 // 接收客户端的信息
                 BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                 //输出流 响应给请求
@@ -62,7 +69,7 @@ public class BlockServer {
 //                    System.out.println("发送信息给客户端 -> " + clientSocket.getRemoteSocketAddress() + ":" + inputLine);
 //                }).start();
 
-                out.println(Thread.currentThread().getName()+"处理服务端收到的信息:" + inputLine);
+                out.println(Thread.currentThread().getName() + "处理服务端收到的信息:" + inputLine);
                 System.out.println("发送信息给客户端 -> " + clientSocket.getRemoteSocketAddress() + ":" + inputLine);
             }
         } catch (IOException e) {
