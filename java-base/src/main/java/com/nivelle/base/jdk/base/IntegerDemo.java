@@ -24,16 +24,23 @@ public class IntegerDemo {
 
         /**
          * 精度超过36会默认为10
+         *
+         *
          */
         String integer2 = Integer.toUnsignedString(-300, 80);
         System.out.println("超过36精度默认为10进制:" + integer2);
 
         /**
          * radix:表面字符串代表的进制
+         *
+         * @param radix 是解析字符串使用的精度基数，第一个参数是满足此精度的字符串
          */
         String intString = "100";
         Integer result = Integer.parseInt(intString, 2);
         System.out.println("2进制intString:" + result);
+
+        String intString2 = "100";
+        System.out.println(Integer.parseInt(intString2,8));
 
         Integer resultResult = Integer.valueOf("100", 2);
         System.out.println("2进制intString:" + resultResult);
