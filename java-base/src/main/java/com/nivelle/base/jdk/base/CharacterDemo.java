@@ -31,19 +31,17 @@ public class CharacterDemo {
             System.out.println("字符数组转字符 gkb:" + new String(byteStr2, "gbk"));
             System.out.println("字符数组转字符 gkb:" + new String(byteStr2, "utf-16"));
 
-            System.out.println("Character 字符对应的ascii:" + (int) character);
-
             String str = "今天是个好日子";
-            System.out.println("字符串数组:" + str.charAt(1));
+            System.out.println(str.charAt(1));
             /**
-             * 使用int可以表示任意一个Unicode字符，低21位表示Unicode编号,高11位设为0。
+             * 使用int可以表示任意一个Unicode字符，低21位表示Unicode编号，高11位设为0。
              * 整数编号在Unicode中称为代码点（code point）,表示一个Unicode字符，与之相对，还有一个词，代码单元，表示一个char
              */
-            System.out.println("今字对应的unicode编码:" + str.codePointAt(1));
+            System.out.println("char codePoint is:"+str.codePointAt(1));
             char[] codeToChar = Character.toChars(22826);
-            System.out.println("22826 unicode 编码对应的字符:" + new String(codeToChar));
+            System.out.println("code to char is:"+new String(codeToChar));
 
-            System.out.println("ASCII 码 与 字符转换:");
+            System.out.println("ASCII 码:");
             System.out.println('a' + 0);
             System.out.println((char) 97);
 
