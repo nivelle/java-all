@@ -47,6 +47,31 @@ public class CharacterDemo {
             System.out.println('a' + 0);
             System.out.println((char) 97);
 
+            String text = "hello你好";
+            System.out.println("字符串长度：" + text.length());
+            System.out.println("字节个数：" + text.getBytes().length);
+            System.out.println("系统默认的编码格式：" + System.getProperty("sun.jnu.encoding"));
+            System.out.println("一个汉字默认用字节数：" + "你".getBytes().length);
+            System.out.println();
+            System.out.println("字符转二进制:" + Integer.toBinaryString(((int) "你".toCharArray()[0])));
+
+            byte[] bytes = text.getBytes();
+
+            StringBuilder stringBuilder = new StringBuilder("低位字节码：");
+            for (int i = 0; i < bytes.length; i++) {
+                String binaryString = Integer.toBinaryString(bytes[i] & 0xff);
+                stringBuilder.append(binaryString);
+            }
+            System.out.println();
+            StringBuilder stringBuilder1 = new StringBuilder("全部字节码");
+            for (int i = 0; i < bytes.length; i++) {
+                String binaryString = Integer.toBinaryString(bytes[i]);
+                stringBuilder1.append(binaryString);
+            }
+
+            System.out.println(stringBuilder);
+            System.out.println(stringBuilder1);
+
         } catch (Exception e) {
             System.out.println(e);
         }

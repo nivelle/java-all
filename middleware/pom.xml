@@ -8,7 +8,7 @@
         <version>1.0.1</version>
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
-    <groupId>com.nivelle</groupId>
+    <groupId>com.nivelle.guide</groupId>
     <artifactId>middleware</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>middleware</name>

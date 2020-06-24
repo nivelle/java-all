@@ -34,13 +34,14 @@ public class IntegerDemo {
          * radix:表面字符串代表的进制
          *
          * @param radix 是解析字符串使用的精度基数，第一个参数是满足此精度的字符串
+         * @param return : 返回值是指定精度对应的10进制
          */
         String intString = "100";
         Integer result = Integer.parseInt(intString, 2);
-        System.out.println("2进制intString:" + result);
+        System.out.println("2进制intString转10进制:" + result);
 
         String intString2 = "100";
-        System.out.println(Integer.parseInt(intString2,8));
+        System.out.println("8进制的intString2转10进制:" + Integer.parseInt(intString2, 8));
 
         Integer resultResult = Integer.valueOf("100", 2);
         System.out.println("2进制intString:" + resultResult);
@@ -84,7 +85,7 @@ public class IntegerDemo {
         /**
          * decode方法主要作用是解码字符串转成Integer型
          */
-        System.out.println("解码为十进制:" + Integer.decode("0x11") + Integer.decode("#11")+Integer.decode("0001"));
+        System.out.println("解码为十进制:" + Integer.decode("0x11") + Integer.decode("#11") + Integer.decode("0001"));
 
     }
 }
