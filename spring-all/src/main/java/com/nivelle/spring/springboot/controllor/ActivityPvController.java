@@ -1,6 +1,6 @@
 package com.nivelle.spring.springboot.controllor;
 
-import com.nivelle.base.pojo.ResponseResult;
+import com.nivelle.spring.pojo.ResponseResult;
 import com.nivelle.spring.springboot.entity.ActivityPvEntity;
 import com.nivelle.spring.pojo.ActivityParams;
 import com.nivelle.spring.springboot.service.ActivityService;
@@ -48,6 +48,7 @@ public class ActivityPvController {
         } else {
             return ResponseResult.newResponseResult().setFail(-1, "insert fail");
         }
+
     }
 
 

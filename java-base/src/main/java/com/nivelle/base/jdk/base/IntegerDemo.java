@@ -24,8 +24,6 @@ public class IntegerDemo {
 
         /**
          * 精度超过36会默认为10
-         *
-         *
          */
         String integer2 = Integer.toUnsignedString(-300, 80);
         System.out.println("超过36精度默认为10进制:" + integer2);

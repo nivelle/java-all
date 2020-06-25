@@ -1,10 +1,10 @@
 package com.nivelle.spring;
 
 import com.google.common.collect.Lists;
-import com.nivelle.base.pojo.TimeLine;
 import com.nivelle.spring.configbean.CommonConfig;
 import com.nivelle.spring.pojo.Cat;
 import com.nivelle.spring.pojo.Dog;
+import com.nivelle.spring.pojo.TimeLine;
 import com.nivelle.spring.springboot.dao.ActivityDaoImpl;
 import com.nivelle.spring.springboot.entity.ActivityPvEntity;
 import com.nivelle.spring.springboot.mapper.ActivityPvMapper;

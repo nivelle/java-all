@@ -1,7 +1,7 @@
 package com.nivelle.spring.springboot.controllor;
 
 import com.google.common.collect.Lists;
-import com.nivelle.base.pojo.Book;
+import com.nivelle.spring.pojo.Book;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,7 +26,6 @@ public class BookController {
         Book book1 = new Book(1L, "java");
         Book book2 = new Book(2L, "C++");
         Book book3 = new Book(3L, "Golang");
-
         books.add(book1);
         books.add(book2);
         books.add(book3);

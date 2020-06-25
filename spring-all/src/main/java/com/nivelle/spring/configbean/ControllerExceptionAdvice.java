@@ -1,6 +1,6 @@
 package com.nivelle.spring.configbean;
 
-import com.nivelle.base.pojo.ErrorStatus;
+import com.nivelle.spring.pojo.ErrorStatus;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

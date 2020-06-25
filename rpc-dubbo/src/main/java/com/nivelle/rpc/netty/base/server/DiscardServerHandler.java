@@ -16,7 +16,6 @@ public class DiscardServerHandler extends SimpleChannelInboundHandler<String> { 
             ctx.writeAndFlush("DiscardServerHandler call back client:" + "DiscardServerHandler 收到数据" + msg + ",当前的时间是:" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
             ctx.close();
             ctx.close().addListener((future) -> {
-
                 if (future.isSuccess()) {
                     System.out.println("DiscardServerHandler 关闭成功");
                 } else {

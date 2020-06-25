@@ -178,3 +178,18 @@ origin  git@github.com:nivelle/programdayandnight.git (push)
 - git commit -v //提交时显示所有diff信息
 
 - git commit --amend -m [message] // 使用一次新的commit，替代上一次提交;如果代码没有任何新变化，则用来改写上一次commit的提交信息
+
+### 冲突标志
+
+```
+<<<<<<< HEAD
+
+本地代码
+
+=======
+
+拉下来的代码
+
+>>>>>>>
+
+```

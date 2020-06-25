@@ -2,11 +2,14 @@ package com.nivelle.rpc.netty.base.client;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.util.Scanner;
 
 /**
@@ -44,9 +47,13 @@ public class NettyClient {
          * “指定Channel应该绑定到的本地地址。如果没有指定，则将由操作系统创建一个随机的地址。或者，也可以通过”“bind()或者connect()方法指定localAddress”
          */
         //b.bind(new LocalAddress("127.0.0.1:6789"));
-        //channelInitializer 注册到 bootstrap
         b.handler(new NettyClientFilter());
         // 连接服务端,阻塞等待直到连接完成
+        //connect(): “连接到远程节点创建一个新的Channel,并返回一个ChannelFuture ，其将会在连接操作完成后接收到通知”
+        //ChannelFuture channelFuture = b.connect(new InetSocketAddress("https://nivelle.me", 80));
+        /**
+         * BootStrap 类的在bind()方法被调用后创建一个新的Channel,在这之后将会调用connect()方法以建立连接
+         */
         ch = b.connect(host, port).sync().channel();
         Scanner scanner = new Scanner(System.in);
         while (true) {

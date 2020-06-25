@@ -1,7 +1,7 @@
 package com.nivelle.rpc.dubbo.controller;
 
 import com.google.common.collect.Lists;
-import com.nivelle.base.pojo.Menu;
+import com.nivelle.rpc.dubbo.model.Menu;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;

@@ -1,8 +1,8 @@
 package com.nivelle.spring.springboot.controllor;
 
 
-import com.nivelle.base.pojo.ResponseResult;
 import com.nivelle.spring.pojo.Person;
+import com.nivelle.spring.pojo.ResponseResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
@@ -44,6 +44,5 @@ public class ValidDataControllor {
 
         return ResponseResult.newResponseResult().setSuccess(person);
     }
-
 
 }

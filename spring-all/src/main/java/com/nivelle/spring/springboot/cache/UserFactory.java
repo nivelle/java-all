@@ -1,7 +1,7 @@
 package com.nivelle.spring.springboot.cache;
 
 import com.google.common.collect.Lists;
-import com.nivelle.base.pojo.User;
+import com.nivelle.spring.pojo.User;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -23,6 +23,6 @@ public class UserFactory {
         users.add(new User(2, "jessy"));
 
         return users;
-
     }
+
 }

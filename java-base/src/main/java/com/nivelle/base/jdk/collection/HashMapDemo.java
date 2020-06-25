@@ -26,6 +26,7 @@ public class HashMapDemo {
         hashMap.put("2", "jessy");
         System.out.println("无参初始化HashMap" + hashMap);
         HashMap hashMapInit = new HashMap(4);
+        System.out.println("获取不存在的key对应的值：" + hashMap.get("3"));
 
         /**
          * 指定 初始化数据,默认加载因子0.75

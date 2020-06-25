@@ -1,6 +1,6 @@
 package com.nivelle.spring.springcore.factorybean;
 
-import com.nivelle.base.pojo.TimeLine;
+import com.nivelle.spring.pojo.TimeLine;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.stereotype.Service;
 
