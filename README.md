@@ -391,9 +391,10 @@ docker整合【下载:docker pull nivelle/nivelle:1.0.2】【运行:sudo docker 
 
 ✅【linux 基础指令】
 
-✅【shell编程】
+✅【shell 编程】
 
-✅【docker学习】
+✅【docker 学习】
 
-✅【nginx】
+✅【nginx 基础】
 
+✅【maven 基础】
