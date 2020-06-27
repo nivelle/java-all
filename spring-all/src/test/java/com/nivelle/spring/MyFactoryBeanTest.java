@@ -1,8 +1,8 @@
 package com.nivelle.spring;
 
 
-import com.nivelle.base.pojo.TimeLine;
-import com.nivelle.base.pojo.User;
+import com.nivelle.spring.pojo.TimeLine;
+import com.nivelle.spring.pojo.User;
 import com.nivelle.spring.springcore.factorybean.MyFactoryBean;
 import org.junit.Test;
 import org.junit.runner.RunWith;

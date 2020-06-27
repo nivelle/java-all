@@ -1,7 +1,7 @@
 package com.nivelle.spring;
 
 import com.google.common.collect.Lists;
-import com.nivelle.base.pojo.User;
+import com.nivelle.spring.pojo.User;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;

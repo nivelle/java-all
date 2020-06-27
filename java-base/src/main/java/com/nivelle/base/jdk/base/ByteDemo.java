@@ -3,7 +3,7 @@ package com.nivelle.base.jdk.base;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * 位操作
+ * 字节 位
  *
  * @author nivell
  * @date 2019/10/31
@@ -231,6 +231,11 @@ public class ByteDemo {
         AtomicInteger ctl = new AtomicInteger(ctlOf(RUNNING, 0)) ;
         System.out.println(ctl);
         System.out.println(0>>2);
+
+        Byte byte1 = new Byte("1");
+        System.out.println(byte1);
+        System.out.println();
+        
 
     }
 

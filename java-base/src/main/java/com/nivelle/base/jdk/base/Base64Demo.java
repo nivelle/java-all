@@ -14,9 +14,15 @@ public class Base64Demo {
     public static void main(String[] args) {
 
         String text = "hello你好";
+        System.out.println("压缩前字符长度:" + text.length());
+        System.out.println("压缩前字节长度:" + text.getBytes().length);
 
         String encode = Base64.getEncoder().encodeToString(text.getBytes(StandardCharsets.UTF_8));
-        System.out.println("压缩后字符串：" + encode);
+        System.out.println("压缩后字符串:" + encode);
+
+        System.out.println("压缩后字符串长度:" + encode.length());
+        System.out.println("压缩后字符串字节长度:" + encode.getBytes().length);
+
         String decode = new String(Base64.getDecoder().decode(encode), StandardCharsets.UTF_8);
         System.out.println("解压后字符串：" + decode);
         System.out.println("原字符串与解压后的字符串比较:" + text.equals(decode));
