@@ -26,7 +26,21 @@ public class CryptDemo {
      * DES (Data Encryption Standard):数据加密标准，速度较快，适用于加密大量数据的场合
      */
 
-    public static final String algorithm = "DES";
+    public static final String DES_ALGORITHM = "DES";
+
+    /**
+     * 非对称性算法:
+     * <p>
+     * RSA:是一个支持变长密钥的公共密钥算法，需要加密的文件块的长度也是可变的
+     */
+    public static final String RSA_ALGORITHM = "RSA";
+
+
+    /**
+     * 对称性加密算法:
+     * AES (Advanced Encryption Standard):高级加密标准，是下一代的加密算法标准，速度快，安全级别高；AES是一个使用128为分组块的分组加密算法，分组块和128、192或256位的密钥一起作为输入，对4×4的字节数组上进行操作。
+     */
+    public static final String AES_ALGORITHM = "AES";
 
     /**
      * 这是默认模式:
@@ -42,16 +56,10 @@ public class CryptDemo {
     /**
      * NOPadding: 使用NOPadding模式时, 原文长度必须是8byte的整数倍
      */
-    public static final String transformation = "DES/ECB/NOPadding";
+    public static final String transformationDES = "DES/ECB/NOPadding";
     public static final String key = "12345678";
     public static final String original = "你好11";
 
-
-    /**
-     * 对称性加密算法:
-     * AES (Advanced Encryption Standard):高级加密标准，是下一代的加密算法标准，速度快，安全级别高；AES是一个使用128为分组块的分组加密算法，分组块和128、192或256位的密钥一起作为输入，对4×4的字节数组上进行操作。
-     */
-    public static final String algorithmAes = "AES";
 
     // 这是默认模式
     //  public static final String transformation = "AES/ECB/PKCS5Padding";
@@ -63,29 +71,26 @@ public class CryptDemo {
     public static final String originalAes = "你好你好你1";
 
 
-
     public static void main(String[] args) throws Exception {
-        String encryptByDES = encryptByDES();
-        System.out.println(encryptByDES);
-        String decryptByDES = decryptByDES(encryptByDES);
-        System.out.println(decryptByDES);
-
         /**
-         * 非对称性算法:
-         *
-         * RSA:是一个支持变长密钥的公共密钥算法，需要加密的文件块的长度也是可变的
+         * DES
          */
-        String algorithm = "RSA";
-        String input = "非对称加密与对称加密相比，其安全性更好：对称加密的通信双方使用相同的秘钥，如果一方的秘钥遭泄露，那么整个通信就会被破解。而非对称加密使用一对秘钥，一个用来加密，一个用来解密，而且公钥是公开的，秘钥是自己保存的，不需要像对称加密那样在通信之前要先同步秘钥";
+        String input = "非对称加密与对称加密相比，其安全性更好：对称加密的通信双方使用相同的秘钥，如果一方的秘钥遭泄露，那么整个通信就会被破解。" +
+                "而非对称加密使用一对秘钥，一个用来加密，一个用来解密，而且公钥是公开的，秘钥是自己保存的，不需要像对称加密那样在通信之前要先同步秘钥";
         try {
-            generateKeyToFile(algorithm, "a.pub", "a.pri");
+            generateKeyToFile(DES_ALGORITHM, "a.pub", "a.pri");
+            PublicKey publicKey = loadPublicKeyFromFile(DES_ALGORITHM, "a.pub");
+            PrivateKey privateKey = loadPrivateKeyFromFile(DES_ALGORITHM, "a.pri");
+            String encryptDES = encrypt(DES_ALGORITHM, input, privateKey, 245);
+            String decryptDES = decrypt(DES_ALGORITHM, encryptDES, publicKey, 256);
+            System.out.println(encryptDES);
+            System.out.println(decryptDES);
 
-            PublicKey publicKey = loadPublicKeyFromFile(algorithm, "a.pub");
-            PrivateKey privateKey = loadPrivateKeyFromFile(algorithm, "a.pri");
-            String encrypt = encrypt(algorithm, input, privateKey, 245);
-            String decrypt = decrypt(algorithm, encrypt, publicKey, 256);
-            System.out.println(encrypt);
-            System.out.println(decrypt);
+            String encryptAes = encrypt(AES_ALGORITHM, input, privateKey, 245);
+            String decryptAes = decrypt(AES_ALGORITHM, encryptAes, publicKey, 256);
+            System.out.println(encryptAes);
+            System.out.println(decryptAes);
+
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -100,45 +105,6 @@ public class CryptDemo {
         System.out.println(decryptByAES);
     }
 
-    public static String encryptByDES() throws Exception {
-        // 获取Cipher
-        Cipher cipher = Cipher.getInstance(transformation);
-
-        // 指定密钥规则
-        SecretKeySpec secretKeySpec = new SecretKeySpec(key.getBytes(), algorithm);
-
-        // 指定模式(加密)和密钥
-        // 创建初始向量
-        IvParameterSpec iv = new IvParameterSpec(key.getBytes());
-        cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec);
-        //  cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, iv);
-        // 加密
-        byte[] bytes = cipher.doFinal(original.getBytes());
-        // 输出加密后的数据
-        // com.sun.org.apache.xml.internal.security.utils.Base64
-        return new String(Base64.getEncoder().encode(bytes));
-    }
-
-    public static String decryptByDES(String encrypted) throws Exception {
-        // 获取Cipher
-        Cipher cipher = Cipher.getInstance(transformation);
-
-        // 指定密钥规则
-        SecretKeySpec secretKeySpec = new SecretKeySpec(key.getBytes(), algorithm);
-
-        // 指定模式(解密)和密钥
-        // 创建初始向量
-        IvParameterSpec iv = new IvParameterSpec(key.getBytes());
-        cipher.init(Cipher.DECRYPT_MODE, secretKeySpec);
-        //  cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, iv);
-        // 解码密文
-        // com.sun.org.apache.xml.internal.security.utils.Base64
-        byte[] decode = Base64.getDecoder().decode(encrypted);
-        // 解密
-        byte[] bytes = cipher.doFinal(decode);
-        // 输出解密后的数据
-        return new String(bytes);
-    }
 
     /**
      * 生成密钥对并保存在本地文件中
@@ -181,7 +147,6 @@ public class CryptDemo {
     private static PublicKey loadPublicKeyFromFile(String algorithm, String filePath) throws Exception {
         // 将文件内容转为字符串
         String keyString = FileUtils.readFileToString(new File(filePath), Charset.forName("UTF-8"));
-
         return loadPublicKeyFromString(algorithm, keyString);
 
     }
@@ -330,12 +295,13 @@ public class CryptDemo {
         }
     }
 
+
     public static String encryptByAES() throws Exception {
 
         // 获取Cipher
         Cipher cipher = Cipher.getInstance(transformationAes);
         // 生成密钥
-        SecretKeySpec keySpec = new SecretKeySpec(keyAes.getBytes(), algorithmAes);
+        SecretKeySpec keySpec = new SecretKeySpec(keyAes.getBytes(), AES_ALGORITHM);
         // 指定模式(加密)和密钥
         // 创建初始化向量
         IvParameterSpec iv = new IvParameterSpec(keyAes.getBytes());
@@ -352,7 +318,7 @@ public class CryptDemo {
         // 获取Cipher
         Cipher cipher = Cipher.getInstance(transformationAes);
         // 生成密钥
-        SecretKeySpec keySpec = new SecretKeySpec(keyAes.getBytes(), algorithmAes);
+        SecretKeySpec keySpec = new SecretKeySpec(keyAes.getBytes(), AES_ALGORITHM);
         // 指定模式(解密)和密钥
         // 创建初始化向量
         IvParameterSpec iv = new IvParameterSpec(keyAes.getBytes());
