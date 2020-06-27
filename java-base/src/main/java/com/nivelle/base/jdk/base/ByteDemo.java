@@ -35,7 +35,7 @@ public class ByteDemo {
     /**
      * 1. &表示按位与,只有两个位同时为1,才能得到1,
      * <p>
-     * todo 0x代表16进制数,0xff表示的数二进制1111 1111 占一个字节.和其进行&操作的数,最低8位,不会发生变化.
+     * todo 0x代表16进制数,0xff 表示的数二进制 1111 1111 占一个字节.和其进行&操作的数,最低8位,不会发生变化.
      * <p>
      * 2. Java中使用补码来表示负数，具体就是除符号位之外，剩余位取反加1，符号位不变还是1（符号位0-正数，1-负数）
      */
@@ -46,6 +46,15 @@ public class ByteDemo {
 
         Integer negativeIntToByte = -128;
         System.out.println(Integer.toBinaryString(negativeIntToByte));
+
+        String byteTests = "你";
+
+        byte[] bytesArray = byteTests.getBytes();
+        //byte类型的数据最高位是符号位，通过和0xff进行与操作,转换为int类型的正整数
+        for (int i = 0; i < bytesArray.length; i++) {
+            System.out.println("当前字节:" + Integer.toBinaryString(bytesArray[i]));
+            System.out.println("当前字节与0xff与" + Integer.toBinaryString(bytesArray[i] & 0xff));
+        }
 
         /**
          *  最大最小值
@@ -228,14 +237,14 @@ public class ByteDemo {
         System.out.println("COUNT_BITS:" + COUNT_BITS);
         System.out.println("CAPACITY:" + CAPACITY);
 
-        AtomicInteger ctl = new AtomicInteger(ctlOf(RUNNING, 0)) ;
+        AtomicInteger ctl = new AtomicInteger(ctlOf(RUNNING, 0));
         System.out.println(ctl);
-        System.out.println(0>>2);
+        System.out.println(0 >> 2);
 
         Byte byte1 = new Byte("1");
         System.out.println(byte1);
         System.out.println();
-        
+
 
     }
 

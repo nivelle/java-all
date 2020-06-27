@@ -3,11 +3,14 @@ package com.nivelle.base.jdk.base;
 import org.apache.commons.io.FileUtils;
 
 import javax.crypto.Cipher;
+import javax.crypto.Mac;
+import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
@@ -24,14 +27,24 @@ public class CryptDemo {
     /**
      * 对称性加密算法:
      * DES (Data Encryption Standard):数据加密标准，速度较快，适用于加密大量数据的场合
+     * <p>
+     * 数据加密标准算法,和BASE64最明显的区别就是有一个工作密钥，该密钥既用于加密、也用于解密，并且要求密钥是一个长度至少大于8位的字符串
      */
 
     public static final String DES_ALGORITHM = "DES";
 
     /**
+     * 椭圆曲线加密算法：
+     */
+    public static final String ECC_ALGORITHM = "ECC";
+
+
+    /**
      * 非对称性算法:
      * <p>
      * RSA:是一个支持变长密钥的公共密钥算法，需要加密的文件块的长度也是可变的
+     * <p>
+     * 非对称加密算法的典型代表，既能加密、又能解密。和对称加密算法比如DES的明显区别在于用于加密、解密的密钥是不同的。使用RSA算法，只要密钥足够长(一般要求1024bit)，加密的信息是不能被破解的
      */
     public static final String RSA_ALGORITHM = "RSA";
 
@@ -72,6 +85,8 @@ public class CryptDemo {
 
 
     public static void main(String[] args) throws Exception {
+
+
         /**
          * DES
          */
@@ -103,6 +118,28 @@ public class CryptDemo {
         System.out.println(encryptByAES);
         String decryptByAES = decryptByAES(encryptByAES);
         System.out.println(decryptByAES);
+
+        /**
+         * base64
+         *
+         * 通常用作对二进制数据进行加密
+         */
+        String text = "hello你好";
+        System.out.println("压缩前字符长度:" + text.length());
+        System.out.println("压缩前字节长度:" + text.getBytes().length);
+
+        String encode = Base64.getEncoder().encodeToString(text.getBytes(StandardCharsets.UTF_8));
+        System.out.println("压缩后字符串:" + encode);
+
+        System.out.println("压缩后字符串长度:" + encode.length());
+        System.out.println("压缩后字符串字节长度:" + encode.getBytes().length);
+
+        String decode = new String(Base64.getDecoder().decode(encode), StandardCharsets.UTF_8);
+        System.out.println("解压后字符串：" + decode);
+        System.out.println("原字符串与解压后的字符串比较:" + text.equals(decode));
+
+        System.out.println("base64加密后占字节数:" + encode.length());
+        System.out.println("原字符串字节数:" + text.getBytes().length + ";位数:" + text.getBytes().length * 8);
     }
 
 
@@ -329,5 +366,104 @@ public class CryptDemo {
 
         return new String(bytes);
     }
+
+    /**
+     * SHA加密
+     *
+     * @param content 待加密内容
+     * @return String
+     */
+    public static String SHAEncrypt(final String content) {
+        try {
+            MessageDigest sha = MessageDigest.getInstance("SHAE");
+            byte[] sha_byte = sha.digest(content.getBytes());
+            StringBuffer hexValue = new StringBuffer();
+            for (byte b : sha_byte) {
+                //将其中的每个字节转成十六进制字符串:byte类型的数据最高位是符号位，通过和0xff进行与操作,转换为int类型的正整数。
+                String toHexString = Integer.toHexString(b & 0xff);
+                hexValue.append(toHexString.length() == 1 ? "0" + toHexString : toHexString);
+            }
+            return hexValue.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+    /**
+     * HMAC加密
+     *
+     * @param key     给定秘钥key
+     * @param content 待加密内容
+     * @return String
+     * <p>
+     * 使用一个密钥生成一个固定大小的小数据块，即MAC，并将其加入到消息中，然后传输。接收方利用与发送方共享的密钥进行鉴别认证
+     */
+    public static byte[] HMACEncrypt(final String key, final String content) {
+        try {
+            SecretKey secretKey = new SecretKeySpec(key.getBytes(), "Mac");
+            Mac mac = Mac.getInstance(secretKey.getAlgorithm());
+            //初始化mac
+            mac.init(secretKey);
+            return mac.doFinal(content.getBytes());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * RSA加密
+     *
+     * @param content 待加密内容
+     * @return byte[]
+     */
+    public static byte[] RSAEncrypt(final String content) {
+        try {
+            // 获取密钥对生成器
+            KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(RSA_ALGORITHM);
+            // 获取密钥对
+            KeyPair keyPair = keyPairGenerator.generateKeyPair();
+
+            return processCipher(content.getBytes(), keyPair.getPrivate(), Cipher.ENCRYPT_MODE, RSA_ALGORITHM);
+        } catch (Exception e) {
+
+        }
+        return null;
+    }
+
+    /**
+     * RSA解密
+     *
+     * @param encoderContent 已加密内容
+     * @return byte[]
+     */
+    public static byte[] RSADecrypt(final byte[] encoderContent) {
+
+        try {
+            // 获取密钥对生成器
+            KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(RSA_ALGORITHM);
+            // 获取密钥对
+            KeyPair keyPair = keyPairGenerator.generateKeyPair();
+            return processCipher(encoderContent, keyPair.getPublic(), Cipher.DECRYPT_MODE, RSA_ALGORITHM);
+        } catch (Exception e) {
+        }
+        return null;
+    }
+
+    private static byte[] processCipher(final byte[] processData, final Key key, final int opsMode, final String algorithm) {
+
+        try {
+
+            Cipher cipher = Cipher.getInstance(algorithm);
+            //初始化
+            cipher.init(opsMode, key, new SecureRandom());
+            return cipher.doFinal(processData);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 
 }
