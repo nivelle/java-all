@@ -121,14 +121,14 @@ public class PriorityBlockingQueueDemo {
         /**
          * ## 扩容方法
          *  private void tryGrow(Object[] array, int oldCap) {
-         *         ## 先释放锁，因为是从offer()方法的锁内部过来的；先释放锁，使用allocationSpinLock变量控制扩容的过程
+         *         ## 先释放锁，因为是从offer()方法的锁内部过来的;先释放锁,使用allocationSpinLock变量控制扩容的过程
          *         ## 防止阻塞的线程过多
          *         lock.unlock(); // must release and then re-acquire main lock
          *         Object[] newArray = null;
          *         ## CAS更新allocationSpinLock变量为1的线程获得扩容资格
          *         if (allocationSpinLock == 0 && UNSAFE.compareAndSwapInt(this, allocationSpinLockOffset, 0, 1)) {
          *             try {
-         *                 ## 旧容量小于64则翻倍，旧容量大于64则增加一半
+         *                 ## 旧容量小于64则翻倍,旧容量大于64则增加一半
          *                 int newCap = oldCap + ((oldCap < 64) ? (oldCap + 2) : (oldCap >> 1));
          *                 ## 判断新容量是否溢出
          *                 if (newCap - MAX_ARRAY_SIZE > 0) {
@@ -187,7 +187,7 @@ public class PriorityBlockingQueueDemo {
          *         try {
          *             ## 队列没有元素，就阻塞在notEmpty条件上
          *             ## 出队成功，就跳出循环
-         *             while ( (result = dequeue()) == null){
+         *             while((result = dequeue()) == null){
          *                 notEmpty.await();
          *             }
          *         } finally {
@@ -204,8 +204,7 @@ public class PriorityBlockingQueueDemo {
          *         ## 数组元素不足，返回null
          *         if (n < 0){
          *             return null;
-         *         }
-         *         else {
+         *         }else {
          *             Object[] array = queue;
          *             ## 弹出堆index=0的元素
          *             E result = (E) array[0];
