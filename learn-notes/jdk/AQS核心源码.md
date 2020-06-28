@@ -72,7 +72,7 @@ static final class Node {
         ## 下一个等待在条件上的节点（Condition锁时使用）
         Node nextWaiter;
 
-        ## 下一个等待条件上额节点是否时共享模式
+        ## 下一个等待条件上的节点是否时共享模式
         final boolean isShared() {
             return nextWaiter == SHARED;
         }
@@ -84,7 +84,7 @@ static final class Node {
             else
                 return p;
         }
-        ## 构造函数，把节点时共享模式还是互斥模式设置到nextWaiter字段里面
+        ## 构造函数，把节点是共享模式还是互斥模式设置到nextWaiter字段里面
         Node(Thread thread, Node mode) { 
             this.nextWaiter = mode;
             this.thread = thread;
@@ -150,6 +150,7 @@ private volatile int state;
 #### AQS 核心实现方法
 
 ##### 公平锁实现
+
 ```
 
 ## ReentrantLock.lock()
@@ -159,6 +160,7 @@ final void lock() {
 ## AbstractQueuedSynchronizer.acquire(): 尝试获取锁,如果获取失败就排队
 public final void acquire(int arg) {
         ## addWaiter()这里传入的节点模式为独占模式;arg默认为1
+        ## 与操作,前面获取成功则不需要再检查后面的入队方法
         if (!tryAcquire(arg) && acquireQueued(addWaiter(Node.EXCLUSIVE), arg)){
             selfInterrupt();
         }
@@ -172,9 +174,9 @@ protected final boolean tryAcquire(int acquires) {
             int c = getState();
             ## 如果当前同步状态值等于0,说明没有线程占有锁
             if (c == 0) {
-                ## 如果没有其它线程在排队，那么当前线程尝试更新state的值为1;如果成功了,则说明当前线程获取了锁【非公平锁则不用!hasQueuedPredecessors()】
-                ## hasQueuedPredecessors：判断当前线程是否位于CLH同步队列中的第一个。如果是则返回flase，否则返回true
-                ## 判断当前节点在等待队列中是否有前驱节点的判断，如果有前驱节点说明有线程比当前线程更早的请求资源，根据公平性，当前线程请求资源失败。如果当前节点没有前驱节点的话，才有做后面的逻辑判断的必要性
+                ## 如果没有其它线程在排队,那么当前线程尝试更新state的值为1;如果成功了,则说明当前线程获取了锁【非公平锁则不用!hasQueuedPredecessors()】
+                ## hasQueuedPredecessors:判断当前线程是否位于CLH同步队列中的第一个。如果是则返回flase，否则返回true
+                ## 判断当前节点在等待队列中是否有前驱节点的判断,如果有前驱节点说明有线程比当前线程更早的请求资源,根据公平性,当前线程请求资源失败。如果当前节点没有前驱节点的话,才有做后面的逻辑判断的必要性
                 if (!hasQueuedPredecessors() && compareAndSetState(0, acquires)) {
                     ## 当前线程获取了锁，把自己设置到exclusiveOwnerThread变量中
                     setExclusiveOwnerThread(current);
@@ -203,6 +205,7 @@ private Node addWaiter(Node mode) {//mode= Node.EXCLUSIVE
         Node node = new Node(Thread.currentThread(), mode);
         ## 这里先尝试把新节点加到尾节点后面,如果成功了就返回新节点;如果没成功再调用enq()方法不断尝试
         Node pred = tail;
+        ## 如果尾节点不为空，则尝试将节点放在尾节点的后面
         if (pred != null) {
             ## 将新节点的前置节点设置为尾节点
             node.prev = pred;
@@ -213,7 +216,7 @@ private Node addWaiter(Node mode) {//mode= Node.EXCLUSIVE
                 return node;
             }
         }
-        ## 如果上面创建尾节点失败,则调用enq()方法
+        ## 如果上面创建尾节点失败,或者尾节点为null,则调用enq()方法；多个节点竞争加入到队列里面
         enq(node);
         return node;
 }
@@ -225,10 +228,11 @@ private Node enq(final Node node) {
             Node t = tail;
             ## 如果尾节点为null,说明还未初始化
             if (t == null) {
-                ## 头节点理论上代表获取锁的线程，但是它不属于队列。所以head节点的thread=null,状态初始为0，然后有后继节点尝试获取锁的时候则被设置为-1
+                ## 头节点理论上代表获取锁的线程,它不属于队列。所以head节点的thread=null,状态初始为0,然后有后继节点尝试获取锁的时候则被设置为-1
                 ## 初始化头节点和尾节点(new Node()方法可见，head 是不包含线程的假节点)，第一次进入这个方法的时候初始化了等待队列，第二次自旋循环才能跳出
-                if (compareAndSetHead(new Node()))
+                if (compareAndSetHead(new Node())){
                     tail = head;
+                 }
             } else {
                 ## 新加入节点的前置节点设置为尾节点
                 node.prev = t;
@@ -236,19 +240,19 @@ private Node enq(final Node node) {
                 if (compareAndSetTail(t, node)) {
                     ## 设置旧尾节点的下一个节点为新节点
                     t.next = node;
-                    return t;
+                    return t;****
                 }
             }
         }
     }
 
-### 调用上面的addWaiter()方法成功使得新节点已经成功入队,下面这个方法是尝试让当前节点来获取锁的(arg=1)
+### 调用上面的 addWaiter()方法成功使得新节点已经成功入队,下面这个方法是尝试让当前节点来获取锁的(arg=1)
 ### AbstractQueuedSynchronizer.acquireQueued() 
 final boolean acquireQueued(final Node node, int arg) {
         ## 失败标识
         boolean failed = true;
         try {
-            ## 终端标识
+            ## 中断标识
             boolean interrupted = false;
             ## 自旋
             for (;;) {
@@ -257,7 +261,7 @@ final boolean acquireQueued(final Node node, int arg) {
                 ## 如果当前节点的前一个节点为head节点,则说明轮到自己获取锁了
                 ## 调用ReentrantLock.FairSync.tryAcquire()方法再次尝试获取锁
                 if (p == head && tryAcquire(arg)) {
-                    ## 重新这只头节点，断开原来头节点
+                    ## 重新设置头节点，断开原来头节点
                     ## 尝试获取锁成功,这里同时只会有一个线程在执行，所以不需要CAS更新;将当前节点设置为新的头节点
                     setHead(node);
                     ## 并把节点从链表中删除,已经获取锁了
@@ -315,7 +319,7 @@ private static boolean shouldParkAfterFailedAcquire(Node pred, Node node) {
              * need a signal, but don't park yet.  Caller will need to
              * retry to make sure it cannot acquire before parking.
              */
-            ## 如果前一个节点的状态<=0,则把其状态设置为等待唤醒
+            ## 如果前一个节点的状态<=0,则把其状态设置为等待唤醒（初始化队列，head初始状态为0，第一次调用该方法先从0设置为-1）
             compareAndSetWaitStatus(pred, ws, Node.SIGNAL);
         }
         return false;
@@ -447,7 +451,8 @@ public void unlock() {
 public final boolean release(int arg) {
         ## 调用AQS实现类的tryRelease()方法释放锁
         if (tryRelease(arg)) {
-            ## 如果头节点不为空,且等待状态不是0,就唤醒下一个节点;在每个节点阻塞之前会把其上一个节点的等待状态设为SIGNAL(-1),SIGNAL的准确理解应该是唤醒下一个等待的线程
+            ## 如果头节点不为空,且等待状态不是0,就唤醒下一个节点;
+            ## 在每个节点阻塞之前会把其上一个节点的等待状态设为SIGNAL(-1),SIGNAL的准确理解应该是唤醒下一个等待的线程
             Node h = head;
             if (h != null && h.waitStatus != 0){
                 unparkSuccessor(h);
@@ -520,7 +525,7 @@ private final Sync sync;
 
 ```
 
-### 核心方法:ReentrantLock实现了Lock接口，Lock接口里面定义了java中锁应该实现的几个方法
+### 核心方法:ReentrantLock 实现了Lock接口，Lock接口里面定义了java中锁应该实现的几个方法
 
 ```
 1. void lock();## 获取锁
@@ -611,20 +616,3 @@ static final class FairSync extends Sync
 ```
 
 来自: [彤哥读源码](https://mp.weixin.qq.com/s?__biz=Mzg2ODA0ODM0Nw==&mid=2247483746&idx=1&sn=a6b5bea0cb52f23e93dd223970b2f6f9&scene=21#wechat_redirect)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

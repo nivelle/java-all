@@ -83,6 +83,9 @@ public class CharacterDemo {
         } catch (Exception e) {
             System.out.println(e);
         }
+
+        String ipv6 = "240e:82:f0ab:4b57:ec2f:6c42:77a4:78";
+        System.out.println(ipv6.length());
     }
 
 }

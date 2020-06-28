@@ -220,9 +220,9 @@ public void execute(Runnable command) {
                 addWorker(null, false);
             }
         }
-        ## 任务入队列失败，尝试创建非核心工作线程。(看第二个参数)
+        ## 任务入队列失败，尝试创建非核心工作线程。如果创建失败则执行拒绝策略 (看第二个参数：true 是加核心线程，false和非核心工作线程)
         else if (!addWorker(command, false)){
-            reject(command);
+            reject(command);//有两次会执行决绝策略
         }
     }
  
@@ -240,9 +240,10 @@ private boolean addWorker(Runnable firstTask, boolean core) {
             int rs = runStateOf(c);
             // Check if queue empty only if necessary.
             ## 条件1:线程池不在RUNNING状态并且状态是STOP、TIDYING或TERMINATED中的任意一种状态
-            ## 条件2:线程池不在RUNNING状态，线程池接受了新的任务
-            ## 条件3:线程池不在RUNNING状态，阻塞队列为空
-            ## 满足这3个条件中的任意一个的话，拒绝执行任务
+            ## 条件2:线程池不在RUNNING状态,线程池接受了新的任务
+            ## 条件3:线程池不在RUNNING状态,阻塞队列为空
+            
+            ## 满足这3个条件中的任意一个的话,拒绝执行任务
             if (rs >= SHUTDOWN && ! (rs == SHUTDOWN && firstTask == null && ! workQueue.isEmpty())){
                 return false;
             }
@@ -258,9 +259,9 @@ private boolean addWorker(Runnable firstTask, boolean core) {
                     ## 跳出retry标记的循环
                     break retry;
                 }
-                ## 如果增加线程数量1失败
+                ## 获取当前状态变量
                 c = ctl.get();
-                ## 如果状态改变了，重新循环操作
+                ## 如果增加线程数量1失败且如果状态改变了,重新循环操作
                 if (runStateOf(c) != rs){
                     ## 从retry开始再次执行循环
                     continue retry;
@@ -292,14 +293,14 @@ private boolean addWorker(Runnable firstTask, boolean core) {
                     // shut down before lock acquired.
                     ## 在锁住之后再重新检测一下状态
                     int rs = runStateOf(ctl.get());
-                    ## 如果线程池在RUNNING状态或者线程池在SHUTDOWN状态并且任务是个null
-                    if (rs < SHUTDOWN ||(rs == SHUTDOWN && firstTask == null)) {
+                    ## 如果线程池在RUNNING状态 或者线程池在SHUTDOWN状态并且任务是个null
+                    if (rs < SHUTDOWN || (rs == SHUTDOWN && firstTask == null)) {
                         ## 判断线程是否还活着，也就是说线程已经启动并且还没死掉
                         if (t.isAlive()) {
                             ## 如果存在已经启动并且还没死的线程，抛出异常
                             throw new IllegalThreadStateException();
                         }
-                        ## worker添加到线程池的workers属性中，是个HashSet
+                        ## worker添加到线程池的 workers 属性中，是个HashSet
                         workers.add(w);
                         ## 得到目前线程池中的线程个数
                         int s = workers.size();
@@ -314,7 +315,7 @@ private boolean addWorker(Runnable firstTask, boolean core) {
                     ## 释放锁
                     mainLock.unlock();
                 }
-                ## 如果任务添加成功，运行任务，改变一下任务成功启动标识
+                ## 如果任务添加成功,运行任务,改变一下任务成功启动标识
                 if (workerAdded) {
                     ## 启动线程，这里的t是Worker中的thread属性，所以相当于就是调用了Worker的run方法
                     t.start();
@@ -386,7 +387,7 @@ final void runWorker(Worker w) {
             }
             completedAbruptly = false;
         } finally {
-            ## 回收Worker方法
+            ## 每次执行任务之后都要检查是否需要回收不需要的回收Worker方法
             processWorkerExit(w, completedAbruptly);
         }
     }
@@ -394,6 +395,7 @@ final void runWorker(Worker w) {
 
 ## 一个worker里面可以在执行完一个任务后置为空(task=null),然后再添加一个未执行的任务
 ## 如果发生了以下四件事中的任意一件，那么Worker需要被回收:
+
 ## 1. Worker个数比线程池最大大小要大
 ## 2. 线程池处于STOP状态
 ## 3. 线程池处于SHUTDOWN状态并且阻塞队列为空
@@ -409,7 +411,7 @@ private Runnable getTask() {
             int c = ctl.get();
             ## 获取线程池状态
             int rs = runStateOf(c);
-            ## 如果线程池是SHUTDOWN状态并且阻塞队列为空的话，worker数量减一，直接返回null
+            ## 如果线程池是 SHUTDOWN 状态并且阻塞队列为空的话，worker数量减一，直接返回null
             ## (SHUTDOWN状态还会处理阻塞队列任务，但是阻塞队列为空的话就结束了),如果线程池是STOP状态的话,worker数量减1,直接返回null(STOP状态不处理阻塞队列任务)
             ## 开始回收闲置Worker（控制变量-1）
             // Check if queue empty only if necessary.
@@ -454,13 +456,14 @@ private Runnable getTask() {
         }
     }
  ```
-## 如果getTask返回的是null，那说明阻塞队列已经没有任务并且当前调用getTask的Worker需要被回收，那么会调用processWorkerExit方法进行回收  
-## 回收不用的worker
+## 如果getTask返回的是null，那说明阻塞队列已经没有任务并且当前调用getTask的Worker需要被回收，那么会调用processWorkerExit方法进行回收 不用的worker,；
+## 在getTask里 decrementWorkerCount（）和 compareAndDecrementWorkerCount（）里是正常处理的回收操作
+
 ``` 
 private void processWorkerExit(Worker w, boolean completedAbruptly) {
         ## 如果Worker非正常结束流程调用processWorkerExit方法，worker数量减一。
         ## 如果是正常结束的话，在getTask方法里worker数量已经减一了
-        if (completedAbruptly) {// If abrupt, then workerCount wasn't adjusted
+        if (completedAbruptly) {// If abrupt, then workerCount wasn't adjusted（如果被中断,则需要先减少工作线程数）
             decrementWorkerCount();
         }
         final ReentrantLock mainLock = this.mainLock;
@@ -478,22 +481,23 @@ private void processWorkerExit(Worker w, boolean completedAbruptly) {
         tryTerminate();
 
         int c = ctl.get();
-        ## 如果线程池还处于RUNNING或者SHUTDOWN状态
+        ## 如果线程池还处于RUNNING或者SHUTDOWN状态,则要处理未处理完的任务
         if (runStateLessThan(c, STOP)) {
              ## Worker是正常结束流程的话
             if (!completedAbruptly) {
                 int min = allowCoreThreadTimeOut ? 0 : corePoolSize;
-                if (min == 0 && ! workQueue.isEmpty())
+                if (min == 0 && ! workQueue.isEmpty()){
                     min = 1;
-                 ## 不需要新开一个Worker
+                }
+                 ## 线程数大于最小线程数，则不需要新开一个Worker
                 if (workerCountOf(c) >= min){
                     return; // replacement not needed
                 }
             }
-            ## 新开一个Worker代替原先的Worker,新开一个Worker需要满足以下3个条件中的任意一个：
+            ## 否则新开一个Worker代替原先的Worker,新开一个Worker需要满足以下3个条件中的任意一个：
             // 1. 用户执行的任务发生了异常
-            // 2. Worker数量比线程池基本大小要小
-           // 3. 阻塞队列不空但是没有任何Worker在工作
+            // 2. Worker数量比线程池核心大小要小
+           //  3. 阻塞队列不空但是没有任何Worker在工作
             addWorker(null, false);
         }
     }  
@@ -506,14 +510,15 @@ final void tryTerminate() {
             int c = ctl.get();
             // 满足3个条件中的任意一个，不终止线程池
                     // 1. 线程池还在运行，不能终止
-                    // 2. 线程池处于TIDYING或TERMINATED状态，说明已经在关闭了，不允许继续处理
+                    // 2. 线程池处于TIDYING或TERMINATED状态,说明已经在关闭了，不允许继续处理
                     // 3. 线程池处于SHUTDOWN状态并且阻塞队列不为空，这时候还需要处理阻塞队列的任务，不能终止线程池
             if (isRunning(c) ||runStateAtLeast(c, TIDYING) || (runStateOf(c) == SHUTDOWN && ! workQueue.isEmpty()))
                 return;
             ## 走到这一步说明线程池已经不在运行，阻塞队列已经没有任务，但是还要回收正在工作的Worker
             if (workerCountOf(c) != 0) { // Eligible to terminate
-                ## 由于线程池不运行了，调用了线程池的关闭方法，在解释线程池的关闭原理的时候会说道这个方法
-                interruptIdleWorkers(ONLY_ONE);//中断闲置Worker，直到回收全部的Worker。这里没有那么暴力，只中断一个，中断之后退出方法，中断了Worker之后，Worker会回收，然后还是会调用tryTerminate方法，如果还有闲置线程，那么继续中断
+                ## 由于线程池不运行了
+                ## 中断闲置Worker,直到回收全部的Worker。这里没有那么暴力,只中断一个,中断之后退出方法,中断了Worker之后,Worker会回收,然后还是会调用tryTerminate方法，如果还有闲置线程，那么继续中断
+                interruptIdleWorkers(ONLY_ONE);
                 return;
             }
             ## 走到这里说明worker已经全部回收了，并且线程池已经不在运行，阻塞队列已经没有任务。可以准备结束线程池了
@@ -522,7 +527,8 @@ final void tryTerminate() {
             try {
                 if (ctl.compareAndSet(c, ctlOf(TIDYING, 0))) {## cas操作，将线程池状态改成TIDYING
                     try {
-                        terminated();## 调用terminated方法
+                        ## 调用terminated方法
+                        terminated();
                     } finally {
                         ctl.set(ctlOf(TERMINATED, 0));
                         termination.signalAll();
@@ -532,7 +538,6 @@ final void tryTerminate() {
             } finally {
                 mainLock.unlock();
             }
-            // else retry on failed CAS
         }
     }  
 ``` 

@@ -17,7 +17,7 @@
    (2) getEnvironment().validateRequiredProperties():校验非空属性是否设置了值，没有设置的话抛出异常(MissingRequiredPropertiesException);//Validate that all properties marked as required are resolvable:see ConfigurablePropertyResolver#setRequiredProperties
    
        - systemEnvironment
-       
+      
        - systemProperties
        
    (3) earlyApplicationEvents= new LinkedHashSet<ApplicationEvent>():保存容器中的一些早期的事件,如果存在则先清理掉旧的监听器

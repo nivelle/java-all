@@ -2,13 +2,13 @@
 
 ### 概述
 
-- 注解@EnableScheduling导入SchedulingConfiguration;
+- 注解@EnableScheduling 导入SchedulingConfiguration;
 
-- SchedulingConfiguration定义基础设施bean ScheduledAnnotationBeanPostProcessor scheduledAnnotationProcessor;
+- SchedulingConfiguration 定义基础设施bean: ScheduledAnnotationBeanPostProcessor scheduledAnnotationProcessor;
 
 - ScheduledAnnotationBeanPostProcessor在容器启动时做如下事情:
 
-  (1) 记所有使用@Scheduled注解的bean方法到一个ScheduledTaskRegistrar，供调度任务执行器TaskScheduler执行
+  (1) 记所有使用@Scheduled注解的bean方法到一个 ScheduledTaskRegistrar，供调度任务执行器 TaskScheduler 执行
   
   (2) 为ScheduledTaskRegistrar指定任务执行器TaskScheduler,该任务执行器来自容器中的bean TaskScheduler/ScheduledExecutorService(如果不指定,ScheduledTaskRegistrar自己会本地创建一个ConcurrentTaskScheduler)
       
@@ -17,7 +17,7 @@
 ## 核心源码
 
 
-### @EnableSchedule
+### @EnableScheduling
 
 ```
 @Import(SchedulingConfiguration.class)
@@ -47,8 +47,8 @@ public class SchedulingConfiguration {
 
 ```
 
-### ScheduledAnnotationBeanPostProcessor#postProcessAfterInitialization检测处理每个@Scheduled注解的方法ScheduledAnnotationBeanPostProcessor实现了DestructionAwareBeanPostProcessor,BeanPostProcessor等接口。
-### 作为一个BeanPostProcessor,ScheduledAnnotationBeanPostProcessor会针对每个bean的创建，在bean生命周期方法#postProcessAfterInitialization中，扫描该bean中使用了注解@Scheduled的方法.
+### ScheduledAnnotationBeanPostProcessor#postProcessAfterInitialization检测处理每个@Scheduled 注解的方法ScheduledAnnotationBeanPostProcessor实现了DestructionAwareBeanPostProcessor,BeanPostProcessor等接口。
+### 作为一个BeanPostProcessor,ScheduledAnnotationBeanPostProcessor会针对每个bean的创建,在bean生命周期方法#postProcessAfterInitialization中，扫描该bean中使用了注解@Scheduled的方法.
 
 ```
 	@Override
@@ -64,7 +64,7 @@ public class SchedulingConfiguration {
         ## this.nonAnnotatedClasses 是一个缓存，用于记录处理过程中所发现的不包含任何被@Scheduled注解的方法的类
 		if (!this.nonAnnotatedClasses.contains(targetClass)) {
           ## 获取类  targetClass 上所有使用注解  @Scheduled 的方法
-          ## 注意 : 某个方法上可能同时使用多个注解  @Scheduled ，所以以下 annotatedMethods 的每个 Entry 是 一个方法对应一个 @cheduled 集合
+          ## 注意 : 某个方法上可能同时使用多个注解  @Scheduled ,所以以下 annotatedMethods 的每个 Entry 是 一个方法对应一个 @cheduled 集合
 			Map<Method, Set<Scheduled>> annotatedMethods = MethodIntrospector.selectMethods(targetClass,(MethodIntrospector.MetadataLookup<Set<Scheduled>>) method -> {
 						Set<Scheduled> scheduledMethods = AnnotatedElementUtils.getMergedRepeatableAnnotations(method, Scheduled.class, Schedules.class);
 						return (!scheduledMethods.isEmpty() ? scheduledMethods : null);
@@ -97,7 +97,7 @@ public class SchedulingConfiguration {
 
 rocessScheduled处理方法上的每个@Scheduled注解，生成一个ScheduledTask并登记到this.scheduledTasks。 
 
-this.scheduledTasks 数据结构为Map; key:是一个对象，其类就是含有方法使用了注解@Scheduled的类 value:是一个ScheduledTask集合,方法上的每个注解@Scheduled对应一个ScheduledTask;
+this.scheduledTasks 数据结构为Map: key:是一个对象,其类就是含有方法使用了注解@Scheduled的类; value:是一个ScheduledTask集合,方法上的每个注解@Scheduled对应一个ScheduledTask;
 
 ```
 	/**
@@ -109,15 +109,16 @@ this.scheduledTasks 数据结构为Map; key:是一个对象，其类就是含有
 	 */
 	protected void processScheduled(Scheduled scheduled, Method method, Object bean) {
 		try {
-           ## 将使用了@Scheduled注解的方法包装成一个 Runnable 对象,随后构建 ScheduledTask 对象时会用得到
+            ## 将使用了@Scheduled注解的方法包装成一个 Runnable 对象,随后构建 ScheduledTask 对象时会用得到
 			Runnable runnable = createRunnable(bean, method);
-            ##用于记录当前 @Scheduled 注解是否已经被处理，初始化为 false  
+            ## 用于记录当前 @Scheduled 注解是否已经被处理，初始化为 false  
 			boolean processedSchedule = false;
 			String errorMessage ="Exactly one of the 'cron', 'fixedDelay(String)', or 'fixedRate(String)' attributes is required";
-           ##用于保存针对当前 @Scheduled  注解生成的 ScheduledTask,该方法完成时，该集合内元素数量通常为 1
+            ## 用于保存针对当前 @Scheduled  注解生成的 ScheduledTask,该方法完成时，该集合内元素数量通常为 1
 			Set<ScheduledTask> tasks = new LinkedHashSet<>(4);
 			// Determine initial delay
-           ## 确定 initial delay 属性 ： 基于注解属性 initialDelay 或者  initialDelayString 分析得到,二者只能使用其中之一
+            
+            ## 确定 initial delay 属性:基于注解属性 initialDelay 或者  initialDelayString 分析得到,二者只能使用其中之一
 			long initialDelay = scheduled.initialDelay();
 			String initialDelayString = scheduled.initialDelayString();
 			if (StringUtils.hasText(initialDelayString)) {
