@@ -28,6 +28,17 @@ public class MakeSqlString {
             stringBuilder.append("111").append(")").append(",");
         }
 
-        System.out.println(stringBuilder.toString());
+        //System.out.println(stringBuilder.toString());
+
+
+
+        for (int i = 0; i < 64; i++) {
+            StringBuilder stringBuilder2 = new StringBuilder("alter table `nd_rt_company_user_");
+            stringBuilder2.append(i);
+            stringBuilder2.append("`");
+            stringBuilder2.append("add column `channel` varchar(16) NOT NULL default  '' COMMENT '渠道';");
+            System.out.println(stringBuilder2.toString());
+
+        }
     }
 }
