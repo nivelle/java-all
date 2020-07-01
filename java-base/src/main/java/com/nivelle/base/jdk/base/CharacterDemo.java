@@ -1,5 +1,7 @@
 package com.nivelle.base.jdk.base;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * Character
  *
@@ -62,24 +64,38 @@ public class CharacterDemo {
             System.out.println("你字的二进制转十进制:" + Integer.parseInt("100111101100000", 2));
             System.out.println("你字对应的编码:" + "你".codePointAt(0));
 
-            String text1 = "hello你好";
-            byte[] bytes = text1.getBytes();
-            StringBuilder stringBuilder = new StringBuilder("低位字节码:");
-            for (int i = 0; i < bytes.length; i++) {
-                String binaryString = Integer.toBinaryString(bytes[i] & 0xff);
-                stringBuilder.append(binaryString);
-            }
+
             System.out.println();
             System.out.println("0xff对应的十进制：" + 0xff);
             System.out.println("十进制转二进制:" + Integer.toBinaryString(255));
-            System.out.println("0xff对应的二进制:" + Integer.toBinaryString(Integer.parseInt("0xff", 16)));
+
+
+            String text1 = "你";
+            byte[] bytes = text1.getBytes();
+            StringBuilder stringBuilder2 = new StringBuilder("低位字节码:");
+            for (int i = 0; i < bytes.length; i++) {
+                String binaryString = Integer.toBinaryString(bytes[i] & 0xff);
+                stringBuilder2.append(binaryString);
+                System.out.println("低位字节码 i is:" + i + "binary is:" + binaryString);
+            }
+
+            StringBuilder stringBuilder3 = new StringBuilder("低位字节码:");
+            for (int i = 0; i < bytes.length; i++) {
+                String binaryString = Integer.toBinaryString(bytes[i] & 0xff);
+                stringBuilder3.append(binaryString);
+                System.out.println("低位字节码 i is:" + i + "binary is:" + binaryString);
+                stringBuilder3.append(StringUtils.leftPad(binaryString, 8, "0"));
+                System.out.println("低位字节码 leftPad i is:" + i + "binary is:" + binaryString);
+
+            }
             StringBuilder stringBuilder1 = new StringBuilder("全部字节码:");
             for (int i = 0; i < bytes.length; i++) {
                 String binaryString = Integer.toBinaryString(bytes[i]);
                 stringBuilder1.append(binaryString);
+                System.out.println("全部字节码 i is:" + i + "binary is:" + binaryString);
             }
-            System.out.println(stringBuilder);
-            System.out.println(stringBuilder1);
+            System.out.println("text1 的低八位:" + stringBuilder2);
+            System.out.println("text1 的二进制:" + stringBuilder1);
         } catch (Exception e) {
             System.out.println(e);
         }
