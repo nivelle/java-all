@@ -2,7 +2,6 @@
 
 ### Tomcat监听端口生成HttpServletRequest
 
-
 ##### 请求处理 : socket => coyote.Request
 
 - public abstract class AbstractProtocol<S> implements ProtocolHandler,MBeanRegistration

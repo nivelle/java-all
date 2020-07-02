@@ -2,6 +2,7 @@ package com.nivelle.base;
 
 import com.google.common.collect.Maps;
 import com.nivelle.base.utils.GsonUtils;
+import org.apache.commons.io.IOUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * TODO:DOCUMENT ME!
@@ -167,12 +169,26 @@ public class TestController {
         String referer = request.getHeader(HttpHeaders.REFERER);
         result.put(HttpHeaders.REFERER, referer);
 
+        String expect = request.getHeader(HttpHeaders.EXPECT);
+        result.put(HttpHeaders.EXPECT, expect);
+        if (expect.equals("100-continue")){
+            response.setHeader(HttpHeaders.EXPECT, expect);
+        }
         System.out.println("result is:" + result);
-
-        response.setHeader(HttpHeaders.ALLOW,HttpMethod.GET.name());
-        response.setStatus(405);
+        response.setHeader(HttpHeaders.ALLOW, HttpMethod.GET.name());
+        //response.setStatus(405);
         result.put(HttpHeaders.ALLOW, HttpMethod.GET.name());
+        String contentType = request.getContentType();
 
+        if ("appliction/x-www-form-urlencoded".equals(contentType)) {
+
+        } else if ("application/json".equals(contentType)) {
+            String paramJson = IOUtils.toString(request.getInputStream(), "utf-8");
+            Map jsonMap = GsonUtils.fromJsonFormat(paramJson, Map.class);
+            String dataStr = (String) jsonMap.get("data");
+            System.out.println("字节数：" + dataStr.getBytes().length);
+
+        }
         response.getWriter().write(GsonUtils.toJson(result));
     }
 }
