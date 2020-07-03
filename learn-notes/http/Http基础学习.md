@@ -3,7 +3,7 @@
 
 ### header
 
-#### general 通用头部 (不属于headers，只用于收集请求url和响应的status等信息)
+#### general 通用头部 (同时适用于请求和响应消息，但与最终消息传输的数据无关的消息头 不属于headers，只用于收集请求url和响应的status等信息)
 
 - Request URL: http://nivelle.me:39300/nd_admin/settlement/list?page=1&size=10&total=0&count=0&companyId=&companyName=
 
@@ -40,7 +40,7 @@ ETag: W/"646-RJRVaOjMluW+SOAL0EThThA2lnM"
 ```
                                                                                             
                                                  
-#### Request Headers
+#### Request Headers(包含更多有关要获取的资源或客户端本身信息的消息头)
 
 - Accept:告诉WEB服务器自己接受什么介质类型，*/* 表示任何类型，type/* 表示该类型下的所有子类型;
 
@@ -58,7 +58,7 @@ ETag: W/"646-RJRVaOjMluW+SOAL0EThThA2lnM"
 
 - Origin: 表明了请求来自于哪个站点  (eg:<scheme> "://" <host> [ ":" <port> ])
 
-#### Response Headers
+#### Response Headers(包含有关响应的补充信息，如其位置或服务器本身（名称和版本等）的消息头)
 
 - Content-Location: 请求资源可替代的备用的另一地址	
 
@@ -68,11 +68,16 @@ ETag: W/"646-RJRVaOjMluW+SOAL0EThThA2lnM"
 
 - Content-Type:返回内容的MIME类型	(Content-Type: text/html; charset=utf-8)
 
-#### Entity Headers
+#### Entity Headers(包含有关实体主体的更多信息，比如主体长(Content-Length)度或其MIME类型)
 
 - Expires:包含日期/时间,即在此时候之后,响应过期(如果在Cache-Control响应头设置了 "max-age" 或者 "s-max-age" 指令，那么 Expires 头会被忽略)
 
 - Last-Modified: 资源的最后修改日期时间
+
+- Content-Length: 发送给接收方的消息主体的大小；
+
+- Content-Type:告诉客户端实际返回的内容的内容类型；详情
+
 
 ### mime
 
