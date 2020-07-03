@@ -10,7 +10,26 @@ import com.nivelle.base.pojo.MyEnum;
  */
 public class EnumDemo {
 
+
+
     public static void main(String[] args) {
+
+        /**
+         *  Enum 反编译：
+         *
+         *  public final class com.nivelle.base.pojo.MyEnum extends java.lang.Enum<com.nivelle.base.pojo.MyEnum> {
+         *   public static final com.nivelle.base.pojo.MyEnum ONE;
+         *   public static final com.nivelle.base.pojo.MyEnum TWO;
+         *   public static final com.nivelle.base.pojo.MyEnum THIRD;
+         *   public static com.nivelle.base.pojo.MyEnum[] values();
+         *   public static com.nivelle.base.pojo.MyEnum valueOf(java.lang.String);
+         *   public int getType();
+         *   public java.lang.String getDesc();
+         *   static {};
+         * }
+         *
+         */
+
 
         /**
          * 枚举类型实际上会被编译成一个对应的类，这个类继承了Enum类，enum有name和ordinal两个实例变量，
@@ -18,7 +37,7 @@ public class EnumDemo {
          *
          * values()和valueOf()是编译器给每个枚举类型自动添加的。
          *
-         * 枚举有一个私有的构造方法，接受name和ordinal，传递给父类，私有表示不能在外部创新新的实例
+         * 枚举有一个私有的构造方法，接受name(String)和ordinal(int)，传递给父类，私有表示不能在外部创新新的实例
          *
          * 枚举值实际是三个静态变量，也是final的，不能被修改。
          *

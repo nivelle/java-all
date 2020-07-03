@@ -6,7 +6,7 @@ package com.nivelle.base.pojo;
  * @author nivell
  * @date 2019/06/19
  */
-public enum MyEnum {
+public enum MyEnum{
 
     ONE(1,"one"),
     TWO(2,"two"),
