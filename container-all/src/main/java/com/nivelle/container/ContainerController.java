@@ -16,7 +16,6 @@ public class ContainerController {
 
     @RequestMapping("/sayHello")
     public String config() {
-
         return "hello world";
     }
 }

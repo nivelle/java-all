@@ -12,15 +12,15 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
  * @date 2020/01/06
  */
 @SpringBootApplication
-public class BootstrapApplication extends SpringBootServletInitializer {
+public class ContainerBootstrapApplication extends SpringBootServletInitializer {
 
     public static void main(String[] args) {
-        SpringApplication.run(BootstrapApplication.class, args);
+        SpringApplication.run(ContainerBootstrapApplication.class, args);
     }
 
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-        return application.sources(BootstrapApplication.class);
+        return application.sources(ContainerBootstrapApplication.class);
     }
 
     /**
