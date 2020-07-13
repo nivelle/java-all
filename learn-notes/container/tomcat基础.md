@@ -125,6 +125,7 @@ telnet localhost 8005  输入：SHUTDOWN 结果：关闭tomcat
 4. reloadable:如果这个属性设为true,  Tomcat服务器在运行状态下会监视在WEB-INF/classes和Web-INF/lib目录CLASS文件的改运.如果监视到有class文件 被更新,服务器自重新加载Web应用
 
 5. cookies: 指定是否通过Cookies来支持Session,默认值为true
+
 ### host-> value
 
 ### host-> logger
@@ -164,17 +165,15 @@ telnet localhost 8005  输入：SHUTDOWN 结果：关闭tomcat
 
 ### Acceptor 线程组。用于接受新连接，并将新连接封装一下，选择一个 Poller 将新连接添加到 Poller 的事件队列中
 
-```
-1. initServerSocket()，通过 ServerSocketChannel.open() 打开一个 ServerSocket，默认绑定到 8080 端口，默认的连接等待队列长度是 100， 当超过 100 个时会拒绝服务。我们可以通过配置 conf/server.xml 中 Connector 的 acceptCount 属性对其进行定制
+1. initServerSocket()，通过 ServerSocketChannel.open() 打开一个 ServerSocket,默认绑定到 8080 端口,默认的连接等待队列长度是 100,当超过 100 个时会拒绝服务。
+我们可以通过配置 conf/server.xml 中 Connector 的 acceptCount 属性对其进行定制
 
-2. createExecutor() 用于创建 Worker 线程池。默认会启动 10 个 Worker 线程，Tomcat 处理请求过程中，Woker 最多不超过 200 个。我们可以通过配置 conf/server.xml 中 Connector 的 minSpareThreads 和 maxThreads 对这两个属性进行定制。
+2. createExecutor() 用于创建 Worker 线程池。默认会启动 10 个 Worker 线程，Tomcat 处理请求过程中，Woker 最多不超过 200 个。
+我们可以通过配置 conf/server.xml 中 Connector 的 minSpareThreads 和 maxThreads 对这两个属性进行定制。
 
 3. Pollor 用于检测已就绪的 Socket。 默认最多不超过 2 个，Math.min(2,Runtime.getRuntime().availableProcessors());。我们可以通过配置 pollerThreadCount 来定制。
 
 4. Acceptor 用于接受新连接。默认是 1 个。我们可以通过配置 acceptorThreadCount 对其进行定制。
-
-
-```
 
 ![Acceptor](https://s1.ax1x.com/2020/07/04/Nv7KOA.png)
 
@@ -184,12 +183,31 @@ telnet localhost 8005  输入：SHUTDOWN 结果：关闭tomcat
 
 3) addEvent() 方法会将 Socket 添加到该 Poller 的 PollerEvent 队列中。到此 Acceptor 的任务就完成了。
 
-####  org.apache.tomcat.util.net.public class Acceptor<U> implements Runnable 
 
 ```
-socket = endpoint.serverSocketAccept();
+## NioEndpoint
+protected SocketChannel serverSocketAccept() throws Exception {
+        return serverSock.accept();
+    }
+
+## Nio2Endpoint
+rotected AsynchronousSocketChannel serverSocketAccept() throws Exception {
+          return serverSock.accept().get();
+      }
+      
+## AprEndpoint
+protected Long serverSocketAccept() throws Exception {
+        long socket = Socket.accept(serverSock);
+        if (log.isDebugEnabled()) {
+            long sa = Address.get(Socket.APR_REMOTE, socket);
+            Sockaddr addr = Address.getInfo(sa);
+            log.debug(sm.getString("endpoint.apr.remoteport",Long.valueOf(socket),Long.valueOf(addr.port)));
+        }
+        return Long.valueOf(socket);
+    }
 
 ```
+
 #### public class NioEndpoint extends AbstractJsseEndpoint<NioChannel,SocketChannel> 
 
 ```
@@ -261,7 +279,7 @@ socket = endpoint.serverSocketAccept();
 
 3）request.getContext().getPipeline().getFirst().invoke() 先获取对应的 StandardContext,并执行其 pipeline。
 
-4） request.getWrapper().getPipeline().getFirst().invoke() 先获取对应的 StandardWrapper，并执行其 pipeline。
+4）request.getWrapper().getPipeline().getFirst().invoke() 先获取对应的 StandardWrapper，并执行其 pipeline。
 
 
 
