@@ -1,6 +1,6 @@
 ## tomcat 模型
 
-### Acceptor 线程组。用于接受新连接，并将新连接封装一下，选择一个 Poller 将新连接添加到 Poller 的事件队列中
+## 组件1：Acceptor 线程组。用于接受新连接，并将新连接封装,选择一个 Poller 将新连接添加到 Poller 的事件队列中
 
 #### public abstract class AbstractEndpoint<S,U>
 
@@ -78,15 +78,17 @@ public void startInternal() throws Exception {
 
             // Create worker collection
             if (getExecutor() == null) {
+                //用于创建 Worker线程池
                 createExecutor();
             }
 
             initializeConnectionLatch();
+            //创建并启动acceptor线程
             startAcceptorThread();
         }
     }
 
-## startInternal
+## AprEndpoint 
 public void startInternal() throws Exception {
 
         if (!running) {
@@ -94,8 +96,7 @@ public void startInternal() throws Exception {
             paused = false;
 
             if (socketProperties.getProcessorCache() != 0) {
-                processorCache = new SynchronizedStack<>(SynchronizedStack.DEFAULT_SIZE,
-                        socketProperties.getProcessorCache());
+                processorCache = new SynchronizedStack<>(SynchronizedStack.DEFAULT_SIZE,socketProperties.getProcessorCache());
             }
 
             // Create worker collection

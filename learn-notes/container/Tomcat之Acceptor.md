@@ -45,6 +45,20 @@ public void close() {
     }
 ```
 
+###  连接计数
+```
+//if we have reached max connections, wait
+protected void countUpOrAwaitConnection() throws InterruptedException {
+        if (maxConnections==-1) return;
+        //默认LimitLatch大小为 1024*8
+        LimitLatch latch = connectionLimitLatch;
+        if (latch!=null) {
+            //达到最大连接数则阻塞
+            latch.countUpOrAwait();
+        }
+    }
+```
+
 ###  处理连接 public class Acceptor<U> implements Runnable
 
 ```
@@ -52,10 +66,8 @@ public void run() {
 
         //该方法运行在 acceptor 线程中,用来接收来自网络的客户端请求，然后封装后注册到 poller 的事件队列,最终 poller 线程将要处理的请求交给 worker 线程    
         int errorDelay = 0;
-       
-        // Loop until we receive a shutdown command
+  
         while (endpoint.isRunning()) {
-            // Loop if endpoint is paused
             // running变量是所属NioEndpoint实例是否处于运行状态的标记;
             // true 表示处于运行中，false表示处于停止服务状态;NioEndpoint实例,还有另外一个状态paused用来表示服务的暂停，比如 running==true&&
             // paused==true表示NioEndpoint实例处于运行中但暂停服务状态，running==true&&paused==false才表示NioEndpoint实例正处于有效服务状态
@@ -74,10 +86,10 @@ public void run() {
             }
             // 逻辑走到这里表示处于正常接收请求状态 running==true&&paused==false
             state = AcceptorState.RUNNING;
-
             try {
-                //if we have reached max connections, wait
+                // if we have reached max connections, wait
                 // 如果还没有到达最大连接数，则当前连接数量做加一操作，如果到达最大连接数则让当前接收线程处于等待状态，直到有连接被释放
+                // 计数+1，达到最大值则等待
                 endpoint.countUpOrAwaitConnection();
                 // Endpoint might have been paused while waiting for latch
                 // If that is the case, don't accept new connections
