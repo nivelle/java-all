@@ -70,7 +70,7 @@ acceptCount：当调用HTTP请求数达到tomcat的最大线程数时，还有�
 
 8. maxPostSize: http-post请求中数据(body)的最大尺寸,单位:byte,默认值为2M.这对一些表单提交(较多文本域)有影响.可以适度调整此值,大文件上传一般会在client拆分成小文件,而不是直接发送
 
-9. useBodyEncodingForURI: 是否使用"Content-type"中指定的编码方式对http-get请求中查询字符串进行编码.如果为"true",将会忽略"URIEncoding"配置项,转而使用header中"content-Type"指定的编码方式
+9. useBodyEncodingForUacceptCountRI: 是否使用"Content-type"中指定的编码方式对http-get请求中查询字符串进行编码.如果为"true",将会忽略"URIEncoding"配置项,转而使用header中"content-Type"指定的编码方式
 
 10. keepAliveTimeout:  当无实际数据交互时，链接被保持的时间，单位：毫秒。在未指定此属性时，将使用connectionTimeout作为keepAliveTimeout。
 

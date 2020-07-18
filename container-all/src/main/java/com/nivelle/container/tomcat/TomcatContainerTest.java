@@ -59,15 +59,16 @@ public class TomcatContainerTest {
         System.out.println("connector executor name:" + connector.getExecutorName());
         System.out.println();
         org.apache.catalina.connector.Request request = connector.createRequest();
+        System.out.println("connector state:"+connector.getState());
 
 
         ProtocolHandler protocolHandler = connector.getProtocolHandler();
         java.util.concurrent.Executor executor = protocolHandler.getExecutor();
         System.out.println("protocolHandler executor:" + executor);
         System.out.println("protocolHandler adapter:" + protocolHandler.getAdapter());
-        protocolHandler.getExecutor().execute(()->{
-            System.out.println("protocolHandler executor execute");
-        });
+//        protocolHandler.getExecutor().execute(()->{
+//            System.out.println("protocolHandler executor execute");
+//        });
         Adapter adapter = protocolHandler.getAdapter();
 
     }

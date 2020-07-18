@@ -22,8 +22,12 @@
 
 #### public abstract void startInternal() throws Exception;
 
+#### startInternal()方法
+
+
+##### NioEndpoint
+
 ```
-## NioEndpoint
 public void startInternal() throws Exception {
 
         if (!running) {
@@ -59,7 +63,10 @@ public void startInternal() throws Exception {
         }
     }
 
-## Nio2Endpoint
+```
+##### Nio2Endpoint
+
+```
 public void startInternal() throws Exception {
 
         if (!running) {
@@ -88,7 +95,9 @@ public void startInternal() throws Exception {
         }
     }
 
-## AprEndpoint 
+```
+##### AprEndpoint 
+```
 public void startInternal() throws Exception {
 
         if (!running) {
@@ -137,6 +146,174 @@ protected void startAcceptorThread() {
     }
 
 ```
+
+#### bind()方法
+
+##### NioEndpoint
+
+```
+public void bind() throws Exception {
+        initServerSocket();
+
+        setStopLatch(new CountDownLatch(1));
+
+        // Initialize SSL if needed
+        initialiseSsl();
+
+        selectorPool.open(getName());
+    }
+    
+## initServerSocket()
+protected void initServerSocket() throws Exception {
+        if (!getUseInheritedChannel()) {
+            serverSock = ServerSocketChannel.open();
+            socketProperties.setProperties(serverSock.socket());
+            InetSocketAddress addr = new InetSocketAddress(getAddress(), getPortWithOffset());
+            serverSock.socket().bind(addr,getAcceptCount());
+        } else {
+            // Retrieve the channel provided by the OS
+            Channel ic = System.inheritedChannel();
+            if (ic instanceof ServerSocketChannel) {
+                serverSock = (ServerSocketChannel) ic;
+            }
+            if (serverSock == null) {
+                throw new IllegalArgumentException(sm.getString("endpoint.init.bind.inherited"));
+            }
+        }
+        serverSock.configureBlocking(true); //mimic APR behavior
+    }
+    
+```
+##### Nio2Endpoint
+````
+public void bind() throws Exception {
+
+        // Create worker collection
+        if (getExecutor() == null) {
+            createExecutor();
+        }
+        if (getExecutor() instanceof ExecutorService) {
+            threadGroup = AsynchronousChannelGroup.withThreadPool((ExecutorService) getExecutor());
+        }
+        // AsynchronousChannelGroup needs exclusive access to its executor service
+        if (!internalExecutor) {
+            log.warn(sm.getString("endpoint.nio2.exclusiveExecutor"));
+        }
+
+        serverSock = AsynchronousServerSocketChannel.open(threadGroup);
+        socketProperties.setProperties(serverSock);
+        InetSocketAddress addr = new InetSocketAddress(getAddress(), getPortWithOffset());
+        //绑定端口同时设置 acceptCount
+        serverSock.bind(addr, getAcceptCount());
+
+        // Initialize SSL if needed
+        initialiseSsl();
+    }
+ ````   
+ 
+##### AprEndpoint
+```
+public void bind() throws Exception {
+
+        // Create the root APR memory pool
+        try {
+            rootPool = Pool.create(0);
+        } catch (UnsatisfiedLinkError e) {
+            throw new Exception(sm.getString("endpoint.init.notavail"));
+        }
+
+        // Create the pool for the server socket
+        serverSockPool = Pool.create(rootPool);
+        // Create the APR address that will be bound
+        String addressStr = null;
+        if (getAddress() != null) {
+            addressStr = getAddress().getHostAddress();
+        }
+        int family = Socket.APR_INET;
+        if (Library.APR_HAVE_IPV6) {
+            if (addressStr == null) {
+                if (!OS.IS_BSD) {
+                    family = Socket.APR_UNSPEC;
+                }
+            } else if (addressStr.indexOf(':') >= 0) {
+                family = Socket.APR_UNSPEC;
+            }
+         }
+
+        long inetAddress = Address.info(addressStr, family, getPortWithOffset(), 0, rootPool);
+        // Create the APR server socket
+        serverSock = Socket.create(Address.getInfo(inetAddress).family,
+                Socket.SOCK_STREAM,
+                Socket.APR_PROTO_TCP, rootPool);
+        if (OS.IS_UNIX) {
+            Socket.optSet(serverSock, Socket.APR_SO_REUSEADDR, 1);
+        }
+        if (Library.APR_HAVE_IPV6) {
+            if (getIpv6v6only()) {
+                Socket.optSet(serverSock, Socket.APR_IPV6_V6ONLY, 1);
+            } else {
+                Socket.optSet(serverSock, Socket.APR_IPV6_V6ONLY, 0);
+            }
+        }
+        // Deal with the firewalls that tend to drop the inactive sockets
+        Socket.optSet(serverSock, Socket.APR_SO_KEEPALIVE, 1);
+        // Bind the server socket
+        int ret = Socket.bind(serverSock, inetAddress);
+        if (ret != 0) {
+            throw new Exception(sm.getString("endpoint.init.bind", "" + ret, Error.strerror(ret)));
+        }
+        // Start listening on the server socket
+        ret = Socket.listen(serverSock, getAcceptCount());
+        if (ret != 0) {
+            throw new Exception(sm.getString("endpoint.init.listen", "" + ret, Error.strerror(ret)));
+        }
+        if (OS.IS_WIN32 || OS.IS_WIN64) {
+            // On Windows set the reuseaddr flag after the bind/listen
+            Socket.optSet(serverSock, Socket.APR_SO_REUSEADDR, 1);
+        }
+
+        // Enable Sendfile by default if it has not been configured but usage on
+        // systems which don't support it cause major problems
+        if (!useSendFileSet) {
+            setUseSendfileInternal(Library.APR_HAS_SENDFILE);
+        } else if (getUseSendfile() && !Library.APR_HAS_SENDFILE) {
+            setUseSendfileInternal(false);
+        }
+
+        // Delay accepting of new connections until data is available
+        // Only Linux kernels 2.4 + have that implemented
+        // on other platforms this call is noop and will return APR_ENOTIMPL.
+        if (deferAccept) {
+            if (Socket.optSet(serverSock, Socket.APR_TCP_DEFER_ACCEPT, 1) == Status.APR_ENOTIMPL) {
+                deferAccept = false;
+            }
+        }
+
+        // Initialize SSL if needed
+        if (isSSLEnabled()) {
+            for (SSLHostConfig sslHostConfig : sslHostConfigs.values()) {
+                createSSLContext(sslHostConfig);
+            }
+            SSLHostConfig defaultSSLHostConfig = sslHostConfigs.get(getDefaultSSLHostConfigName());
+            if (defaultSSLHostConfig == null) {
+                throw new IllegalArgumentException(sm.getString("endpoint.noSslHostConfig",
+                        getDefaultSSLHostConfigName(), getName()));
+            }
+            Long defaultSSLContext = defaultSSLHostConfig.getOpenSslContext();
+            sslContext = defaultSSLContext.longValue();
+            SSLContext.registerDefault(defaultSSLContext, this);
+
+            // For now, sendfile is not supported with SSL
+            if (getUseSendfile()) {
+                setUseSendfileInternal(false);
+                if (useSendFileSet) {
+                    log.warn(sm.getString("endpoint.apr.noSendfileWithSSL"));
+                }
+            }
+        }
+    }
+```
+
 
 #### 用于创建 Worker线程池
 
@@ -257,7 +434,6 @@ public void run() {
         
 ```
 
-
 ### protected abstract SocketProcessorBase<S> createSocketProcessor(SocketWrapperBase<S> socketWrapper, SocketEvent event);
 ```
 ## NioEndpoint
@@ -297,6 +473,7 @@ public boolean processSocket(SocketWrapperBase<S> socketWrapper,
             }
             Executor executor = getExecutor();
             if (dispatch && executor != null) {
+                //交给线程池处理连接 ,线程池处理的任务：SocketProccessor
                 executor.execute(sc);
             } else {
                 sc.run();

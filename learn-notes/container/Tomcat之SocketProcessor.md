@@ -159,3 +159,67 @@ public boolean processSocket(SocketWrapperBase<S> socketWrapper, SocketEvent eve
 
 
 ```
+
+
+### public abstract class AbstractProcessorLight implements Processor
+
+```
+public SocketState process(SocketWrapperBase<?> socketWrapper, SocketEvent status)
+            throws IOException {
+
+        SocketState state = SocketState.CLOSED;
+        Iterator<DispatchType> dispatches = null;
+        do {
+            if (dispatches != null) {
+                DispatchType nextDispatch = dispatches.next();
+                if (getLog().isDebugEnabled()) {
+                    getLog().debug("Processing dispatch type: [" + nextDispatch + "]");
+                }
+                state = dispatch(nextDispatch.getSocketStatus());
+                if (!dispatches.hasNext()) {
+                    state = checkForPipelinedData(state, socketWrapper);
+                }
+            } else if (status == SocketEvent.DISCONNECT) {
+                // Do nothing here, just wait for it to get recycled
+            } else if (isAsync() || isUpgrade() || state == SocketState.ASYNC_END) {
+                state = dispatch(status);
+                state = checkForPipelinedData(state, socketWrapper);
+            } else if (status == SocketEvent.OPEN_WRITE) {
+                // Extra write event likely after async, ignore
+                state = SocketState.LONG;
+            } else if (status == SocketEvent.OPEN_READ) {
+                state = service(socketWrapper);
+            } else if (status == SocketEvent.CONNECT_FAIL) {
+                logAccess(socketWrapper);
+            } else {
+                // Default to closing the socket if the SocketEvent passed in
+                // is not consistent with the current state of the Processor
+                state = SocketState.CLOSED;
+            }
+
+            if (getLog().isDebugEnabled()) {
+                getLog().debug("Socket: [" + socketWrapper +
+                        "], Status in: [" + status +
+                        "], State out: [" + state + "]");
+            }
+
+            if (isAsync()) {
+                state = asyncPostProcess();
+                if (getLog().isDebugEnabled()) {
+                    getLog().debug("Socket: [" + socketWrapper +
+                            "], State after async post processing: [" + state + "]");
+                }
+            }
+
+            if (dispatches == null || !dispatches.hasNext()) {
+                // Only returns non-null iterator if there are
+                // dispatches to process.
+                dispatches = getIteratorAndClearDispatches();
+            }
+        } while (state == SocketState.ASYNC_END ||
+                dispatches != null && state != SocketState.CLOSED);
+
+        return state;
+    }
+
+```

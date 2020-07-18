@@ -161,10 +161,7 @@ telnet localhost 8005  输入：SHUTDOWN 结果：关闭tomcat
 13. Connector把HttpServletResponse对象返回给客户browser
 
 
-
-
-
-
+![Tomcat结构图](https://s1.ax1x.com/2020/07/18/Ug0DpV.jpg)
 
 
 
