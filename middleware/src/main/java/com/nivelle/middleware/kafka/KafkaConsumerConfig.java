@@ -20,7 +20,7 @@ import java.util.Map;
 /**
  * 消费者配置
  *
- * @author nivell
+ * @author nivelle
  * @date 2019/12/04
  */
 @Configuration

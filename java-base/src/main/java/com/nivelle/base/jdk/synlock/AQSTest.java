@@ -5,7 +5,7 @@ import java.util.concurrent.locks.AbstractQueuedSynchronizer;
 /**
  * AQS
  *
- * @author nivell
+ * @author nivelle
  * @date 2019/07/19
  */
 public class AQSTest {

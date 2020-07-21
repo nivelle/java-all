@@ -5,7 +5,7 @@ import java.lang.reflect.Method;
 /**
  * 所有java类的父类
  *
- * @author nivell
+ * @author nivelle
  * @date 2019/12/12
  */
 public class ObjectDemo {

@@ -13,7 +13,7 @@ import java.util.Random;
 /**
  * TODO:DOCUMENT ME!
  *
- * @author nivell
+ * @author nivelle
  * @date 2019/12/02
  */
 public class MyPartitioner implements Partitioner {

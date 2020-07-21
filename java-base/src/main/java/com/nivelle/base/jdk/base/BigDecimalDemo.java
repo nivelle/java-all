@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 /**
  * bigDecimal
  *
- * @author nivell
+ * @author nivelle
  * @date 2019/10/13
  */
 public class BigDecimalDemo {

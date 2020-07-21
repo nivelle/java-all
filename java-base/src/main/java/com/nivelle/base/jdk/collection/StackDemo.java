@@ -5,7 +5,7 @@ import java.util.Stack;
 /**
  * Stack
  *
- * @author nivell
+ * @author nivelle
  * @date 2019/10/15
  */
 public class StackDemo {

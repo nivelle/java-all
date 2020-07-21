@@ -3,7 +3,7 @@ package com.nivelle.base.pojo;
 /**
  * 枚举类
  *
- * @author nivell
+ * @author nivelle
  * @date 2019/06/19
  */
 public enum MyEnum{

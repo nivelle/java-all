@@ -3,7 +3,7 @@ package com.nivelle.base.jdk.base;
 /**
  * 异常学习
  *
- * @author nivell
+ * @author nivelle
  * @date 2019/12/15
  */
 public class ExceptionDemo {

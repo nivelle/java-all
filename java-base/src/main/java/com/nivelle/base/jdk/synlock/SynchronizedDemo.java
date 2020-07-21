@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Synchronized 方法
  *
- * @author nivell
+ * @author nivelle
  * @date 2019/11/02
  */
 public class SynchronizedDemo {

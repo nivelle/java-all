@@ -6,7 +6,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * ThreadPool 线程池模型
  *
- * @author nivell
+ * @author nivelle
  * @date 2019/06/16
  */
 public class ThreadPoolDemo {

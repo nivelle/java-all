@@ -6,7 +6,7 @@ import com.alibaba.dubbo.common.extension.SPI;
 /**
  * Dubbo SPI 机制
  *
- * @author nivell
+ * @author nivelle
  * @date 2019/10/07
  */
 @SPI(value = "mySpi")

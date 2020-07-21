@@ -8,7 +8,7 @@ import java.util.StringJoiner;
 /**
  * String
  *
- * @author nivell
+ * @author nivelle
  * @date 2019/06/16
  */
 public class StringDemo {
@@ -198,7 +198,7 @@ public class StringDemo {
             System.out.println("转为字符串数组:" + ("nivelle".toCharArray()[i]));
         }
 
-        System.out.println("格式化字符串:" + String.format("nivell%s", "e"));
+        System.out.println("格式化字符串:" + String.format("nivelle%s", "e"));
 
         String str = new String("aaa");
         System.out.println(str);

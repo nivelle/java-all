@@ -3,7 +3,7 @@ package com.nivelle.base.pojo;
 /**
  * TODO:DOCUMENT ME!
  *
- * @author nivell
+ * @author nivelle
  * @date 2020/04/02
  */
 public class Bar {

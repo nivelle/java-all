@@ -8,7 +8,7 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 /**
  * war包方式启动
  *
- * @author nivell
+ * @author nivelle
  * @date 2020/01/06
  */
 @SpringBootApplication

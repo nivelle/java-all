@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Collections
  *
- * @author nivell
+ * @author nivelle
  * @date 2020/04/14
  */
 public class CollectionsTest {

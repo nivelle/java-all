@@ -5,7 +5,7 @@ import java.util.Arrays;
 /**
  * Arrays
  *
- * @author nivell
+ * @author nivelle
  * @date 2020/04/14
  */
 public class ArraysTest {

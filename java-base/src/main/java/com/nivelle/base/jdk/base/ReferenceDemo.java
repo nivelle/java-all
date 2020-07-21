@@ -6,7 +6,7 @@ import java.util.Objects;
 /**
  * 引用类型
  *
- * @author nivell
+ * @author nivelle
  * @date 2020/04/19
  */
 public class ReferenceDemo {

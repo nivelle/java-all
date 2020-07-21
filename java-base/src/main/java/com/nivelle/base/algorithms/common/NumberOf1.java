@@ -3,7 +3,7 @@ package com.nivelle.base.algorithms.common;
 /**
  * 二进制中1的个数
  *
- * @author nivell
+ * @author nivelle
  * @date 2019/08/20
  */
 public class NumberOf1 {

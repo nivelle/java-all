@@ -11,7 +11,7 @@ import org.springframework.core.env.ConfigurableEnvironment;
 /**
  * 自定义测试
  *
- * @author nivell
+ * @author nivelle
  * @date 2019/09/25
  */
 public class TestAnnotationConfigApplicationContext {

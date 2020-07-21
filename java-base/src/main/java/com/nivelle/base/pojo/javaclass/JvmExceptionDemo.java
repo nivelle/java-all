@@ -3,7 +3,7 @@ package com.nivelle.base.pojo.javaclass;
 /**
  * java编译反编译demo
  *
- * @author nivell
+ * @author nivelle
  * @date 2020/03/23
  */
 public class JvmExceptionDemo {

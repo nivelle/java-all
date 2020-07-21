@@ -5,7 +5,7 @@ import org.springframework.core.type.AnnotationMetadata;
 /**
  * 自定义bean注册器
  *
- * @author nivell
+ * @author nivelle
  * @date 2019/09/24
  */
 public class ImportSelector implements org.springframework.context.annotation.ImportSelector {

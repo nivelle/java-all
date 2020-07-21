@@ -3,7 +3,7 @@ package com.nivelle.base.algorithms.common;
 /**
  * 斐波那契数列
  *
- * @author nivell
+ * @author nivelle
  * @date 2019/08/20
  */
 public class Fibonacci {

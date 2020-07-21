@@ -4,7 +4,7 @@ package com.nivelle.base.jdk.jvm;
  * jvm虚拟机参数配置学习
  *
  *
- * @author nivell
+ * @author nivelle
  * @date 2020/03/21
  */
 public class JvmArgumentsTest {

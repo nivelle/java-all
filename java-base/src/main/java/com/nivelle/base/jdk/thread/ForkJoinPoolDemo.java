@@ -6,7 +6,7 @@ import java.util.concurrent.ForkJoinTask;
 /**
  * TODO:DOCUMENT ME!
  *
- * @author nivell
+ * @author nivelle
  * @date 2020/04/14
  */
 public class ForkJoinPoolDemo {

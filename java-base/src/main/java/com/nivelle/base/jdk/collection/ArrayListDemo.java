@@ -8,7 +8,7 @@ import java.util.*;
 /**
  * ArrayList
  *
- * @author nivell
+ * @author nivelle
  * @date 2019/06/16
  */
 public class ArrayListDemo {
@@ -410,6 +410,7 @@ public class ArrayListDemo {
         }
         System.out.println();
         System.out.println("list3:" + list3);
+
 
     }
 

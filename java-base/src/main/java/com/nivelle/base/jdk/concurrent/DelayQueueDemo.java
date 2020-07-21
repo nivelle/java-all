@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * 延时队列
  *
- * @author nivell
+ * @author nivelle
  * @date 2020/04/14
  */
 public class DelayQueueDemo {

@@ -16,7 +16,7 @@ import java.util.concurrent.CountDownLatch;
 /**
  * DistributedLockByCurator
  *
- * @author nivell
+ * @author nivelle
  * @date 2019/07/06
  */
 

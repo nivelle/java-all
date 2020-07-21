@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
  * <p>
  * 执行时机 : 在BeanDefinitionRegistry的标准初始化之后所有其他一般的BeanFactoryPostProcessor执行之前执行，此时所有的bean定义已经加载但是还没有bean实例被创建。
  *
- * @author nivell
+ * @author nivelle
  * @date 2019/08/25
  */
 @Component

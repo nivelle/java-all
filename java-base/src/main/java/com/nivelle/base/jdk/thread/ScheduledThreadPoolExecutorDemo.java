@@ -8,7 +8,7 @@ import java.util.concurrent.locks.LockSupport;
 /**
  * ScheduledThreadPoolExecutor(定时任务线程池)
  *
- * @author nivell
+ * @author nivelle
  * @date 2020/04/14
  */
 public class ScheduledThreadPoolExecutorDemo {

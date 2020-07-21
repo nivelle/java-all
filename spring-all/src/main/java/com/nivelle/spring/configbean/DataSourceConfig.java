@@ -13,7 +13,7 @@ import javax.sql.DataSource;
 /**
  * 数据源配置
  *
- * @author nivell
+ * @author nivelle
  * @date 2019/08/09
  */
 @Configuration

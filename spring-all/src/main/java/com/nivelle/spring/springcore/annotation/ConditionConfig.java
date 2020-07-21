@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 /**
  * 条件注解
  *
- * @author nivell
+ * @author nivelle
  * @date 2020/01/16
  */
 @Configuration

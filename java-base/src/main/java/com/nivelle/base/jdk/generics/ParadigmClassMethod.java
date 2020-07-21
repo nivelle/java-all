@@ -3,7 +3,7 @@ package com.nivelle.base.jdk.generics;
 /**
  * 范型类&范型方法
  *
- * @author nivell
+ * @author nivelle
  * @date 2019/11/12
  */
 public class ParadigmClassMethod<T> {

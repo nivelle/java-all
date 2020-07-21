@@ -9,7 +9,7 @@ import io.netty.handler.codec.string.StringEncoder;
 /**
  * 客户端过滤器
  *
- * @author nivell
+ * @author nivelle
  * @date 2019/11/12
  */
 public class NettyClientFilter extends ChannelInitializer<SocketChannel> {

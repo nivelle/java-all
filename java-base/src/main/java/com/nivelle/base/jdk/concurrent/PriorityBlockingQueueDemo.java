@@ -8,7 +8,7 @@ import java.util.concurrent.PriorityBlockingQueue;
 /**
  * 优先级阻塞队列
  *
- * @author nivell
+ * @author nivelle
  * @date 2020/04/16
  */
 public class PriorityBlockingQueueDemo {

@@ -5,7 +5,7 @@ import java.util.Random;
 /**
  * math
  *
- * @author nivell
+ * @author nivelle
  * @date 2019/07/22
  */
 public class JavaMathDemo {

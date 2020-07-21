@@ -10,7 +10,7 @@ import java.util.concurrent.Executor;
 /**
  * 线程池
  *
- * @author nivell
+ * @author nivelle
  * @date 2020/04/12
  */
 @Configuration

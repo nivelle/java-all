@@ -3,7 +3,7 @@ package com.nivelle.base.jdk.jvm;
 /**
  * 函数式接口
  *
- * @author nivell
+ * @author nivelle
  * @date 2020/03/29
  */
 

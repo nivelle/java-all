@@ -11,7 +11,7 @@ import java.util.Set;
 /**
  * 跨域过滤器处理
  *
- * @author nivell
+ * @author nivelle
  * @date 2019/08/15
  */
 public class CorsFilter implements Filter {

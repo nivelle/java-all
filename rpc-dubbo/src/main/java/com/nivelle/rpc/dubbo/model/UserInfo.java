@@ -3,7 +3,7 @@ package com.nivelle.rpc.dubbo.model;
 /**
  * TODO:DOCUMENT ME!
  *
- * @author nivell
+ * @author nivelle
  * @date 2019/08/19
  */
 public class UserInfo {

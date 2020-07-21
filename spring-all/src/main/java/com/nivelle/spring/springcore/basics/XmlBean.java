@@ -1,7 +1,7 @@
 package com.nivelle.spring.springcore.basics;
 
 /**
- * @author nivell
+ * @author nivelle
  * @date 2019/08/21
  */
 public class XmlBean {

@@ -6,7 +6,7 @@ import sun.misc.SharedSecrets;
 /**
  * SharedSecrets 和  JavaLangAccess的作用
  *
- * @author nivell
+ * @author nivelle
  * @date 2020/01/15
  */
 public class JavaLangAccessDemo {

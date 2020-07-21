@@ -3,7 +3,7 @@ package com.nivelle.base.jdk.base;
 /**
  * boolean 类型
  *
- * @author nivell
+ * @author nivelle
  * @date 2020/03/21
  */
 public class BooleanDemo {

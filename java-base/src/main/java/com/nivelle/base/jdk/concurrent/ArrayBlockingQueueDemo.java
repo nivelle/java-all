@@ -5,7 +5,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 /**
  * ArrayBlockingQueue
  *
- * @author nivell
+ * @author nivelle
  * @date 2020/04/16
  */
 public class ArrayBlockingQueueDemo {

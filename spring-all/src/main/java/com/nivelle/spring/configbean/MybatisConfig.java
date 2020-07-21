@@ -16,7 +16,7 @@ import javax.sql.DataSource;
 /**
  * mybatis配置一个master数据源
  *
- * @author nivell
+ * @author nivelle
  * @date 2019/08/08
  */
 @Configuration

@@ -3,7 +3,7 @@ package com.nivelle.base.jdk.atom;
 /**
  * LongAccumulator
  *
- * @author nivell
+ * @author nivelle
  * @date 2020/04/13
  */
 public class LongAccumulatorDemo {

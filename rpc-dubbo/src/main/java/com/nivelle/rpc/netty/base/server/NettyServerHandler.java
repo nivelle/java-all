@@ -9,7 +9,7 @@ import java.time.format.DateTimeFormatter;
 /**
  * 服务端出站处理器
  *
- * @author nivell
+ * @author nivelle
  * @date 2019/11/12
  */
 public class NettyServerHandler extends SimpleChannelInboundHandler<String> {

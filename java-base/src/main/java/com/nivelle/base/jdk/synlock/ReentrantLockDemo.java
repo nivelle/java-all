@@ -6,7 +6,7 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * ReentrantLock 源码分析
  *
- * @author nivell
+ * @author nivelle
  * @date 2019/06/16
  */
 public class ReentrantLockDemo {

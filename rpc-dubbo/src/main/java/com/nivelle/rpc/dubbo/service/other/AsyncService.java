@@ -4,7 +4,7 @@ import java.util.concurrent.Future;
 
 /**
  * 异步方法
- * @author nivell
+ * @author nivelle
  * @date 2019/08/23
  */
 public interface AsyncService {

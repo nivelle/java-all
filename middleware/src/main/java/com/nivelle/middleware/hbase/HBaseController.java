@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 /**
  * HBASE使用实例
  *
- * @author nivell
+ * @author nivelle
  * @date 2019/11/05
  */
 @Controller

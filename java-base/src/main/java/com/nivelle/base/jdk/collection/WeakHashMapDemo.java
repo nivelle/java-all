@@ -6,7 +6,7 @@ import java.util.WeakHashMap;
 /**
  * WeakHashMap
  *
- * @author nivell
+ * @author nivelle
  * @date 2019/10/15
  */
 public class WeakHashMapDemo {

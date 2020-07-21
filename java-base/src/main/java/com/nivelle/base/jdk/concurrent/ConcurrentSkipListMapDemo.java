@@ -6,7 +6,7 @@ import java.util.concurrent.ConcurrentSkipListMap;
 /**
  * 跳跃表
  *
- * @author nivell
+ * @author nivelle
  * @date 2020/04/12
  */
 public class ConcurrentSkipListMapDemo {

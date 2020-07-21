@@ -3,7 +3,7 @@ package com.nivelle.base.jdk.base;
 /**
  * Float
  *
- * @author nivell
+ * @author nivelle
  * @date 2019/06/16
  */
 public class FloatDemo {

@@ -6,7 +6,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.StampedLock;
 
 /**
- * @author nivell
+ * @author nivelle
  * @date 2020/04/12
  */
 public class StampedLockDemo {

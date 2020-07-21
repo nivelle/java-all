@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 /**
  * tomcat配置类
  *
- * @author nivell
+ * @author nivelle
  * @date 2019/07/25
  */
 @Configuration

@@ -5,7 +5,7 @@ import com.nivelle.base.pojo.MyEnum;
 /**
  * Enum
  *
- * @author nivell
+ * @author nivelle
  * @date 2019/06/16
  */
 public class EnumDemo {

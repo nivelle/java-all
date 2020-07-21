@@ -3,7 +3,7 @@ package com.nivelle.base.algorithms.common;
 /**
  * 数值的整数次方
  *
- * @author nivell
+ * @author nivelle
  * @date 2019/08/21
  */
 public class Power {

@@ -5,7 +5,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 /**
  * CopyOnWriteArraySet
  *
- * @author nivell
+ * @author nivelle
  * @date 2020/04/14
  */
 public class CopyOnWriteArraySetDemo {

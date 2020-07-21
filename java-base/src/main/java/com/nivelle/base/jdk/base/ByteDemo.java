@@ -5,7 +5,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * 字节 位
  *
- * @author nivell
+ * @author nivelle
  * @date 2019/10/31
  */
 public class ByteDemo {

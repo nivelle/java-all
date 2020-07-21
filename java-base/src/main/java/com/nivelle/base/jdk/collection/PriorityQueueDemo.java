@@ -5,7 +5,7 @@ import java.util.PriorityQueue;
 /**
  * 优先队列
  *
- * @author nivell
+ * @author nivelle
  * @date 2020/04/13
  */
 public class PriorityQueueDemo {

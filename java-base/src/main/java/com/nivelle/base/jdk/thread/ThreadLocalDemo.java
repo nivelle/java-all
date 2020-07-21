@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 /**
  * ThreadLocal
  *
- * @author nivell
+ * @author nivelle
  * @date 2019/06/16
  */
 @Service

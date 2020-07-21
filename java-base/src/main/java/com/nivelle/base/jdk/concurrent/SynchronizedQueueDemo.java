@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * 同步队列
  *
- * @author nivell
+ * @author nivelle
  * @date 2020/04/14
  */
 public class SynchronizedQueueDemo {

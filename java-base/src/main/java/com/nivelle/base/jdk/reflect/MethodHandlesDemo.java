@@ -7,7 +7,7 @@ import java.lang.invoke.MethodType;
 /**
  * 方法句柄使用demo
  *
- * @author nivell
+ * @author nivelle
  * @date 2020/03/28
  */
 public class MethodHandlesDemo {

@@ -5,7 +5,7 @@ import java.io.*;
 /**
  * java本身序列化和反序列化会校验类 serialVersionUID 是否匹配，不同系统不同JVM默认生成的serialVersionUID可能不一致，保证编译路径一致。
  *
- * @author nivell
+ * @author nivelle
  * @date 2020/04/02
  */
 public class SerialVersionExceptionDemo implements Serializable {

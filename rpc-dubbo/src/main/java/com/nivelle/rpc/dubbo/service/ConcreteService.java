@@ -3,7 +3,7 @@ package com.nivelle.rpc.dubbo.service.other;
 import org.springframework.stereotype.Service;
 
 /**
- * @author nivell
+ * @author nivelle
  * @date 2019/08/25
  */
 @Service

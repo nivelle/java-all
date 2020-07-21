@@ -22,7 +22,7 @@
         <!-- 文件滚动策略根据%d{patter}中的“patter”而定，此处为每天产生一个文件 -->
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- 归档文件名“.zip或.gz结尾”,表示归档文件自动压缩 -->
-            <FileNamePattern>./my_log%d{yyyyMMdd}.log.zip</FileNamePattern>
+            <FileNamePattern>/Users/nivellefu/logs/container-all_log%d{yyyyMMdd}.log.zip</FileNamePattern>
             <maxHistory>30</maxHistory>
         </rollingPolicy>
 

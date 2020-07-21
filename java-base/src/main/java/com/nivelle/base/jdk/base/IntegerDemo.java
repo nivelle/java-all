@@ -3,7 +3,7 @@ package com.nivelle.base.jdk.base;
 /**
  * Integer
  *
- * @author nivell
+ * @author nivelle
  * @date 2019/06/05
  */
 public class IntegerDemo {

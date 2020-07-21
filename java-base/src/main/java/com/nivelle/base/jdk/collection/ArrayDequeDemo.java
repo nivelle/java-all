@@ -5,7 +5,7 @@ import java.util.ArrayDeque;
 /**
  * 双端队列
  *
- * @author nivell
+ * @author nivelle
  * @date 2020/04/13
  */
 public class ArrayDequeDemo {

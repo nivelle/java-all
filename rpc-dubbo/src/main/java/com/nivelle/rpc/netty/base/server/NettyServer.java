@@ -14,7 +14,7 @@ import java.net.InetSocketAddress;
 /**
  * netty服务端
  *
- * @author nivell
+ * @author nivelle
  * @date 2019/11/12
  */
 public class NettyServer {

@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 /**
  * tomcat配置类
  *
- * @author nivell
+ * @author nivelle
  * @date 2019/07/25
  */
 @Configuration
@@ -53,6 +53,8 @@ public class TomcatConfig implements WebServerFactoryCustomizer<ConfigurableServ
         protocolHandler.setMaxThreads(2);
         // 最大连接数
         protocolHandler.setMaxConnections(10);
+        connector.setAllowTrace(true);
+        connector.setRedirectPort(8080);
         return connector;
     }
 }

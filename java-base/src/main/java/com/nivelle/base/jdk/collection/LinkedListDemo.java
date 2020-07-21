@@ -8,7 +8,7 @@ import java.util.ListIterator;
 /**
  * LinkedList 双向队列
  *
- * @author nivell
+ * @author nivelle
  * @date 2019/06/16
  */
 public class LinkedListDemo {

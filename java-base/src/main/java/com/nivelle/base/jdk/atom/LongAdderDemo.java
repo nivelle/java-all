@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.LongAdder;
 /**
  * LongAdder
  *
- * @author nivell
+ * @author nivelle
  * @date 2020/04/12
  */
 public class LongAdderDemo {

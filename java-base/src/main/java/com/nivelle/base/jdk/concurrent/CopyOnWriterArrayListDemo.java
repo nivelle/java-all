@@ -6,7 +6,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /**
  * CopyOnWriterArrayList 是 ArrayList的线程安全版本
  *
- * @author nivell
+ * @author nivelle
  * @date 2019/06/16
  */
 public class CopyOnWriterArrayListDemo {

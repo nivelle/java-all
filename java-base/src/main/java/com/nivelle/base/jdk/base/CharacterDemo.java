@@ -5,7 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * Character
  *
- * @author nivell
+ * @author nivelle
  * @date 2019/12/16
  */
 public class CharacterDemo {
