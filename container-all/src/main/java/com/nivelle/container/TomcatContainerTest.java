@@ -1,4 +1,4 @@
-package com.nivelle.container.tomcat;
+package com.nivelle.container;
 
 import org.apache.catalina.Engine;
 import org.apache.catalina.Host;

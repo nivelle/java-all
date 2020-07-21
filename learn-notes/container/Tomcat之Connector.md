@@ -15,22 +15,6 @@
 
 - Http11NioProtocol
 
-
-##
-
-```
-
-public Http11Protocol() {  
-        endpoint = new JIoEndpoint();  
-        cHandler = new Http11ConnectionHandler(this);  
-        ((JIoEndpoint) endpoint).setHandler(cHandler);  
-        setSoLinger(Constants.DEFAULT_CONNECTION_LINGER);  
-        setSoTimeout(Constants.DEFAULT_CONNECTION_TIMEOUT);  
-        setTcpNoDelay(Constants.DEFAULT_TCP_NO_DELAY);  
-    } 
-```
-
-
 ### Connector 构造函数
 ```
 public Connector(String protocol) {
@@ -123,7 +107,7 @@ protected void initInternal() throws LifecycleException {
             throw new LifecycleException(sm.getString("coyoteConnector.protocolHandlerInstantiationFailed"));
         }
 
-        // 第一步: 初始化 CoyoteAdapter
+        // 第一步: 初始化 CoyoteAdapter,并且将其设置为ProtocolHandler的Adapter
         adapter = new CoyoteAdapter(this);
         // 将 CoyoteAdapter 设置到 ProtocolHandler
         protocolHandler.setAdapter(adapter);
