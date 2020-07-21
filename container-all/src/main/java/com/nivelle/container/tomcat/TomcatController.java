@@ -54,6 +54,8 @@ public class TomcatController {
         result.put("contextPath", servletContext.getContextPath());
         //result.put("classLoader", servletContext.getClassLoader());
         System.out.println("classLoader:"+servletContext.getClassLoader());
+
+        result.put("接口处的收到的host",httpServlet.getRemoteHost());
         return GsonUtils.toJson(result);
     }
 

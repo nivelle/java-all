@@ -109,6 +109,10 @@ ETag: W/"646-RJRVaOjMluW+SOAL0EThThA2lnM"
 
 - 404(Not Found) 浏览器地址错误。服务器找不到对应资源。
 
+- 429(Too Many Requests) 如果你希望限制客户端对服务的请求数，可使用 429 状态码，同时包含一个 Retry-After 响应头用于告诉客户端多长时间后可以再次请求服务
+
+- 431(Request Header Fields Too Large) 请求头字段太大
+
 - 500(Internal Server Error) 服务器在执行时报错。
 
 - 503(Service Unavailable) 服务器暂时处于超负载或正在进行停机维护，无响应。一般需要重启服务器即可。
