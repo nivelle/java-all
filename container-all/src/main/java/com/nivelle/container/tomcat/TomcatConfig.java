@@ -60,6 +60,8 @@ public class TomcatConfig implements WebServerFactoryCustomizer<ConfigurableServ
     }
 
     /**
+     * 超过最大连接数的时候则阻塞:
+     *
      * 2020-07-21 23:30:32
      * Full thread dump Java HotSpot(TM) 64-Bit Server VM (25.191-b12 mixed mode):
      *

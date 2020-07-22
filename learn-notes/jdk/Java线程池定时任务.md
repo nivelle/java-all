@@ -65,17 +65,17 @@ public interface ScheduledExecutorService extends ExecutorService {
 ```
 private final class Worker extends AbstractQueuedSynchronizer implements Runnable {
       
-        ## 真正工作的线程
+        //真正工作的线程
         final Thread thread;
-        ## 初始化任务，通过构造函数传进来
+        //初始化任务，通过构造函数传进来
         Runnable firstTask;
-        ## 完成任务数
+        //完成任务数
         volatile long completedTasks;
 
-        ## 构造方法
+        //构造方法
         Worker(Runnable firstTask) {
-            ## 把状态位设置成-1，这样任何线程都不能得到Worker的锁，除非调用了unlock方法。
-            ## 这个unlock方法会在runWorker方法中一开始就调用,这是为了确保Worker构造出来之后,没有任何线程能够得到它的锁,除非调用了runWorker之后,其他线程才能获得Worker的锁
+            // 把状态位设置成-1，这样任何线程都不能得到Worker的锁，除非调用了unlock方法。
+            //这个unlock方法会在runWorker方法中一开始就调用,这是为了确保Worker构造出来之后,没有任何线程能够得到它的锁,除非调用了runWorker之后,其他线程才能获得Worker的锁
             setState(-1); // inhibit interrupts until runWorker
             this.firstTask = firstTask;
             ## 这里把Worker本身作为Runnable传给线程(worker就是线程要执行的任务)
@@ -189,38 +189,38 @@ private final class Worker extends AbstractQueuedSynchronizer implements Runnabl
 ### ThreadPoolExecutor.execute(Runnable command)
 
 ```
-## 提交任务,任务并非立即执行
+//提交任务,任务并非立即执行
 public void execute(Runnable command) {
-        ## 任务不能为空
+        //任务不能为空
         if (command == null){
             throw new NullPointerException();
         }
-        ## 控制变量（高3位存储状态，低29位存储工作线程的数量
+        // 控制变量（高3位存储状态，低29位存储工作线程的数量
         int c = ctl.get();
-        ## 如果工作线程数量小于核心数量
+        //如果工作线程数量小于核心数量
         if (workerCountOf(c) < corePoolSize) {
-            ## 重新获取下控制变量(交给核心线程)
+            //重新获取下控制变量(交给核心线程)
             if (addWorker(command, true)){
                 return;
             }
-            ## 重新获取控制变量
+            //重新获取控制变量
             c = ctl.get();
         }
-        ## 如果达到了核心数量且线程池是运行状态，任务入队列(线程池的线程大小比基本大小要大，并且线程池还在RUNNING状态，阻塞队列也没满的情况，加到阻塞队列里)
+        //如果达到了核心数量且线程池是运行状态，任务入队列(线程池的线程大小比基本大小要大，并且线程池还在RUNNING状态，阻塞队列也没满的情况，加到阻塞队列里)
         if (isRunning(c) && workQueue.offer(command)) {
-            ## 获取控制变量（线程数）
+            // 获取控制变量（线程数）
             int recheck = ctl.get();
-            ## 再次检查线程池状态，如果不是运行状态，就移除任务并执行拒绝策略
+            //再次检查线程池状态，如果不是运行状态，就移除任务并执行拒绝策略
             if (! isRunning(recheck) && remove(command)){
                 reject(command);
             }
-            ## 容错检查工作线程数量是否为0，如果为0就创建一个(这个时候可能突然线程池关闭了，所以再做一层判断)
+            //容错检查工作线程数量是否为0，如果为0就创建一个(这个时候可能突然线程池关闭了，所以再做一层判断)
             else if (workerCountOf(recheck) == 0){
                 ## 创建一个线程
                 addWorker(null, false);
             }
         }
-        ## 任务入队列失败，尝试创建非核心工作线程。如果创建失败则执行拒绝策略 (看第二个参数：true 是加核心线程，false和非核心工作线程)
+        //任务入队列失败，尝试创建非核心工作线程。如果创建失败则执行拒绝策略 (看第二个参数：true 是加核心线程，false和非核心工作线程)
         else if (!addWorker(command, false)){
             reject(command);//有两次会执行决绝策略
         }
