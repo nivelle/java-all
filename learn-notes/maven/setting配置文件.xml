@@ -64,6 +64,26 @@
     </servers>
 
     <!--为仓库列表配置的下载镜像列表。高级设置请参阅镜像设置页面 -->
+    <!--
+   | 从远程仓库才下载 artifacts 时, 用于替代指定远程仓库的镜像服务器配置；
+   |
+   | 例如当您无法连接上国外的仓库是, 可以指定连接到国内的镜像服务器；
+   |
+   | pom.xml 和 setting.xml 中配置的仓库和镜像优先级关系（mirror 优先级高于 repository）:
+   |
+   |    repository（setting.xml） < repository（pom.xml） < mirror（setting.xml）
+   |
+   |    例如, 如果配置了 mirrorOf = *,  则 不管项目的 pom.xml 配置了什么仓库, 最终都会被镜像到 镜像仓库
+   |
+   |  私服的配置推荐用profile配置而不是mirror
+   |-->
+
+    <!--
+         | 【mirro 匹配顺序】:
+         | 多个 mirror 优先级 按照 id字母顺序进行排列（即与编写的顺序无关）
+         | 在第一个 mirror 找不到 artifact, 不会继续超找下一个镜像。
+         | 只有当 mirror 无法链接的时候, 才会尝试链接下一个镜像, 类似容灾备份。
+         |-->
     <mirrors>
         <!--给定仓库的下载镜像。 -->
         <mirror>
