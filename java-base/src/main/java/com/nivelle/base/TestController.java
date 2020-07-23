@@ -5,8 +5,10 @@ import com.nivelle.base.utils.GsonUtils;
 import org.apache.commons.io.IOUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -21,7 +23,7 @@ import java.util.Map;
  * @author nivelle
  * @date 2020/04/03
  */
-@RestController
+@Controller
 @RequestMapping(value = "/test")
 public class TestController {
 
@@ -31,6 +33,14 @@ public class TestController {
     public String config() {
 
         return "hello world";
+    }
+
+    @RequestMapping("/url")
+    public Object redirect() {
+        RedirectView redirectTarget = new RedirectView();
+        redirectTarget.setContextRelative(true);
+        redirectTarget.setUrl("http://baidu.com");
+        return redirectTarget;
     }
 
     /**
@@ -105,7 +115,7 @@ public class TestController {
             System.out.println("fail");
             return;
         }
-        response.setHeader(HttpHeaders.WWW_AUTHENTICATE,baseStr);
+        response.setHeader(HttpHeaders.WWW_AUTHENTICATE, baseStr);
         response.setStatus(401);
         Cookie[] cookies = request.getCookies();
         System.out.println(cookies != null ? "cookie key is " + cookies[0].getName() + "  value is " + cookies[0].getValue() : "cookies为空");
