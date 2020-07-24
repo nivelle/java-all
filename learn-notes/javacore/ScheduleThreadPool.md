@@ -5,36 +5,36 @@
 
 ```
 public interface Executor {
-    ## 执行无返回值任务
+    ## 执行无返回值任务,任务提交
     void execute(Runnable command);
 }
 ```
 ### ExecutorService 是Executor的次级接口,扩展了一些功能; AbstractExecutorService 实现了 ExecutorService 接口,通过模版方法的方式提供了一些基础实现
 ```
 public interface ExecutorService extends Executor {
-    ## 关闭线程池，不再接受新任务，但已经提交的任务会执行完成
+    // 关闭线程池，不再接受新任务，但已经提交的任务会执行完成
     void shutdown();
-    ## 立即关闭线程池，尝试停止正在运行的任务，未执行的任务将不再执行;被迫停止及未执行的任务将以列表的形式返回
+    //立即关闭线程池，尝试停止正在运行的任务，未执行的任务将不再执行;被迫停止及未执行的任务将以列表的形式返回
     List<Runnable> shutdownNow();
-    ## 检查线程池是否已关闭
+    // 检查线程池是否已关闭
     boolean isShutdown();
-    ## 检查线程池是否已终止，只有在shutdown()或shutdownNow()之后调用才有可能为true
+    // 检查线程池是否已终止，只有在shutdown()或shutdownNow()之后调用才有可能为true
     boolean isTerminated();
-    ## 在指定时间内线程池达到终止状态了才会返回true
+    // 在指定时间内线程池达到终止状态了才会返回true
     boolean awaitTermination(long timeout, TimeUnit unit)throws InterruptedException;
-    ## 执行有返回值的任务，任务的返回值为task.call()的结果
+    // 执行有返回值的任务，任务的返回值为task.call()的结果
     <T> Future<T> submit(Callable<T> task);
-    ##  执行有返回值的任务,任务的返回值为这里传入的result;当然只有当任务执行完成了调用get()时才会返回
+    //  执行有返回值的任务,任务的返回值为这里传入的result;当然只有当任务执行完成了调用get()时才会返回
     <T> Future<T> submit(Runnable task, T result);
-    ## 执行有返回值的任务，任务的返回值为null;当然只有当任务执行完成了调用get()时才会返回
+    // 执行有返回值的任务，任务的返回值为null;当然只有当任务执行完成了调用get()时才会返回
     Future<?> submit(Runnable task);
-    ## 批量执行任务，只有当这些任务都完成了这个方法才会返回
+    // 批量执行任务，只有当这些任务都完成了这个方法才会返回
     <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks) throws InterruptedException;
-    ## 在指定时间内批量执行任务，未执行完成的任务将被取消;这里的timeout是所有任务的总时间，不是单个任务的时间
+    // 在指定时间内批量执行任务，未执行完成的任务将被取消;这里的timeout是所有任务的总时间，不是单个任务的时间
     <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks,long timeout, TimeUnit unit) throws InterruptedException;
-    ## 返回任意一个已完成任务的执行结果，未执行完成的任务将被取消
+    // 返回任意一个已完成任务的执行结果，未执行完成的任务将被取消
     <T> T invokeAny(Collection<? extends Callable<T>> tasks) throws InterruptedException, ExecutionException;
-    ## 在指定时间内如果有任务已完成，则返回任意一个已完成任务的执行结果，未执行完成的任务将被取消
+    // 在指定时间内如果有任务已完成，则返回任意一个已完成任务的执行结果，未执行完成的任务将被取消
     <T> T invokeAny(Collection<? extends Callable<T>> tasks,long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException;
 }
 ```
@@ -44,16 +44,16 @@ public interface ExecutorService extends Executor {
 ```
 public interface ScheduledExecutorService extends ExecutorService {
 
-    ## 在指定延时后执行一次,无返回值
+    // 在指定延时后执行一次,无返回值
     public ScheduledFuture<?> schedule(Runnable command,long delay, TimeUnit unit);
 
-    ## 在指定延时后执行一次,有返回值
+    // 在指定延时后执行一次,有返回值
     public <V> ScheduledFuture<V> schedule(Callable<V> callable,long delay, TimeUnit unit);
 
-    ## 在指定延时后开始执行，并在之后以指定时间间隔重复执行（间隔不包含任务执行的时间),上一个任务开始的时间计时，period时间过去后，检测上一个任务是否执行完毕，如果上一个任务执行完毕，则当前任务立即执行，如果上一个任务没有执行完毕，则需要等上一个任务执行完毕后立即执行
+    //在指定延时后开始执行，并在之后以指定时间间隔重复执行（间隔不包含任务执行的时间),上一个任务开始的时间计时，period时间过去后，检测上一个任务是否执行完毕，如果上一个任务执行完毕，则当前任务立即执行，如果上一个任务没有执行完毕，则需要等上一个任务执行完毕后立即执行
     public ScheduledFuture<?> scheduleAtFixedRate(Runnable command,long initialDelay,long period,TimeUnit unit);
 
-    ## 在指定延时后开始执行，并在之后以指定延时重复执行（间隔包含任务执行的时间),以上一个任务结束时开始计时,period时间过去后,立即执行
+    //在指定延时后开始执行，并在之后以指定延时重复执行（间隔包含任务执行的时间),以上一个任务结束时开始计时,period时间过去后,立即执行
     public ScheduledFuture<?> scheduleWithFixedDelay(Runnable command,long initialDelay,long delay,TimeUnit unit);
 
 }
@@ -132,54 +132,54 @@ private final class Worker extends AbstractQueuedSynchronizer implements Runnabl
 ## 核心属性
 
 ```
-   ## 初始化状态和数量，状态为RUNNING，线程数为0
+    //初始化状态和数量，状态为RUNNING，线程数为0
     private final AtomicInteger ctl = new AtomicInteger(ctlOf(RUNNING, 0));
 
-    ## int 32位，低29位用来表示线程池容量，也就是2的29次方-1
+    //int 32位，低29位用来表示线程池容量，也就是2的29次方-1
     private static final int COUNT_BITS = Integer.SIZE - 3;
     private static final int CAPACITY = (1 << COUNT_BITS) - 1;
 
     // 高3位用来表示线程池状态
-    ## -1 << 29 = 11111111111111111111111111111111 << 29 = 11100000000000000000000000000000(前3位为111)
+    // -1 << 29 = 11111111111111111111111111111111 << 29 = 11100000000000000000000000000000(前3位为111)
     private static final int RUNNING = -1 << COUNT_BITS;
-    ## 0 << 29 = 00000000000000000000000000000000 << 29 = 00000000000000000000000000000000(前3位为000)
+    // 0 << 29 = 00000000000000000000000000000000 << 29 = 00000000000000000000000000000000(前3位为000)
     private static final int SHUTDOWN = 0 << COUNT_BITS;
-    ## 1 << 29 = 00000000000000000000000000000001 << 29 = 00100000000000000000000000000000(前3位为001)
+    // 1 << 29 = 00000000000000000000000000000001 << 29 = 00100000000000000000000000000000(前3位为001)
     private static final int STOP = 1 << COUNT_BITS;
-    ## 2 << 29 = 00000000000000000000000000000010 << 29 = 01000000000000000000000000000000(前3位为010)
+    // 2 << 29 = 00000000000000000000000000000010 << 29 = 01000000000000000000000000000000(前3位为010)
     private static final int TIDYING = 2 << COUNT_BITS;
-    ## 3 << 29 = 00000000000000000000000000000011 << 29 = 01100000000000000000000000000000(前3位为011)
+    // 3 << 29 = 00000000000000000000000000000011 << 29 = 01100000000000000000000000000000(前3位为011)
     private static final int TERMINATED = 3 << COUNT_BITS;
 
-    ## 得到状态，CAPACITY的非操作得到的二进制位11100000000000000000000000000000，然后做在一个与操作，相当于直接取前3位的的值
+    //得到状态，CAPACITY的非操作得到的二进制位11100000000000000000000000000000，然后做在一个与操作，相当于直接取前3位的的值
     private static int runStateOf(int c) {
         return c & ~CAPACITY;
     }
-    ## 得到线程数，也就是后29位的数字. 
-    ## 直接跟CAPACITY做一个与操作即可，CAPACITY就是的值就 1 << 29 - 1 = 00011111111111111111111111111111。 
-    ## 与操作的话前面3位肯定为0，相当于直接取后29位的值
+    //得到线程数，也就是后29位的数字. 
+    //直接跟CAPACITY做一个与操作即可，CAPACITY就是的值就 1 << 29 - 1 = 00011111111111111111111111111111。 
+    //与操作的话前面3位肯定为0，相当于直接取后29位的值
     private static int workerCountOf(int c) {
         return c & CAPACITY;
     }
-    ## 或操作。相当于更新数量和状态两个操作
+    //或操作。相当于更新数量和状态两个操作
     private static int ctlOf(int rs, int wc) {
         return rs | wc;
     }
     
-
+```
 ## 线程池状态
 
-    ## 可以接受新的任务，也可以处理阻塞队列里的任务
+```
+    //可以接受新的任务，也可以处理阻塞队列里的任务
     private static final int RUNNING    = -1 << COUNT_BITS;
-    ## 不接受新的任务，但是可以处理阻塞队列里的任务
+    // 不接受新的任务，但是可以处理阻塞队列里的任务
     private static final int SHUTDOWN   =  0 << COUNT_BITS;
-    ## 不接受新的任务，不处理阻塞队列里的任务，中断正在处理的任务
+    // 不接受新的任务，不处理阻塞队列里的任务，中断正在处理的任务
     private static final int STOP       =  1 << COUNT_BITS;
-    ## 过渡状态，也就是说所有的任务都执行完了，当前线程池已经没有有效的线程，这个时候线程池的状态将会TIDYING，并且将要调用terminated方法
+    // 过渡状态，也就是说所有的任务都执行完了，当前线程池已经没有有效的线程，这个时候线程池的状态将会TIDYING，并且将要调用terminated方法
     private static final int TIDYING    =  2 << COUNT_BITS;
-    ## 终止状态。terminated方法调用完成以后的状态
+    // 终止状态。terminated方法调用完成以后的状态
     private static final int TERMINATED =  3 << COUNT_BITS;
-
 
 ```
 
@@ -206,7 +206,7 @@ public void execute(Runnable command) {
             //重新获取控制变量
             c = ctl.get();
         }
-        //如果达到了核心数量且线程池是运行状态，任务入队列(线程池的线程大小比基本大小要大，并且线程池还在RUNNING状态，阻塞队列也没满的情况，加到阻塞队列里)
+        //如果达到了核心数量且线程池是运行状态,任务入队列(线程池的线程大小比基本大小要大,并且线程池还在RUNNING状态,阻塞队列也没满的情况,加到阻塞队列里)
         if (isRunning(c) && workQueue.offer(command)) {
             // 获取控制变量（线程数）
             int recheck = ctl.get();
@@ -291,33 +291,33 @@ private boolean addWorker(Runnable firstTask, boolean core) {
                     // Recheck while holding lock.
                     // Back out on ThreadFactory failure or if
                     // shut down before lock acquired.
-                    ## 在锁住之后再重新检测一下状态
+                    // 在锁住之后再重新检测一下状态
                     int rs = runStateOf(ctl.get());
-                    ## 如果线程池在RUNNING状态 或者线程池在SHUTDOWN状态并且任务是个null
+                    // 如果线程池在RUNNING状态 或者线程池在SHUTDOWN状态并且任务是个null
                     if (rs < SHUTDOWN || (rs == SHUTDOWN && firstTask == null)) {
-                        ## 判断线程是否还活着，也就是说线程已经启动并且还没死掉
+                        // 判断线程是否还活着，也就是说线程已经启动并且还没死掉
                         if (t.isAlive()) {
-                            ## 如果存在已经启动并且还没死的线程，抛出异常
+                            //如果存在已经启动并且还没死的线程，抛出异常
                             throw new IllegalThreadStateException();
                         }
-                        ## worker添加到线程池的 workers 属性中，是个HashSet
+                        //worker添加到线程池的 workers 属性中，是个HashSet
                         workers.add(w);
-                        ## 得到目前线程池中的线程个数
+                        // 得到目前线程池中的线程个数
                         int s = workers.size();
-                        ##  如果线程池中的线程个数超过了线程池中的最大线程数时，更新一下这个最大线程数
+                        // 如果线程池中的线程个数超过了线程池中的最大线程数时，更新一下这个最大线程数
                         if (s > largestPoolSize){
                              largestPoolSize = s;
                         }
-                        ## 标识一下任务已经添加成功
+                        // 标识一下任务已经添加成功
                         workerAdded = true;
                     }
                 } finally {
-                    ## 释放锁
+                    // 释放锁
                     mainLock.unlock();
                 }
-                ## 如果任务添加成功,运行任务,改变一下任务成功启动标识
+                //如果任务添加成功,运行任务,改变一下任务成功启动标识
                 if (workerAdded) {
-                    ## 启动线程，这里的t是Worker中的thread属性，所以相当于就是调用了Worker的run方法
+                    // 启动线程，这里的t是Worker中的thread属性，所以相当于就是调用了Worker的run方法
                     t.start();
                     workerStarted = true;
                 }
@@ -347,25 +347,25 @@ final void runWorker(Worker w) {
         w.unlock(); // allow interrupts
         boolean completedAbruptly = true;
         try {
-           ## 如果worker中的任务不为空，继续执行，否则使用getTask获得任务。一直死循环，除非得到的任务为空才退出 
+           // 如果worker中的任务不为空，继续执行，否则使用getTask获得任务。一直死循环，除非得到的任务为空才退出 
             while (task != null || (task = getTask()) != null) {
-                ## 如果拿到了任务，给自己上锁，表示当前Worker已经要开始执行任务了，已经不是闲置Worker
+                // 如果拿到了任务，给自己上锁，表示当前Worker已经要开始执行任务了，已经不是闲置Worker
                 w.lock();
                 ## 在执行任务之前先做一些处理:
                 ## 1. 如果线程池已经处于STOP状态并且当前线程没有被中断，中断线程 
                 ## 2. 如果线程池还处于RUNNING或SHUTDOWN状态,并且当前线程已经被中断了,重新检查一下线程池状态,如果处于STOP状态并且没有被中断,那么中断线程                
                 if ((runStateAtLeast(ctl.get(), STOP) ||
-                    ## Thread.interrupted()会清除中断状态
+                    //Thread.interrupted()会清除中断状态
                     (Thread.interrupted() && runStateAtLeast(ctl.get(), STOP))) && !wt.isInterrupted()){
-                    ## 中断线程
+                    //中断线程
                     wt.interrupt();
                 }
                 try {
-                   ## 任务执行前需要做什么，ThreadPoolExecutor是个空实现
+                    //任务执行前需要做什么，ThreadPoolExecutor是个空实现
                     beforeExecute(wt, task);
                     Throwable thrown = null;
                     try {
-                        ## 真正的开始执行任务，调用的是run方法，而不是start方法。这里run的时候可能会被中断，比如线程池调用了shutdownNow方法
+                        // 真正的开始执行任务，调用的是run方法，而不是start方法。这里run的时候可能会被中断，比如线程池调用了shutdownNow方法
                         task.run();
                     } catch (RuntimeException x) {
                         thrown = x; throw x;
