@@ -71,7 +71,6 @@ private final class Worker extends AbstractQueuedSynchronizer implements Runnabl
         Runnable firstTask;
         //完成任务数
         volatile long completedTasks;
-
         //构造方法
         Worker(Runnable firstTask) {
             // 把状态位设置成-1，这样任何线程都不能得到Worker的锁，除非调用了unlock方法。
