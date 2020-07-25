@@ -365,7 +365,7 @@ final void runWorker(Worker w) {
                     beforeExecute(wt, task);
                     Throwable thrown = null;
                     try {
-                        // 真正的开始执行任务，调用的是run方法，而不是start方法。这里run的时候可能会被中断，比如线程池调用了shutdownNow方法
+                        //真正的开始执行任务，调用的是run方法，而不是start方法。这里run的时候可能会被中断，比如线程池调用了shutdownNow方法
                         task.run();
                     } catch (RuntimeException x) {
                         thrown = x; throw x;
@@ -387,7 +387,7 @@ final void runWorker(Worker w) {
             }
             completedAbruptly = false;
         } finally {
-            ## 每次执行任务之后都要检查是否需要回收不需要的回收Worker方法
+            // 每次执行任务之后都要检查是否需要回收不需要的回收Worker方法
             processWorkerExit(w, completedAbruptly);
         }
     }
@@ -403,24 +403,22 @@ final void runWorker(Worker w) {
 
 ```
 private Runnable getTask() {
-        ##  如果使用超时时间并且也没有拿到任务的标识
+        // 如果使用超时时间并且也没有拿到任务的标识
         boolean timedOut = false; // Did the last poll() time out?
-
         for (;;) {
-            ## 获取控制变量
+            //获取控制变量
             int c = ctl.get();
-            ## 获取线程池状态
+            // 获取线程池状态
             int rs = runStateOf(c);
-            ## 如果线程池是 SHUTDOWN 状态并且阻塞队列为空的话，worker数量减一，直接返回null
-            ## (SHUTDOWN状态还会处理阻塞队列任务，但是阻塞队列为空的话就结束了),如果线程池是STOP状态的话,worker数量减1,直接返回null(STOP状态不处理阻塞队列任务)
-            ## 开始回收闲置Worker（控制变量-1）
+            // 如果线程池是 SHUTDOWN 状态并且阻塞队列为空的话，worker数量减一，直接返回null (SHUTDOWN状态还会处理阻塞队列任务，但是阻塞队列为空的话就结束了),如果线程池是STOP状态的话,worker数量减1,直接返回null(STOP状态不处理阻塞队列任务)
+            // 开始回收闲置Worker（控制变量-1）
             // Check if queue empty only if necessary.
             if (rs >= SHUTDOWN && (rs >= STOP || workQueue.isEmpty())) {
-                ## 一个一个减worker
+                //一个一个减worker
                 decrementWorkerCount();
                 return null;
             }
-            ## 工作线程数量
+            //工作线程数量
             int wc = workerCountOf(c);
             // Are workers subject to culling?
             ## 是否允许超时，有两种情况（非核心线程是一定允许超时的，这里的超时其实是指取任务超时）
@@ -429,28 +427,27 @@ private Runnable getTask() {
             boolean timed = allowCoreThreadTimeOut || wc > corePoolSize;
             ## 超时判断
             if ((wc > maximumPoolSize || (timed && timedOut)) && (wc > 1 || workQueue.isEmpty())) {
-                ## 超时了，减少工作线程数量，并返回null
+                //超时了，减少工作线程数量，并返回null
                 if (compareAndDecrementWorkerCount(c)){                    
                     return null;
                 }
-                ## 减少工作线程数量失败，则重试
+                //减少工作线程数量失败，则重试
                 continue;
             }
 
             try {
-                ## 真正取任务的地方
-                ## 默认情况下，只有当工作线程数量大于核心线程数量时,才会调用poll()方法触发超时调用(poll()和take()都会获取head元素，然后从队列中删除)
+                ## 真正取任务的地方，默认情况下，只有当工作线程数量大于核心线程数量时,才会调用poll()方法触发超时调用(poll()和take()都会获取head元素，然后从队列中删除)
                 ## poll(timeout, unit)方法会在超时时返回null，如果timeout<=0，队列为空时直接返回null;take()方法会一直阻塞直到取到任务或抛出中断异常。
                 Runnable r = timed ? workQueue.poll(keepAliveTime, TimeUnit.NANOSECONDS):workQueue.take();
                 if (r != null){
-                    ## 取到任务了就正常返回
+                    //取到任务了就正常返回
                     return r;
                 }
-                ## 没取到任务表明超时了，回到continue那个if中返回null
+                // 没取到任务表明超时了，回到continue那个if中返回null
                 timedOut = true;
             } catch (InterruptedException retry) {
-                ## 捕获到了中断异常
-                ## 中断标记是在调用shutDown()或者shutDownNow()的时候设置进去的；此时，会回到for循环的第一个if处判断状态是否要返回null
+                //捕获到了中断异常
+                //中断标记是在调用shutDown()或者shutDownNow()的时候设置进去的；此时，会回到for循环的第一个if处判断状态是否要返回null
                 timedOut = false;
             }
         }
@@ -461,29 +458,30 @@ private Runnable getTask() {
 
 ``` 
 private void processWorkerExit(Worker w, boolean completedAbruptly) {
-        ## 如果Worker非正常结束流程调用processWorkerExit方法，worker数量减一。
-        ## 如果是正常结束的话，在getTask方法里worker数量已经减一了
+        // 如果Worker非正常结束流程调用processWorkerExit方法，worker数量减一。
+        // 如果是正常结束的话，在getTask方法里worker数量已经减一了
         if (completedAbruptly) {// If abrupt, then workerCount wasn't adjusted（如果被中断,则需要先减少工作线程数）
             decrementWorkerCount();
         }
         final ReentrantLock mainLock = this.mainLock;
-        ## 加锁，防止并发问题
+        //加锁，防止并发问题
         mainLock.lock();
         try {
-            ## 记录总的完成任务数
+            //记录总的完成任务数
             completedTaskCount += w.completedTasks;
-            ## 线程池的worker集合删除掉需要回收的Worker
+            //线程池的worker集合删除掉需要回收的Worker
             workers.remove(w);
         } finally {
-            mainLock.unlock();//解锁
+            //解锁
+            mainLock.unlock();
         }
-        ## 尝试结束线程池
+        // 尝试结束线程池
         tryTerminate();
 
         int c = ctl.get();
-        ## 如果线程池还处于RUNNING或者SHUTDOWN状态,则要处理未处理完的任务
+        //如果线程池还处于RUNNING或者SHUTDOWN状态,则要处理未处理完的任务
         if (runStateLessThan(c, STOP)) {
-             ## Worker是正常结束流程的话
+             //Worker是正常结束流程的话
             if (!completedAbruptly) {
                 int min = allowCoreThreadTimeOut ? 0 : corePoolSize;
                 if (min == 0 && ! workQueue.isEmpty()){

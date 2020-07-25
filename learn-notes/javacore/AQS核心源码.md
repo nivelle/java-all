@@ -1,28 +1,27 @@
+### AQS是基于FIFO的队列实现的，并且内部维护了一个状态变量state，通过原子更新这个状态变量state即可以实现加锁解锁操作。
 
-## AQS是基于FIFO的队列实现的，并且内部维护了一个状态变量state，通过原子更新这个状态变量state即可以实现加锁解锁操作。
-
-### 核心类
+#### 核心类
 
 ```
 static final class Node {
-        ## 标识一个节点是等待中的共享模式
+        //标识一个节点是等待中的共享模式
         static final Node SHARED = new Node();
-        ## 标识一个节点是等待中的互斥模式
+        //标识一个节点是等待中的互斥模式
         static final Node EXCLUSIVE = null;
 
         /** waitStatus value to indicate thread has cancelled */
         ## 等待状态标识,线程已经取消
         static final int CANCELLED =  1;
         /** waitStatus value to indicate successor's thread needs unparking */
-        ## 等待状态标识,后继节点需要唤醒时，当前节点状态为-1
+        //等待状态标识,后继节点需要唤醒时，当前节点状态为-1
         static final int SIGNAL    = -1;
         /** waitStatus value to indicate thread is waiting on condition */
-        ## 等待状态标识,一个线程在等待一个条件
+        //等待状态标识,一个线程在等待一个条件
         static final int CONDITION = -2;
         /**
          * waitStatus value to indicate the next acquireShared should unconditionally【无条件】 propagate【传播】
          */
-        ## 等待标识,后面的共享锁需要无条件传播（共享锁需要连续唤醒读的线程）
+        // 等待标识,后面的共享锁需要无条件传播（共享锁需要连续唤醒读的线程）
         static final int PROPAGATE = -3;
         
         ## waitStatus = 0 //None of the above
@@ -60,7 +59,7 @@ static final class Node {
          * CONDITION for condition nodes.  It is modified using CAS
          * (or when possible, unconditional volatile writes).
          */
-         ## 当前节点对应的等待状态;状态入上面。
+        // 当前节点对应的等待状态，如上
         volatile int waitStatus;
 
         ## 前一个节点
