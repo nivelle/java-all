@@ -60,6 +60,12 @@ public class TomcatConfig implements WebServerFactoryCustomizer<ConfigurableServ
     }
 
     /**
+     *
+     * 1. 当一个线程占有一个锁的时候，线程堆栈会打印一个－locked<0x22bffb60>
+     * 2. 当一个线程正在等在其他线程释放该锁，线程堆栈会打印一个－waiting to lock<0x22bffb60>
+     * 3. 当一个线程占有一个锁，但又执行在该锁的wait上，线程堆栈中首先打印locked,然后打印－waiting on <0x22c03c60>
+     *
+     *
      * 超过最大连接数的时候则阻塞:
      *
      * 2020-07-21 23:30:32
