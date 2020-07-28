@@ -1,6 +1,6 @@
 package com.nivelle.spring.springboot.dao;
 
-import com.nivelle.spring.springboot.entity.ActivityPvEntity;
+import com.nivelle.spring.pojo.ActivityPvEntity;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;

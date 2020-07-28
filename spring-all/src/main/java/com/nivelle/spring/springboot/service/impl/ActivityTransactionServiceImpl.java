@@ -1,10 +1,6 @@
 package com.nivelle.spring.springboot.service.impl;
 
-import com.nivelle.spring.springboot.entity.ActivityPvEntity;
-import com.nivelle.spring.springboot.mapper.ActivityPvMapper;
-import com.nivelle.spring.springboot.service.ActivityService;
-import com.nivelle.spring.springboot.service.ActivityTransactionService;
-import com.nivelle.spring.springboot.entity.ActivityPvEntity;
+import com.nivelle.spring.pojo.ActivityPvEntity;
 import com.nivelle.spring.springboot.mapper.ActivityPvMapper;
 import com.nivelle.spring.springboot.service.ActivityService;
 import com.nivelle.spring.springboot.service.ActivityTransactionService;

@@ -1,9 +1,6 @@
 package com.nivelle.spring.springboot.controllor;
 
-import com.nivelle.spring.springboot.entity.ActivityPvEntity;
-import com.nivelle.spring.springboot.service.ActivityService;
-import com.nivelle.spring.springboot.service.ActivityTransactionService;
-import com.nivelle.spring.springboot.entity.ActivityPvEntity;
+import com.nivelle.spring.pojo.ActivityPvEntity;
 import com.nivelle.spring.springboot.service.ActivityService;
 import com.nivelle.spring.springboot.service.ActivityTransactionService;
 import org.springframework.beans.factory.annotation.Autowired;

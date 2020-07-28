@@ -1,8 +1,7 @@
 package com.nivelle.spring.springboot.service;
 
 
-import com.nivelle.spring.springboot.entity.*;
-import com.nivelle.spring.springboot.entity.*;
+import com.nivelle.spring.pojo.*;
 
 import java.util.List;
 

@@ -1,6 +1,6 @@
 package com.nivelle.spring.springcore.annotation;
 
-import com.nivelle.spring.springboot.entity.UserInfoEntity;
+import com.nivelle.spring.pojo.UserInfoEntity;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.factory.config.BeanDefinition;

@@ -3,7 +3,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.nivelle.spring.springboot.mapper.SysRoleMapper">
 
-    <resultMap id="BaseResultMap" type="com.nivelle.spring.springboot.entity.SysRoleEntity">
+    <resultMap id="BaseResultMap" type="com.nivelle.spring.pojo.SysRoleEntity">
         <id column="id" property="id"/>
         <result column="available" property="available"/>
         <result column="description" property="description"/>

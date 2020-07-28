@@ -1,7 +1,7 @@
 package com.nivelle.spring.mysql;
 
 import com.nivelle.spring.springboot.dao.ActivityDaoImpl;
-import com.nivelle.spring.springboot.entity.ActivityPvEntity;
+import com.nivelle.spring.pojo.ActivityPvEntity;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

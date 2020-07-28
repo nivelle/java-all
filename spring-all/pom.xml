@@ -198,7 +198,7 @@
             <artifactId>freemarker</artifactId>
         </dependency>
     </dependencies>
-    <build>
+<!--    <build>-->
 <!--        <plugins>-->
 <!--            &lt;!&ndash; Docker maven plugin &ndash;&gt;-->
 <!--            <plugin>-->
@@ -218,5 +218,5 @@
 <!--                </configuration>-->
 <!--            </plugin>-->
 <!--        </plugins>-->
-    </build>
+<!--    </build>-->
 </project>
