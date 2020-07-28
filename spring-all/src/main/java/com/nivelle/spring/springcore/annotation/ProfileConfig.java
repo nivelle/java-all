@@ -70,7 +70,7 @@ public class ProfileConfig implements EmbeddedValueResolverAware, EnvironmentAwa
     @Override
     public void setEmbeddedValueResolver(StringValueResolver resolver) {
         this.resolver = resolver;
-        this.applicationName = this.resolver.resolveStringValue("${dubbo.application.name}");
+        this.applicationName = this.resolver.resolveStringValue("${application.name}");
     }
 
 
