@@ -1,4 +1,4 @@
-package com.nivelle.spring;
+package com.nivelle.spring.test;
 
 import com.nivelle.spring.springcore.basics.PersonBeanLife;
 import org.springframework.context.ApplicationContext;

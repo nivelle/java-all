@@ -1,5 +1,6 @@
-package com.nivelle.spring;
+package com.nivelle.spring.test;
 
+import cn.hutool.http.HttpUtil;
 import com.google.common.collect.Lists;
 import com.nivelle.spring.configbean.CommonConfig;
 import com.nivelle.spring.pojo.Cat;
@@ -27,13 +28,14 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
 @RestController
 @RequestMapping("/test")
-public class TestController {
+public class SpringAllTestController {
 
     @Autowired
     CommonConfig commonConfig;
@@ -373,6 +375,33 @@ public class TestController {
     public String writeLog(){
         myService.writeLog();
         return "SUCCESS";
+    }
+
+    /**
+     * 请求中断
+     *
+     * @param httpServletRequest
+     * @param httpServletResponse
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping("/writeData")
+    @ResponseBody
+    public void writeData(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+        try {
+            int i = 0;
+            PrintWriter printWriter = httpServletResponse.getWriter();
+            while (true) {
+                Thread.sleep(1000);
+                i++;
+                printWriter.write(i);
+                if (i % 10 == 0) {
+                    System.out.print(i);
+                }
+            }
+        } catch (Exception e) {
+            System.err.println(e);
+        }
     }
 
 }

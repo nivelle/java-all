@@ -1,4 +1,4 @@
-package com.nivelle.base;
+package com.nivelle.base.test;
 
 import com.google.common.collect.Maps;
 import com.nivelle.base.utils.GsonUtils;
@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.view.RedirectView;
+import sun.net.www.http.HttpClient;
+import cn.hutool.http.HttpUtil;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -28,7 +30,7 @@ import java.util.Map;
  */
 @Controller
 @RequestMapping(value = "/test")
-public class TestController {
+public class BaseTestController {
 
     HashMap cache = Maps.newHashMap();
 
@@ -40,30 +42,22 @@ public class TestController {
 
 
     /**
-     * 请求中断
+     * http
      *
-     * @param httpServletRequest
-     * @param httpServletResponse
      * @return
-     * @throws Exception
      */
-    @RequestMapping("/writeData")
-    @ResponseBody
-    public void writeData(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+    @RequestMapping("httpClient")
+    public String httpClient() {
+        String data = HttpUtil.get("http://localhost:8080/springAll/test/writeData");
+        System.out.println(data);
         try {
-            int i = 0;
-            PrintWriter printWriter = httpServletResponse.getWriter();
-            while (true) {
-                Thread.sleep(1000);
-                i++;
-                printWriter.write(i);
-                if (i%10==0)System.out.print(i);
-            }
+            Thread.sleep(1000);
         } catch (Exception e) {
-            System.err.println(e);
+            System.err.println();
         }
-
+        return "";
     }
+
 
     @RequestMapping("/url")
     public Object redirect() {

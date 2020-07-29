@@ -22,6 +22,17 @@
 
     <dependencies>
         <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-http</artifactId>
+            <version>5.3.10</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>4.0.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
             <version>2.3.1.RELEASE</version>
@@ -197,26 +208,27 @@
             <groupId>org.freemarker</groupId>
             <artifactId>freemarker</artifactId>
         </dependency>
+
     </dependencies>
-<!--    <build>-->
-<!--        <plugins>-->
-<!--            &lt;!&ndash; Docker maven plugin &ndash;&gt;-->
-<!--            <plugin>-->
-<!--                <groupId>com.spotify</groupId>-->
-<!--                <artifactId>docker-maven-plugin</artifactId>-->
-<!--                <version>1.2.0</version>-->
-<!--                <configuration>-->
-<!--                    <imageName>${docker.image.prefix}/${project.artifactId}</imageName>-->
-<!--                    <dockerDirectory></dockerDirectory>-->
-<!--                    <resources>-->
-<!--                        <resource>-->
-<!--                            <targetPath>/</targetPath>-->
-<!--                            <directory>${project.build.directory}</directory>-->
-<!--                            <include>${project.build.finalName}.jar</include>-->
-<!--                        </resource>-->
-<!--                    </resources>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
-<!--        </plugins>-->
-<!--    </build>-->
+    <!--    <build>-->
+    <!--        <plugins>-->
+    <!--            &lt;!&ndash; Docker maven plugin &ndash;&gt;-->
+    <!--            <plugin>-->
+    <!--                <groupId>com.spotify</groupId>-->
+    <!--                <artifactId>docker-maven-plugin</artifactId>-->
+    <!--                <version>1.2.0</version>-->
+    <!--                <configuration>-->
+    <!--                    <imageName>${docker.image.prefix}/${project.artifactId}</imageName>-->
+    <!--                    <dockerDirectory></dockerDirectory>-->
+    <!--                    <resources>-->
+    <!--                        <resource>-->
+    <!--                            <targetPath>/</targetPath>-->
+    <!--                            <directory>${project.build.directory}</directory>-->
+    <!--                            <include>${project.build.finalName}.jar</include>-->
+    <!--                        </resource>-->
+    <!--                    </resources>-->
+    <!--                </configuration>-->
+    <!--            </plugin>-->
+    <!--        </plugins>-->
+    <!--    </build>-->
 </project>
