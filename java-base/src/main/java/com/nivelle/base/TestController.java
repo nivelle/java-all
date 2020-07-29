@@ -6,13 +6,16 @@ import org.apache.commons.io.IOUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.PrintWriter;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,6 +36,33 @@ public class TestController {
     public String config() {
 
         return "hello world";
+    }
+
+
+    /**
+     * 请求中断
+     *
+     * @param httpServletRequest
+     * @param httpServletResponse
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping("/writeData")
+    @ResponseBody
+    public void writeData(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+        try {
+            int i = 0;
+            PrintWriter printWriter = httpServletResponse.getWriter();
+            while (true) {
+                Thread.sleep(1000);
+                i++;
+                printWriter.write(i);
+                if (i%10==0)System.out.print(i);
+            }
+        } catch (Exception e) {
+            System.err.println(e);
+        }
+
     }
 
     @RequestMapping("/url")
