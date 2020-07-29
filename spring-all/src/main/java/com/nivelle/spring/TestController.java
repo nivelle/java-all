@@ -6,7 +6,7 @@ import com.nivelle.spring.pojo.Cat;
 import com.nivelle.spring.pojo.Dog;
 import com.nivelle.spring.pojo.TimeLine;
 import com.nivelle.spring.springboot.dao.ActivityDaoImpl;
-import com.nivelle.spring.springboot.entity.ActivityPvEntity;
+import com.nivelle.spring.pojo.ActivityPvEntity;
 import com.nivelle.spring.springboot.mapper.ActivityPvMapper;
 import com.nivelle.spring.springcore.aop.MyService;
 import com.nivelle.spring.springcore.basics.InitSpringBean;

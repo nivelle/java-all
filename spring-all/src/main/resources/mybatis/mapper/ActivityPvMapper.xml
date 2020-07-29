@@ -3,7 +3,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.nivelle.spring.springboot.mapper.ActivityPvMapper" >
 
-    <resultMap id="BaseResultMap" type="com.nivelle.spring.springboot.entity.ActivityPvEntity" >
+    <resultMap id="BaseResultMap" type="com.nivelle.spring.pojo.ActivityPvEntity" >
         <id column="id" property="id"/>
         <result column="activity_id" property="activityId"/>
         <result column="position_type" property="positionType"/>
@@ -26,7 +26,7 @@
         FROM activity_pv
     </select>
 
-    <insert id="insert" useGeneratedKeys="true" keyProperty="id"  parameterType="com.nivelle.spring.springboot.entity.ActivityPvEntity">
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id"  parameterType="com.nivelle.spring.pojo.ActivityPvEntity">
         INSERT INTO
         activity_pv
         (activity_id,position_type,ip,device_type,device_no)

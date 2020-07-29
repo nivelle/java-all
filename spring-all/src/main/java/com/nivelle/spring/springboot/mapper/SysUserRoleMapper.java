@@ -1,6 +1,6 @@
 package com.nivelle.spring.springboot.mapper;
 
-import com.nivelle.spring.springboot.entity.SystemUserRoleEntity;
+import com.nivelle.spring.pojo.SystemUserRoleEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 

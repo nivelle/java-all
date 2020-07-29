@@ -1,7 +1,7 @@
 package com.nivelle.spring.configbean.shiro;
 
 import com.google.common.collect.Lists;
-import com.nivelle.spring.springboot.entity.*;
+import com.nivelle.spring.pojo.*;
 import com.nivelle.spring.springboot.service.ShiroSysService;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;

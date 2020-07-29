@@ -1,4 +1,4 @@
-package com.nivelle.spring.springboot.entity;
+package com.nivelle.spring.pojo;
 
 import lombok.*;
 

@@ -8,7 +8,7 @@
  -->
 <mapper namespace="com.nivelle.spring.springboot.mapper.SysUserInfoMapper">
     <!-- 使用resultMap将查询结果映射到type-->
-    <resultMap id="BaseResultMap" type="com.nivelle.spring.springboot.entity.UserInfoEntity">
+    <resultMap id="BaseResultMap" type="com.nivelle.spring.pojo.UserInfoEntity">
         <id column="uid" property="uid"/>
         <result column="username" property="username"/>
         <result column="name" property="name"/>
@@ -16,7 +16,7 @@
         <result column="salt" property="salt"/>
         <result column="state" property="state"/>
 
-        <collection property="roleList" ofType="com.nivelle.spring.springboot.entity.SysRoleEntity">
+        <collection property="roleList" ofType="com.nivelle.spring.pojo.SysRoleEntity">
             <id column="id" property="id"/>
             <result column="available" property="available"/>
             <result column="description" property="description"/>

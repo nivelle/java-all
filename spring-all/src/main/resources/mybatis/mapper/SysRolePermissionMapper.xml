@@ -3,7 +3,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.nivelle.spring.springboot.mapper.SysRolePermissionMapper" >
 
-    <resultMap id="BaseResultMap" type="com.nivelle.spring.springboot.entity.SysRolePermissionEntity" >
+    <resultMap id="BaseResultMap" type="com.nivelle.spring.pojo.SysRolePermissionEntity" >
         <id column="id" property="id"/>
         <result column="role_id" property="roleId"/>
         <result column="permission_id" property="permissionId"/>

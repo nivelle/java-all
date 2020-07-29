@@ -1,7 +1,7 @@
 package com.nivelle.spring.springboot;
 
 
-import com.nivelle.spring.springboot.entity.UserInfoEntity;
+import com.nivelle.spring.pojo.UserInfoEntity;
 import com.nivelle.spring.springboot.mapper.SysUserInfoMapper;
 import net.minidev.json.JSONObject;
 import org.junit.Before;

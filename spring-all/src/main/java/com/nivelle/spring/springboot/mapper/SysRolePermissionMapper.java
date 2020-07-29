@@ -1,7 +1,6 @@
 package com.nivelle.spring.springboot.mapper;
 
-import com.nivelle.spring.springboot.entity.SysRolePermissionEntity;
-import com.nivelle.spring.springboot.entity.SysRolePermissionEntity;
+import com.nivelle.spring.pojo.SysRolePermissionEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 

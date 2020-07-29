@@ -1,6 +1,6 @@
 package com.nivelle.spring.springboot.service;
 
-import com.nivelle.spring.springboot.entity.ActivityPvEntity;
+import com.nivelle.spring.pojo.ActivityPvEntity;
 
 import java.util.List;
 

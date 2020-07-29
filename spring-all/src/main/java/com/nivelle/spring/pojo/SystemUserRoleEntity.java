@@ -1,4 +1,4 @@
-package com.nivelle.spring.springboot.entity;
+package com.nivelle.spring.pojo;
 
 import lombok.Data;
 import lombok.Getter;
@@ -9,13 +9,12 @@ import lombok.ToString;
 @Setter
 @Getter
 @ToString
-public class SysRolePermissionEntity {
+public class SystemUserRoleEntity {
 
     private Long id;
     private Long roleId;
-    private Long permissionId;
+    private Long uid;
     private String createTime;
     private String updateTime;
-
 
 }

@@ -93,6 +93,26 @@ public class MakeSqlString {
             //System.out.println(stringBuilder2.toString());
         }
 
+        for (int i = 0; i < 64; i++) {
+            StringBuilder stringBuilder2 = new StringBuilder("DROP TABLE IF EXISTS `nd_company_read_time_rank_");
+            stringBuilder2.append(i);
+            stringBuilder2.append("`;");
+            stringBuilder2.append("CREATE TABLE `nd_company_read_time_rank_");
+            stringBuilder2.append(i);
+            stringBuilder2.append("`");
+            stringBuilder2.append("(");
+            stringBuilder2.append("`id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键自增id',");
+            stringBuilder2.append("`user_name` varchar(16) NOT NULL default ''COMMENT 'S号',");
+            stringBuilder2.append("`company_id` varchar(16) NOT NULL default ''COMMENT '企业ID',");
+            stringBuilder2.append("`read_times` bigint(32) NOT NULL COMMENT '阅读时长（单位分）',");
+            stringBuilder2.append("`create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',");
+            stringBuilder2.append("`update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',");
+            stringBuilder2.append("PRIMARY KEY (`id`),");
+            stringBuilder2.append("  UNIQUE KEY `uniq_user_company` (`user_name`,`company_id`)");
+            stringBuilder2.append(") ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+            System.out.println(stringBuilder2.toString());
+        }
+
 
     }
 }

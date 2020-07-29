@@ -1,10 +1,8 @@
 package com.nivelle.spring.springboot.service.impl;
 
-import com.nivelle.spring.springboot.entity.*;
+import com.nivelle.spring.pojo.*;
 import com.nivelle.spring.springboot.mapper.*;
 import com.nivelle.spring.springboot.service.ShiroSysService;
-import com.nivelle.spring.springboot.entity.*;
-import com.nivelle.spring.springboot.mapper.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

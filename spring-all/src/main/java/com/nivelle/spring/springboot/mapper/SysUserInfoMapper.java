@@ -1,7 +1,6 @@
 package com.nivelle.spring.springboot.mapper;
 
-import com.nivelle.spring.springboot.entity.UserInfoEntity;
-import com.nivelle.spring.springboot.entity.UserInfoEntity;
+import com.nivelle.spring.pojo.UserInfoEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 

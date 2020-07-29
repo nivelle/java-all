@@ -1,7 +1,6 @@
 package com.nivelle.spring.springboot.service;
 
-import com.nivelle.spring.springboot.entity.ActivityPvEntity;
-import com.nivelle.spring.springboot.entity.ActivityPvEntity;
+import com.nivelle.spring.pojo.ActivityPvEntity;
 
 /**
  * Spring AOP事物代理默认只能代理接口
