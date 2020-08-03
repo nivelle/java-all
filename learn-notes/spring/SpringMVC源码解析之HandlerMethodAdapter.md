@@ -34,15 +34,18 @@ private List<HandlerMethodArgumentResolver> getDefaultArgumentResolvers() {
 		resolvers.add(new SessionStatusMethodArgumentResolver());//SessionStatus
 		resolvers.add(new UriComponentsBuilderMethodArgumentResolver());//UriComponentsBuilder
 
-		// Custom arguments
+		// Custom arguments 
+		// Custom arguments , 添加定制的参数解析器
 		if (getCustomArgumentResolvers() != null) {
 			resolvers.addAll(getCustomArgumentResolvers());
 		}
 
-		// Catch-all
+		// Catch-all 如果上面的参数解析器都处理不了，尝试使用下面的解析器尝试兜底
+		//true 表示 : 即使不使用注解 @RequestParam ,简单类型的方法参数也会被认为是请求参数被解析,此时请求参数名称会根据方法参数名称派生而来。
 		resolvers.add(new RequestParamMethodArgumentResolver(getBeanFactory(), true));
+		//true 表示 : 即使不使用注解 @ModelAttribute,非简单类型的方法参数和返回值也会被认为
+		//是 model attribute 
 		resolvers.add(new ServletModelAttributeMethodProcessor(true));
-
 		return resolvers;
 	}
 
