@@ -1,6 +1,32 @@
 
 ### public class DispatcherServlet extends FrameworkServlet
 
+#### initStrategies(ApplicationContext context)//DispatcherServlet的初始化方法
+```
+//springboot应用中 context是 AnnotationConfigServletWebServerApplicationContext
+protected void initStrategies(ApplicationContext context) {
+        // MultipartResolver 文件上传相关:从bean容器中中获取名字为 MULTIPART_RESOLVER_BEAN_NAME(multipartResolver)的bean，记录到属性multipartResolver，没有响应bean的话设置为null
+		initMultipartResolver(context);
+		//LocaleResolver, 本地化语言相关:从bean容器中获取名字为LOCALE_RESOLVER_BEAN_NAME(localeResolver)的bean记录到属性localeResolver,没有相应bean的话使用缺省策略
+		initLocaleResolver(context);
+		//ThemeResolver 相关: 从bean容器中获取名字为THEME_RESOLVER_BEAN_NAME(themeResolver)的bean记录到属性themeResolver,没有相应bean的话使用缺省策略
+		initThemeResolver(context);
+		//HandlerMapping相关:从bean容器中获取名字为HANDLER_MAPPING_BEAN_NAME(handlerMapping)的bean,或者获取所有类型是HandlerMapping的bean(DispatcherServlet的缺省做法),记录到属性handlerMappings,没有相应bean的话使用缺省策略
+		initHandlerMappings(context);
+		//HandlerAdapter (list) 相关:从bean容器中获取名字为HANDLER_ADAPTER_BEAN_NAME(handlerAdapter)的bean,或者获取所有类型是HandlerAdapter的bean(DispatcherServlet的缺省做法),记录到属性handlerAdapters,没有相应bean的话使用缺省策略	
+		initHandlerAdapters(context);
+		//HandlerExceptionResolver (list) 异常处理Handler相关:从bean容器中获取名字为HANDLER_EXCEPTION_RESOLVER_BEAN_NAME(handlerExceptionResolver)的bean,或者获取所有类型是HandlerExceptionResolver的bean(DispatcherServlet的缺省做法),记录到属性handlerExceptionResolvers,没有相应bean的话使用缺省策略	
+		initHandlerExceptionResolvers(context);
+		//RequestToViewNameTranslator 相关:从bean容器中获取名字为REQUEST_TO_VIEW_NAME_TRANSLATOR_BEAN_NAME(viewNameTranslator)的bean记录到属性viewNameTranslator,没有相应bean的话使用缺省策略
+		initRequestToViewNameTranslator(context);
+		// ViewResolver (list) 相关:从bean容器中获取名字为VIEW_RESOLVER_BEAN_NAME(viewResolver)的bean,或者获取所有类型是ViewResolver的bean(DispatcherServlet的缺省做法),记录到属性viewResolvers,没有相应bean的话使用缺省策略
+		initViewResolvers(context);
+		//FlashMapManager:从bean容器中获取名字为FLASH_MAP_MANAGER_BEAN_NAME(flashMapManager)的bean记录到属性flashMapManager,没有相应bean的话使用缺省策略
+		initFlashMapManager(context);
+	}
+
+```
+
 #### 选择handler
 
 ```
@@ -177,7 +203,6 @@ private void processDispatchResult(HttpServletRequest request, HttpServletRespon
 				errorView = (mv != null);
 			}
 		}
-		//z
 		//  当前 mv 也可能是 null，比如控制器方法直接返回 JSON/XML而无需视图渲染的情况，这种情况下当前方法在这里就算结束了，仅为它进入不了下面的 if 语句块
 		if (mv != null && !mv.wasCleared()) {
 			render(mv, request, response);
@@ -199,6 +224,66 @@ private void processDispatchResult(HttpServletRequest request, HttpServletRespon
 
 		if (mappedHandler != null) {
 			mappedHandler.triggerAfterCompletion(request, response, null);
+		}
+	}
+
+```
+
+#### protected void render(ModelAndView mv, HttpServletRequest request, HttpServletResponse response)//解析绘出视图
+
+```
+protected void render(ModelAndView mv, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		// Determine locale for request and apply it to the response.
+		//本地化处理, 属性 this.localeResolver 在 DispatcherServlet 初始化时由初始化方法 initLocaleResolver 填充
+		Locale locale =(this.localeResolver != null ? this.localeResolver.resolveLocale(request) : request.getLocale());
+		response.setLocale(locale);
+
+		View view;
+		//尝试从 ModelAndView mv中分析得到 View view 
+		String viewName = mv.getViewName();
+		if (viewName != null) {
+			// 根据视图名称找到视图对象，该方法使用到了this.viewResolvers属性中注册的视图解析器
+			// 将视图名称解析成一个View对象返回
+			// this,viewResolvers 是DispatcherServlet初始化方法，initViewResolvers填充的
+			// 常见视图解析器：
+			// 1. ContentNegotiatingViewResolver 2. BeanNameViewResolver 3. FreeMarkerViewResolver 4. ViewResolverComposite 5. InternalResourceViewResolver
+			view = resolveViewName(viewName, mv.getModelInternal(), locale, request);
+			if (view == null) {
+			   //如果不存在能够解析当前视图名称的  ViewResolver，则抛出该异常
+				throw new ServletException("Could not resolve view with name '" + mv.getViewName() +
+						"' in servlet with name '" + getServletName() + "'");
+			}
+		}
+		else {
+			// No need to lookup: the ModelAndView object contains the actual View object.
+			//现在已经从 ModelAndView 中分析得到 View 对象了，现在使用它进行结合要渲染的数据进行视图渲染
+			view = mv.getView();
+			if (view == null) {
+				throw new ServletException("ModelAndView [" + mv + "] neither contains a view name nor a " +
+						"View object in servlet with name '" + getServletName() + "'");
+			}
+		}
+
+		// Delegate to the View object for rendering.
+		if (logger.isTraceEnabled()) {
+			logger.trace("Rendering view [" + view + "] ");
+		}
+		try {
+			if (mv.getStatus() != null) {
+				response.setStatus(mv.getStatus().value());
+			}
+			// 视图渲染：
+			// 结合数据模型和视图模版形成最终的视图数据写入到响应对象
+			// 不过这里视图数据写入后并不会发送给请求者。将响应数据最终发送给请求者也就是浏览器端的动作，会在随后调用控制返回给应用服务器时，由应用服务器执行：
+			// 1. 从用户直观的感受来讲，当前方法结束时，用户在浏览器上看不到写入的视图数据
+			// 2. 针对应用服务器是Tomcat的情况，是在 CoyoteAdapter#service 中请求被Spring MVC 处理完之后调用 response.finishResponse() 才真正将数据返回给请求者。
+			view.render(mv.getModelInternal(), request, response);
+		}
+		catch (Exception ex) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Error rendering view [" + view + "]", ex);
+			}
+			throw ex;
 		}
 	}
 

@@ -2,17 +2,16 @@ package com.nivelle.base.jdk.annotion.myannotion;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-@MyAnnotation
+@MyAnnotation(name = "myAnnotationTest")
 public class UserLogin {
 
     @Autowired
+    @MyAnnotation(nation = "test")
     private IUser userdao;
 
-    @MyAnnotation(nation = "EnglishUserImpl" )
     public void setUserdao(IUser userdao) {
         this.userdao = userdao;
     }
-
     public IUser getUserdao() {
         return userdao;
     }

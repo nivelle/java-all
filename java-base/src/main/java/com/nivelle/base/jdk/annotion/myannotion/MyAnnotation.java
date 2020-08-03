@@ -10,8 +10,8 @@ public @interface MyAnnotation {
 
     String name() default "";
 
-    String sex() default "男";
+    String sex() default "default sex 男";
 
-    String nation() default "ChineseUserImpl";
+    String nation() default "default nation ChineseUserImpl";
 }
 

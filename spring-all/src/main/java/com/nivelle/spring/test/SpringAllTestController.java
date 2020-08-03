@@ -1,6 +1,4 @@
 package com.nivelle.spring.test;
-
-import cn.hutool.http.HttpUtil;
 import com.google.common.collect.Lists;
 import com.nivelle.spring.configbean.CommonConfig;
 import com.nivelle.spring.pojo.Cat;
@@ -34,7 +32,6 @@ import java.util.Map;
 import java.util.Properties;
 
 @RestController
-@RequestMapping("/test")
 public class SpringAllTestController {
 
     @Autowired
