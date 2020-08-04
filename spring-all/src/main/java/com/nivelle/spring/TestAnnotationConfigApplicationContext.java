@@ -1,4 +1,4 @@
-package com.nivelle.spring.test;
+package com.nivelle.spring;
 
 import com.nivelle.spring.pojo.Dog;
 import com.nivelle.spring.springcore.annotation.ConditionConfig;

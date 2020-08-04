@@ -1,22 +1,22 @@
 package com.nivelle.spring.test;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.nivelle.spring.GsonUtils;
 import com.nivelle.spring.configbean.CommonConfig;
-import com.nivelle.spring.pojo.Cat;
-import com.nivelle.spring.pojo.Dog;
-import com.nivelle.spring.pojo.TimeLine;
+import com.nivelle.spring.pojo.*;
 import com.nivelle.spring.springboot.dao.ActivityDaoImpl;
-import com.nivelle.spring.pojo.ActivityPvEntity;
 import com.nivelle.spring.springboot.mapper.ActivityPvMapper;
 import com.nivelle.spring.springcore.aop.MyService;
 import com.nivelle.spring.springcore.basics.InitSpringBean;
 import com.nivelle.spring.springcore.basics.XmlBean;
 import com.nivelle.spring.springcore.factorybean.*;
 import com.nivelle.spring.springcore.listener.springevent.MyEvent;
-import com.nivelle.spring.springmvc.PropertiesHandlerMethodArgumentResolver;
-import com.nivelle.spring.springmvc.PropertiesHandlerMethodReturnValueHandler;
-import com.nivelle.spring.springmvc.PropertiesHttpMessageConverter;
+import com.nivelle.spring.springmvc.MyHandlerMethodArgumentResolver;
+import com.nivelle.spring.springmvc.MyHandlerMethodReturnValueHandler;
+import com.nivelle.spring.springmvc.MyHttpMessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
@@ -27,11 +27,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-@RestController
+@Controller
 public class SpringAllTestController {
 
     @Autowired
@@ -50,37 +51,39 @@ public class SpringAllTestController {
 
     @Autowired
     MyService myService;
-
+    @Autowired
+    InitSpringBean initSpringBean;
     /**
      * 获取上下文
      */
     @Autowired
     WebApplicationContext webApplicationConnect;
 
-    @RequestMapping("/config")
-    public String config() {
-
-        String desc = commonConfig.getDesc();
-
-        // Son man = new Son(1, "nivelle", 100);
-
-        System.out.println(desc);
-
-        //System.out.println(man.getScore() + man.getName() + man.getAge());
-
-        return "hello world my name is " + desc;
-    }
-
-    @RequestMapping("/extends")
+    @PostMapping("/config")
     @ResponseBody
-    public String hello() {
-
-//        Son man = new Son(1, "nivelle", 100);
-//        System.out.println(man.getScore() + man.getName() + man.getAge());
-//        return "class extends name is:" + man.getName() + " " + "score is: " + man.getScore();
-        return "";
+    public Object config(@RequestBody User user) {
+        String desc = commonConfig.getDesc();
+        System.out.println(desc);
+        System.out.println(user.name);
+        HashMap result = Maps.newHashMap();
+        result.put("age",user.getAge());
+        result.put("name",user.getName());
+        return result;
     }
 
+    @RequestMapping("/argument")
+    @ResponseBody
+    public String argument() {
+        return "nivelle";
+    }
+
+    @RequestMapping("/return")
+    @ResponseBody
+    public Map returnValue() {
+        Map map = Maps.newHashMap();
+        map.put(1,2);
+        return map;
+    }
     /**
      * 优雅停机
      *
@@ -89,12 +92,10 @@ public class SpringAllTestController {
     @RequestMapping("/graceFull")
     @ResponseBody
     public String graceFull() {
-
         try {
             System.out.println("等待过程中终止进程,但是依然等待当前任务执行完毕");
             Thread.sleep(30000);
         } catch (Exception e) {
-
         }
         System.out.println("优雅停机执行完毕");
         return "stop success";
@@ -253,8 +254,6 @@ public class SpringAllTestController {
         return xmlBeanService1.helloXmlService();
     }
 
-    @Autowired
-    InitSpringBean initSpringBean;
 
     /**
      * 初始化测试
@@ -314,8 +313,8 @@ public class SpringAllTestController {
     /**
      * 自定义参数转换器测试,不依赖@RequestBody和 @ResponseBody
      * <p>
-     * {@link PropertiesHandlerMethodArgumentResolver}
-     * {@link PropertiesHandlerMethodReturnValueHandler}
+     * {@link MyHandlerMethodArgumentResolver}
+     * {@link MyHandlerMethodReturnValueHandler}
      *
      * @param properties
      * @return
@@ -329,7 +328,7 @@ public class SpringAllTestController {
     /**
      * 自定义参数转换器测试,依赖@RequestBody和 @ResponseBody
      * <p>
-     * {@link PropertiesHttpMessageConverter}
+     * {@link MyHttpMessageConverter}
      *
      * @param properties
      * @return

@@ -20,25 +20,33 @@ import java.util.Properties;
  *
  * @Author nivelle
  */
-public class PropertiesHandlerMethodArgumentResolver implements HandlerMethodArgumentResolver {
+public class MyHandlerMethodArgumentResolver implements HandlerMethodArgumentResolver {
+
+    /**
+     * 是否支持parameter指定的方法参数
+     */
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
+        System.out.println("HandlerMethodArgumentResolver ==>supportsParameter,\n parameter="+parameter+"\n supportsParameter:"+(Properties.class.equals(parameter.getParameterType())));
         return Properties.class.equals(parameter.getParameterType());
     }
 
+    /**
+     * 从指定请求上下文中，将方法参数MethodParameter解析为参数值。
+     * 这里需要解析的参数parameter一定符合如下条件:将其交给当前HandlerMethodArgumentResolver对象的方法supportsParameter,返回结果是true
+     */
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+        System.out.println("HandlerMethodArgumentResolver ==>resolveArgument,\n parameter="+parameter+"\n mavContainer:"+mavContainer+"\n webRequest :"+webRequest+"\n binderFactory:"+binderFactory);
         ServletWebRequest servletWebRequest = (ServletWebRequest) webRequest;
         HttpServletRequest request = servletWebRequest.getRequest();
         String contentType = request.getHeader("Content-Type");
-
         MediaType mediaType = MediaType.parseMediaType(contentType);
         // 获取编码
         Charset charset = mediaType.getCharset() == null ? Charset.forName("UTF-8") : mediaType.getCharset();
         // 获取输入流
         InputStream inputStream = request.getInputStream();
         InputStreamReader inputStreamReader = new InputStreamReader(inputStream, charset);
-
         // 输入流转换为 Properties
         Properties properties = new Properties();
         properties.load(inputStreamReader);

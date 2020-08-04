@@ -3,29 +3,23 @@ package com.nivelle.spring.springmvc;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
+import com.google.common.collect.Lists;
+import com.nivelle.spring.springcore.handlerinterceptor.MyHandlerInterceptor;
 import com.nivelle.spring.springmvc.filter.MyCrossFilter;
 import com.nivelle.spring.springmvc.filter.MyFilter1;
 import com.nivelle.spring.springmvc.filter.MyFilter2;
-import com.nivelle.spring.springcore.handlerinterceptor.MyHandlerInterceptor;
-import com.nivelle.spring.springmvc.servlet.myServlet1;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.nivelle.spring.springmvc.servlet.MyServlet1;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.stereotype.Component;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
+import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.util.UrlPathHelper;
-
-import javax.annotation.PostConstruct;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -41,125 +35,34 @@ import java.util.List;
  * Custom Favicon support (covered later in this document).
  * Automatic use of a ConfigurableWebBindingInitializer bean (covered later in this document).
  */
-@Configuration
-/**
- *
- * @EnableWebMvc 完全自定义控制SpringMVC;If you want to take complete control of Spring MVC, you can add your own @Configuration annotated with @EnableWebMvc
- *
- * 如果既想保留自动配置的SpringMVC又想使用自己自定义的MVC属性，需要使用实现了WebMvcConfigurer的配置类。该配置类不能加 @EnableWebMvc
- *
- * **/
 
+/**
+ * @EnableWebMvc 完全自定义控制SpringMVC;If you want to take complete control of Spring MVC, you can add your own @Configuration annotated with @EnableWebMvc
+ * <p>
+ * 如果既想保留自动配置的SpringMVC又想使用自己自定义的MVC属性，需要使用实现了WebMvcConfigurer的配置类。该配置类不能加 @EnableWebMvc
+ **/
+@Configuration
 public class MyWebConfig implements WebMvcConfigurer {
 
+    @Override
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolverList) {
+        argumentResolverList.add(new MyHandlerMethodArgumentResolver());
+    }
 
-    @Autowired
-    private RequestMappingHandlerAdapter requestMappingHandlerAdapter;
-
-    @PostConstruct
-    public void init() {
-        /**
-         * 处理入参映射
-         */
-        // 获取当前 RequestMappingHandlerAdapter 所有的 ArgumentResolver对象
-        List<HandlerMethodArgumentResolver> argumentResolvers = requestMappingHandlerAdapter.getArgumentResolvers();
-        List<HandlerMethodArgumentResolver> newArgumentResolvers = new ArrayList<>(argumentResolvers.size() + 1);
-        // 添加 PropertiesHandlerMethodArgumentResolver 到集合第一个位置
-        newArgumentResolvers.add(0, new PropertiesHandlerMethodArgumentResolver());
-        // 将原 ArgumentResolver 添加到集合中
-        newArgumentResolvers.addAll(argumentResolvers);
-        // 重新设置 ArgumentResolver对象集合
-        requestMappingHandlerAdapter.setArgumentResolvers(newArgumentResolvers);
-
-        /**
-         * 处理返回值
-         */
-        // 获取当前 RequestMappingHandlerAdapter 所有的 returnValueHandlers对象
-        List<HandlerMethodReturnValueHandler> returnValueHandlers = requestMappingHandlerAdapter.getReturnValueHandlers();
-        List<HandlerMethodReturnValueHandler> newReturnValueHandlers = new ArrayList<>(returnValueHandlers.size() + 1);
-        // 添加 PropertiesHandlerMethodReturnValueHandler 到集合第一个位置
-        newReturnValueHandlers.add(0, new PropertiesHandlerMethodReturnValueHandler());
-        // 将原 returnValueHandlers 添加到集合中
-        newReturnValueHandlers.addAll(returnValueHandlers);
-        // 重新设置 ReturnValueHandlers对象集合
-        requestMappingHandlerAdapter.setReturnValueHandlers(newReturnValueHandlers);
+    @Override
+    public void addReturnValueHandlers(List<HandlerMethodReturnValueHandler> returnValueHandlers) {
+        returnValueHandlers.add(new MyHandlerMethodReturnValueHandler());
     }
 
     /**
-     * 请求过滤器
+     * 和 MyCrossFilter 一样解决跨域问题。 第三种方式是直接在Controller上 @CrossOrigin
      *
-     * @return
-     */
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    @Bean
-    @DependsOn("myFilter2")//初始化顺序控制
-    public FilterRegistrationBean filterRegister() {
-        FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
-        filterRegistrationBean.setFilter(new MyFilter1());
-        filterRegistrationBean.addUrlPatterns("/*");
-        //数字越小，优先级越高，指的是执行顺序，加载顺序按照先后，若需要修改，可使用注解 @DependsOn
-        filterRegistrationBean.setOrder(2);
-        System.out.println("过滤器1注册完成");
-        return filterRegistrationBean;
-    }
-
-    /**
-     * 请求过滤器2先与过滤器1执行
-     *
-     * @return
-     */
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    @Bean(name = "myFilter2")
-    public FilterRegistrationBean filterRegister2() {
-        FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
-        filterRegistrationBean.setFilter(new MyFilter2());
-        filterRegistrationBean.addUrlPatterns("/*");
-        filterRegistrationBean.setOrder(1);
-        System.out.println("过滤器2注册完成");
-        return filterRegistrationBean;
-    }
-
-    /**
-     * 请求过滤器2先与过滤器1执行
-     *
-     * @return
-     */
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    @Bean(name = "crossFilter")
-    public FilterRegistrationBean filterCross() {
-        FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
-        filterRegistrationBean.setFilter(new MyCrossFilter());
-        filterRegistrationBean.addUrlPatterns("/*");
-        filterRegistrationBean.setOrder(1);
-        System.out.println("跨域过滤器");
-        return filterRegistrationBean;
-    }
-
-    /**
-     *  和 MyCrossFilter 一样解决跨域问题。 第三种方式是直接在Controller上 @CrossOrigin
      * @param registry
      */
     @Override
-    public void addCorsMappings(CorsRegistry registry){
+    public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**").allowedOrigins("*").
-                allowedMethods("POST","GET","PUT","DELETE").allowCredentials(true).allowedHeaders("*").maxAge(3600);
-    }
-    /**
-     * 自定义servle有三种注入方式
-     * <p>
-     * 1.ServletRegistrationBean
-     * <p>
-     * 2.@WebServlet
-     * <p>
-     * 3.ServletContextInitializer
-     */
-    @Bean
-    public ServletRegistrationBean registerServlet() {
-        ServletRegistrationBean servletRegistrationBean = new ServletRegistrationBean(
-                new myServlet1(), "/registerServlet");
-        servletRegistrationBean.addInitParameter("desc", "nivele love jessy");
-        System.out.println("自定义servlet");
-        return servletRegistrationBean;
+                allowedMethods("POST", "GET", "PUT", "DELETE").allowCredentials(true).allowedHeaders("*").maxAge(3600);
     }
 
     /**
@@ -188,24 +91,11 @@ public class MyWebConfig implements WebMvcConfigurer {
         fj.setSerializerFeatures(SerializerFeature.DisableCircularReferenceDetect);
         fjc.setFastJsonConfig(fj);
         converters.add(0, fjc);
-//        Jackson2ObjectMapperBuilder builder = Jackson2ObjectMapperBuilder.xml();
-//        builder.indentOutput(true);
-//        converters.add(1, new MappingJackson2XmlHttpMessageConverter(builder.build()));
-//        converters.add(2, converter());
-    }
-
-    /**
-     * 自定义消息转换器
-     *
-     * @return
-     */
-    @Bean
-    public PropertiesHttpMessageConverter converter() {
-        return new PropertiesHttpMessageConverter();
     }
 
     /**
      * 对控制进行路由规则配置
+     *
      * @param configurer
      */
     @Override
@@ -228,7 +118,6 @@ public class MyWebConfig implements WebMvcConfigurer {
         //configurer.addPathPrefix("test", c -> c.isAnnotationPresent(MyAnnotationImportBeanDefinitionRegistrar.class));
         configurer.addPathPrefix("test", c -> c.getPackage().getName().contains("com.nivelle.spring.test"));
     }
-
 
 }
 

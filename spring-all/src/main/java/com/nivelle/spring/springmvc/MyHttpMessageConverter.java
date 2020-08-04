@@ -18,17 +18,16 @@ import java.util.Properties;
  *
  * @Author nivelle
  */
-public class PropertiesHttpMessageConverter extends AbstractGenericHttpMessageConverter<Properties> {
+public class MyHttpMessageConverter extends AbstractGenericHttpMessageConverter<Properties> {
 
-    public PropertiesHttpMessageConverter() {
+    public MyHttpMessageConverter() {
         super(new MediaType("text", "properties"));
-
     }
     @Override
     protected void writeInternal(Properties properties, Type type, HttpOutputMessage outputMessage) throws IOException, HttpMessageNotWritableException {
+        System.out.println("AbstractGenericHttpMessageConverter =>writeInternal,properties:"+properties+"\n"+"type:"+type+"\n HttpOutputMessage:"+outputMessage);
         // 获取请求头
         HttpHeaders headers = outputMessage.getHeaders();
-
         // 获取 content-type
         MediaType contentType = headers.getContentType();
         // 获取编码
@@ -36,19 +35,17 @@ public class PropertiesHttpMessageConverter extends AbstractGenericHttpMessageCo
         if (contentType != null) {
             charset = contentType.getCharset();
         }
-
         charset = charset == null ? Charset.forName("UTF-8") : charset;
-
         // 获取请求体
         OutputStream body = outputMessage.getBody();
-
         OutputStreamWriter outputStreamWriter = new OutputStreamWriter(body, charset);
-
         properties.store(outputStreamWriter, "PropertiesHttpMessageConverter#writeInternal");
     }
 
     @Override
     protected Properties readInternal(Class<? extends Properties> clazz, HttpInputMessage inputMessage) throws IOException, HttpMessageNotReadableException {
+        System.out.println("AbstractGenericHttpMessageConverter =>readInternal,clazz:"+clazz+"\n"+"inputMessage:"+inputMessage);
+
         Properties properties = new Properties();
         // 获取请求头
         HttpHeaders headers = inputMessage.getHeaders();
@@ -59,9 +56,7 @@ public class PropertiesHttpMessageConverter extends AbstractGenericHttpMessageCo
         if (contentType != null) {
             charset = contentType.getCharset();
         }
-
         charset = charset == null ? Charset.forName("UTF-8") : charset;
-
         // 获取请求体
         InputStream body = inputMessage.getBody();
         InputStreamReader inputStreamReader = new InputStreamReader(body, charset);

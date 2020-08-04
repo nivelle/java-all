@@ -18,7 +18,7 @@ public class RegisterMyServlet2 implements ServletContextInitializer {
     @Override
     public void onStartup(ServletContext servletContext) {
         ServletRegistration initServlet = servletContext
-                .addServlet("initServlet2", myServlet2.class);
+                .addServlet("initServlet2", MyServlet2.class);
         initServlet.addMapping("/initServlet2");
         initServlet.setInitParameter("desc2", "nivelle");
     }

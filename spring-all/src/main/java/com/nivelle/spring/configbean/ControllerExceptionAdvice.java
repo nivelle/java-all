@@ -85,8 +85,6 @@ public class ControllerExceptionAdvice {
             System.err.println(ex.getMessage());
             System.err.println(ex.getStackTrace());
             System.err.println(ex.getLocalizedMessage());
-
-
         }
         return message;
     }
