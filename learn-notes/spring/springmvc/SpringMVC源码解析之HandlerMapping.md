@@ -1,5 +1,61 @@
 ### handlerMapping
 
+
+
+#### AbstractHandlerMethodMapping
+
+- lookupHandlerMethod: 方法负责URL的匹配
+````
+protected HandlerMethod lookupHandlerMethod(String lookupPath, HttpServletRequest request) throws Exception {
+		List<Match> matches = new ArrayList<>();
+		List<T> directPathMatches = this.mappingRegistry.getMappingsByUrl(lookupPath);
+		if (directPathMatches != null) {
+			addMatchingMappings(directPathMatches, matches, request);
+		}
+		if (matches.isEmpty()) {
+			// No choice but to go through all mappings...
+			addMatchingMappings(this.mappingRegistry.getMappings().keySet(), matches, request);
+		}
+
+		if (!matches.isEmpty()) {
+			Comparator<Match> comparator = new MatchComparator(getMappingComparator(request));
+			matches.sort(comparator);
+			Match bestMatch = matches.get(0);
+			if (matches.size() > 1) {
+				if (logger.isTraceEnabled()) {
+					logger.trace(matches.size() + " matching mappings: " + matches);
+				}
+				if (CorsUtils.isPreFlightRequest(request)) {
+					return PREFLIGHT_AMBIGUOUS_MATCH;
+				}
+				Match secondBestMatch = matches.get(1);
+				if (comparator.compare(bestMatch, secondBestMatch) == 0) {
+					Method m1 = bestMatch.handlerMethod.getMethod();
+					Method m2 = secondBestMatch.handlerMethod.getMethod();
+					String uri = request.getRequestURI();
+					throw new IllegalStateException(
+							"Ambiguous handler methods mapped for '" + uri + "': {" + m1 + ", " + m2 + "}");
+				}
+			}
+			request.setAttribute(BEST_MATCHING_HANDLER_ATTRIBUTE, bestMatch.handlerMethod);
+			handleMatch(bestMatch.mapping, lookupPath, request);
+			return bestMatch.handlerMethod;
+		}
+		else {
+			return handleNoMatch(this.mappingRegistry.getMappings().keySet(), lookupPath, request);
+		}
+	}
+
+
+
+````
+
+
+
+
+
+
+
 - RequestMappingHandlerMapping
 
 ```

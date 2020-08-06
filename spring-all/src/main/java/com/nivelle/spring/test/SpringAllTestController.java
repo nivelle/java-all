@@ -58,6 +58,7 @@ public class SpringAllTestController {
     WebApplicationContext webApplicationConnect;
 
     /**
+     * 获取某个请求头
      * @param contentType
      * @return
      * @RequestHeader
@@ -70,7 +71,23 @@ public class SpringAllTestController {
     }
 
     /**
+     * 获取所有的请求头
+     *
+     * @param headers
+     * @return
+     * @RequestHeader
+     */
+    @PostMapping("/headers")
+    @ResponseBody
+    public Object configHeaders(@RequestHeader Map headers) {
+        System.out.println(headers);
+        return headers;
+    }
+
+
+    /**
      * 本质上是利用了 defaultValue 持占位符和SpEL的特性
+     *
      * @return
      * @Value
      */
@@ -99,6 +116,20 @@ public class SpringAllTestController {
         return result;
     }
 
+    /**
+     * pathValue 非必填
+     *
+     * @param id
+     * @return
+     */
+    @GetMapping({"/pathValue/{id}", "/pathValue"})
+    @ResponseBody
+    public Object pathValue(@PathVariable(required = false) String id) {
+        HashMap result = Maps.newHashMap();
+        result.put("id", id);
+        return result;
+    }
+
 
     /**
      * Map参数封装
@@ -111,7 +142,20 @@ public class SpringAllTestController {
         System.out.println(params);
         System.out.println(params.get("name"));
         HashMap result = Maps.newHashMap();
-        result.put("name", params.get("name")+"fuck");
+        result.put("name", params.get("name") + "fuck");
+        return result;
+    }
+
+    /**
+     * Map参数封装
+     *
+     * @return
+     */
+    @PostMapping("/config3")
+    @ResponseBody
+    public Object config3(@RequestParam(value = "${myConfig.desc}") String desc) {
+        HashMap result = Maps.newHashMap();
+        result.put("desc", desc);
         return result;
     }
 
