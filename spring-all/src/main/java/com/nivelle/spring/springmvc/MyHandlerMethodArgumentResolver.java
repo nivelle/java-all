@@ -27,17 +27,24 @@ public class MyHandlerMethodArgumentResolver implements HandlerMethodArgumentRes
      */
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        System.out.println("HandlerMethodArgumentResolver ==>supportsParameter,\n parameter="+parameter+"\n supportsParameter:"+(Properties.class.equals(parameter.getParameterType())));
+        System.out.println("parameter:" + parameter.getParameter());
+        System.out.println("parameter name1:" + parameter.getParameter().getName());
+        System.out.println("parameter type:" + parameter.getParameterType());
+        System.out.println("parameter name2:" + parameter.getParameterName());
+        System.out.println("parameter executable:" + parameter.getExecutable());
+        System.out.println("parameter method:" + parameter.getMethod());
+        System.out.println("HandlerMethodArgumentResolver ==>supportsParameter,\n parameter=" + parameter + "\n supportsParameter:" + (Properties.class.equals(parameter.getParameterType())));
         return Properties.class.equals(parameter.getParameterType());
     }
 
     /**
-     * 从指定请求上下文中，将方法参数MethodParameter解析为参数值。
-     * 这里需要解析的参数parameter一定符合如下条件:将其交给当前HandlerMethodArgumentResolver对象的方法supportsParameter,返回结果是true
+     * 从指定请求上下文中，将方法参数MethodParameter解析为参数值。这里需要解析的参数parameter一定符合如下条件:将其交给当前HandlerMethodArgumentResolver对象的方法supportsParameter,返回结果是true
+     *
+     * 它是HandlerMethod方法的解析器，将HttpServletRequest(header + body 中的内容)解析为HandlerMethod方法的参数（method parameters）
      */
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-        System.out.println("HandlerMethodArgumentResolver ==>resolveArgument,\n parameter="+parameter+"\n mavContainer:"+mavContainer+"\n webRequest :"+webRequest+"\n binderFactory:"+binderFactory);
+        System.out.println("HandlerMethodArgumentResolver ==>resolveArgument,\n parameter=" + parameter + "\n mavContainer:" + mavContainer + "\n webRequest :" + webRequest + "\n binderFactory:" + binderFactory);
         ServletWebRequest servletWebRequest = (ServletWebRequest) webRequest;
         HttpServletRequest request = servletWebRequest.getRequest();
         String contentType = request.getHeader("Content-Type");

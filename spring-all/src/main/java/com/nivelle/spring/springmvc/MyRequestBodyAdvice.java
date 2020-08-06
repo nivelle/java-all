@@ -20,6 +20,15 @@ import java.lang.reflect.Type;
 public class MyRequestBodyAdvice implements RequestBodyAdvice {
     @Override
     public boolean supports(MethodParameter methodParameter, Type targetType, Class<? extends HttpMessageConverter<?>> converterType) {
+        System.out.println("parameter:" + methodParameter.getParameter());
+        System.out.println("parameter name1:" + methodParameter.getParameter().getName());
+        System.out.println("parameter type:" + methodParameter.getParameterType());
+        System.out.println("parameter name2:" + methodParameter.getParameterName());
+        System.out.println("parameter executable:" + methodParameter.getExecutable());
+        System.out.println("parameter method:" + methodParameter.getMethod());
+        System.out.println("parameter toString:" + methodParameter.getParameter().toString());
+        System.out.println("parameter modifiers:" + methodParameter.getParameter().getModifiers());
+
         System.out.println("MyRequestBodyAdvice support==》methodParameter：" + methodParameter + "\n targetType:" + targetType + "\n converterType:" + converterType + "\n support is:" + methodParameter.getParameterType().equals(User.class));
         return methodParameter.getParameterType().equals(User.class);
     }

@@ -76,3 +76,7 @@ public RequestMatchResult match(HttpServletRequest request, String pattern) {
 		return new RequestMatchResult(patterns.iterator().next(), lookupPath, getPathMatcher());
 	}	
 ```
+
+- BeanNameUrlHandlerMapping
+
+- AbstractUrlHandlerMapping
