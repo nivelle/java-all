@@ -1,7 +1,7 @@
 package com.nivelle.spring.test;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.nivelle.spring.GsonUtils;
 import com.nivelle.spring.configbean.CommonConfig;
 import com.nivelle.spring.pojo.*;
 import com.nivelle.spring.springboot.dao.ActivityDaoImpl;
@@ -15,7 +15,9 @@ import com.nivelle.spring.springmvc.MyHandlerMethodArgumentResolver;
 import com.nivelle.spring.springmvc.MyHandlerMethodReturnValueHandler;
 import com.nivelle.spring.springmvc.MyHttpMessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -39,16 +41,12 @@ public class SpringAllTestController {
     CommonConfig commonConfig;
     @Autowired
     ActivityPvMapper activityPvMapper;
-
     @Autowired
     ActivityDaoImpl activityDao;
-
     @Autowired
     MyFactoryBean myFactoryBean;
-
     @Autowired
     ApplicationContext applicationContext;
-
     @Autowired
     MyService myService;
     @Autowired
@@ -59,6 +57,36 @@ public class SpringAllTestController {
     @Autowired
     WebApplicationContext webApplicationConnect;
 
+    /**
+     * @param contentType
+     * @return
+     * @RequestHeader
+     */
+    @PostMapping("/header")
+    @ResponseBody
+    public Object configHeader(@RequestHeader(name = HttpHeaders.CONTENT_TYPE) String contentType) {
+        System.out.println(contentType);
+        return contentType + "aa";
+    }
+
+    /**
+     * 本质上是利用了 defaultValue 持占位符和SpEL的特性
+     * @return
+     * @Value
+     */
+    @PostMapping("/value")
+    @ResponseBody
+    public Object value(@Value(value = "${myConfig.desc}") String name) {
+        System.out.println(name);
+        return name + "return";
+    }
+
+    /**
+     * MethodArgumentResolver
+     *
+     * @param user
+     * @return
+     */
     @PostMapping("/config")
     @ResponseBody
     public Object config(@RequestBody User user) {
@@ -66,106 +94,49 @@ public class SpringAllTestController {
         System.out.println(desc);
         System.out.println(user.name);
         HashMap result = Maps.newHashMap();
-        result.put("age",user.getAge());
-        result.put("name",user.getName());
+        result.put("age", user.getAge());
+        result.put("name", user.getName());
         return result;
     }
 
+
+    /**
+     * Map参数封装
+     *
+     * @return
+     */
+    @PostMapping("/config2")
+    @ResponseBody
+    public Object config2(@RequestParam Map params) {
+        System.out.println(params);
+        System.out.println(params.get("name"));
+        HashMap result = Maps.newHashMap();
+        result.put("name", params.get("name")+"fuck");
+        return result;
+    }
+
+    /**
+     * requestBodyAdvice
+     *
+     * @return
+     */
     @RequestMapping("/argument")
     @ResponseBody
     public String argument() {
         return "nivelle";
     }
 
+    /**
+     * ResponseBodyAdvice
+     *
+     * @return
+     */
     @RequestMapping("/return")
     @ResponseBody
     public Map returnValue() {
         Map map = Maps.newHashMap();
-        map.put(1,2);
+        map.put(1, 2);
         return map;
-    }
-    /**
-     * 优雅停机
-     *
-     * @return
-     */
-    @RequestMapping("/graceFull")
-    @ResponseBody
-    public String graceFull() {
-        try {
-            System.out.println("等待过程中终止进程,但是依然等待当前任务执行完毕");
-            Thread.sleep(30000);
-        } catch (Exception e) {
-        }
-        System.out.println("优雅停机执行完毕");
-        return "stop success";
-    }
-
-
-    /**
-     * jdbcTemplate 实践
-     *
-     * @return
-     */
-    @RequestMapping("/activityPv/{id}")
-    @ResponseBody
-    public ActivityPvEntity getActivityPv(@PathVariable String id) {
-        ActivityPvEntity activityPvEntity = activityDao.getActivitiesById(Long.valueOf(id));
-        System.out.println("activityPv is:" + activityPvEntity);
-        return activityPvEntity;
-    }
-
-    /**
-     * 原型返回
-     *
-     * @return
-     */
-    @RequestMapping("/activityPvs")
-    @ResponseBody
-    public Object getActivityPvs() {
-        List<Map<String, Object>> activityList = activityDao.getActivityList();
-        System.out.println("activityList is:" + activityList);
-        return activityList;
-    }
-
-    /**
-     * 自动映射
-     *
-     * @return
-     */
-    @RequestMapping("/activityPvs2")
-    @ResponseBody
-    public Object getActivityPvs2() {
-        List<ActivityPvEntity> activityList = activityDao.getActivityList2();
-        System.out.println("activityList is:" + activityList);
-        return activityList;
-    }
-
-    /**
-     * 自定义对象映射
-     *
-     * @return
-     */
-    @RequestMapping("/activityPvs3")
-    @ResponseBody
-    public Object getActivityPvs3() {
-        List<ActivityPvEntity> activityList = activityDao.getActivityList3();
-        System.out.println("activityList is:" + activityList);
-        return activityList;
-    }
-
-    /**
-     * 自定义对象映射
-     *
-     * @return
-     */
-    @RequestMapping("/updateActivity/{id}")
-    @ResponseBody
-    public Object changeActivityPv(@PathVariable String id) {
-        ActivityPvEntity activityPvEntity = activityDao.getActivitiesForUpdate(Long.valueOf(id));
-        System.out.println(activityPvEntity);
-        int changeCount = activityDao.updateActivityPv(activityPvEntity);
-        return changeCount;
     }
 
     /**
@@ -193,8 +164,7 @@ public class SpringAllTestController {
 
     /**
      * 单实例测试
-     *
-     * @return
+     * singleBean 测试
      */
     @RequestMapping("/singletonBean")
     public Object singletonTest() {
@@ -209,9 +179,7 @@ public class SpringAllTestController {
     }
 
     /**
-     * 多实例测试
-     *
-     * @return
+     * prototype bean 多实例测试
      */
     @RequestMapping("/prototypeBean")
     public Object prototypeBeanTest() {
@@ -224,20 +192,16 @@ public class SpringAllTestController {
         }
     }
 
+    /**
+     * 从webApplicationConnect容器获取指定bean
+     *
+     * @return
+     */
     @RequestMapping("/registerBean")
-    public Object registerBean() {
-        Cat cat = (Cat) webApplicationConnect.getBean("com.nivelle.guide.model.Cat");
-        System.out.println(cat);
-        return cat;
-    }
-
-    @RequestMapping("/ok")
-    public Object test() {
-        System.out.println("dubbo provider is ok");
+    public Object contentBean() {
         /**
          * springboot默认属性未设置值时为null,可设置为""
          */
-        //UserInfo userInfo = new UserInfo();
         Object object = webApplicationConnect.getBean("userInfo");
         return object;
     }
@@ -248,7 +212,7 @@ public class SpringAllTestController {
      * @return
      */
     @RequestMapping("xml")
-    public Object testXmlService() {
+    public Object xmlService() {
         Object xmlBeanService = webApplicationConnect.getBean("xmlService");
         XmlBean xmlBeanService1 = (XmlBean) xmlBeanService;
         return xmlBeanService1.helloXmlService();
@@ -256,21 +220,29 @@ public class SpringAllTestController {
 
 
     /**
-     * 初始化测试
+     * Spring 初始化测试
      *
      * @return
      */
     @RequestMapping("/init")
     @ResponseBody
     public Object myInitSpringBean() {
-
         String name = initSpringBean.getName();
         int age = initSpringBean.getAge();
-
         return name + age;
     }
 
-
+    /**
+     * 参数获取
+     *
+     * @param request
+     * @param response
+     * @param session
+     * @param model
+     * @param modelMap
+     * @return
+     * @throws Exception
+     */
     @RequestMapping("/defaultParameter")
     public ModelAndView defaultParameter(HttpServletRequest request,
                                          HttpServletResponse response,
@@ -279,13 +251,11 @@ public class SpringAllTestController {
                                          ModelMap modelMap) throws Exception {
         request.setAttribute("requestParameter", "request类型");
         response.getWriter().write("nivelle's response");
-
         session.setAttribute("sessionParameter", "session类型");
         //ModelMap是Model接口的一个实现类，作用是将Model数据填充到request域
         //即使使用Model接口，其内部绑定还是由ModelMap来实现
         model.addAttribute("modelParameter", "model类型");
         modelMap.addAttribute("modelMapParameter", "modelMap类型");
-
         ModelAndView mv = new ModelAndView();
         mv.setViewName("/success");
         return mv;
@@ -299,12 +269,9 @@ public class SpringAllTestController {
      */
     @RequestMapping("/session/cookie")
     public ModelAndView getSession(HttpSession session, HttpServletRequest request) {
-
         String sessionContent = session.getAttribute("sessionParameter").toString();
         System.out.println("=====" + sessionContent);
-
         System.out.println("-----" + request.getCookies()[0].getName() + request.getCookies()[0].getValue());
-
         ModelAndView mv = new ModelAndView();
         mv.setViewName("/success");
         return mv;
@@ -320,7 +287,7 @@ public class SpringAllTestController {
      * @return
      */
     @RequestMapping(value = "convertSelf", consumes = "text/properties")
-    public Properties getconvertSelf(Properties properties) {
+    public Properties getConvertSelf(Properties properties) {
         System.out.println("入参被解析:properties={}" + properties);
         return properties;
     }
@@ -365,16 +332,17 @@ public class SpringAllTestController {
 
     /**
      * 使用AOP代理
+     *
      * @return
      */
     @RequestMapping("myService")
-    public String writeLog(){
+    public String writeLog() {
         myService.writeLog();
         return "SUCCESS";
     }
 
     /**
-     * 请求中断
+     * 模拟在写出数据的过程中中断连接
      *
      * @param httpServletRequest
      * @param httpServletResponse

@@ -1,7 +1,6 @@
 
 ### HandlerMethodArgumentResolver
 
-
 #### 基于Name
 
 ```
@@ -57,7 +56,8 @@ public abstract class AbstractNamedValueMethodArgumentResolver implements Handle
 		// @RequestAttribute --> 通过 HttpServletRequest.getAttribute(name,RequestAttributes.SCOPE_REQUEST) ==》RequestAttributeMethodArgumentResolver
 		// @SessionAttribute --> 通过 request.getAttribute(name, RequestAttributes.SCOPE_SESSION)  ==》SessionAttributeMethodArgumentResolver
 		// @RequestHeader    --> 通过 HttpServletRequest.getHeaderValues(name) =String[] headerValues = request.getHeaderValues(name);
-		// @CookieValue      --> 通过 HttpServletRequest.getCookies() 
+		// @CookieValue      --> 通过 HttpServletRequest.getCookies() == AbstractCookieValueMethodArgumentResolver
+		// @Value --> ExpressionValueMethodArgumentResolver
 		Object arg = resolveName(resolvedName.toString(), nestedParameter, webRequest);
 		// 若解析出来值仍旧为null，那就走defaultValue （若指定了的话）
 		if (arg == null) {
@@ -128,6 +128,9 @@ public abstract class AbstractNamedValueMethodArgumentResolver implements Handle
 
 #### 数据类型是Map的
 
+数据来源同上，只是参数类型是Map
+
+
 #### 固定参数类型
 
 #### 基于ContentType的消息转换器
@@ -139,18 +142,11 @@ public abstract class AbstractNamedValueMethodArgumentResolver implements Handle
 ```
 public boolean supportsParameter(MethodParameter parameter) {
 		Class<?> paramType = parameter.getParameterType();
-		return (WebRequest.class.isAssignableFrom(paramType) ||
-				ServletRequest.class.isAssignableFrom(paramType) ||
-				MultipartRequest.class.isAssignableFrom(paramType) ||
-				HttpSession.class.isAssignableFrom(paramType) ||
-				(pushBuilder != null && pushBuilder.isAssignableFrom(paramType)) ||
-				Principal.class.isAssignableFrom(paramType) ||
-				InputStream.class.isAssignableFrom(paramType) ||
-				Reader.class.isAssignableFrom(paramType) ||
-				HttpMethod.class == paramType ||
-				Locale.class == paramType ||
-				TimeZone.class == paramType ||
-				ZoneId.class == paramType);
+		return (WebRequest.class.isAssignableFrom(paramType) || ServletRequest.class.isAssignableFrom(paramType) ||
+				MultipartRequest.class.isAssignableFrom(paramType) ||HttpSession.class.isAssignableFrom(paramType) ||
+				(pushBuilder != null && pushBuilder.isAssignableFrom(paramType)) ||Principal.class.isAssignableFrom(paramType) ||
+				InputStream.class.isAssignableFrom(paramType) ||Reader.class.isAssignableFrom(paramType) ||
+				HttpMethod.class == paramType ||Locale.class == paramType ||TimeZone.class == paramType ||ZoneId.class == paramType);
 	}
 
 ```
