@@ -1,4 +1,4 @@
-package com.nivelle.spring.test;
+package com.nivelle.spring;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -24,7 +24,6 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.ModelAndView;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -57,6 +56,7 @@ public class SpringAllTestController {
     @Autowired
     WebApplicationContext webApplicationConnect;
 
+    ///springMVC核心注解
     /**
      * 获取某个请求头
      * @param contentType
@@ -69,7 +69,6 @@ public class SpringAllTestController {
         System.out.println(contentType);
         return contentType + "aa";
     }
-
     /**
      * 获取所有的请求头
      *
@@ -83,10 +82,8 @@ public class SpringAllTestController {
         System.out.println(headers);
         return headers;
     }
-
-
     /**
-     * 本质上是利用了 defaultValue 持占位符和SpEL的特性
+     * 本质上是利用了 @RequestParam defaultValue 持占位符和SpEL的特性
      *
      * @return
      * @Value
@@ -97,10 +94,8 @@ public class SpringAllTestController {
         System.out.println(name);
         return name + "return";
     }
-
     /**
      * MethodArgumentResolver
-     *
      * @param user
      * @return
      */
@@ -115,7 +110,6 @@ public class SpringAllTestController {
         result.put("name", user.getName());
         return result;
     }
-
     /**
      * pathValue 非必填
      *
@@ -129,7 +123,6 @@ public class SpringAllTestController {
         result.put("id", id);
         return result;
     }
-
 
     /**
      * Map参数封装
@@ -145,9 +138,8 @@ public class SpringAllTestController {
         result.put("name", params.get("name") + "fuck");
         return result;
     }
-
     /**
-     * Map参数封装
+     * @RequestParam  value 支持占位符
      *
      * @return
      */
@@ -158,9 +150,8 @@ public class SpringAllTestController {
         result.put("desc", desc);
         return result;
     }
-
     /**
-     * requestBodyAdvice
+     * 参数映射前拦截器: requestBodyAdvice
      *
      * @return
      */
@@ -169,9 +160,8 @@ public class SpringAllTestController {
     public String argument() {
         return "nivelle";
     }
-
     /**
-     * ResponseBodyAdvice
+     * 返回值返回前拦截器: responseBodyAdvice
      *
      * @return
      */
@@ -181,18 +171,6 @@ public class SpringAllTestController {
         Map map = Maps.newHashMap();
         map.put(1, 2);
         return map;
-    }
-
-    /**
-     * 自定义对象映射
-     *
-     * @return
-     */
-    @RequestMapping("/selectForUpdate/{id}")
-    @ResponseBody
-    public Object getActivityPvForUpdate(@PathVariable String id) {
-        ActivityPvEntity activityPvEntity = activityDao.getActivitiesForUpdate(Long.valueOf(id));
-        return activityPvEntity;
     }
 
     /**

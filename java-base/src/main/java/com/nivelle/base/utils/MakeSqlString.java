@@ -110,9 +110,19 @@ public class MakeSqlString {
             stringBuilder2.append("PRIMARY KEY (`id`),");
             stringBuilder2.append("  UNIQUE KEY `uniq_user_company` (`user_name`,`company_id`)");
             stringBuilder2.append(") ENGINE=InnoDB DEFAULT CHARSET=utf8;");
-            System.out.println(stringBuilder2.toString());
+            // System.out.println(stringBuilder2.toString());
         }
-
-
+        StringBuilder stringBuilder1 = new StringBuilder();
+        for (int i = 0; i < 64; i++) {
+            StringBuilder stringBuilder2 = new StringBuilder("select * from `nd_user_read_data_");
+            stringBuilder2.append(i);
+            stringBuilder2.append("`");
+            stringBuilder2.append("where process =0 and read_times> 60 and create_time >='2020-08-01 00:00:00' and create_time <='2020-08-07 23:59:59'");
+            stringBuilder2.append(" ");
+            stringBuilder2.append("union all");
+            stringBuilder1.append(" ");
+            stringBuilder1.append(stringBuilder2);
+        }
+        System.out.println(stringBuilder1.toString());
     }
 }
