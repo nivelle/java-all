@@ -96,6 +96,10 @@ docker整合【下载:docker pull nivelle/nivelle:1.0.2】【运行:sudo docker 
 
 ✅ 【HandlerMethodReturnValueHandler:返回消息转换器】
 
+✅ 【RequestBodyAdvice】
+
+✅ 【ResponseBodyAdvice】
+
 ✅ 【ApplicationRunner&&CommandLineRunner】
 
 ✅ 【WebMvcConfigurer && @EnableWebMvc】
