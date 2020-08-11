@@ -18,6 +18,7 @@ import java.util.Properties;
  *
  * @Author nivelle
  */
+//若不指定消息转换器，则优先使用后自定义后加入的消息转换器。 通过 Accept 消息头来指定
 public class MyHttpMessageConverter extends AbstractGenericHttpMessageConverter<Properties> {
 
     public MyHttpMessageConverter() {

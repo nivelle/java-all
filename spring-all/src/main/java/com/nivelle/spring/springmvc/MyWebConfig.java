@@ -20,6 +20,7 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.util.UrlPathHelper;
+
 import java.util.List;
 
 
@@ -116,7 +117,7 @@ public class MyWebConfig implements WebMvcConfigurer {
         // 配置路径前缀
         // 下面这样写的意思是：对含有 MyAnnotationImportBeanDefinitionRegistrar 注解的controller添加/test前缀
         //configurer.addPathPrefix("test", c -> c.isAnnotationPresent(MyAnnotationImportBeanDefinitionRegistrar.class));
-        configurer.addPathPrefix("test", c -> c.getPackage().getName().contains("com.nivelle.spring.test"));
+        configurer.addPathPrefix("test", c -> c.getPackage().getName().contains("com.nivelle.spring.springmvc.test"));
     }
 
 }

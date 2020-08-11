@@ -273,6 +273,30 @@ public class RequestHeaderMethodArgumentResolver extends AbstractNamedValueMetho
 }
 
 ```
+
+- ServletCookieValueMethodArgumentResolver
+
+```
+protected Object resolveName(String cookieName, MethodParameter parameter,
+			NativeWebRequest webRequest) throws Exception {
+
+		HttpServletRequest servletRequest = webRequest.getNativeRequest(HttpServletRequest.class);
+		Assert.state(servletRequest != null, "No HttpServletRequest");
+
+		Cookie cookieValue = WebUtils.getCookie(servletRequest, cookieName);
+		if (Cookie.class.isAssignableFrom(parameter.getNestedParameterType())) {
+			return cookieValue;
+		}
+		else if (cookieValue != null) {
+			return this.urlPathHelper.decodeRequestString(servletRequest, cookieValue.getValue());
+		}
+		else {
+			return null;
+		}
+	}
+
+
+```
 - ExpressionValueMethodArgumentResolver
 
 ```
@@ -300,7 +324,7 @@ public class ExpressionValueMethodArgumentResolver extends AbstractNamedValueMet
 			super("@Value", false, annotation.value());
 		}
 	}
-	// 这里恒返回null，因此即使你的key是@Value
+	// 这里返回null,因此即使你的key是@Value,也是不会采纳你的传值
 	@Override
 	@Nullable
 	protected Object resolveName(String name, MethodParameter parameter, NativeWebRequest webRequest) throws Exception {
@@ -316,35 +340,37 @@ public class ExpressionValueMethodArgumentResolver extends AbstractNamedValueMet
 
 数据来源同上，只是参数类型是Map
 
-#### 固定参数类型(基于ContentType的消息转换器)
+#### 固定参数类型
 
-#### ServletRequestMethodArgumentResolver
+- ServletRequestMethodArgumentResolver
 
-- supportsParameter //查询支持的参数类型
-
+//支持的
 ```
 public boolean supportsParameter(MethodParameter parameter) {
 		Class<?> paramType = parameter.getParameterType();
-		return (WebRequest.class.isAssignableFrom(paramType) || ServletRequest.class.isAssignableFrom(paramType) ||
-				MultipartRequest.class.isAssignableFrom(paramType) ||HttpSession.class.isAssignableFrom(paramType) ||
-				(pushBuilder != null && pushBuilder.isAssignableFrom(paramType)) ||Principal.class.isAssignableFrom(paramType) ||
-				InputStream.class.isAssignableFrom(paramType) ||Reader.class.isAssignableFrom(paramType) ||
-				HttpMethod.class == paramType ||Locale.class == paramType ||TimeZone.class == paramType ||ZoneId.class == paramType);
+		return (WebRequest.class.isAssignableFrom(paramType) 
+		       || ServletRequest.class.isAssignableFrom(paramType) //webRequest.getNativeRequest(requiredType)
+		       || MultipartRequest.class.isAssignableFrom(paramType) 
+		       || HttpSession.class.isAssignableFrom(paramType) //request.getSession()
+		       || (pushBuilder != null && pushBuilder.isAssignableFrom(paramType)) //PushBuilderDelegate.resolvePushBuilder(request, paramType);
+		       || Principal.class.isAssignableFrom(paramType) //request.getUserPrincipal()
+		       || InputStream.class.isAssignableFrom(paramType) //request.getInputStream()
+		       || Reader.class.isAssignableFrom(paramType) //request.getReader()
+		       || HttpMethod.class == paramType //HttpMethod.resolve(request.getMethod());
+		       || Locale.class == paramType //RequestContextUtils.getLocale(request)
+		       || TimeZone.class == paramType //RequestContextUtils.getTimeZone(request)
+		       || ZoneId.class == paramType); //RequestContextUtils.getTimeZone(request)
 	}
 
 ```
 
-- resolveArgument(MethodParameter parameter, @Nullable ModelAndViewContainer mavContainer,NativeWebRequest webRequest, @Nullable WebDataBinderFactory binderFactory)
+- ServletResponseMethodArgumentResolver
 
 ```
 //webRequest 是 Spring MVC 在处理一个请求过程中代表当前请求的对象，在 Spring MVC 使用某个 HandlerMethodArgumentResolver 解析控制器方法的某个参数时，
-//总是会将 webRequest 传递给该 HandlerMethodArgumentResolver。
-//mavContainer, webRequest , binderFactory 共同组成了解析指定参数 parameter的一个上下文环境
-public Object resolveArgument(MethodParameter parameter, @Nullable ModelAndViewContainer mavContainer,
-			NativeWebRequest webRequest, @Nullable WebDataBinderFactory binderFactory) throws Exception {
-
+//总是会将 webRequest 传递给该 HandlerMethodArgumentResolver。mavContainer, webRequest , binderFactory 共同组成了解析指定参数 parameter的一个上下文环境
+public Object resolveArgument(MethodParameter parameter, @Nullable ModelAndViewContainer mavContainer,NativeWebRequest webRequest, @Nullable WebDataBinderFactory binderFactory) throws Exception {
 		Class<?> paramType = parameter.getParameterType();
-
 		// WebRequest / NativeWebRequest / ServletWebRequest
 		if (WebRequest.class.isAssignableFrom(paramType)) {
 			if (!paramType.isInstance(webRequest)) {
@@ -352,20 +378,18 @@ public Object resolveArgument(MethodParameter parameter, @Nullable ModelAndViewC
 			}
 			return webRequest;
 		}
-
 		// ServletRequest / HttpServletRequest / MultipartRequest / MultipartHttpServletRequest
 		//如果参数的类型为  ServletRequest 的可赋值类型时，委托方法 resolveNativeRequest 做具体解析
 		if (ServletRequest.class.isAssignableFrom(paramType) || MultipartRequest.class.isAssignableFrom(paramType)) {
 			return resolveNativeRequest(webRequest, paramType);
 		}
-
 		// HttpServletRequest required for all further argument types
 		return resolveArgument(paramType, resolveNativeRequest(webRequest, HttpServletRequest.class));
 	}
 
 ```
 
-- private <T> T resolveNativeRequest(NativeWebRequest webRequest, Class<T> requiredType)
+// private <T> T resolveNativeRequest(NativeWebRequest webRequest, Class<T> requiredType)
 
 ```
  	private <T> T resolveNativeRequest(NativeWebRequest webRequest, Class<T> requiredType) {
@@ -380,62 +404,222 @@ public Object resolveArgument(MethodParameter parameter, @Nullable ModelAndViewC
 
 
 ```
-- private Object resolveArgument(Class<?> paramType, HttpServletRequest request) throws IOException 
+
+- RedirectAttributesMethodArgumentResolver
+
+````
+public Object resolveArgument(MethodParameter parameter, @Nullable ModelAndViewContainer mavContainer,NativeWebRequest webRequest, @Nullable WebDataBinderFactory binderFactory) throws Exception {
+		Assert.state(mavContainer != null, "RedirectAttributes argument only supported on regular handler methods");
+		ModelMap redirectAttributes;
+		if (binderFactory != null) {
+			DataBinder dataBinder = binderFactory.createBinder(webRequest, null, DataBinder.DEFAULT_OBJECT_NAME);
+			redirectAttributes = new RedirectAttributesModelMap(dataBinder);
+		}
+		else {
+			redirectAttributes  = new RedirectAttributesModelMap();
+		}
+		mavContainer.setRedirectModel(redirectAttributes);
+		return redirectAttributes;
+	}
+
+````
+
+#### 基于ContentType消息转换器类型(利用HttpMessageConverter将输入流转换成对应的参数)
 
 ```
-private Object resolveArgument(Class<?> paramType, HttpServletRequest request) throws IOException {
-		if (HttpSession.class.isAssignableFrom(paramType)) {
-			HttpSession session = request.getSession();
-			if (session != null && !paramType.isInstance(session)) {
-				throw new IllegalStateException(
-						"Current session is not of type [" + paramType.getName() + "]: " + session);
-			}
-			return session;
-		}
-		else if (pushBuilder != null && pushBuilder.isAssignableFrom(paramType)) {
-			return PushBuilderDelegate.resolvePushBuilder(request, paramType);
-		}
-		else if (InputStream.class.isAssignableFrom(paramType)) {
-			InputStream inputStream = request.getInputStream();
-			if (inputStream != null && !paramType.isInstance(inputStream)) {
-				throw new IllegalStateException(
-						"Request input stream is not of type [" + paramType.getName() + "]: " + inputStream);
-			}
-			return inputStream;
-		}
-		else if (Reader.class.isAssignableFrom(paramType)) {
-			Reader reader = request.getReader();
-			if (reader != null && !paramType.isInstance(reader)) {
-				throw new IllegalStateException(
-						"Request body reader is not of type [" + paramType.getName() + "]: " + reader);
-			}
-			return reader;
-		}
-		else if (Principal.class.isAssignableFrom(paramType)) {
-			Principal userPrincipal = request.getUserPrincipal();
-			if (userPrincipal != null && !paramType.isInstance(userPrincipal)) {
-				throw new IllegalStateException(
-						"Current user principal is not of type [" + paramType.getName() + "]: " + userPrincipal);
-			}
-			return userPrincipal;
-		}
-		else if (HttpMethod.class == paramType) {
-			return HttpMethod.resolve(request.getMethod());
-		}
-		else if (Locale.class == paramType) {
-			return RequestContextUtils.getLocale(request);
-		}
-		else if (TimeZone.class == paramType) {
-			TimeZone timeZone = RequestContextUtils.getTimeZone(request);
-			return (timeZone != null ? timeZone : TimeZone.getDefault());
-		}
-		else if (ZoneId.class == paramType) {
-			TimeZone timeZone = RequestContextUtils.getTimeZone(request);
-			return (timeZone != null ? timeZone.toZoneId() : ZoneId.systemDefault());
-		}
 
-		// Should never happen...
-		throw new UnsupportedOperationException("Unknown parameter type: " + paramType.getName());
+// @since 3.1
+public abstract class AbstractMessageConverterMethodArgumentResolver implements HandlerMethodArgumentResolver {
+
+	// 默认支持的方法（没有Deleted方法）
+	// httpMethod为null 或者方法不属于这集中 或者没有contendType且没有body 那就返回null
+	// 也就是说如果是Deleted请求，即使body里有值也是返回null的。（因为它不是SUPPORTED_METHODS ）
+	private static final Set<HttpMethod> SUPPORTED_METHODS = EnumSet.of(HttpMethod.POST, HttpMethod.PUT, HttpMethod.PATCH);
+	private static final Object NO_VALUE = new Object();
+
+	protected final List<HttpMessageConverter<?>> messageConverters;
+	protected final List<MediaType> allSupportedMediaTypes;
+	// 和RequestBodyAdvice和ResponseBodyAdvice有关的
+	private final RequestResponseBodyAdviceChain advice;
+
+	// 构造函数里指定HttpMessageConverter
+	// 此一个参数的构造函数木人调用
+	public AbstractMessageConverterMethodArgumentResolver(List<HttpMessageConverter<?>> converters) {
+		this(converters, null);
 	}
+
+	// @since 4.2
+	public AbstractMessageConverterMethodArgumentResolver(List<HttpMessageConverter<?>> converters, @Nullable List<Object> requestResponseBodyAdvice) {
+		Assert.notEmpty(converters, "'messageConverters' must not be empty");
+		this.messageConverters = converters;
+		// 它会把所有的消息转换器里支持的MediaType都全部拿出来汇聚起来
+		this.allSupportedMediaTypes = getAllSupportedMediaTypes(converters);
+		this.advice = new RequestResponseBodyAdviceChain(requestResponseBodyAdvice);
+	}
+
+	// 提供一个defualt方法访问
+	RequestResponseBodyAdviceChain getAdvice() {
+		return this.advice;
+	}
+
+	// 子类RequestResponseBodyMethodProcessor有复写此方法
+	// readWithMessageConverters()就是利用消息转换器解析HttpInputMessage的核心
+	@Nullable
+	protected <T> Object readWithMessageConverters(NativeWebRequest webRequest, MethodParameter parameter, Type paramType) throws IOException, HttpMediaTypeNotSupportedException, HttpMessageNotReadableException {
+		HttpInputMessage inputMessage = createInputMessage(webRequest);
+		return readWithMessageConverters(inputMessage, parameter, paramType);
+	}
+
+}
+
+```
+
+### 子类实现：public class RequestResponseBodyMethodProcessor extends AbstractMessageConverterMethodProcessor
+
+#### public abstract class AbstractMessageConverterMethodProcessor extends AbstractMessageConverterMethodArgumentResolver implements HandlerMethodReturnValueHandler
+
+````
+// @since 3.1
+public abstract class AbstractMessageConverterMethodProcessor extends AbstractMessageConverterMethodArgumentResolver implements HandlerMethodReturnValueHandler {
+
+	// 默认情况下：文件后缀是这些就不弹窗下载
+	private static final Set<String> WHITELISTED_EXTENSIONS = new HashSet<>(Arrays.asList("txt", "text", "yml", "properties", "csv","json", "xml", "atom", "rss", "png", "jpe", "jpeg", "jpg", "gif", "wbmp", "bmp"));
+	private static final Set<String> WHITELISTED_MEDIA_BASE_TYPES = new HashSet<>(Arrays.asList("audio", "image", "video"));
+	private static final List<MediaType> ALL_APPLICATION_MEDIA_TYPES = Arrays.asList(MediaType.ALL, new MediaType("application"));
+	private static final Type RESOURCE_REGION_LIST_TYPE = new ParameterizedTypeReference<List<ResourceRegion>>() { }.getType();
+	
+	// 用于给URL解码 decodingUrlPathHelper.decodeRequestString(servletRequest, filename);
+	private static final UrlPathHelper decodingUrlPathHelper = new UrlPathHelper();
+	// rawUrlPathHelper.getOriginatingRequestUri(servletRequest);
+	private static final UrlPathHelper rawUrlPathHelper = new UrlPathHelper();
+	static {
+		rawUrlPathHelper.setRemoveSemicolonContent(false);
+		rawUrlPathHelper.setUrlDecode(false);
+	}
+
+	// 内容协商管理器
+	private final ContentNegotiationManager contentNegotiationManager;
+	// 扩展名的内容协商策略
+	private final PathExtensionContentNegotiationStrategy pathStrategy;
+	private final Set<String> safeExtensions = new HashSet<>();
+
+	protected AbstractMessageConverterMethodProcessor(List<HttpMessageConverter<?>> converters) {
+		this(converters, null, null);
+	}
+	// 可以指定内容协商管理器ContentNegotiationManager 
+	protected AbstractMessageConverterMethodProcessor(List<HttpMessageConverter<?>> converters, @Nullable ContentNegotiationManager contentNegotiationManager) {
+		this(converters, contentNegotiationManager, null);
+	}
+	// 这个构造器才是重点
+	protected AbstractMessageConverterMethodProcessor(List<HttpMessageConverter<?>> converters,
+	 @Nullable ContentNegotiationManager manager, 
+	 @Nullable List<Object> requestResponseBodyAdvice) {
+		super(converters, requestResponseBodyAdvice);
+		// 可以看到：默认情况下会直接new一个内容协商管理器
+		this.contentNegotiationManager = (manager != null ? manager : new ContentNegotiationManager());
+		// 若管理器里有就用管理器里的，否则new PathExtensionContentNegotiationStrategy()
+		this.pathStrategy = initPathStrategy(this.contentNegotiationManager);
+		// 用safeExtensions装上内容协商所支持的所有后缀
+		// 并且把后缀白名单也加上去（表示是默认支持的后缀）
+		this.safeExtensions.addAll(this.contentNegotiationManager.getAllFileExtensions());
+		this.safeExtensions.addAll(WHITELISTED_EXTENSIONS);
+	}
+
+	// ServletServerHttpResponse 是对HttpServletResponse的包装，主要是对响应头进行处理
+	// 主要是处理：setContentType、setCharacterEncoding等等
+	// 所以子类若要写数据，就调用此方法来向输出流里写数据
+	protected ServletServerHttpResponse createOutputMessage(NativeWebRequest webRequest) {
+		HttpServletResponse response = webRequest.getNativeResponse(HttpServletResponse.class);
+		Assert.state(response != null, "No HttpServletResponse");
+		return new ServletServerHttpResponse(response);
+	}
+	// 注意：createInputMessage()方法是父类提供的，对HttpServletRequest的包装
+	// 主要处理了：getURI()、getHeaders()等方法
+	// getHeaders()方法主要是处理了：getContentType()
+	protected <T> void writeWithMessageConverters(T value, MethodParameter returnType, NativeWebRequest webRequest) throws IOException, HttpMediaTypeNotAcceptableException, HttpMessageNotWritableException {
+		ServletServerHttpRequest inputMessage = createInputMessage(webRequest);
+		ServletServerHttpResponse outputMessage = createOutputMessage(webRequest);
+		writeWithMessageConverters(value, returnType, inputMessage, outputMessage);
+	}
+	// 这个方法是消息处理的核心之核心：处理了contentType、消息转换、内容协商、下载等等
+	// 注意：此处并且还会执行RequestResponseBodyAdviceChain，进行前后拦截
+	protected <T> void writeWithMessageConverters(@Nullable T value, MethodParameter returnType,
+			ServletServerHttpRequest inputMessage, ServletServerHttpResponse outputMessage)
+			throws IOException, HttpMediaTypeNotAcceptableException, HttpMessageNotWritableException { ... }
+}
+
+
+````
+
+##### public class RequestResponseBodyMethodProcessor extends AbstractMessageConverterMethodProcessor
+
+```
+public class RequestResponseBodyMethodProcessor extends AbstractMessageConverterMethodProcessor {
+	@Override
+	public boolean supportsParameter(MethodParameter parameter) {
+		return parameter.hasParameterAnnotation(RequestBody.class);
+	}
+
+	@Override
+	public Object resolveArgument(MethodParameter parameter, @Nullable ModelAndViewContainer mavContainer, NativeWebRequest webRequest, @Nullable WebDataBinderFactory binderFactory) throws Exception {
+
+		parameter = parameter.nestedIfOptional();
+		// 所以核心逻辑：读取流、消息换换等都在父类里已经完成。子类直接调用就可以拿到转换后的值arg 
+		// arg 一般都是个类对象，比如Person实例
+		Object arg = readWithMessageConverters(webRequest, parameter, parameter.getNestedGenericParameterType());
+		// 若是POJO，就是类名首字母小写（并不是形参名）
+		String name = Conventions.getVariableNameForParameter(parameter);
+		// 进行数据校验
+		if (binderFactory != null) {
+			WebDataBinder binder = binderFactory.createBinder(webRequest, arg, name);
+			if (arg != null) {
+				validateIfApplicable(binder, parameter);
+				if (binder.getBindingResult().hasErrors() && isBindExceptionRequired(binder, parameter)) {
+					throw new MethodArgumentNotValidException(parameter, binder.getBindingResult());
+				}
+			}
+			// 把校验结果放进Model里，方便页面里获取
+			if (mavContainer != null) {
+				mavContainer.addAttribute(BindingResult.MODEL_KEY_PREFIX + name, binder.getBindingResult());
+			}
+		}
+		// 适配：支持到Optional类型的参数
+		return adaptArgumentIfNecessary(arg, parameter);
+	}
+}
+
+```
+
+##### public class HttpEntityMethodProcessor extends AbstractMessageConverterMethodProcessor 
+
+```
+public class HttpEntityMethodProcessor extends AbstractMessageConverterMethodProcessor {
+	@Override
+	public boolean supportsParameter(MethodParameter parameter) {
+		return (HttpEntity.class == parameter.getParameterType() || RequestEntity.class == parameter.getParameterType());
+	}
+
+	@Override
+	@Nullable
+	public Object resolveArgument(MethodParameter parameter, @Nullable ModelAndViewContainer mavContainer,
+			NativeWebRequest webRequest, @Nullable WebDataBinderFactory binderFactory) throws IOException, HttpMediaTypeNotSupportedException {
+
+		ServletServerHttpRequest inputMessage = createInputMessage(webRequest);
+		// 拿到HttpEntity的泛型类型
+		Type paramType = getHttpEntityType(parameter);
+		if (paramType == null) {
+			// 注意：这个泛型类型是必须指定的，必须的
+			throw new IllegalArgumentException("HttpEntity parameter '" + parameter.getParameterName() + "' in method " + parameter.getMethod() + " is not parameterized");
+		}
+		// 调用父类方法拿到body的值(把泛型类型传进去了，所以返回的是个实例)
+		Object body = readWithMessageConverters(webRequest, parameter, paramType);
+		// 注意步操作：new了一个RequestEntity进去，持有实例即可
+		if (RequestEntity.class == parameter.getParameterType()) {
+			return new RequestEntity<>(body, inputMessage.getHeaders(), inputMessage.getMethod(), inputMessage.getURI());
+		} else { // 用的父类HttpEntity，那就会丢失掉Method等信息（因此建议入参用RequestEntity类型，更加强大些）
+			return new HttpEntity<>(body, inputMessage.getHeaders());
+		}
+	}
+}
 
 ```

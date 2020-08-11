@@ -1,4 +1,4 @@
-package com.nivelle.spring;
+package com.nivelle.spring.springmvc.test;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -171,6 +171,14 @@ public class SpringAllTestController {
         Map map = Maps.newHashMap();
         map.put(1, 2);
         return map;
+    }
+    @RequestMapping("/return2")
+    @ResponseBody
+    public User returnValue2() {
+        User user = new User();
+        user.setAge(1);
+        user.setName("nivelle");
+        return user;
     }
 
     /**
