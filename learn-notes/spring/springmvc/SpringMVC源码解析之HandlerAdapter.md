@@ -65,8 +65,7 @@ private List<HandlerMethodArgumentResolver> getDefaultArgumentResolvers() {
 #### RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter implements BeanFactoryAware, InitializingBean
 
 ```
-public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
-		implements BeanFactoryAware, InitializingBean {
+public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapterimplements BeanFactoryAware, InitializingBean {
 
 	/**
 	 * MethodFilter that matches InitBinder @InitBinder methods.
@@ -166,7 +165,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 		this.messageConverters.add(new ByteArrayHttpMessageConverter());
 		this.messageConverters.add(stringHttpMessageConverter);
 		try {
-        // text/xml,application/xml, application/*+xml
+           // text/xml,application/xml, application/*+xml
 			this.messageConverters.add(new SourceHttpMessageConverter<>());
 		}
 		catch (Error err) {

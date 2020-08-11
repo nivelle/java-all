@@ -9,25 +9,25 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * @author fuxinzhong
  * @date 2020/08/03
  */
 @ControllerAdvice
-public class MyResponseBodyAdvice implements ResponseBodyAdvice<Map> {
+public class MyResponseBodyAdvice implements ResponseBodyAdvice<Properties> {
     @Override
     public boolean supports(MethodParameter returnType, Class converterType) {
-        System.out.println(returnType.getParameterType());
-        System.out.println("MyResponseBodyAdvice supports==》" + "\nreturnType：" + returnType + "\n converterType" + converterType + "\nsupports:" + returnType.getParameterType().equals(HashMap.class));
-        return returnType.getParameterType().equals(HashMap.class);
+        System.out.println("MyResponseBodyAdvice supports==》" + "\nreturnType：" + returnType + "\n converterType" + converterType + "\nsupports:" + returnType.getParameterType().equals(Properties.class));
+        return returnType.getParameterType().equals(Properties.class);
     }
 
     @Override
-    public Map beforeBodyWrite(Map body, MethodParameter returnType, MediaType selectedContentType, Class selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
+    public Properties beforeBodyWrite(Properties body, MethodParameter returnType, MediaType selectedContentType, Class selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
         System.out.println("MyResponseBodyAdvice ==>body:" + body + "\n returnType:" + returnType + "\n selectedContentType:" +
                 selectedContentType + "\n request:" + request + "\n response:" + response);
-        body.put(3,3);
+        body.put("adviceValue","fuck");
         return body;
     }
 }

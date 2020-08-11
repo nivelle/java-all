@@ -91,7 +91,11 @@ public class MyWebConfig implements WebMvcConfigurer {
         //忽略循环引用
         fj.setSerializerFeatures(SerializerFeature.DisableCircularReferenceDetect);
         fjc.setFastJsonConfig(fj);
-        converters.add(0, fjc);
+        //设置的index越靠前越优先尝试。 若设置为尾部则优先生效的是 MappingJackson2HttpMessageConverter
+        //converters.add(0,fjc);
+        converters.add(fjc);
+        MyHttpMessageConverter myHttpMessageConverter = new MyHttpMessageConverter();
+        converters.add(myHttpMessageConverter);
     }
 
     /**

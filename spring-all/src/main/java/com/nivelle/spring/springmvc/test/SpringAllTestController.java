@@ -172,6 +172,11 @@ public class SpringAllTestController {
         map.put(1, 2);
         return map;
     }
+
+    /**
+     * MyHttpMessageConvert 测试
+     * @return
+     */
     @RequestMapping("/return2")
     @ResponseBody
     public User returnValue2() {
@@ -179,6 +184,17 @@ public class SpringAllTestController {
         user.setAge(1);
         user.setName("nivelle");
         return user;
+    }
+
+    @RequestMapping("/return3")
+    @ResponseBody
+    public Properties returnValue3() {
+        Properties properties = new Properties();
+        User user = new User();
+        user.setAge(1);
+        user.setName("nivelle");
+        properties.setProperty("user",user.toString());
+        return properties;
     }
 
     /**

@@ -1,5 +1,21 @@
 
+initMultipartResolver(context);
+		initLocaleResolver(context);
+		initThemeResolver(context);
+		initHandlerMappings(context);
+		initHandlerAdapters(context);
+		initHandlerExceptionResolvers(context);
+		initRequestToViewNameTranslator(context);
+		initViewResolvers(context);
+		initFlashMapManager(context);
+		
+		
 ### initMultipartResolver
+
+### initLocaleResolver
+
+### initThemeResolver
+
 
 
 ### initHandlerMappings 
@@ -161,8 +177,15 @@ private void initHandlerExceptionResolvers(ApplicationContext context) {
 
 ```
 
+### initRequestToViewNameTranslator
 
-#### DispatcherServlet.properties
+
+### initViewResolvers
+
+
+### initFlashMapManager
+
+#### springboot 默认配置的组件（文件DispatcherServlet.properties）
 
 文件DispatcherServlet.properties是一个属性文件。每个属性的key是一个策略接口的长名称，而value是key指定的策略接口的多个实现类的长名称，每个类名称之间使用,分割。
 

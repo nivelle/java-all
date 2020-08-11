@@ -67,7 +67,7 @@ protected void noHandlerFound(HttpServletRequest request, HttpServletResponse re
 ```
 #### getHandlerAdapter(Object handler)
 
-- DispatcherServlet请求处理过程中，执行Handler处理请求是通过HandlerAdapter完成的，而并非是DispatcherServlet直接调用Handler提供的处理方法
+- DispatcherServlet请求处理过程中,执行Handler处理请求是通过HandlerAdapter完成的，而并非是DispatcherServlet直接调用Handler提供的处理方法
 
 - DispatcherServlet初始化过程中初始化了initHandlerAdapters,SpringMVC默认提供了多种HandlerAdapter (WebMvcConfigurationSupport)
 

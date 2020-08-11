@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.AbstractGenericHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
+import org.springframework.lang.Nullable;
 
 import java.io.*;
 import java.lang.reflect.Type;
@@ -23,14 +24,35 @@ public class MyHttpMessageConverter extends AbstractGenericHttpMessageConverter<
 
     public MyHttpMessageConverter() {
         super(new MediaType("text", "properties"));
+        System.out.println("MyHttpMessageConverter construt");
+    }
+    @Override
+    public boolean supports(Class<?> clazz) {
+        System.out.println("MyHttpMessageConverter supports:"+ clazz.getName());
+        return true;
+    }
+    @Override
+    public boolean canRead(Type type, @Nullable Class<?> contextClass, @Nullable MediaType mediaType) {
+        System.out.println("MyHttpMessageConverter canRead:"+ (type instanceof Class ? canRead((Class<?>) type, mediaType) : canRead(mediaType))
+        +"type:"+type+" "+"contextClass:"+contextClass+" "+"mediaType:"+" "+mediaType);
+        return (type instanceof Class ? canRead((Class<?>) type, mediaType) : canRead(mediaType));
+    }
+    @Override
+    public boolean canWrite(@Nullable Type type, Class<?> clazz, @Nullable MediaType mediaType) {
+        System.out.println("MyHttpMessageConverter canWrite:"+ (type instanceof Class ? canRead((Class<?>) type, mediaType) : canRead(mediaType))
+        +"  type:"+type+" "+"clazz:"+clazz+" "+"mediaType:"+mediaType);
+        return canWrite(clazz, mediaType);
     }
     @Override
     protected void writeInternal(Properties properties, Type type, HttpOutputMessage outputMessage) throws IOException, HttpMessageNotWritableException {
-        System.out.println("AbstractGenericHttpMessageConverter =>writeInternal,properties:"+properties+"\n"+"type:"+type+"\n HttpOutputMessage:"+outputMessage);
+        System.out.println("MyHttpMessageConverter =>writeInternal,properties:"+properties+"\n"+"type:"+type+"\n HttpOutputMessage:"+outputMessage);
         // 获取请求头
         HttpHeaders headers = outputMessage.getHeaders();
+        System.out.println("MyHttpMessageConverter headers: "+ headers);
         // 获取 content-type
         MediaType contentType = headers.getContentType();
+        System.out.println("MyHttpMessageConverter contentType: "+ contentType);
+
         // 获取编码
         Charset charset = null;
         if (contentType != null) {
@@ -45,11 +67,13 @@ public class MyHttpMessageConverter extends AbstractGenericHttpMessageConverter<
 
     @Override
     protected Properties readInternal(Class<? extends Properties> clazz, HttpInputMessage inputMessage) throws IOException, HttpMessageNotReadableException {
-        System.out.println("AbstractGenericHttpMessageConverter =>readInternal,clazz:"+clazz+"\n"+"inputMessage:"+inputMessage);
+        System.out.println("MyHttpMessageConverter =>readInternal,clazz:"+clazz+"\n"+"inputMessage:"+inputMessage);
 
         Properties properties = new Properties();
         // 获取请求头
         HttpHeaders headers = inputMessage.getHeaders();
+        System.out.println("MyHttpMessageConverter readInternal headers: "+ headers);
+
         // 获取 content-type
         MediaType contentType = headers.getContentType();
         // 获取编码
@@ -57,6 +81,7 @@ public class MyHttpMessageConverter extends AbstractGenericHttpMessageConverter<
         if (contentType != null) {
             charset = contentType.getCharset();
         }
+        System.out.println("MyHttpMessageConverter readInternal contentType: "+ contentType);
         charset = charset == null ? Charset.forName("UTF-8") : charset;
         // 获取请求体
         InputStream body = inputMessage.getBody();
