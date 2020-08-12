@@ -1,24 +1,24 @@
-## Spring 的 createBeanInstance()
+### Spring 的 createBeanInstance()
 
 - Class<?> beanClass = resolveBeanClass(mbd, beanName);//解析bean的类型信息
 
-#### beanClass不为空 && beanClass不是公开类（不是public修饰） && 该bean不允许访问非公共构造函数和方法，则抛异常
+##### beanClass不为空 && beanClass不是公开类（不是public修饰） && 该bean不允许访问非公共构造函数和方法，则抛异常
 
 - if (beanClass != null && !Modifier.isPublic(beanClass.getModifiers()) && !mbd.isNonPublicAccessAllowed());
 
-#### 如果存在工厂方法则使用工厂方法实例化bean对象
+##### 如果存在工厂方法则使用工厂方法实例化bean对象
 
 - if (mbd.getFactoryMethodName() != null)
 
-#### boolean resolved = false;(构造函数或工厂方法是否已经解析过)
+##### boolean resolved = false;(构造函数或工厂方法是否已经解析过)
 
 - resolved = true;//如果resolvedConstructorOrFactoryMethod缓存不为空，则将resolved标记为已解析
 
-#### boolean autowireNecessary = false;(是否需要自动注入（即是否需要解析构造函数参数)）
+##### boolean autowireNecessary = false;(是否需要自动注入（即是否需要解析构造函数参数)）
 
 - autowireNecessary = mbd.constructorArgumentsResolved;
 
-#### 如果已经解析过，则使用resolvedConstructorOrFactoryMethod缓存里解析好的构造函数方法
+##### 如果已经解析过，则使用resolvedConstructorOrFactoryMethod缓存里解析好的构造函数方法
 
 - return autowireConstructor(beanName, mbd, null, null);
 
@@ -61,10 +61,7 @@
   -  beanClass = mbd.getBeanClass();
   -  candidates = (mbd.isNonPublicAccessAllowed() ? beanClass().getDeclaredConstructors() : beanClass.getConstructors())
 
-
-  
- 
-#### 否则使用默认的构造函数进行bean的实例化
+##### 否则使用默认的构造函数进行bean的实例化
 
 - instantiateBean(beanName, mbd);
 
@@ -73,7 +70,7 @@
 
   - Constructor<?>[] ctors = ibp.determineCandidateConstructors(beanClass, beanName);//使用@Autowire注解修饰构造函数，则该构造函数在这边会被AutowiredAnnotationBeanPostProcessor找到
 
-#### 如果ctors不为空 || mbd的注入方式为AUTOWIRE_CONSTRUCTOR || mdb定义了构造函数的参数值 || args不为空，则执行构造函数自动注入
+##### 如果ctors不为空 || mbd的注入方式为AUTOWIRE_CONSTRUCTOR || mdb定义了构造函数的参数值 || args不为空，则执行构造函数自动注入
 
 - return autowireConstructor(beanName, mbd, ctors, args);
 

@@ -1,6 +1,6 @@
-## Spring 的 getBean()
+### Spring 的 getBean()
 
-### getBean(String name) 
+#### getBean(String name) 
 
    - doGetBean(final String name, final Class<T> requiredType, final Object[] args, boolean typeCheckOnly);
    

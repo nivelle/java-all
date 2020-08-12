@@ -1,6 +1,6 @@
-# SpringBoot 之 DispatcherServlet
+## SpringBoot 之 DispatcherServlet
 
-## 1. ServletWebServerFactoryAutoConfiguration
+### 1. ServletWebServerFactoryAutoConfiguration
 
 - @ConditionalOnClass(ServletRequest.class)//类 ServletRequest 存在于 classpath 上时才生效,也就是要求javax.servlet-api包必须被引用;
 
@@ -26,7 +26,7 @@
 
 - public TomcatServletWebServerFactoryCustomizer tomcatServletWebServerFactoryCustomizer(ServerProperties serverProperties);
 
-### 静态内部类
+#### 静态内部类
 
 public static class BeanPostProcessorsRegistrar implements ImportBeanDefinitionRegistrar, BeanFactoryAware
 
@@ -39,7 +39,7 @@ public static class BeanPostProcessorsRegistrar implements ImportBeanDefinitionR
   
   - registerSyntheticBeanIfMissing(registry, "errorPageRegistrarBeanPostProcessor",ErrorPageRegistrarBeanPostProcessor.class);
 
-### ServletWebServerFactoryConfiguration
+#### ServletWebServerFactoryConfiguration
 
 - ServletWebServerFactoryConfiguration
 
@@ -52,9 +52,9 @@ public static class BeanPostProcessorsRegistrar implements ImportBeanDefinitionR
     - public TomcatServletWebServerFactory tomcatServletWebServerFactory();
 
 
-## 2. DispatcherServletAutoConfiguration
+### 2. DispatcherServletAutoConfiguration
 
-#### 主要提供两个bean
+##### 主要提供两个bean
 
 - DispatcherServlet
 
@@ -69,7 +69,7 @@ public static class BeanPostProcessorsRegistrar implements ImportBeanDefinitionR
  
   ```
 
-### public class DispatcherServletAutoConfiguration {}
+#### public class DispatcherServletAutoConfiguration {}
 
 - @Configuration
 
@@ -79,7 +79,7 @@ public static class BeanPostProcessorsRegistrar implements ImportBeanDefinitionR
 
 - @AutoConfigureAfter(ServletWebServerFactoryAutoConfiguration.class);//在自动配置类 ServletWebServerFactoryAutoConfiguration 应用之后再应用
 
-### protected static class DispatcherServletConfiguration{}
+#### protected static class DispatcherServletConfiguration{}
 
 - @Configuration //定义 bean DispatcherServlet dispatcherServlet;//如果类型为 MultipartResolver 的 bean 存在，为其创建一个别名 multipartResolver
 
@@ -89,7 +89,7 @@ public static class BeanPostProcessorsRegistrar implements ImportBeanDefinitionR
 
 - @EnableConfigurationProperties({ HttpProperties.class, WebMvcProperties.class });//确保前缀为 spring.http 的配置参数被加载到 bean HttpProperties;确保前缀为 spring.mvc 的配置参数被加载到 bean WebMvcProperties
 
-#### public DispatcherServlet dispatcherServlet(HttpProperties httpProperties, WebMvcProperties webMvcProperties) TODO 
+##### public DispatcherServlet dispatcherServlet(HttpProperties httpProperties, WebMvcProperties webMvcProperties) TODO 
 
 - DispatcherServlet dispatcherServlet = new DispatcherServlet();
 
@@ -104,14 +104,14 @@ public static class BeanPostProcessorsRegistrar implements ImportBeanDefinitionR
 - dispatcherServlet.setEnableLoggingRequestDetails(httpProperties.isLogRequestDetails());
 
 
-#### public MultipartResolver multipartResolver(MultipartResolver resolver)
+##### public MultipartResolver multipartResolver(MultipartResolver resolver)
 
 - @ConditionalOnBean(MultipartResolver.class);
 
 - @ConditionalOnMissingBean(name = DispatcherServlet.MULTIPART_RESOLVER_BEAN_NAME)
 
 
-### protected static class DispatcherServletRegistrationConfiguration
+#### protected static class DispatcherServletRegistrationConfiguration
 
 - @Configuration(proxyBeanMethods = false)
 
@@ -123,7 +123,7 @@ public static class BeanPostProcessorsRegistrar implements ImportBeanDefinitionR
 
 - @Import(DispatcherServletConfiguration.class)
 
-#### public DispatcherServletRegistrationBean dispatcherServletRegistration(DispatcherServlet dispatcherServlet,WebMvcProperties webMvcProperties, ObjectProvider<MultipartConfigElement> multipartConfig)
+##### public DispatcherServletRegistrationBean dispatcherServletRegistration(DispatcherServlet dispatcherServlet,WebMvcProperties webMvcProperties, ObjectProvider<MultipartConfigElement> multipartConfig)
 
 ```
 它不是个普通意义上的Bean,它实现了Spring SCI 接口,而对于此类实现了Spring SCI(ServletContextInitializer)接口的bean定义,在内置的Tomcat servlet容器启动阶段,严格地讲，是其中相当于web app的StarndartContext的启动阶段，会被逐个实例化并调用其onStartup()方法
@@ -136,7 +136,7 @@ public static class BeanPostProcessorsRegistrar implements ImportBeanDefinitionR
 
 - multipartConfig.ifAvailable(registration::setMultipartConfig);
 
-## 3. DispatcherServlet 处理一个请求 
+### 3. DispatcherServlet 处理一个请求 
 
 - protected void doDispatch(HttpServletRequest request, HttpServletResponse response) throws Exception
 
@@ -156,11 +156,11 @@ public static class BeanPostProcessorsRegistrar implements ImportBeanDefinitionR
   
   - mappedHandler = getHandler(processedRequest);//这里根据请求自身，和 DispatcherServlet 的 handlerMappings 查找能够处理该请求的handler, 记录在 mappedHandler , 具体返回的类型是 HandlerExecutionChain,相当于 n 个 HandlerInterceptor + 1 个 handler 
 
-#### if (mappedHandler == null)
+##### if (mappedHandler == null)
 
   - noHandlerFound(processedRequest, response);//如果没有找到可以处理该请求的 handler ， 这里直接交给 noHandlerFound 处理,根据配置决定 抛出异常 或者返回 404
   
-#### else
+##### else
 
   - HandlerAdapter ha = getHandlerAdapter(mappedHandler.getHandler());//根据所找到的 handler 和 DispatcherServlet 的 handlerAdapters 看看哪个 handlerAdapter可以执行这个 handler。
   
@@ -168,7 +168,7 @@ public static class BeanPostProcessorsRegistrar implements ImportBeanDefinitionR
   
   - boolean isGet = "GET".equals(method);
  
-#### if (isGet || "HEAD".equals(method)) 
+##### if (isGet || "HEAD".equals(method)) 
 
   - long lastModified = ha.getLastModified(request, mappedHandler.getHandler());
   
@@ -176,13 +176,13 @@ public static class BeanPostProcessorsRegistrar implements ImportBeanDefinitionR
   
     - return
   
-#### else
+##### else
 
   - if (!mappedHandler.applyPreHandle(processedRequest, response));//执行 mappedHandler 所有 HandlerInteceptor 的 preHandle 方法，如果有执行失败，在这里直接返回不再继续处理该请求
   
     - mv = ha.handle(processedRequest, response, mappedHandler.getHandler());//现在才真正由所找到的 HandlerAdapter  执行 所对应的 handler,返回结果是一个 ModelAndView 对象 mv， 或者 null
   
-#### if (asyncManager.isConcurrentHandlingStarted()) return ;
+##### if (asyncManager.isConcurrentHandlingStarted()) return ;
 
  - 	applyDefaultViewName(processedRequest, mv);//如果上面获取的 ModelAndView 对象 mv 不为 null， 并且没有含有 view，并且配置了缺省 view，这里应用缺省 view
  

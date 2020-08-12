@@ -1,6 +1,6 @@
-# SpringBoot 之自动配置
+### SpringBoot 之自动配置
 
-### 1. springBoot隐含的自动依赖
+#### 1. springBoot隐含的自动依赖
 
 ```
   //   org.springframework.boot:spring-boot-starter
@@ -12,7 +12,7 @@
 
 ```
 
-### 2. 自动配置注解
+#### 2. 自动配置注解
 
  - @SpringBootApplication
  
@@ -65,7 +65,7 @@
 
       - return StringUtils.toStringArray(autoConfigurationEntry.getConfigurations());
 
-### 3. 应用启动时 ConfigurationClassPostProcessor 的注册 [SpringBoot run()方法prepareContext创建BeanDefinitionReader时构造ConfigurationClassPostProcessor注册](./SpringBoot源码解析之run()方法.md)
+#### 3. 应用启动时 ConfigurationClassPostProcessor 的注册 [SpringBoot run()方法prepareContext创建BeanDefinitionReader时构造ConfigurationClassPostProcessor注册](./SpringBoot源码解析之run()方法.md)
 
 
 1. **ConfigurationClassPostProcessor 被设计用来发现所有的配置类和相关的Bean定义并注册到容器，它在所有BeanFactoryPostProcessor中具备最高执行优先级，因为其他BeanFactoryPostProcessor需要基于注册了Bean定义工作。**

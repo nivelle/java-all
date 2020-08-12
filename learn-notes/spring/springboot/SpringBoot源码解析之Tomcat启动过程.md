@@ -1,13 +1,13 @@
-# SpringBoot 之 Tomcat启动过程
+### SpringBoot 之 Tomcat启动过程
 
-### 子类实现: ServletWebServerApplicationContext
+##### 子类实现: ServletWebServerApplicationContext
 - private void createWebServer()
 
   - WebServer webServer = this.webServer;
   
   - ServletContext servletContext = getServletContext();
 
-#### if (webServer == null && servletContext == null)
+###### if (webServer == null && servletContext == null)
 
   - ServletWebServerFactory factory = getWebServerFactory();//获取webServer的工厂类
   
@@ -17,7 +17,7 @@
   
   - this.webServer = factory.getWebServer(getSelfInitializer());//创建webServer,参数:ServletContextInitializer... initializers 实现SCI的组件
   
-    ##### TomcatServletWebServerFactory 子类实现
+    ####### TomcatServletWebServerFactory 子类实现
     
     ```
     1. tomcat有多种配置和启动方式，最常见的方式是基于server.xml配置的启动器 org.apache.catalina.startup.Bootstrap, 而这里的Tomcat是一个内嵌tomcat的启动器
@@ -116,7 +116,7 @@
         - startDaemonAwaitThread();//tomcat 自身所有的线程都是daemon线程。这里spring创建了一个非daemon线程用来阻塞整个应用，避免刚启动就马上结束的情况。
 
 
-#### else if (servletContext != null)
+###### else if (servletContext != null)
   
   - getSelfInitializer().onStartup(servletContext);
   
@@ -141,7 +141,7 @@
   
   - initPropertySources();
 
-#### 除了Tomcat Connector之外的Tomcat组件启动完毕,接下来继续启动Connector
+###### 除了Tomcat Connector之外的Tomcat组件启动完毕,接下来继续启动Connector
 
 - WebServer webServer = startWebServer(); // [父类 finishRefresh()](./Spring源码解析之refresh()方法.md)
 

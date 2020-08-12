@@ -1,4 +1,4 @@
-### handlerMapping
+#### handlerMapping
 
 ````
 handlerMapping 负责处理用户Url请求地址和处理类Handler的对应关系，在HandlerMapping接口中定义了根据一个URL必须返回一个由HandlerExecutionChain代表的处理链，我们可以在这个处理链中添加任意的HandlerAdapter实例来处理这个URL对应的请求
@@ -21,7 +21,9 @@ public interface HandlerMapping {
 
 ````
 
-#### 实现类: public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport implements HandlerMapping, Ordered, BeanNameAware 
+#### 实现(一) public interface MatchableHandlerMapping extends HandlerMapping
+
+#### 实现(二) public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport implements HandlerMapping, Ordered, BeanNameAware 
 
 ````
 public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport implements HandlerMapping, Ordered, BeanNameAware {
@@ -66,13 +68,10 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
 		// 如果是 WebRequestInterceptor 类型的拦截器  需要用WebRequestHandlerInterceptorAdapter进行包装适配
 		initInterceptors();
 	}
-
 	// 去容器（含祖孙容器）内找到所有的MappedInterceptor类型的拦截器出来，添加进去  非单例的Bean也包含
 	// 备注MappedInterceptor 为Spring MVC拦截器接口`HandlerInterceptor`的实现类  并且是个final类 Spring3.0后出来的。
 	protected void detectMappedInterceptors(List<HandlerInterceptor> mappedInterceptors) {
-		mappedInterceptors.addAll(
-				BeanFactoryUtils.beansOfTypeIncludingAncestors(
-						obtainApplicationContext(), MappedInterceptor.class, true, false).values());
+		mappedInterceptors.addAll(BeanFactoryUtils.beansOfTypeIncludingAncestors(obtainApplicationContext(), MappedInterceptor.class, true, false).values());
 	}
 	// 它就是把调用者放进来的interceptors，适配成HandlerInterceptor然后统一放在`adaptedInterceptors`里面装着~~~
 	protected void initInterceptors() {
@@ -86,7 +85,7 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
 			}
 		}
 	}
-	// 适配其实也很简单~就是支持源生的HandlerInterceptor以及WebRequestInterceptor两种情况而已
+	// 适配: 支持源生的HandlerInterceptor以及WebRequestInterceptor
 	protected HandlerInterceptor adaptInterceptor(Object interceptor) {
 		if (interceptor instanceof HandlerInterceptor) {
 			return (HandlerInterceptor) interceptor;
@@ -117,22 +116,18 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
 			String handlerName = (String) handler;
 			handler = obtainApplicationContext().getBean(handlerName);
 		}
-		// 关键步骤：根据handler和request构造一个请求处理链
+		// 关键步骤: 根据handler和request构造一个请求处理链
 		HandlerExecutionChain executionChain = getHandlerExecutionChain(handler, request);
 		return executionChain;
 	}
-
-	// 已经找到handler了，那就根据此构造一个请求链，这里主要是吧拦截器们给糅进来 构成对指定请求的一个拦截器链
+	// 包装 handler 为HandlerExecutionChain,将拦截器设置进来。
 	protected HandlerExecutionChain getHandlerExecutionChain(Object handler, HttpServletRequest request) {
-		// 小细节：因为handler本身也许就是个Chain，所以此处需要判断一下
 		HandlerExecutionChain chain = (handler instanceof HandlerExecutionChain ? (HandlerExecutionChain) handler : new HandlerExecutionChain(handler));
-		// 此处就用到了urlPathHelper来解析request 
-		// 如我的请求地址为：`http://localhost:8080/demo_war_war/api/v1/hello`  那么lookupPath=/api/v1/hello
+		// 此处就用到了urlPathHelper来解析request,获取项目名之后的请求地址
 		String lookupPath = this.urlPathHelper.getLookupPathForRequest(request);
 		for (HandlerInterceptor interceptor : this.adaptedInterceptors) {
 			if (interceptor instanceof MappedInterceptor) {
-				// 这里其实就能体现出MappedInterceptor的些许优势了：也就是它只有路径匹配上了才会拦截，没有匹配上的就不会拦截了
-				// 备注：MappedInterceptor可以设置includePatterns和excludePatterns等
+				// 这里其实就能体现出MappedInterceptor的些许优势了：也就是它只有路径匹配上了才会拦截，没有匹配上的就不会拦截了备注：MappedInterceptor可以设置includePatterns和excludePatterns等
 				MappedInterceptor mappedInterceptor = (MappedInterceptor) interceptor;
 				if (mappedInterceptor.matches(lookupPath, this.pathMatcher)) {
 					chain.addInterceptor(mappedInterceptor.getInterceptor());
@@ -148,6 +143,7 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
 ````
 
 #####  public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping implements MatchableHandlerMapping 
+
 //将url对应的Handler保存在一个Map中，在getHandlerInternal方法中使用url从Map中获取Handler
 
 ```

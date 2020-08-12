@@ -1,10 +1,10 @@
-## AOP实现自动注解
+### AOP实现自动注解
 
-### @EnableAspectJAutoProxy
+#### @EnableAspectJAutoProxy
 
-#### @Import(AspectJAutoProxyRegistrar.class) implement ImportBeanDefinitionRegistrar
+##### @Import(AspectJAutoProxyRegistrar.class) implement ImportBeanDefinitionRegistrar
 
-#### registerBeanDefinitions();//目的是创建类: AnnotationAwareAspectJAutoProxyCreator 其实也就是在refresh()中创建 [refresh中 registerBeanPostProcessors中处理 ](./Spring源码解析之refresh()方法.md)
+##### registerBeanDefinitions();//目的是创建类: AnnotationAwareAspectJAutoProxyCreator 其实也就是在refresh()中创建 [refresh中 registerBeanPostProcessors中处理 ](./Spring源码解析之refresh()方法.md)
 
    - AopConfigUtils.registerAspectJAnnotationAutoProxyCreatorIfNecessary(registry);
     
@@ -67,9 +67,9 @@
     
       - definition.getPropertyValues().add("exposeProxy", Boolean.TRUE);
 
-### AnnotationAwareAspectJAutoProxyCreator
+#### AnnotationAwareAspectJAutoProxyCreator
 
-### 子类: AbstractAutoProxyCreator extends ProxyProcessorSupport implements SmartInstantiationAwareBeanPostProcessor, BeanFactoryAware
+#### 子类: AbstractAutoProxyCreator extends ProxyProcessorSupport implements SmartInstantiationAwareBeanPostProcessor, BeanFactoryAware
 
 - public Object postProcessBeforeInstantiation(Class<?> beanClass, String beanName)
 
@@ -145,7 +145,7 @@
       
     - this.advisedBeans.put(cacheKey,Boolean.FALSE);//如果不存在增强，标记false,作为缓存，再次进入提高效率
     
-#### protected Object createProxy(Class<?> beanClass, @Nullable String beanName,@Nullable Object[] specificInterceptors, TargetSource targetSource)
+##### protected Object createProxy(Class<?> beanClass, @Nullable String beanName,@Nullable Object[] specificInterceptors, TargetSource targetSource)
 
 - if (this.beanFactory instanceof ConfigurableListableBeanFactory)//如果是ConfigurableListableBeanFactory接口（咱们DefaultListableBeanFactory就是该接口的实现类）则，暴露目标类
 

@@ -1,4 +1,4 @@
-# SpringBoot 之 事物注解
+### SpringBoot 之 事物注解
 
 **Spring 支持三个不同的事务注解**
 
@@ -8,7 +8,7 @@
 
 3. EJB 3 事务注解 javax.ejb.TransactionAttribute
 
-### TransactionAutoConfiguration //SpringBoot 事物自动注解
+##### TransactionAutoConfiguration //SpringBoot 事物自动注解
 
 **条件**:
 
@@ -75,7 +75,7 @@
 
 ---
 
-### @EnableTransactionManagement(proxyTargetClass = false)
+##### @EnableTransactionManagement(proxyTargetClass = false)
 
 - boolean proxyTargetClass() default false;//proxyTargetClass = false表示是JDK动态代理支持接口代理。true表示是Cglib代理支持子类继承代理。
 
@@ -83,7 +83,7 @@
 
 - int order() default Ordered.LOWEST_PRECEDENCE;//连接点上有多个通知时，排序，默认最低。值越大优先级越低。
 
-#### @Import(TransactionManagementConfigurationSelector.class)
+##### @Import(TransactionManagementConfigurationSelector.class)
 
 - public class TransactionManagementConfigurationSelector extends AdviceModeImportSelector<EnableTransactionManagement>
 
@@ -97,7 +97,7 @@
       
         - return (ClassUtils.isPresent("javax.transaction.Transactional", getClass().getClassLoader()) ?TransactionManagementConfigUtils.JTA_TRANSACTION_ASPECT_CONFIGURATION_CLASS_NAME :TransactionManagementConfigUtils.TRANSACTION_ASPECT_CONFIGURATION_CLASS_NAME);
 
-#### public class AutoProxyRegistrar implements ImportBeanDefinitionRegistrar 
+##### public class AutoProxyRegistrar implements ImportBeanDefinitionRegistrar 
 
 - AopConfigUtils.registerAutoProxyCreatorIfNecessary(registry);
 
@@ -109,7 +109,7 @@
   
   - definition.getPropertyValues().add("exposeProxy", Boolean.TRUE);
 
-#### public class ProxyTransactionManagementConfiguration extends AbstractTransactionManagementConfiguration
+##### public class ProxyTransactionManagementConfiguration extends AbstractTransactionManagementConfiguration
 
 - public BeanFactoryTransactionAttributeSourceAdvisor transactionAdvisor(TransactionAttributeSource transactionAttributeSource,TransactionInterceptor transactionInterceptor);//定义事务增强器
 
@@ -138,7 +138,7 @@
 
 ---
    
-### AnnotationTransactionAttributeSource(分析事物注解最终组织成一个TransactionAttribute供随后使用)
+##### AnnotationTransactionAttributeSource(分析事物注解最终组织成一个TransactionAttribute供随后使用)
 
 public class AnnotationTransactionAttributeSource extends AbstractFallbackTransactionAttributeSource
 
@@ -202,7 +202,7 @@ public class AnnotationTransactionAttributeSource extends AbstractFallbackTransa
       
       ```
 
-### AbstractFallbackTransactionAttributeSource(抽象父类,真正实现解析注解属性)
+##### AbstractFallbackTransactionAttributeSource(抽象父类,真正实现解析注解属性)
    
 public abstract class AbstractFallbackTransactionAttributeSource implements TransactionAttributeSource 
 

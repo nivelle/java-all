@@ -1,7 +1,7 @@
 
-### public class DispatcherServlet extends FrameworkServlet
+#### public class DispatcherServlet extends FrameworkServlet
 
-#### initStrategies(ApplicationContext context)//DispatcherServlet的初始化方法
+##### initStrategies(ApplicationContext context)//DispatcherServlet的初始化方法
 ```
 //springboot应用中 context是 AnnotationConfigServletWebServerApplicationContext
 protected void initStrategies(ApplicationContext context) {
@@ -27,7 +27,7 @@ protected void initStrategies(ApplicationContext context) {
 
 ```
 
-#### 选择handler
+##### 选择handler
 
 ```
 protected HandlerExecutionChain getHandler(HttpServletRequest request) throws Exception {
@@ -46,7 +46,7 @@ protected HandlerExecutionChain getHandler(HttpServletRequest request) throws Ex
 
 ```
 
-#### 默认返回noHandlerFound
+##### 默认返回noHandlerFound
 
 ```
 protected void noHandlerFound(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -65,7 +65,7 @@ protected void noHandlerFound(HttpServletRequest request, HttpServletResponse re
 	}
 
 ```
-#### getHandlerAdapter(Object handler)
+##### getHandlerAdapter(Object handler)
 
 - DispatcherServlet请求处理过程中,执行Handler处理请求是通过HandlerAdapter完成的，而并非是DispatcherServlet直接调用Handler提供的处理方法
 
@@ -87,7 +87,7 @@ protected HandlerAdapter getHandlerAdapter(Object handler) throws ServletExcepti
 ```
 
 
-#### doDispatch()
+##### doDispatch()
 
 ```
 protected void doDispatch(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -180,7 +180,7 @@ protected void doDispatch(HttpServletRequest request, HttpServletResponse respon
 
 ```
 
-#### private void processDispatchResult(HttpServletRequest request, HttpServletResponse response,@Nullable HandlerExecutionChain mappedHandler, @Nullable ModelAndView mv,@Nullable Exception exception) throws Exception 
+##### private void processDispatchResult(HttpServletRequest request, HttpServletResponse response,@Nullable HandlerExecutionChain mappedHandler, @Nullable ModelAndView mv,@Nullable Exception exception) throws Exception 
 
 ```
 private void processDispatchResult(HttpServletRequest request, HttpServletResponse response,
@@ -229,7 +229,7 @@ private void processDispatchResult(HttpServletRequest request, HttpServletRespon
 
 ```
 
-#### protected void render(ModelAndView mv, HttpServletRequest request, HttpServletResponse response)//解析绘出视图
+##### protected void render(ModelAndView mv, HttpServletRequest request, HttpServletResponse response)//解析绘出视图
 
 ```
 protected void render(ModelAndView mv, HttpServletRequest request, HttpServletResponse response) throws Exception {

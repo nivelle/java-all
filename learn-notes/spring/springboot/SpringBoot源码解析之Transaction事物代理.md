@@ -1,11 +1,11 @@
-# SpringBoot源码解析之Transaction事物代理
+### SpringBoot源码解析之Transaction事物代理
 
-## TransactionAspectSupport
+#### TransactionAspectSupport
 
 public abstract class TransactionAspectSupport implements BeanFactoryAware, InitializingBean
 
 
-#### protected Object invokeWithinTransaction(Method method, @Nullable Class<?> targetClass,final InvocationCallback invocation) throws Throwable;//将目标方法调用包围在事务处理逻辑中
+##### protected Object invokeWithinTransaction(Method method, @Nullable Class<?> targetClass,final InvocationCallback invocation) throws Throwable;//将目标方法调用包围在事务处理逻辑中
 
   - TransactionAttributeSource tas = getTransactionAttributeSource();// 如果transaction attribute为空,该方法就是非事务（非编程式事务）
   
@@ -38,7 +38,7 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
         
         ```
         
-        ##### public Object proceed() throws Throwable
+        ####### public Object proceed() throws Throwable
         
         - if (this.currentInterceptorIndex == this.interceptorsAndDynamicMethodMatchers.size() - 1);// 启动时索引为-1，唤醒连接点，后续递增
         
@@ -74,7 +74,7 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
     
     - cleanupTransactionInfo(txInfo);//finally 无论正常还是异常都会发生的事务机制的清场工作,比如当前方法的执行需要一个全新的事务，所以该方法执行事前会挂起之前可能存在的事务,现在方法执行完了，需要恢复之前的事务
 
-#### protected PlatformTransactionManager determineTransactionManager(@Nullable TransactionAttribute txAttr);//根据指定的事务属性 txAttr 判断要使用的事务管理器 PlatformTransactionManager
+##### protected PlatformTransactionManager determineTransactionManager(@Nullable TransactionAttribute txAttr);//根据指定的事务属性 txAttr 判断要使用的事务管理器 PlatformTransactionManager
 
   - if (txAttr == null || this.beanFactory == null) => return getTransactionManager();// 获取属性 this.transactionManager 作为缺省事务管理器 
   
@@ -93,7 +93,7 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
       - this.transactionManagerCache.putIfAbsent(DEFAULT_TRANSACTION_MANAGER_KEY, defaultTransactionManager);
 
 
-#### protected TransactionInfo createTransactionIfNecessary(@Nullable PlatformTransactionManager tm,@Nullable TransactionAttribute txAttr, final String joinpointIdentification)
+##### protected TransactionInfo createTransactionIfNecessary(@Nullable PlatformTransactionManager tm,@Nullable TransactionAttribute txAttr, final String joinpointIdentification)
 
   - if (txAttr != null && txAttr.getName() == null);// 如果还没有定义名字，把连接点的ID定义成事务的名称
   
@@ -105,7 +105,7 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
   
   - return prepareTransactionInfo(tm, txAttr, joinpointIdentification, status);
   
-#### protected TransactionInfo prepareTransactionInfo(@Nullable PlatformTransactionManager tm,@Nullable TransactionAttribute txAttr, String joinpointIdentification,@Nullable TransactionStatus status)
+##### protected TransactionInfo prepareTransactionInfo(@Nullable PlatformTransactionManager tm,@Nullable TransactionAttribute txAttr, String joinpointIdentification,@Nullable TransactionStatus status)
 
    **构造一个TransactionInfo事务信息对象，绑定当前线程：ThreadLocal<TransactionInfo>**
     
