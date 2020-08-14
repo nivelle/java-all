@@ -1,4 +1,4 @@
-package com.nivelle.spring.springcore.handlerinterceptor;
+package com.nivelle.spring.springmvc;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -15,21 +15,20 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author nivellefu
  */
-@Component
 public class MyHandlerInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest,
                              HttpServletResponse httpServletResponse, Object o) {
         String localName = httpServletRequest.getLocalName();
-        System.out.println("preHandle执行方法前执行返回的结果决定是否往下执行" + localName);
+        System.out.println("MyHandlerInterceptor =>preHandle 执行方法前执行返回的结果决定是否往下执行" + localName);
         return true;
     }
 
     @Override
     public void postHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
                            Object o, ModelAndView modelAndView) {
-        System.out.println("postHandle当方法返回值时执行");
+        System.out.println("MyHandlerInterceptor => postHandle当方法返回值时执行");
         return;
     }
 

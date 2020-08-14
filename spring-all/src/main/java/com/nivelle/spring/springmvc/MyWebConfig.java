@@ -3,19 +3,8 @@ package com.nivelle.spring.springmvc;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
-import com.google.common.collect.Lists;
-import com.nivelle.spring.springcore.handlerinterceptor.MyHandlerInterceptor;
-import com.nivelle.spring.springmvc.filter.MyCrossFilter;
-import com.nivelle.spring.springmvc.filter.MyFilter1;
-import com.nivelle.spring.springmvc.filter.MyFilter2;
-import com.nivelle.spring.springmvc.servlet.MyServlet1;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
-import org.springframework.boot.web.servlet.ServletRegistrationBean;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.stereotype.Component;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.servlet.config.annotation.*;
@@ -73,7 +62,7 @@ public class MyWebConfig implements WebMvcConfigurer {
      */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new MyHandlerInterceptor()).addPathPatterns("/config/**");
+        registry.addInterceptor(new MyHandlerInterceptor()).addPathPatterns("/test/config").excludePathPatterns("/test/return");
     }
 
     /**
@@ -121,7 +110,7 @@ public class MyWebConfig implements WebMvcConfigurer {
         // 配置路径前缀
         // 下面这样写的意思是：对含有 MyAnnotationImportBeanDefinitionRegistrar 注解的controller添加/test前缀
         //configurer.addPathPrefix("test", c -> c.isAnnotationPresent(MyAnnotationImportBeanDefinitionRegistrar.class));
-        configurer.addPathPrefix("test", c -> c.getPackage().getName().contains("com.nivelle.spring.springmvc.test"));
+        configurer.addPathPrefix("test", c -> c.getPackage().getName().contains("com.nivelle.spring.test"));
     }
 
 }

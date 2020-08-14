@@ -1,19 +1,18 @@
-## mysql 逻辑架构
+### mysql 逻辑架构
 
 ![mysql逻辑架构图.png](https://i.loli.net/2020/04/07/1NdFLzB9hnlPKkc.png)
 
-## 性能配置
+### 性能配置
 
-### –skip-grant-tables :跳过权限验证
+#### –skip-grant-tables :跳过权限验证
 
-### 增删改数据（DML),修改表结构的操作（DDL)
+#### 增删改数据（DML),修改表结构的操作（DDL)
 
-### set global slow_query_log = on;  //开启慢查询日志
+#### set global slow_query_log = on;  //开启慢查询日志
 
+#### 如果你的 MySQL 现在出现了性能瓶颈，而且瓶颈在 IO 上，可以通过哪些方法来提升性能呢？
 
-### 如果你的 MySQL 现在出现了性能瓶颈，而且瓶颈在 IO 上，可以通过哪些方法来提升性能呢？
-
-1. 设置 binlog_group_commit_sync_delay 和 binlog_group_commit_sync_no_delay_count 参数，减少 binlog 的写盘次数。这个方法是基于“额外的故意等待”来实现的，因此可能会增加语句的响应时间，但没有丢失数据的风险。
+1. 设置 binlog_group_commit_sync_delay 和 binlog_group_commit_sync_no_delay_count 参数,减少 binlog 的写盘次数。这个方法是基于“额外的故意等待”来实现的，因此可能会增加语句的响应时间，但没有丢失数据的风险。
 
 2. 将 sync_binlog 设置为大于 1 的值（比较常见是 100~1000）。这样做的风险是，主机掉电时会丢 binlog 日志。
 
@@ -21,23 +20,24 @@
 
 ---
 
-## mysql 日志
+### mysql 日志
 
 - redo log(重做日志)
 
-1. redo log是InnoDB存储引擎层的日志;记录的是修改之后的值;
+1. redo log 是 InnoDB 存储引擎层的日志,**记录的是修改之后的值**;
 
-2. 在一条更新语句进行执行的时候，InnoDB引擎会把更新记录写到redo log日志中，然后更新内存，此时算是语句执行完了，然后在空闲的时候或者是按照设定的更新策略将redo log中的内容更新到磁盘中，这里涉及到WAL即Write Ahead logging技术，他的关键点是先写日志，再写磁盘。
+2. 在一条更新语句进行执行的时候，InnoDB引擎会把更新记录写到redo log日志中，然后更新内存，此时算是语句执行完了，
+然后在空闲的时候或者是按照设定的更新策略将redo log中的内容更新到磁盘中，这里涉及到WAL即Write Ahead logging技术，他的关键点是先写日志，再写磁盘。
 
 3. redo log日志的大小是固定的，即记录满了以后就从头循环写;记录满时要停止数据库更新操作,转而将日志刷到磁盘;
    
-4. 可以根据redo log日志进行恢复，也就达到了crash-safe
+4. 可以根据redo log日志进行恢复，也就达到了 crash-safe
 
 - binlog(归档日志)。
 
 1. binlog是MySQL Server层记录的日志,属于逻辑日志
 
-2. 是以二进制的形式记录的是这个语句的原始逻辑，依靠binlog是没有crash-safe能力的
+2. 是以二进制的形式记录的是这个**语句的原始逻辑**，依靠binlog是没有crash-safe能力的
    
 
 redoLog | bingLog
@@ -47,10 +47,11 @@ redoLog | bingLog
 循环写，日志空间大小固定| 追加写，是指一份写到一定大小的时候会更换下一个文件，不会覆盖
 作为异常宕机或者介质故障后的数据恢复使用|可以作为恢复数据使用，主从复制搭建
 
+
 redoLog | undoLog
 ---|---
-用来恢复提交后的物理数据页(恢复数据页，且只能恢复到最后一次提交的位置) | 记录事务开始前的状态,用来回滚行记录到某个版本;undo log一般是逻辑日志，根据每行记录进行记录。
-确保事务的持久性。防止在发生故障的时间点，尚有脏页未写入磁盘，在重启mysql服务的时候，根据redo log进行重做，从而达到事务的持久性这一特性。| 保存了事务发生之前的数据的一个版本，可以用于回滚，同时可以提供多版本并发控制下的读（MVCC），也即非锁定读
+用来恢复提交后的物理数据页(恢复数据页,且只能恢复到最后一次提交的位置) | 记录事务开始前的状态,用来回滚行记录到某个版本;undo log一般是逻辑日志，根据每行记录进行记录。
+确保事务的持久性。防止在发生故障的时间点，尚有脏页未写入磁盘,在重启mysql服务的时候,根据redo log进行重做,从而达到事务的持久性这一特性。| 保存了事务发生之前的数据的一个版本，可以用于回滚，同时可以提供多版本并发控制下的读（MVCC），也即非锁定读
 
 ### 一条更新语句的执行过程
 
@@ -67,23 +68,23 @@ update T set c=c+1 where ID=2;
 - 执行器调用引擎的提交事务接口，引擎把刚刚写入的 redo log 改成提交（commit）状态，更新完成。
 
 
-## 库
+### 库
 
-## 创建数据库
+#### 创建数据库
 
 ```
 CREATE DATABASE javaguideslave;
 
 ```
 
-### 指定编码
+#### 指定编码
 
 ```
 drop database if EXISTS teambuild;
 create database teambuild CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
-### 查看数据库版本
+#### 查看数据库版本
 
 
 ```
@@ -96,7 +97,7 @@ select version();
 +-----------+
 ```
 
-### 查看数据库隔离级别(默认RR重复读)
+#### 查看数据库隔离级别(默认RR重复读)
 
 ```
 mysql> select @@global.tx_isolation;
@@ -107,7 +108,7 @@ mysql> select @@global.tx_isolation;
 +-----------------------+
 ```
 
-### 查看当前默认的数据库引擎
+#### 查看当前默认的数据库引擎
 
 
 ```
@@ -127,7 +128,7 @@ show engines;
 | CSV                | YES     | CSV storage engine                                             | NO           | NO   | NO         |
 +--------------------+---------+----------------------------------------------------------------+--------------+------+------------+
 ```
-### 查看当前的查询状态
+#### 查看当前的查询状态
 
 ```
 
@@ -135,33 +136,33 @@ show processlist;
 
 ```
 
-### 创建账号
+#### 创建账号
 
 ```
 create user 'root'@'%' identified with mysql_native_password by 'Nivelle123';
 ```
 
-### 给当前账号授权
+#### 给当前账号授权
 
 ```
 GRANT ALL PRIVILEGES ON javaguides.* TO 'root'@'localhost' IDENTIFIED BY 'Nivelle123' WITH GRANT OPTION;
 
 ```
 
-### 查看数据库
+#### 查看数据库
 
 ```
 show databases;
 
 ```
 
-### 使用某个数据库
+#### 使用某个数据库
 
 ```
 use databases;
 
 ```
-### 删除某个数据库
+#### 删除某个数据库
 
 ```
 drop database databasesName;
@@ -170,9 +171,9 @@ drop database databasesName;
 
 ---
 
-## 表
+### 表
 
-### 初始化表
+#### 初始化表
 
 ```
 DROP TABLE IF EXISTS `activity`;
@@ -190,43 +191,43 @@ CREATE TABLE `activity` (
 
 ```
 
-### 查看所有表
+#### 查看所有表
 
 ```
 show tables;
 ```
-### 删除表
+#### 删除表
 
 ```
 drop table tableName;
 ```
 
-### 修改表名
+#### 修改表名
 
 ```
 alter table oldTableName rename to newTableName;
 ```
-### 修改列
+#### 修改列
 
 ```
 alter table tableName change oldName newName;
 
 ```
 
-### 添加列
+#### 添加列
 
 ```
 alter table tableName add column 列名 类型；
 
 ```
-### 修改列属性
+#### 修改列属性
 
 ```
 alter table 表名 modify name varchar(22);
 
 ```
 
-### 删除整个表数据后整理表
+#### 删除整个表数据后整理表
 
 ```
 alter table A engine=InnoDB;
@@ -235,17 +236,16 @@ alter table A engine=InnoDB;
 
 ---
 
-## 索引
+### 索引
 
-
-### 创建唯一索引
+#### 创建唯一索引
 
 ```
 create unique index uniq_device_no on activity(`device_no`);
 
 ```
 
-### 创建联合索引
+#### 创建联合索引
 
 ```
 
@@ -253,7 +253,7 @@ CREATE INDEX device ON activity (`type`,`device_no`);
 
 ```
 
-### 查看索引
+#### 查看索引
 
 ```
 show index from activity;
@@ -269,7 +269,7 @@ show index from activity;
 
 ```
 
-### InnoDB的索引有两类索引，聚集索引(Clustered Index)与普通索引(Secondary Index)。
+#### InnoDB的索引有两类索引，聚集索引(Clustered Index)与普通索引(Secondary Index)。
 
 - InnoDB的每一个表都会有聚集索引(叶子节点存储行记录(row)；):
 
@@ -280,7 +280,6 @@ show index from activity;
  (3)否则，InnoDB会创建一个隐藏的row-id作为聚集索引；
 
 - 普通索引，叶子节点存储了PK的值；
-
 
 - 无论使用InnoDB还是 MyISAM 存储引擎，默认都会创建一个主键索引，而创建主键索引默认使用B+tree索引。
 
@@ -301,16 +300,13 @@ show index from activity;
 
 - 防止索引失效: 以 %s 开头的的like查询无法利用节点查询数据;使用复合索引时，需要使用索引最左边的列进行查询才可以; 查询条件使用 or 且or的前后条件中有一个列没有索引，那么涉及的索引不会被使用到。
 
-
-
-
 ---
 
-## 锁
+### 锁
 
-### 四种隔离级别
+#### 四种隔离级别
 
-- 读未提交: 事务A读取数据时，事务B读取数据加了共享锁，修改数据时加了排他锁。 会导致张读，不可重复读以及幻读
+- 读未提交: 事务A读取数据时，事务B读取数据加了共享锁，修改数据时加了排他锁。 会导致脏读，不可重复读以及幻读
 
 - 读提交: 事务A读取数据是加了共享锁，一旦读取，立即释放，事务B读取修改数据是加了行级排他锁，直到事务结束才释放锁。也就是说，事务A在读取数据时，事务B只能读取数据但是不能修改。当事务A读取数据后，事务B才能修改。可以避免脏读，依然存在不可重复读以及幻读的问题。
 
@@ -318,15 +314,15 @@ show index from activity;
 
 - 可序列化: 事务A读取事务时加了共享锁，事务结束才释放锁。事务B读取数据修改数据时，加了表级别排他锁，直到事务结束才释放锁。 
 
-### mysql innodb 的行锁是通过锁索引来实现的。
+#### mysql innodb 的行锁是通过锁索引来实现的。
 
-- 如果不通过索引条件来检索数据，那么InnoDB将对表中所有的记录加锁，其实就是升级为表锁。
+- 如果不通过索引条件来检索数据，那么 InnoDB 将对表中所有的记录加锁，其实就是升级为表锁。
 
-### 锁类型
+#### 锁类型
  
 (1) 共享/排它锁(Shared and Exclusive Locks)
     
-    - for update //排他当前读;加的是意向排它记录锁,读到所有已经提交的记录值;如果字段没有索引,即使使用wehre条件也会进行表级锁
+    - for update //排他当前读;加的是意向排它记录锁,读到所有已经提交的记录值;如果字段没有索引,即使 使用wehre条件也会进行表级锁
    
     - lock in share mode;//共享当前读,意向共读记录锁
 
@@ -433,6 +429,7 @@ select * from innodb_locks;
 - mysql 默认开启了死锁检测机制，发现死锁后，主动回滚死锁链条中锁定资源最少的一个事务，让其他事务得以继续执行。将参数 **innodb_deadlock_detect** 设置为 on，表示开启这个逻辑。(**加锁访问的行上有锁，他才要检测**)
 
 - 聚蔟索引更新和二级索引更新，如果是更新同一个索引值也可能引起死锁。
+
 ### 事务
 
 ```
@@ -452,7 +449,7 @@ select * from innodb_locks;
 
 - RC和RR事务隔离级别是基于多版本并发控制实现高性能事务。一旦数据加上排他锁，其他事务无法加入共享锁，且处于阻塞等待状态。
 
-- MVCC对普通select不加锁，如果读取的数据正在执行delete或则update，这时读取操作不会等待排他锁释放，而是利用MVCC读取该数据的快照（数据快照是基于undo实现的）
+- MVCC对普通select不加锁,如果读取的数据正在执行delete或则update，这时读取操作不会等待排他锁释放，而是利用 MVCC 读取该数据的快照（数据快照是基于undoLog实现的）
 
 #### 幻读
 
@@ -460,9 +457,9 @@ select * from innodb_locks;
 
 跟间隙锁存在冲突关系的，是“往这个间隙中插入一个记录”这个操作。间隙锁之间都不存在冲突关系
 
-- 在可重复读隔离级别下，普通的查询是快照读，是不会看到别的事务插入的数据的。因此，幻读在“当前读”下才会出现。
+- 在可重复读隔离级别下, 普通的查询是快照读, 是不会看到别的事务插入的数据的。因此，幻读在“当前读”下才会出现。
 
-- 幻读仅仅指的是插入行，修改行不算幻读;
+- 幻读仅仅指的是插入行,修改行不算幻读;
 
 #### 优化原则
 

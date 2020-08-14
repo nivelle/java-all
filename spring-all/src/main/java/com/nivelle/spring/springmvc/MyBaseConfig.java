@@ -9,6 +9,7 @@ import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.web.servlet.handler.MappedInterceptor;
 
 /**
  * TODO:DOCUMENT ME!
@@ -97,4 +98,12 @@ public class MyBaseConfig {
         System.out.println("跨域过滤器");
         return filterRegistrationBean;
     }
+
+
+//    @Bean
+//    public MappedInterceptor myHandlerInterceptor() {
+//        String[] includePatterns = {"/test/config"};
+//        MappedInterceptor handlerInterceptor = new MappedInterceptor(includePatterns, new MyHandlerInterceptor());
+//        return handlerInterceptor;
+//    }
 }

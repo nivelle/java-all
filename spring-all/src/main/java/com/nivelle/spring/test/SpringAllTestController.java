@@ -1,4 +1,4 @@
-package com.nivelle.spring.springmvc.test;
+package com.nivelle.spring.test;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;

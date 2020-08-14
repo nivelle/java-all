@@ -23,6 +23,21 @@ public interface HandlerMapping {
 
 #### 实现(一) public interface MatchableHandlerMapping extends HandlerMapping
 
+```
+public interface MatchableHandlerMapping extends HandlerMapping {
+
+	/**
+	 * Determine whether the given request matches the request criteria.
+	 * @param request the current request
+	 * @param pattern the pattern to match
+	 * @return the result from request matching, or {@code null} if none
+	 */
+	@Nullable
+	RequestMatchResult match(HttpServletRequest request, String pattern);//确定给定的请求是否符合请求条件  pattern：模版
+
+}
+```
+
 #### 实现(二) public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport implements HandlerMapping, Ordered, BeanNameAware 
 
 ````
@@ -142,19 +157,20 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
 
 ````
 
-#####  public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping implements MatchableHandlerMapping 
-
-//将url对应的Handler保存在一个Map中，在getHandlerInternal方法中使用url从Map中获取Handler
+-  子类: public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping implements MatchableHandlerMapping //将url对应的Handler保存在一个Map中，在getHandlerInternal方法中使用url从Map中获取Handler
 
 ```
 public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping implements MatchableHandlerMapping {
-	// 根路径 / 的处理器
+	
 	@Nullable
-	private Object rootHandler;
+	private Object rootHandler;// 根路径 / 的处理器
+	
 	// 尾部是否使用斜线/匹配   如果为true  那么`/users`它也会匹配上`/users/`  默认是false的
 	private boolean useTrailingSlashMatch = false;
+	
 	// 设置是否延迟初始化handler。仅适用于单实例handler，默认是false表示立即实例化
 	private boolean lazyInitHandlers = false;
+	
 	// 这个Map就是缓存下，URL对应的Handler（注意这里只是handler，而不是chain）
 	private final Map<String, Object> handlerMap = new LinkedHashMap<>();
 
@@ -162,15 +178,11 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping i
 	@Override
 	@Nullable
 	protected Object getHandlerInternal(HttpServletRequest request) throws Exception {
-		// 找到URL的后半段，由此可见Spring MVC处理URL路径匹配都是从工程名后面开始匹配的
-		String lookupPath = getUrlPathHelper().getLookupPathForRequest(request);
-		// 根据url查找handler 
-		// 1、先去handlerMap里找，若找到了那就实例化它，并且给chain里加入一个拦截器：`PathExposingHandlerInterceptor`  它是个private私有类的HandlerInterceptor
-		// 该拦截器的作用：request.setAttribute()请求域里面放置四个属性 key见 HandlerMapping 的常量
-		// 2、否则就使用 PathMatcher 去匹配URL，这里面光匹配其实是比较简单的。但是这里面还解决了一个问题：那就是匹配上多个路径的问题
-		// 因此：若匹配上多个路径了，就按照PathMatcher的排序规则排序，取值get(0)然后加上那个HandlerInterceptor即可
-		// 需要注意的是：若存在uriTemplateVariables，也就是路径里都存在多个最佳的匹配的情况  比如/book/{id}和/book/{name}这两种。
-		// 还有就是URI完全一样，但是一个是get方法，一个是post方法之类的  那就再加一个拦截器`UriTemplateVariablesHandlerInterceptor`  它request.setAttribute()了一个属性：key为 xxx.uriTemplateVariables
+		// 找到URL的后半段,由此可见Spring MVC处理URL路径匹配都是从工程名后面开始匹配的
+		String lookupPath = getUrlPathHelper().getLookupPathForRequest(request);		
+		// 根据url查找handler: 
+		// (1) 先去handlerMap里找，若找到了那就实例化它，并且给chain里加入一个拦截器：`PathExposingHandlerInterceptor` 它是个private私有类的HandlerInterceptor		
+		// (2) 否则就使用 PathMatcher 去匹配URL，存在匹配上多个路径的问题若匹配上多个路径了，就按照PathMatcher的排序规则排序，取值get(0)
 		// 请注意：这里默认的两个拦截器每次都是new出来的和Handler可议说是绑定的，所以不会存在线程安全问题
 		Object handler = lookupHandler(lookupPath, request);
 		// 若没找到：
@@ -196,27 +208,28 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping i
 		return handler;
 	}
 
-	// =========该抽象类提供的这个方法就特别重要了：向handlerMap里面put值的唯一入口
+	// 向handlerMap里面put值的唯一入口
 	protected void registerHandler(String[] urlPaths, String beanName) throws BeansException, IllegalStateException {
 		Assert.notNull(urlPaths, "URL path array must not be null");
 		for (String urlPath : urlPaths) {
 			registerHandler(urlPath, beanName);
 		}
 	}
+	//向 handlerMapping 中添加 key=url value=handler
 	protected void registerHandler(String urlPath, Object handler) throws BeansException, IllegalStateException {
 		Assert.notNull(urlPath, "URL path must not be null");
 		Assert.notNull(handler, "Handler object must not be null");
 		Object resolvedHandler = handler;
-		// 如果是beanName，并且它是立马加载的~
+		// 如果是beanName，而且非懒加载
 		if (!this.lazyInitHandlers && handler instanceof String) {
 			String handlerName = (String) handler;
 			ApplicationContext applicationContext = obtainApplicationContext();
-			// 并且还需要是单例的，那就立马实例化
+			// 如果是单例，那么直接从上下文中获取已经是实例化的
 			if (applicationContext.isSingleton(handlerName)) {
 				resolvedHandler = applicationContext.getBean(handlerName);
 			}
 		}
-		// 先尝试从Map中去获取
+		// 先尝试通过 urlPath从 Map中去获取 handler
 		Object mappedHandler = this.handlerMap.get(urlPath);
 		if (mappedHandler != null) {
 			// 这个异常错误信息，相信我们在开发中经常碰到吧：简单就是说就是一个URL只能映射到一个Handler上（但是一个Handler是可以处理多个URL的，这个需要注意）
@@ -232,9 +245,6 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping i
 			else if (urlPath.equals("/*")) {
 				setDefaultHandler(resolvedHandler);
 			}
-			// 注意此处：好像是Spring5之后 把这句Mapped的日志级别   直接降低到trace级别了，简直太低了有木有~~~
-			// 在Spring 5之前，这里的日志级别包括上面的setRoot等是info（所以我们在控制台经常能看见大片的'Mapped URL path'日志~~~~）
-			// 所以：自Spring5之后不再会看controller这样的映射的日志了
 			else {
 				this.handlerMap.put(urlPath, resolvedHandler);
 				if (logger.isTraceEnabled()) {
@@ -252,3 +262,194 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping i
 }
 
 ```
+
+- BeanNameUrlHandlerMapping //是 AbstractDetectingUrlHandlerMapping extends AbstractUrlHandlerMapping 的唯一实现类
+
+```
+public class BeanNameUrlHandlerMapping extends AbstractDetectingUrlHandlerMapping {
+
+	@Override
+	protected String[] determineUrlsForHandler(String beanName) {
+		List<String> urls = new ArrayList<>();
+		// 意思就是必须以/开头
+		if (beanName.startsWith("/")) {
+			urls.add(beanName);
+		}
+		// 别名
+		String[] aliases = obtainApplicationContext().getAliases(beanName);
+		for (String alias : aliases) {
+			if (alias.startsWith("/")) {
+				urls.add(alias);
+			}
+		}
+		return StringUtils.toStringArray(urls);
+	}
+}
+
+```
+
+- public class SimpleUrlHandlerMapping extends AbstractUrlHandlerMapping
+
+```
+public class SimpleUrlHandlerMapping extends AbstractUrlHandlerMapping {
+	private final Map<String, Object> urlMap = new LinkedHashMap<>();
+
+	public void setMappings(Properties mappings) {
+		CollectionUtils.mergePropertiesIntoMap(mappings, this.urlMap);
+	}
+	public void setUrlMap(Map<String, ?> urlMap) {
+		this.urlMap.putAll(urlMap);
+	}
+
+	@Override
+	public void initApplicationContext() throws BeansException {
+		super.initApplicationContext();
+		registerHandlers(this.urlMap);
+	}
+	// 这个实现简单到令人发指
+	protected void registerHandlers(Map<String, Object> urlMap) throws BeansException {
+		if (urlMap.isEmpty()) {
+			logger.trace("No patterns in " + formatMappingName());
+		} else {
+			urlMap.forEach((url, handler) -> {
+				// 如果还没有斜线，在前面加上斜线
+				if (!url.startsWith("/")) {
+					url = "/" + url;
+				}
+				if (handler instanceof String) {
+					handler = ((String) handler).trim();
+				}
+				registerHandler(url, handler);
+			});
+		}
+	}
+}
+
+
+```
+##### public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMapping implements InitializingBean
+
+````
+// @since 3.1  Spring3.1之后才出现，这个时候注解驱动也出来了
+// 实现了initializingBean接口，其实主要的注册操作则是通过afterPropertiesSet()接口方法来调用的
+// 它是带有泛型T的。T：包含HandlerMethod与传入请求匹配所需条件的handlerMethod的映射
+public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMapping implements InitializingBean {
+	// SCOPED_TARGET的BeanName的前缀
+	private static final String SCOPED_TARGET_NAME_PREFIX = "scopedTarget.";
+	private static final HandlerMethod PREFLIGHT_AMBIGUOUS_MATCH = new HandlerMethod(new EmptyHandler(), ClassUtils.getMethod(EmptyHandler.class, "handle"));
+	// 跨域相关
+	private static final CorsConfiguration ALLOW_CORS_CONFIG = new CorsConfiguration();
+	static {
+		ALLOW_CORS_CONFIG.addAllowedOrigin("*");
+		ALLOW_CORS_CONFIG.addAllowedMethod("*");
+		ALLOW_CORS_CONFIG.addAllowedHeader("*");
+		ALLOW_CORS_CONFIG.setAllowCredentials(true);
+	}
+	
+	// 默认不会去祖先容器里面找Handlers
+	private boolean detectHandlerMethodsInAncestorContexts = false;
+	// @since 4.1提供的新接口
+	// 为处HandlerMetho的映射分配名称的策略接口   只有一个方法getName()
+	// 唯一实现为：RequestMappingInfoHandlerMethodMappingNamingStrategy
+	// 策略为：@RequestMapping指定了name属性，那就以指定的为准  否则策略为：取出Controller所有的`大写字母` + # + method.getName()
+	// 如：AppoloController#match方法  最终的name为：AC#match 
+	// 当然这个你也可以自己实现这个接口，然后set进来即可（只是一般没啥必要这么去干~~）
+	@Nullable
+	private HandlerMethodMappingNamingStrategy<T> namingStrategy;
+	// 内部类：负责注册
+	private final MappingRegistry mappingRegistry = new MappingRegistry();
+
+	// 此处细节：使用的是读写锁  比如此处使用的是读锁   获得所有的注册进去的Handler的Map
+	public Map<T, HandlerMethod> getHandlerMethods() {
+		this.mappingRegistry.acquireReadLock();
+		try {
+			return Collections.unmodifiableMap(this.mappingRegistry.getMappings());
+		} finally {
+			this.mappingRegistry.releaseReadLock();
+		}
+	}
+	// 此处是根据mappingName来获取一个Handler  此处需要注意哦
+	@Nullable
+	public List<HandlerMethod> getHandlerMethodsForMappingName(String mappingName) {
+		return this.mappingRegistry.getHandlerMethodsByMappingName(mappingName);
+	}
+	// 最终都是委托给mappingRegistry去做了注册的工作，此处日志级别为trace级别
+	public void registerMapping(T mapping, Object handler, Method method) {
+		if (logger.isTraceEnabled()) {
+			logger.trace("Register \"" + mapping + "\" to " + method.toGenericString());
+		}
+		this.mappingRegistry.register(mapping, handler, method);
+	}
+	public void unregisterMapping(T mapping) {
+		if (logger.isTraceEnabled()) {
+			logger.trace("Unregister mapping \"" + mapping + "\"");
+		}
+		this.mappingRegistry.unregister(mapping);
+	}
+
+	// 初始化HandlerMethods的入口
+	@Override
+	public void afterPropertiesSet() {
+		initHandlerMethods();
+	}
+	// 看initHandlerMethods()，观察是如何实现加载HandlerMethod
+	protected void initHandlerMethods() {
+		// getCandidateBeanNames：Object.class相当于拿到当前容器（一般都是当前容器） 内所有的Bean定义信息
+		// 如果阁下容器隔离到到的话，这里一般只会拿到@Controller标注的web组件  以及其它相关web组件的  不会非常的多的~~~~
+		for (String beanName : getCandidateBeanNames()) {
+			// BeanName不是以这个打头得  这里才会process这个BeanName~~~~
+			if (!beanName.startsWith(SCOPED_TARGET_NAME_PREFIX)) {
+				// 会在每个Bean里面找处理方法，HandlerMethod，然后注册进去
+				processCandidateBean(beanName);
+			}
+		}
+		// 略：它就是输出一句日志：debug日志或者trace日志   `7 mappings in 'requestMappingHandlerMapping'`
+		handlerMethodsInitialized(getHandlerMethods());
+	}
+
+	// 确定指定的候选bean的类型，如果标识为Handler类型，则调用DetectHandlerMethods
+	// isHandler(beanType):判断这个type是否为Handler类型   它是个抽象方法，由子类去决定到底啥才叫Handler~~~~
+	// `RequestMappingHandlerMapping`的判断依据为：该类上标注了@Controller注解或者@Controller注解  就算作是一个Handler
+	// 所以此处：@Controller起到了一个特殊的作用，不能等价于@Component的哟~~~~
+	protected void processCandidateBean(String beanName) {
+		Class<?> beanType = null;
+		try {
+			beanType = obtainApplicationContext().getType(beanName);
+		} catch (Throwable ex) {
+			// 即使抛出异常  程序也不会终止~
+		}
+		if (beanType != null && isHandler(beanType)) {
+			// 这个和我们上篇博文讲述的类似，都属于detect探测系列~~~~
+			detectHandlerMethods(beanName);
+		}
+	}
+
+	// 在指定的Handler的bean中查找处理程序方法Methods  找打就注册进去：mappingRegistry
+	protected void detectHandlerMethods(Object handler) {
+		Class<?> handlerType = (handler instanceof String ?obtainApplicationContext().getType((String) handler) : handler.getClass());
+		if (handlerType != null) {
+			Class<?> userType = ClassUtils.getUserClass(handlerType);
+			// 又是非常熟悉的方法：MethodIntrospector.selectMethods
+			// 它在我们招@EventListener、@Scheduled等注解方法时已经遇到过多次
+			// 此处特别之处在于：getMappingForMethod 属于一个抽象方法，由子类去决定它的寻找规则：什么才算作一个处理器方法
+			Map<Method, T> methods = MethodIntrospector.selectMethods(userType,
+					(MethodIntrospector.MetadataLookup<T>) method -> {
+						try {
+							return getMappingForMethod(method, userType);
+						} catch (Throwable ex) {
+							throw new IllegalStateException("Invalid mapping on handler class [" + userType.getName() + "]: " + method, ex);
+						}
+					});
+			
+			// 把找到的Method  遍历后注册进去
+			methods.forEach((method, mapping) -> {
+				// 找到这个可调用的方法（AopUtils.selectInvocableMethod）
+				Method invocableMethod = AopUtils.selectInvocableMethod(method, userType);
+				registerHandlerMethod(handler, invocableMethod, mapping);
+			});
+		}
+	}
+}
+
+
+````
