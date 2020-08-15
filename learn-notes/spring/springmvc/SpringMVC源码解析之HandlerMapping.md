@@ -263,7 +263,7 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping i
 
 ```
 
-- BeanNameUrlHandlerMapping //是 AbstractDetectingUrlHandlerMapping extends AbstractUrlHandlerMapping 的唯一实现类
+- public class BeanNameUrlHandlerMapping extends AbstractDetectingUrlHandlerMapping  //是 AbstractDetectingUrlHandlerMapping extends AbstractUrlHandlerMapping 的唯一实现类
 
 ```
 public class BeanNameUrlHandlerMapping extends AbstractDetectingUrlHandlerMapping {
@@ -334,7 +334,7 @@ public class SimpleUrlHandlerMapping extends AbstractUrlHandlerMapping {
 // 实现了initializingBean接口，其实主要的注册操作则是通过afterPropertiesSet()接口方法来调用的
 // 它是带有泛型T的。T：包含HandlerMethod与传入请求匹配所需条件的handlerMethod的映射
 public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMapping implements InitializingBean {
-	// SCOPED_TARGET的BeanName的前缀
+	// SCOPED_TARGET的 BeanName的前缀
 	private static final String SCOPED_TARGET_NAME_PREFIX = "scopedTarget.";
 	private static final HandlerMethod PREFLIGHT_AMBIGUOUS_MATCH = new HandlerMethod(new EmptyHandler(), ClassUtils.getMethod(EmptyHandler.class, "handle"));
 	// 跨域相关
@@ -349,11 +349,10 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 	// 默认不会去祖先容器里面找Handlers
 	private boolean detectHandlerMethodsInAncestorContexts = false;
 	// @since 4.1提供的新接口
-	// 为处HandlerMetho的映射分配名称的策略接口   只有一个方法getName()
-	// 唯一实现为：RequestMappingInfoHandlerMethodMappingNamingStrategy
-	// 策略为：@RequestMapping指定了name属性，那就以指定的为准  否则策略为：取出Controller所有的`大写字母` + # + method.getName()
+	// 为处HandlerMetho的映射分配名称的策略接口,只有一个方法getName()
+	// 唯一实现为：RequestMappingInfoHandlerMethodMappingNamingStrategy 策略为：@RequestMapping指定了name属性，那就以指定的为准 否则策略为：取出Controller所有的`大写字母` + # + method.getName()
 	// 如：AppoloController#match方法  最终的name为：AC#match 
-	// 当然这个你也可以自己实现这个接口，然后set进来即可（只是一般没啥必要这么去干~~）
+	// 当然这个你也可以自己实现这个接口，然后set进来即可
 	@Nullable
 	private HandlerMethodMappingNamingStrategy<T> namingStrategy;
 	// 内部类：负责注册
@@ -368,12 +367,12 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 			this.mappingRegistry.releaseReadLock();
 		}
 	}
-	// 此处是根据mappingName来获取一个Handler  此处需要注意哦
+	// 此处是根据mappingName来获取一个Handler
 	@Nullable
 	public List<HandlerMethod> getHandlerMethodsForMappingName(String mappingName) {
 		return this.mappingRegistry.getHandlerMethodsByMappingName(mappingName);
 	}
-	// 最终都是委托给mappingRegistry去做了注册的工作，此处日志级别为trace级别
+	// 最终都是委托给 mappingRegistry去做了注册的工作，此处日志级别为trace级别
 	public void registerMapping(T mapping, Object handler, Method method) {
 		if (logger.isTraceEnabled()) {
 			logger.trace("Register \"" + mapping + "\" to " + method.toGenericString());
@@ -392,25 +391,22 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 	public void afterPropertiesSet() {
 		initHandlerMethods();
 	}
-	// 看initHandlerMethods()，观察是如何实现加载HandlerMethod
+	// 加载HandlerMethod
 	protected void initHandlerMethods() {
-		// getCandidateBeanNames：Object.class相当于拿到当前容器（一般都是当前容器） 内所有的Bean定义信息
-		// 如果阁下容器隔离到到的话，这里一般只会拿到@Controller标注的web组件  以及其它相关web组件的  不会非常的多的~~~~
+		// getCandidateBeanNames：Object.class相当于拿到当前容器内所有的Bean定义信息
 		for (String beanName : getCandidateBeanNames()) {
-			// BeanName不是以这个打头得  这里才会process这个BeanName~~~~
+			// BeanName不是以这个打头得 : scopedTarget. 
 			if (!beanName.startsWith(SCOPED_TARGET_NAME_PREFIX)) {
 				// 会在每个Bean里面找处理方法，HandlerMethod，然后注册进去
 				processCandidateBean(beanName);
 			}
 		}
-		// 略：它就是输出一句日志：debug日志或者trace日志   `7 mappings in 'requestMappingHandlerMapping'`
 		handlerMethodsInitialized(getHandlerMethods());
 	}
-
 	// 确定指定的候选bean的类型，如果标识为Handler类型，则调用DetectHandlerMethods
-	// isHandler(beanType):判断这个type是否为Handler类型   它是个抽象方法，由子类去决定到底啥才叫Handler~~~~
+	
+	// isHandler(beanType):判断这个type是否为Handler类型 它是个抽象方法，由子类去判断是否是Handler
 	// `RequestMappingHandlerMapping`的判断依据为：该类上标注了@Controller注解或者@Controller注解  就算作是一个Handler
-	// 所以此处：@Controller起到了一个特殊的作用，不能等价于@Component的哟~~~~
 	protected void processCandidateBean(String beanName) {
 		Class<?> beanType = null;
 		try {
@@ -424,13 +420,11 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 		}
 	}
 
-	// 在指定的Handler的bean中查找处理程序方法Methods  找打就注册进去：mappingRegistry
+	// 在指定的Handler的bean中查找处理程序方法Methods
 	protected void detectHandlerMethods(Object handler) {
 		Class<?> handlerType = (handler instanceof String ?obtainApplicationContext().getType((String) handler) : handler.getClass());
 		if (handlerType != null) {
 			Class<?> userType = ClassUtils.getUserClass(handlerType);
-			// 又是非常熟悉的方法：MethodIntrospector.selectMethods
-			// 它在我们招@EventListener、@Scheduled等注解方法时已经遇到过多次
 			// 此处特别之处在于：getMappingForMethod 属于一个抽象方法，由子类去决定它的寻找规则：什么才算作一个处理器方法
 			Map<Method, T> methods = MethodIntrospector.selectMethods(userType,
 					(MethodIntrospector.MetadataLookup<T>) method -> {
@@ -451,5 +445,244 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 	}
 }
 
-
 ````
+
+- HandlerMethod lookupHandlerMethod(String lookupPath, HttpServletRequest request) //由路径找到handlerMethod
+
+```
+protected HandlerMethod lookupHandlerMethod(String lookupPath, HttpServletRequest request) throws Exception {
+		// Match是一个private class，内部就两个属性：T mapping和HandlerMethod handlerMethod
+		List<Match> matches = new ArrayList<>();
+		// 根据lookupPath去注册中心里查找mappingInfos，因为一个具体的url可能匹配上多个MappingInfo的
+		// 至于为何是多值？有这么一种情况  URL都是/api/v1/hello  但是有的是get post delete等方法  当然还有可能是headers/consumes等等不一样，都算多个的  所以有可能是会匹配到多个MappingInfo的
+		// 所有这个里可以匹配出多个出来。比如/hello 匹配出GET、POST、PUT都成，所以size可以为3
+		List<T> directPathMatches = this.mappingRegistry.getMappingsByUrl(lookupPath);
+		if (directPathMatches != null) {
+			// 依赖于子类实现的抽象方法：getMatchingMapping()  看看到底匹不匹配，而不仅仅是URL匹配就行
+			// 比如还有method、headers、consumes等等这些不同都代表着不同的MappingInfo的
+			// 最终匹配上的，会new Match()放进matches里面去
+			addMatchingMappings(directPathMatches, matches, request);
+		}
+		if (matches.isEmpty()) {
+			// No choice but to go through all mappings...
+			addMatchingMappings(this.mappingRegistry.getMappings().keySet(), matches, request);
+		}
+		if (!matches.isEmpty()) {
+			// getMappingComparator这个方法也是抽象方法由子类去实现的。
+			// 比如：`RequestMappingInfoHandlerMapping`的实现为先比较Method，patterns、params
+			Comparator<Match> comparator = new MatchComparator(getMappingComparator(request));
+			matches.sort(comparator);
+			// 排序后的最佳匹配为get(0)
+			Match bestMatch = matches.get(0);
+			// 如果总的匹配个数大于1的话
+			if (matches.size() > 1) {
+				if (CorsUtils.isPreFlightRequest(request)) {
+					return PREFLIGHT_AMBIGUOUS_MATCH;
+				}
+				// 次最佳匹配
+				Match secondBestMatch = matches.get(1);
+				// 注意：这个是运行时的检查
+				if (comparator.compare(bestMatch, secondBestMatch) == 0) {
+					Method m1 = bestMatch.handlerMethod.getMethod();
+					Method m2 = secondBestMatch.handlerMethod.getMethod();
+					String uri = request.getRequestURI();
+					throw new IllegalStateException("Ambiguous handler methods mapped for '" + uri + "': {" + m1 + ", " + m2 + "}");
+				}
+			}
+			// 把最最佳匹配的方法放进request的属性里面: bestMatchingHandler
+			request.setAttribute(BEST_MATCHING_HANDLER_ATTRIBUTE, bestMatch.handlerMethod);
+			// pathWithinHandlerMapping
+			handleMatch(bestMatch.mapping, lookupPath, request);
+			return bestMatch.handlerMethod;
+		}
+		// 一个都没匹配上，handleNoMatch这个方法虽然不是抽象方法，protected方法子类复写
+		// RequestMappingInfoHandlerMapping有复写此方
+		else {
+			return handleNoMatch(this.mappingRegistry.getMappings().keySet(), lookupPath, request);
+		}
+	}
+	
+```
+
+####  RequestMappingHandlerMapping
+
+```
+// @since 3.1  Spring3.1才提供的这种注解扫描的方式的支持~~~  它也实现了MatchableHandlerMapping分支的接口
+// EmbeddedValueResolverAware接口：说明要支持解析Spring的表达式~
+public class RequestMappingHandlerMapping extends RequestMappingInfoHandlerMapping
+		implements MatchableHandlerMapping, EmbeddedValueResolverAware {
+	
+	...
+	private Map<String, Predicate<Class<?>>> pathPrefixes = new LinkedHashMap<>();
+
+	// 配置要应用于控制器方法的路径前缀
+	// @since 5.1：Spring5.1才出来的新特性，其实有时候还是很好的使的  下面给出使用的Demo
+	// 前缀用于enrich每个@RequestMapping方法的映射，至于匹不匹配由Predicate来决定  有种前缀分类的效果~~~~
+	// 推荐使用Spring5.1提供的类：org.springframework.web.method.HandlerTypePredicate
+	public void setPathPrefixes(Map<String, Predicate<Class<?>>> prefixes) {
+		this.pathPrefixes = Collections.unmodifiableMap(new LinkedHashMap<>(prefixes));
+	}
+	// @since 5.1   注意pathPrefixes是只读的~~~因为上面Collections.unmodifiableMap了  有可能只是个空Map
+	public Map<String, Predicate<Class<?>>> getPathPrefixes() {
+		return this.pathPrefixes;
+	}
+	
+	public void setUseRegisteredSuffixPatternMatch(boolean useRegisteredSuffixPatternMatch) {
+		this.useRegisteredSuffixPatternMatch = useRegisteredSuffixPatternMatch;
+		this.useSuffixPatternMatch = (useRegisteredSuffixPatternMatch || this.useSuffixPatternMatch);
+	}
+	// If enabled a method mapped to "/users" also matches to "/users/".
+	public void setUseTrailingSlashMatch(boolean useTrailingSlashMatch) {
+		this.useTrailingSlashMatch = useTrailingSlashMatch;
+	}
+	
+	@Override
+	public void afterPropertiesSet() {
+		// 对RequestMappingInfo的配置进行初始化  赋值
+		this.config = new RequestMappingInfo.BuilderConfiguration();
+		this.config.setUrlPathHelper(getUrlPathHelper()); // 设置urlPathHelper默认为UrlPathHelper.class
+		this.config.setPathMatcher(getPathMatcher()); //默认为AntPathMatcher，路径匹配校验器
+		this.config.setSuffixPatternMatch(this.useSuffixPatternMatch); // 是否支持后缀补充，默认为true
+		this.config.setTrailingSlashMatch(this.useTrailingSlashMatch); // 是否添加"/"后缀，默认为true
+		this.config.setRegisteredSuffixPatternMatch(this.useRegisteredSuffixPatternMatch); // 是否采用mediaType匹配模式，比如.json/.xml模式的匹配，默认为false      
+		this.config.setContentNegotiationManager(getContentNegotiationManager()); //mediaType处理类：ContentNegotiationManager
+
+		// 此处 必须还是要调用父类的方法的
+		super.afterPropertiesSet();
+	}
+
+	// 判断该类，是否是一个handler（此处就体现出@Controller注解的特殊性了）
+	@Override
+	protected boolean isHandler(Class<?> beanType) {
+		return (AnnotatedElementUtils.hasAnnotation(beanType, Controller.class) ||
+				AnnotatedElementUtils.hasAnnotation(beanType, RequestMapping.class));
+	}
+
+	// 还记得父类：AbstractHandlerMethodMapping#detectHandlerMethods的时候，回去该类里面找所有的指定的方法
+	@Override
+	@Nullable
+	protected RequestMappingInfo getMappingForMethod(Method method, Class<?> handlerType) {
+		// 第一步：先拿到方法上的info
+		RequestMappingInfo info = createRequestMappingInfo(method);
+		if (info != null) {
+			// 方法上有。在第二步：拿到类上的info
+			RequestMappingInfo typeInfo = createRequestMappingInfo(handlerType);
+			if (typeInfo != null) {
+				// 倘若类上面也有，那就combine把两者结合
+				// combile的逻辑基如下：
+				// names：name1+#+name2
+				// path：路径拼接起来作为全路径(容错了方法里没有/的情况)
+				// method、params、headers：取并集
+				// consumes、produces：以方法的为准，没有指定再取类上的
+				// custom：谁有取谁的。若都有：那就看custom具体实现的.combine方法去决定把  简单的说就是交给调用者了~~~
+				info = typeInfo.combine(info);
+			}
+
+			// 在Spring5.1之后还要处理这个前缀匹配
+			// 根据这个类，去找看有没有前缀  getPathPrefix()：entry.getValue().test(handlerType) = true算是hi匹配上了
+			// 备注：也支持${os.name}这样的语法拿值，可以把前缀也写在专门的配置文件里面
+			String prefix = getPathPrefix(handlerType);
+			if (prefix != null) {
+				// RequestMappingInfo.paths(prefix)  相当于统一在前面加上这个前缀~
+				info = RequestMappingInfo.paths(prefix).build().combine(info);
+			}
+		}
+		return info;
+	}
+
+	// 根据此方法/类，创建一个RequestMappingInfo
+	@Nullable
+	private RequestMappingInfo createRequestMappingInfo(AnnotatedElement element) {
+		// 注意：此处使用的是 findMergedAnnotation 这也就是为什么虽然@RequestMapping它并不具有继承的特性，但是你子类仍然有继承的效果的原因
+		RequestMapping requestMapping = AnnotatedElementUtils.findMergedAnnotation(element, RequestMapping.class);
+		
+		// 请注意：这里进行了区分处理:Class 和 Method
+		// 这里返回的是一个condition 也就是看看要不要处理这个请求的条件
+		RequestCondition<?> condition = (element instanceof Class ?getCustomTypeCondition((Class<?>) element) : getCustomMethodCondition((Method) element));
+		// 这个createRequestMappingInfo 就是根据一个@RequestMapping以及一个condition创建一个
+		return (requestMapping != null ? createRequestMappingInfo(requestMapping, condition) : null);
+	}
+	// 他俩都是返回的null。protected方法留给子类复写, 子类可以据此自己定义一套自己的规则来限制匹配
+	// Provide a custom method-level request condition.
+	// 它相当于在Spring MVC默认的规则的基础上，用户还可以自定义条件进行处理
+	@Nullable
+	protected RequestCondition<?> getCustomTypeCondition(Class<?> handlerType) {
+		return null;
+	}
+	@Nullable
+	protected RequestCondition<?> getCustomMethodCondition(Method method) {
+		return null;
+	}
+	// 根据@RequestMapping 创建一个RequestMappingInfo 
+	protected RequestMappingInfo createRequestMappingInfo(RequestMapping requestMapping, @Nullable RequestCondition<?> customCondition) {
+		RequestMappingInfo.Builder builder = RequestMappingInfo
+				// 强大的地方在此处：path里竟然还支持/api/v1/${os.name}/hello 这样形式动态的获取值
+				// 也就是说URL还可以从配置文件里面读取,@GetMapping("/${os.name}/hello") // 支持从配置文件里读取此值  Windows 10
+				.paths(resolveEmbeddedValuesInPatterns(requestMapping.path()))
+				.methods(requestMapping.method())
+				.params(requestMapping.params())
+				.headers(requestMapping.headers())
+				.consumes(requestMapping.consumes())
+				.produces(requestMapping.produces())
+				.mappingName(requestMapping.name());
+		// 调用者自定义的条件
+		if (customCondition != null) {
+			builder.customCondition(customCondition);
+		}
+		// 注意此处：把当前的config设置进去了
+		return builder.options(this.config).build();
+	}
+
+	@Override
+	public RequestMatchResult match(HttpServletRequest request, String pattern) { ... }
+	// 支持了@CrossOrigin注解  Spring4.2提供的注解
+	@Override
+	protected CorsConfiguration initCorsConfiguration(Object handler, Method method, RequestMappingInfo mappingInfo) { ... }
+}
+
+```
+
+#### @RequestMapping 注解
+
+```
+@Target({ElementType.METHOD, ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Mapping
+public @interface RequestMapping {
+
+	//给这个Mapping取一个名字。若不填写，就用HandlerMethodMappingNamingStrategy 去按规则生成
+	String name() default "";
+
+	// 路径  数组形式  可以写多个
+	@AliasFor("path")
+	String[] value() default {};
+	@AliasFor("value")
+	String[] path() default {};
+	
+	// 请求方法：GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS, TRACE
+	// 显然可以指定多个方法。如果不指定，表示适配所有方法类型~~
+	// 同时还有类似的枚举类：org.springframework.http.HttpMethod
+	RequestMethod[] method() default {};
+	
+	// 指定request中必须包含某些参数值时，才让该方法处理
+	// 使用 params 元素，你可以让多个处理方法处理到同一个URL 的请求, 而这些请求的参数是不一样的
+	// 如：@RequestMapping(value = "/fetch", params = {"personId=10"} 和 @RequestMapping(value = "/fetch", params = {"personId=20"}
+	// 这两个方法都处理请求`/fetch`，但是参数不一样，进入的方法也不一样
+	// 支持!myParam和myParam!=myValue这种
+	String[] params() default {};
+
+	// 指定request中必须包含某些指定的header值，才能让该方法处理请求
+	// @RequestMapping(value = "/head", headers = {"content-type=text/plain"}
+	String[] headers() default {};
+
+	// 指定处理请求request的**提交内容类型(Content-Type),例如application/json、text/html等相当于只有指定的这些Content-Type的才处理 @RequestMapping(value = "/cons", consumes = {"application/json", "application/XML"}
+	// 不指定表示处理所有,取值参见枚举类：org.springframework.http.MediaType
+	String[] consumes() default {};
+	// 指定返回的内容类型,返回的内容类型必须是request请求头(Accept)中所包含的类型仅当request请求头中的(Accept)类型中包含该指定类型才返回；
+	// 参见枚举类：org.springframework.http.MediaType
+	String[] produces() default {};
+
+}
+
+```

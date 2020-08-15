@@ -1,12 +1,106 @@
+### HandlerAdapter
 
-### public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter implements BeanFactoryAware, InitializingBean 
-#### RequestMappingHandlerAdapter 是Spring MVC用来执行控制器方法的HandlerAdapter
+#####  SimpleControllerHandlerAdapter //直接处理 HttpServletRequest , HttpServletResponse 
+
+```
+public class SimpleControllerHandlerAdapter implements HandlerAdapter {
+
+	@Override
+	public boolean supports(Object handler) {
+		return (handler instanceof Controller);
+	}
+
+	@Override
+	@Nullable
+	public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler)
+			throws Exception {
+
+		return ((Controller) handler).handleRequest(request, response);
+	}
+
+	@Override
+	public long getLastModified(HttpServletRequest request, Object handler) {
+		if (handler instanceof LastModified) {
+			return ((LastModified) handler).getLastModified(request);
+		}
+		return -1L;
+	}
+
+}
+
+```
+
+
+#####  HttpRequestHandlerAdapter
+
+适配org.springframework.web.HttpRequestHandler这种Handler
+````
+public class HttpRequestHandlerAdapter implements HandlerAdapter {
+
+	@Override
+	public boolean supports(Object handler) {
+		return (handler instanceof HttpRequestHandler);
+	}
+
+	@Override
+	@Nullable
+	public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler)
+			throws Exception {
+
+		((HttpRequestHandler) handler).handleRequest(request, response);
+		return null; //HttpRequestHandler#handleRequest()它没有返回值（全靠开发者自己写response），而Controller最起码来说还有Model和View自动渲染
+	}
+
+	@Override
+	public long getLastModified(HttpServletRequest request, Object handler) {
+		if (handler instanceof LastModified) {
+			return ((LastModified) handler).getLastModified(request);
+		}
+		return -1L;
+	}
+
+}
+
+````
+
+##### SimpleServletHandlerAdapter
+
+Spring MVC默认并不向容器注册这种HandlerAdapter，若需要使用是需要调用者手动给注册这个Bean，Servlet这种Handler才能正常使用
+
+```
+public class SimpleServletHandlerAdapter implements HandlerAdapter {
+
+	@Override
+	public boolean supports(Object handler) {
+		return (handler instanceof Servlet);
+	}
+
+	@Override
+	@Nullable
+	public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler)
+			throws Exception {
+
+		((Servlet) handler).service(request, response);
+		return null;
+	}
+
+	@Override
+	public long getLastModified(HttpServletRequest request, Object handler) {
+		return -1;
+	}
+
+}
+
+```
+
+#####  public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter implements BeanFactoryAware, InitializingBean 
+
+###### RequestMappingHandlerAdapter 是Spring MVC用来执行控制器方法的HandlerAdapter
  
 ```
-RequestMappingHandlerAdapter继承自抽象基类AbstractHandlerMethodAdapter,AbstractHandlerMethodAdapter主要是定义了一些抽象方法和禁止了一些方法的继承。
-AbstractHandlerMethodAdapter又继承自WebContentGenerator,WebContentGenerator主要提供了对HTTP缓存机制方面的支持。
+1. RequestMappingHandlerAdapter继承自抽象基类AbstractHandlerMethodAdapter,AbstractHandlerMethodAdapter主要是定义了一些抽象方法和禁止了一些方法的继承。AbstractHandlerMethodAdapter又继承自WebContentGenerator,WebContentGenerator主要提供了对HTTP缓存机制方面的支持。
 
-RequestMappingHandlerAdapter实现了InitializingBean接口，所以相应它的bean组件在实例化过程中会执行其初始化方法#afterPropertiesSet。
+2. RequestMappingHandlerAdapter实现了InitializingBean接口，所以相应它的bean组件在实例化过程中会执行其初始化方法#afterPropertiesSet。
 
 ```
 
@@ -62,7 +156,53 @@ private List<HandlerMethodArgumentResolver> getDefaultArgumentResolvers() {
 
 ```
 
-#### RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter implements BeanFactoryAware, InitializingBean
+- private List<HandlerMethodReturnValueHandler> getDefaultReturnValueHandlers() 
+
+```
+	private List<HandlerMethodReturnValueHandler> getDefaultReturnValueHandlers() {
+		List<HandlerMethodReturnValueHandler> handlers = new ArrayList<>();
+
+		// Single-purpose return value types
+		handlers.add(new ModelAndViewMethodReturnValueHandler());
+		handlers.add(new ModelMethodProcessor());
+		handlers.add(new ViewMethodReturnValueHandler());
+		handlers.add(new ResponseBodyEmitterReturnValueHandler(getMessageConverters(),
+				this.reactiveAdapterRegistry, this.taskExecutor, this.contentNegotiationManager));
+		handlers.add(new StreamingResponseBodyReturnValueHandler());
+		handlers.add(new HttpEntityMethodProcessor(getMessageConverters(),
+				this.contentNegotiationManager, this.requestResponseBodyAdvice));
+		handlers.add(new HttpHeadersReturnValueHandler());
+		handlers.add(new CallableMethodReturnValueHandler());
+		handlers.add(new DeferredResultMethodReturnValueHandler());
+		handlers.add(new AsyncTaskMethodReturnValueHandler(this.beanFactory));
+
+		// Annotation-based return value types
+		handlers.add(new ModelAttributeMethodProcessor(false));
+		handlers.add(new RequestResponseBodyMethodProcessor(getMessageConverters(),
+				this.contentNegotiationManager, this.requestResponseBodyAdvice));
+
+		// Multi-purpose return value types
+		handlers.add(new ViewNameMethodReturnValueHandler());
+		handlers.add(new MapMethodProcessor());
+
+		// Custom return value types
+		if (getCustomReturnValueHandlers() != null) {
+			handlers.addAll(getCustomReturnValueHandlers());
+		}
+
+		// Catch-all
+		if (!CollectionUtils.isEmpty(getModelAndViewResolvers())) {
+			handlers.add(new ModelAndViewResolverMethodReturnValueHandler(getModelAndViewResolvers()));
+		}
+		else {
+			handlers.add(new ModelAttributeMethodProcessor(true));
+		}
+
+		return handlers;
+	}
+```
+
+#### 子类：RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter implements BeanFactoryAware, InitializingBean
 
 ```
 public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapterimplements BeanFactoryAware, InitializingBean {
@@ -801,8 +941,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapterim
     // 2. invokeHandlerMethod 调用目标控制器方法
     // 3. 目标控制器调用之后做一些响应对象的处理: 针对HTTP缓存机制，设置相应的响应头部
 	@Override
-	protected ModelAndView handleInternal(HttpServletRequest request,
-			HttpServletResponse response, HandlerMethod handlerMethod) throws Exception {
+	protected ModelAndView handleInternal(HttpServletRequest request,HttpServletResponse response, HandlerMethod handlerMethod) throws Exception {
 
 		ModelAndView mav;
        // 检查请求 :
@@ -861,8 +1000,6 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapterim
 	protected long getLastModifiedInternal(HttpServletRequest request, HandlerMethod handlerMethod) {
 		return -1;
 	}
-
-
 	/**
 	 * Return the SessionAttributesHandler instance for the given handler type
 	 * (never null).
@@ -883,31 +1020,24 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapterim
 	}
 
 	/**
-	 * Invoke the RequestMapping handler method preparing a ModelAndView
-	 * if view resolution is required.
-     * 调用 @RequestMapping 注解的目标控制器方法，如果需要视图解析的话准备一个 ModelAndView
-     * 对象并返回
+	 * Invoke the RequestMapping handler method preparing a ModelAndView if view resolution is required.
+     * 调用 @RequestMapping 注解的目标控制器方法，如果需要视图解析的话准备一个 ModelAndView对象并返回
 	 * @since 4.2
 	 * @see #createInvocableHandlerMethod(HandlerMethod)
 	 */
 	@Nullable
-	protected ModelAndView invokeHandlerMethod(HttpServletRequest request,
-			HttpServletResponse response, HandlerMethod handlerMethod) throws Exception {
-
+	protected ModelAndView invokeHandlerMethod(HttpServletRequest request,HttpServletResponse response, HandlerMethod handlerMethod) throws Exception {
         // 将请求/响应对象包装成一个 ServletWebRequest 对象,
         // 最终的目标控制器方法调用使用该包装对象进行
 		ServletWebRequest webRequest = new ServletWebRequest(request, response);
 		try {
 			WebDataBinderFactory binderFactory = getDataBinderFactory(handlerMethod);
 			ModelFactory modelFactory = getModelFactory(handlerMethod, binderFactory);
-
-          // 将目标控制器方法包装成一个  ServletInvocableHandlerMethod ，最终的目标控制器方法调用
-          // 将使用该对象进行，
-          // ServletInvocableHandlerMethod 类具备从请求上下文解析控制器方法参数，以及处理
-          // 控制器方法返回值的能力，而参数 HandlerMethod handlerMethod 不具备这个能力
+          // 将目标控制器方法包装成一个  ServletInvocableHandlerMethod,最终的目标控制器方法调用将使用该对象进行，
+          // ServletInvocableHandlerMethod 类具备从请求上下文解析控制器方法参数，以及处理控制器方法返回值的能力,而参数 HandlerMethod handlerMethod 不具备这个能力
 			ServletInvocableHandlerMethod invocableMethod = createInvocableHandlerMethod(handlerMethod);
 			if (this.argumentResolvers != null) {
-            // 设置控制器方法参数解析器
+                // 设置控制器方法参数解析器
 				invocableMethod.setHandlerMethodArgumentResolvers(this.argumentResolvers);
 			}
 			if (this.returnValueHandlers != null) {
@@ -915,16 +1045,15 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapterim
 				invocableMethod.setHandlerMethodReturnValueHandlers(this.returnValueHandlers);
 			}
 			invocableMethod.setDataBinderFactory(binderFactory);
-          //  设置控制器方法参数名称发现器
+            //设置控制器方法参数名称发现器
 			invocableMethod.setParameterNameDiscoverer(this.parameterNameDiscoverer);
-
-          // 准备 ModelAndView 容器，用于接收目标控制器方法执行获得的  ModelAndView 信息  
+            //准备 ModelAndView 容器，用于接收目标控制器方法执行获得的  ModelAndView 信息  
 			ModelAndViewContainer mavContainer = new ModelAndViewContainer();
 			mavContainer.addAllAttributes(RequestContextUtils.getInputFlashMap(request));
 			modelFactory.initModel(webRequest, mavContainer, invocableMethod);
 			mavContainer.setIgnoreDefaultModelOnRedirect(this.ignoreDefaultModelOnRedirect);
 
-          // 关于异步请求的处理  
+            //关于异步请求的处理  
 			AsyncWebRequest asyncWebRequest = WebAsyncUtils.createAsyncWebRequest(request, response);
 			asyncWebRequest.setTimeout(this.asyncRequestTimeout);
 
@@ -1084,6 +1213,5 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapterim
 		}
 		return mav;
 	}
-
 }
 ```
