@@ -1,5 +1,6 @@
 package com.nivelle.spring.springmvc;
 
+import com.nivelle.spring.pojo.User;
 import com.nivelle.spring.springmvc.filter.MyCrossFilter;
 import com.nivelle.spring.springmvc.filter.MyFilter1;
 import com.nivelle.spring.springmvc.filter.MyFilter2;
@@ -9,6 +10,8 @@ import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.servlet.handler.MappedInterceptor;
 
 /**
@@ -106,4 +109,9 @@ public class MyBaseConfig {
 //        MappedInterceptor handlerInterceptor = new MappedInterceptor(includePatterns, new MyHandlerInterceptor());
 //        return handlerInterceptor;
 //    }
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder){
+        binder.registerCustomEditor(User.class,new MyPropertyEditorSupport());
+    }
 }

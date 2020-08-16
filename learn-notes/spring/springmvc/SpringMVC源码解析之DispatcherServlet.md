@@ -1,9 +1,157 @@
 
 #### public class DispatcherServlet extends FrameworkServlet
 
-##### initStrategies(ApplicationContext context)//DispatcherServlet的初始化方法
+##### public abstract class FrameworkServlet extends HttpServletBean implements ApplicationContextAware
+
+- initServletBean()
+
 ```
-//springboot应用中 context是 AnnotationConfigServletWebServerApplicationContext
+protected final void initServletBean() throws ServletException {
+		getServletContext().log("Initializing Spring " + getClass().getSimpleName() + " '" + getServletName() + "'");
+		if (logger.isInfoEnabled()) {
+			logger.info("Initializing Servlet '" + getServletName() + "'");
+		}
+		long startTime = System.currentTimeMillis();
+
+		try {
+		    // 初始化WebApplicationContext属性 WebApplicationContext 是继承自ApplicationContext 接口的接口。 该属性也就是Spring容器上下文。 FrameworkServlet的作用就是将Servlet与Spring容器关联
+			this.webApplicationContext = initWebApplicationContext();
+			// 该方法主要是为了让子类覆写该方法并坐一些需要的处理，不过DispatcherServlet并未覆写该方法。
+			initFrameworkServlet();
+		}
+		catch (ServletException | RuntimeException ex) {
+			logger.error("Context initialization failed", ex);
+			throw ex;
+		}
+
+		if (logger.isDebugEnabled()) {
+			String value = this.enableLoggingRequestDetails ?
+					"shown which may lead to unsafe logging of potentially sensitive data" :
+					"masked to prevent unsafe logging of potentially sensitive data";
+			logger.debug("enableLoggingRequestDetails='" + this.enableLoggingRequestDetails +
+					"': request parameters and headers will be " + value);
+		}
+
+		if (logger.isInfoEnabled()) {
+			logger.info("Completed initialization in " + (System.currentTimeMillis() - startTime) + " ms");
+		}
+	}
+
+```
+
+- initWebApplicationContext()
+
+```
+protected WebApplicationContext initWebApplicationContext() {
+       // 得到跟上下文
+		WebApplicationContext rootContext = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
+		WebApplicationContext wac = null;
+		if (this.webApplicationContext != null) {
+			// A context instance was injected at construction time -> use it
+			wac = this.webApplicationContext;
+			//以WebApplicationContext 为参数的构造函数，同样设置webApplicationContext 的 父容器为 根上下文
+			if (wac instanceof ConfigurableWebApplicationContext) {
+				ConfigurableWebApplicationContext cwac = (ConfigurableWebApplicationContext) wac;
+				if (!cwac.isActive()) {
+					// The context has not yet been refreshed -> provide services such as
+					// setting the parent context, setting the application context id, etc
+					if (cwac.getParent() == null) {
+						// The context instance was injected without an explicit parent -> set
+						// the root application context (if any; may be null) as the parent
+						cwac.setParent(rootContext);
+					}
+					configureAndRefreshWebApplicationContext(cwac);
+				}
+			}
+		}
+		if (wac == null) {
+			// 以contextAttribute属性(FrameworkServlet的String类型属性)为key从ServletContext中找WebApplicationContext。
+			// 一般不会设置contextAttribute属性，也就是说这里找到的wac为null
+			wac = findWebApplicationContext();
+		}
+		if (wac == null) {
+			// 创建WebApplicationContext并设置根上下文为父上下文，然后配置ServletConfig，ServletContext等实例到这个上下文中
+			wac = createWebApplicationContext(rootContext);
+		}
+
+		if (!this.refreshEventReceived) {
+			// webApplicationContext创建成功之后会进行调用，FrameworkServlet空实现子. 子类Dispatcher会覆写这个方法
+			synchronized (this.onRefreshMonitor) {
+				onRefresh(wac);
+			}
+		}
+
+		if (this.publishContext) {
+			// Publish the context as a servlet context attribute.
+			String attrName = getServletContextAttributeName();
+			//将新创建的容器上下文设置到ServletContext中
+			getServletContext().setAttribute(attrName, wac);
+		}
+
+		return wac;
+	}
+
+```
+
+##### 根上下文是web.xml中配置的ContextLoaderListener监听器中根据contextConfigLocation路径生成的上下文
+```
+<context-param>
+  <param-name>contextConfigLocation</param-name>  
+  <param-value>classpath:springConfig/applicationContext.xml</param-value>  
+</context-param>
+<listener>
+  <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>  
+</listener>
+```
+
+##### public abstract class HttpServletBean extends HttpServlet implements EnvironmentCapable, EnvironmentAware
+
+```
+public final void init() throws ServletException {
+
+		// Set bean properties from init parameters.
+		// 构造过程中会使用ServletConfig对象找出web.xml配置文件中的配置参数并设置到 ServletConfigPropertyValues 内部
+		PropertyValues pvs = new ServletConfigPropertyValues(getServletConfig(), this.requiredProperties);
+		if (!pvs.isEmpty()) {
+			try {
+			    // 使用BeanWrapper构造DidpatcherServlet
+				BeanWrapper bw = PropertyAccessorFactory.forBeanPropertyAccess(this);
+				ResourceLoader resourceLoader = new ServletContextResourceLoader(getServletContext());
+				//Resource类型参数使用属性编辑器
+				bw.registerCustomEditor(Resource.class, new ResourceEditor(resourceLoader, getEnvironment()));
+				initBeanWrapper(bw);
+				bw.setPropertyValues(pvs, true);
+			}
+			catch (BeansException ex) {
+				if (logger.isErrorEnabled()) {
+					logger.error("Failed to set bean properties on servlet '" + getServletName() + "'", ex);
+				}
+				throw ex;
+			}
+		}
+
+		// Let subclasses do whatever initialization they like.
+		initServletBean();
+	}
+
+```
+
+##### public abstract class HttpServlet extends GenericServlet
+
+##### public abstract class GenericServlet implements Servlet, ServletConfig,java.io.Serializable 
+
+
+- protected void onRefresh(ApplicationContext context)//DispatcherServlet覆写了FrameworkServlet中的onRefresh方法
+
+```
+protected void onRefresh(ApplicationContext context) {
+		initStrategies(context);
+	}
+
+```
+
+-  initStrategies(ApplicationContext context)//springBoot context是 AnnotationConfigServletWebServerApplicationContext
+```
 protected void initStrategies(ApplicationContext context) {
         // MultipartResolver 文件上传相关:从bean容器中中获取名字为 MULTIPART_RESOLVER_BEAN_NAME(multipartResolver)的bean，记录到属性multipartResolver，没有响应bean的话设置为null
 		initMultipartResolver(context);
@@ -27,7 +175,7 @@ protected void initStrategies(ApplicationContext context) {
 
 ```
 
-##### 选择handler
+#### 选择handler
 
 ```
 protected HandlerExecutionChain getHandler(HttpServletRequest request) throws Exception {
@@ -46,7 +194,7 @@ protected HandlerExecutionChain getHandler(HttpServletRequest request) throws Ex
 
 ```
 
-##### 默认返回noHandlerFound
+#### 默认返回noHandlerFound
 
 ```
 protected void noHandlerFound(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -65,7 +213,7 @@ protected void noHandlerFound(HttpServletRequest request, HttpServletResponse re
 	}
 
 ```
-##### getHandlerAdapter(Object handler)
+#### getHandlerAdapter(Object handler)
 
 - DispatcherServlet请求处理过程中,执行Handler处理请求是通过HandlerAdapter完成的，而并非是DispatcherServlet直接调用Handler提供的处理方法
 
@@ -87,7 +235,7 @@ protected HandlerAdapter getHandlerAdapter(Object handler) throws ServletExcepti
 ```
 
 
-##### doDispatch()
+#### doDispatch()
 
 ```
 protected void doDispatch(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -180,7 +328,7 @@ protected void doDispatch(HttpServletRequest request, HttpServletResponse respon
 
 ```
 
-##### private void processDispatchResult(HttpServletRequest request, HttpServletResponse response,@Nullable HandlerExecutionChain mappedHandler, @Nullable ModelAndView mv,@Nullable Exception exception) throws Exception 
+#### private void processDispatchResult(HttpServletRequest request, HttpServletResponse response,@Nullable HandlerExecutionChain mappedHandler, @Nullable ModelAndView mv,@Nullable Exception exception) throws Exception 
 
 ```
 private void processDispatchResult(HttpServletRequest request, HttpServletResponse response,
@@ -229,7 +377,7 @@ private void processDispatchResult(HttpServletRequest request, HttpServletRespon
 
 ```
 
-##### protected void render(ModelAndView mv, HttpServletRequest request, HttpServletResponse response)//解析绘出视图
+#### protected void render(ModelAndView mv, HttpServletRequest request, HttpServletResponse response)//解析绘出视图
 
 ```
 protected void render(ModelAndView mv, HttpServletRequest request, HttpServletResponse response) throws Exception {

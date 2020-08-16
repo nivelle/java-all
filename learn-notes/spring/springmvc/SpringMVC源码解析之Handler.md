@@ -1,4 +1,23 @@
 
+### HandlerMethod
+
+#### 一个HandlerMethod对象,包装了以下信息：
+
+- Object bean: Web控制器方法所在的Web控制器bean. 可以是字符串，代表bean 的名称，也可以是bean实例对象本身
+
+- Class beanType: Web控制器方法所在的Web控制器bean的类型，如果该bean被代理，这里记录的是被代理的用户类信息
+
+- Method method: Web控制器方法
+
+- Method bridgedMethod: 被桥接的Web控制器方法
+
+- MethodParameter[] parameter :Web控制器方法的参数信息，所在类所在方法，参数，索引，参数类型
+
+- HttpStatus responseStatus: 注解@ResponseStatus 的code 属性
+
+- String responseStatusReason: 注解@ResponseStatus 的 reason 属性
+
+
 ### HandlerExecutionChain
 
 #### boolean applyPreHandle(HttpServletRequest request, HttpServletResponse response)

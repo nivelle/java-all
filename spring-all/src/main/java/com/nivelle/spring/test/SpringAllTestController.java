@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -90,6 +91,7 @@ public class SpringAllTestController {
      */
     @PostMapping("/value")
     @ResponseBody
+    @ResponseStatus(value = HttpStatus.SERVICE_UNAVAILABLE,reason = "瞎几吧搞")
     public Object value(@Value(value = "${myConfig.desc}") String name) {
         System.out.println(name);
         return name + "return";
@@ -101,6 +103,7 @@ public class SpringAllTestController {
      */
     @PostMapping("/config")
     @ResponseBody
+    @ResponseStatus(code =HttpStatus.BAD_GATEWAY)
     public Object config(@RequestBody User user) {
         String desc = commonConfig.getDesc();
         System.out.println(desc);
