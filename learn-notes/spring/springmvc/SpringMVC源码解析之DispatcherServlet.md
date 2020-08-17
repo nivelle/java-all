@@ -215,9 +215,9 @@ protected void noHandlerFound(HttpServletRequest request, HttpServletResponse re
 ```
 #### getHandlerAdapter(Object handler)
 
-- DispatcherServlet请求处理过程中,执行Handler处理请求是通过HandlerAdapter完成的，而并非是DispatcherServlet直接调用Handler提供的处理方法
+- DispatcherServlet请求处理过程中,执行Handler处理请求是通过HandlerAdapter完成的,而并非是DispatcherServlet直接调用Handler提供的处理方法
 
-- DispatcherServlet初始化过程中初始化了initHandlerAdapters,SpringMVC默认提供了多种HandlerAdapter (WebMvcConfigurationSupport)
+- DispatcherServlet初始化过程中初始化了 initHandlerAdapters,SpringMVC默认提供了多种HandlerAdapter (WebMvcConfigurationSupport)
 
 ```
 protected HandlerAdapter getHandlerAdapter(Object handler) throws ServletException {
@@ -233,7 +233,228 @@ protected HandlerAdapter getHandlerAdapter(Object handler) throws ServletExcepti
 	}
 
 ```
+##### handle()方法子类实现： public abstract class AbstractHandlerMethodAdapter extends WebContentGenerator implements HandlerAdapter, Ordered
 
+```
+protected ModelAndView handleInternal(HttpServletRequest request,
+			HttpServletResponse response, HandlerMethod handlerMethod) throws Exception {
+
+		ModelAndView mav;
+		checkRequest(request);
+
+		// Execute invokeHandlerMethod in synchronized block if required.
+		if (this.synchronizeOnSession) {
+			HttpSession session = request.getSession(false);
+			if (session != null) {
+				Object mutex = WebUtils.getSessionMutex(session);
+				synchronized (mutex) {
+					mav = invokeHandlerMethod(request, response, handlerMethod);
+				}
+			}
+			else {
+				// No HttpSession available -> no mutex necessary
+				mav = invokeHandlerMethod(request, response, handlerMethod);
+			}
+		}
+		else {
+			// No synchronization on session demanded at all...
+			mav = invokeHandlerMethod(request, response, handlerMethod);
+		}
+
+		if (!response.containsHeader(HEADER_CACHE_CONTROL)) {
+			if (getSessionAttributesHandler(handlerMethod).hasSessionAttributes()) {
+				applyCacheSeconds(response, this.cacheSecondsForSessionAttributeHandlers);
+			}
+			else {
+				prepareResponse(response);
+			}
+		}
+
+		return mav;
+	}
+
+```
+
+##### handleInternal()方法 子类实现：public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter implements BeanFactoryAware, InitializingBean
+ 
+ ```
+ protected ModelAndView handleInternal(HttpServletRequest request,HttpServletResponse response, HandlerMethod handlerMethod) throws Exception {
+       
+       		ModelAndView mav;
+       		checkRequest(request);
+       		// Execute invokeHandlerMethod in synchronized block if required.
+       		if (this.synchronizeOnSession) {
+       			HttpSession session = request.getSession(false);
+       			if (session != null) {
+       				Object mutex = WebUtils.getSessionMutex(session);
+       				synchronized (mutex) {
+       					mav = invokeHandlerMethod(request, response, handlerMethod);
+       				}
+       			}
+       			else {
+       				// No HttpSession available -> no mutex necessary
+       				mav = invokeHandlerMethod(request, response, handlerMethod);
+       			}
+       		}
+       		else {
+       			// No synchronization on session demanded at all...
+       			mav = invokeHandlerMethod(request, response, handlerMethod);
+       		}
+       
+       		if (!response.containsHeader(HEADER_CACHE_CONTROL)) {
+       			if (getSessionAttributesHandler(handlerMethod).hasSessionAttributes()) {
+       				applyCacheSeconds(response, this.cacheSecondsForSessionAttributeHandlers);
+       			}
+       			else {
+       				prepareResponse(response);
+       			}
+       		}
+       
+       		return mav;
+       	}
+
+```
+
+##### invokeHandlerMethod 实现
+
+```
+protected ModelAndView invokeHandlerMethod(HttpServletRequest request,HttpServletResponse response, HandlerMethod handlerMethod) throws Exception {
+
+		ServletWebRequest webRequest = new ServletWebRequest(request, response);
+		try {
+			WebDataBinderFactory binderFactory = getDataBinderFactory(handlerMethod);
+			ModelFactory modelFactory = getModelFactory(handlerMethod, binderFactory);
+
+			ServletInvocableHandlerMethod invocableMethod = createInvocableHandlerMethod(handlerMethod);
+			if (this.argumentResolvers != null) {
+				invocableMethod.setHandlerMethodArgumentResolvers(this.argumentResolvers);
+			}
+			if (this.returnValueHandlers != null) {
+				invocableMethod.setHandlerMethodReturnValueHandlers(this.returnValueHandlers);
+			}
+			invocableMethod.setDataBinderFactory(binderFactory);
+			invocableMethod.setParameterNameDiscoverer(this.parameterNameDiscoverer);
+
+			ModelAndViewContainer mavContainer = new ModelAndViewContainer();
+			mavContainer.addAllAttributes(RequestContextUtils.getInputFlashMap(request));
+			modelFactory.initModel(webRequest, mavContainer, invocableMethod);
+			mavContainer.setIgnoreDefaultModelOnRedirect(this.ignoreDefaultModelOnRedirect);
+
+			AsyncWebRequest asyncWebRequest = WebAsyncUtils.createAsyncWebRequest(request, response);
+			asyncWebRequest.setTimeout(this.asyncRequestTimeout);
+
+			WebAsyncManager asyncManager = WebAsyncUtils.getAsyncManager(request);
+			asyncManager.setTaskExecutor(this.taskExecutor);
+			asyncManager.setAsyncWebRequest(asyncWebRequest);
+			asyncManager.registerCallableInterceptors(this.callableInterceptors);
+			asyncManager.registerDeferredResultInterceptors(this.deferredResultInterceptors);
+
+			if (asyncManager.hasConcurrentResult()) {
+				Object result = asyncManager.getConcurrentResult();
+				mavContainer = (ModelAndViewContainer) asyncManager.getConcurrentResultContext()[0];
+				asyncManager.clearConcurrentResult();
+				LogFormatUtils.traceDebug(logger, traceOn -> {
+					String formatted = LogFormatUtils.formatValue(result, !traceOn);
+					return "Resume with async result [" + formatted + "]";
+				});
+				invocableMethod = invocableMethod.wrapConcurrentResult(result);
+			}
+
+			invocableMethod.invokeAndHandle(webRequest, mavContainer);
+			if (asyncManager.isConcurrentHandlingStarted()) {
+				return null;
+			}
+
+			return getModelAndView(mavContainer, modelFactory, webRequest);
+		}
+		finally {
+			webRequest.requestCompleted();
+		}
+	}
+
+
+```
+
+##### invokeAndHandle 方法子类实现 : public class ServletInvocableHandlerMethod extends InvocableHandlerMethod 
+
+```
+public void invokeAndHandle(ServletWebRequest webRequest, ModelAndViewContainer mavContainer,
+			Object... providedArgs) throws Exception {
+        
+        //真正执行控制器方法
+		Object returnValue = invokeForRequest(webRequest, mavContainer, providedArgs);
+		setResponseStatus(webRequest);
+
+		if (returnValue == null) {
+			if (isRequestNotModified(webRequest) || getResponseStatus() != null || mavContainer.isRequestHandled()) {
+				disableContentCachingIfNecessary(webRequest);
+				mavContainer.setRequestHandled(true);
+				return;
+			}
+		}
+		else if (StringUtils.hasText(getResponseStatusReason())) {
+			mavContainer.setRequestHandled(true);
+			return;
+		}
+
+		mavContainer.setRequestHandled(false);
+		Assert.state(this.returnValueHandlers != null, "No return value handlers");
+		try {
+		   //对返回值做处理 
+			this.returnValueHandlers.handleReturnValue(
+					returnValue, getReturnValueType(returnValue), mavContainer, webRequest);
+		}
+		catch (Exception ex) {
+			if (logger.isTraceEnabled()) {
+				logger.trace(formatErrorForReturnValue(returnValue), ex);
+			}
+			throw ex;
+		}
+	}
+
+```
+##### invokeForRequest子类实现：public class InvocableHandlerMethod extends HandlerMethod 
+
+```
+public Object invokeForRequest(NativeWebRequest request, @Nullable ModelAndViewContainer mavContainer,
+			Object... providedArgs) throws Exception {
+
+		Object[] args = getMethodArgumentValues(request, mavContainer, providedArgs);
+		if (logger.isTraceEnabled()) {
+			logger.trace("Arguments: " + Arrays.toString(args));
+		}
+		return doInvoke(args);
+	}
+//执行反射方法	
+protected Object doInvoke(Object... args) throws Exception {
+		ReflectionUtils.makeAccessible(getBridgedMethod());
+		try {
+			return getBridgedMethod().invoke(getBean(), args);
+		}
+		catch (IllegalArgumentException ex) {
+			assertTargetBean(getBridgedMethod(), getBean(), args);
+			String text = (ex.getMessage() != null ? ex.getMessage() : "Illegal argument");
+			throw new IllegalStateException(formatInvokeError(text, args), ex);
+		}
+		catch (InvocationTargetException ex) {
+			// Unwrap for HandlerExceptionResolvers ...
+			Throwable targetException = ex.getTargetException();
+			if (targetException instanceof RuntimeException) {
+				throw (RuntimeException) targetException;
+			}
+			else if (targetException instanceof Error) {
+				throw (Error) targetException;
+			}
+			else if (targetException instanceof Exception) {
+				throw (Exception) targetException;
+			}
+			else {
+				throw new IllegalStateException(formatInvokeError("Invocation failure", args), targetException);
+			}
+		}
+	}
+
+```
 
 #### doDispatch()
 

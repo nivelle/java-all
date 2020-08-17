@@ -36,7 +36,7 @@ public class DataSourceConfig {
      */
     @Bean(name = "slaveDataSource")
     @Qualifier("slaveDataSource")
-    @Primary //当有多个实例时，用该注解表明先于未加该注解的实例注入，并不是表示它时主实例
+    @Primary //当有多个实例时，用该注解表明先于未加该注解的实例注入，并不是表示它是主实例
     @ConfigurationProperties(prefix = "spring.datasource.slave")
     public DataSource slaveDataSource() {
         return DataSourceBuilder.create().build();

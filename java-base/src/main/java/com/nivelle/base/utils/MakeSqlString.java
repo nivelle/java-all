@@ -123,6 +123,13 @@ public class MakeSqlString {
             stringBuilder1.append(" ");
             stringBuilder1.append(stringBuilder2);
         }
-        System.out.println(stringBuilder1.toString());
+        //System.out.println(stringBuilder1.toString());
+        int initId = 1141;
+        StringBuilder stringBuilder2 = new StringBuilder();
+        for (int i=1142;i<=1255;i++){
+            stringBuilder2.append(i);
+            stringBuilder2.append(",");
+        }
+        System.out.println(stringBuilder2.toString());
     }
 }

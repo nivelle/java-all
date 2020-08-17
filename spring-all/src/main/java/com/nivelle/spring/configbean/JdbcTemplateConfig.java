@@ -33,10 +33,8 @@ public class JdbcTemplateConfig {
      * @param dataSource
      * @return
      */
-    /**
-     * TODO @Bean 方法参数注入的时候, 先按照名字注入，若名字没匹配到则按照类型注入
-     */
     @Bean(name = "slaveJdbcTemplate")
+    //@Bean 构造方法参数注入的时候, 先按照名字注入，若名字没匹配到则按照类型注入
     public JdbcTemplate slaveJdbcTemplate(
             @Qualifier("slaveDataSource") DataSource dataSource) {
         return new JdbcTemplate(dataSource);
