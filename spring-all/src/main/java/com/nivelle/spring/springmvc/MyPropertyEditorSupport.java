@@ -5,7 +5,7 @@ import com.nivelle.spring.pojo.User;
 import java.beans.PropertyEditorSupport;
 
 /**
- * 自定义属性转换器
+ * 自定义属性转换器(类型转的一种)
  *
  * @author fuxinzhong
  * @date 2020/08/16

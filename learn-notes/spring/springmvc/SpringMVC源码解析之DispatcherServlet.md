@@ -424,7 +424,8 @@ public Object invokeForRequest(NativeWebRequest request, @Nullable ModelAndViewC
 			logger.trace("Arguments: " + Arrays.toString(args));
 		}
 		return doInvoke(args);
-	}
+}
+	
 //执行反射方法	
 protected Object doInvoke(Object... args) throws Exception {
 		ReflectionUtils.makeAccessible(getBridgedMethod());

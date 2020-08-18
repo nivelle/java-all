@@ -4,6 +4,7 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.format.FormatterRegistry;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
@@ -111,6 +112,11 @@ public class MyWebConfig implements WebMvcConfigurer {
         // 下面这样写的意思是：对含有 MyAnnotationImportBeanDefinitionRegistrar 注解的controller添加/test前缀
         //configurer.addPathPrefix("test", c -> c.isAnnotationPresent(MyAnnotationImportBeanDefinitionRegistrar.class));
         configurer.addPathPrefix("test", c -> c.getPackage().getName().contains("com.nivelle.spring.test"));
+    }
+
+    @Override
+    public  void  addFormatters(FormatterRegistry registry){
+        registry.addConverter(new MyParamsConverter());
     }
 
 }

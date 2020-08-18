@@ -114,4 +114,5 @@ public class MyBaseConfig {
     public void initBinder(WebDataBinder binder){
         binder.registerCustomEditor(User.class,new MyPropertyEditorSupport());
     }
+    
 }

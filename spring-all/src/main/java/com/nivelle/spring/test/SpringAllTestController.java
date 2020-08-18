@@ -25,6 +25,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.ModelAndView;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -58,8 +59,10 @@ public class SpringAllTestController {
     WebApplicationContext webApplicationConnect;
 
     ///springMVC核心注解
+
     /**
      * 获取某个请求头
+     *
      * @param contentType
      * @return
      * @RequestHeader
@@ -70,6 +73,7 @@ public class SpringAllTestController {
         System.out.println(contentType);
         return contentType + "aa";
     }
+
     /**
      * 获取所有的请求头
      *
@@ -83,6 +87,7 @@ public class SpringAllTestController {
         System.out.println(headers);
         return headers;
     }
+
     /**
      * 本质上是利用了 @RequestParam defaultValue 持占位符和SpEL的特性
      *
@@ -91,19 +96,21 @@ public class SpringAllTestController {
      */
     @PostMapping("/value")
     @ResponseBody
-    @ResponseStatus(value = HttpStatus.SERVICE_UNAVAILABLE,reason = "瞎几吧搞")
+    @ResponseStatus(value = HttpStatus.SERVICE_UNAVAILABLE, reason = "瞎几吧搞")
     public Object value(@Value(value = "${myConfig.desc}") String name) {
         System.out.println(name);
         return name + "return";
     }
+
     /**
      * MethodArgumentResolver
+     *
      * @param user
      * @return
      */
     @PostMapping("/config")
     @ResponseBody
-    @ResponseStatus(code =HttpStatus.BAD_GATEWAY)
+    @ResponseStatus(code = HttpStatus.BAD_GATEWAY)
     public Object config(@RequestBody User user) {
         String desc = commonConfig.getDesc();
         System.out.println(desc);
@@ -113,6 +120,7 @@ public class SpringAllTestController {
         result.put("name", user.getName());
         return result;
     }
+
     /**
      * pathValue 非必填
      *
@@ -141,10 +149,10 @@ public class SpringAllTestController {
         result.put("name", params.get("name") + "fuck");
         return result;
     }
+
     /**
-     * @RequestParam  value 支持占位符
-     *
      * @return
+     * @RequestParam value 支持占位符
      */
     @PostMapping("/config3")
     @ResponseBody
@@ -153,6 +161,7 @@ public class SpringAllTestController {
         result.put("desc", desc);
         return result;
     }
+
     /**
      * 参数映射前拦截器: requestBodyAdvice
      *
@@ -163,6 +172,7 @@ public class SpringAllTestController {
     public String argument() {
         return "nivelle";
     }
+
     /**
      * 返回值返回前拦截器: responseBodyAdvice
      *
@@ -178,6 +188,7 @@ public class SpringAllTestController {
 
     /**
      * MyHttpMessageConvert 测试
+     *
      * @return
      */
     @RequestMapping("/return2")
@@ -196,7 +207,7 @@ public class SpringAllTestController {
         User user = new User();
         user.setAge(1);
         user.setName("nivelle");
-        properties.setProperty("user",user.toString());
+        properties.setProperty("user", user.toString());
         return properties;
     }
 
@@ -416,5 +427,26 @@ public class SpringAllTestController {
             System.err.println(e);
         }
     }
+
+    /**
+     * 类型转换器测试
+     *
+     * @param source
+     */
+    @RequestMapping("/converter")
+    @ResponseBody
+    public Object converter(Boolean source) {
+        /**
+         *      trueValues.add("true");
+         * 		trueValues.add("on");
+         * 		trueValues.add("yes");
+         * 		trueValues.add("1");
+         */
+        System.err.println(source);
+        System.err.println(source);
+        System.err.println(source);
+        return source;
+    }
+
 
 }
