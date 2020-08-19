@@ -273,3 +273,10 @@ public interface ConditionalConverter {
 
 }
 ````
+
+### Formatter
+
+```
+public interface Formatter<T> extends Printer<T>, Parser<T> {
+}
+```

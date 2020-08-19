@@ -9,7 +9,10 @@ import org.apache.catalina.connector.Connector;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.coyote.Adapter;
 import org.apache.coyote.ProtocolHandler;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.ServletContext;
@@ -29,6 +32,9 @@ import java.util.HashMap;
 @RestController
 @RequestMapping(value = "/tomcat")
 public class TomcatController {
+
+    @Autowired
+    ApplicationContext applicationContext;
 
     @RequestMapping(value = "mytomcat")
     public String myTomcat(ServletRequest servletRequest, ServletResponse servletResponse) {
@@ -57,6 +63,19 @@ public class TomcatController {
 
         result.put("接口处的收到的host",httpServlet.getRemoteHost());
         return GsonUtils.toJson(result);
+    }
+
+    /**
+     * 默认加载类
+     *
+     * @para
+     */
+    @RequestMapping("/defaultBeans")
+    @ResponseBody
+    public Object defaultBeans() {
+        String[] defaultBeans = applicationContext.getBeanDefinitionNames();
+        System.out.println(defaultBeans.length);
+        return defaultBeans;
     }
 
     public static void main(String[] args) throws Exception {

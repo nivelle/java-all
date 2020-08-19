@@ -14,9 +14,11 @@ import com.nivelle.spring.springcore.listener.springevent.MyEvent;
 import com.nivelle.spring.springmvc.MyHandlerMethodArgumentResolver;
 import com.nivelle.spring.springmvc.MyHandlerMethodReturnValueHandler;
 import com.nivelle.spring.springmvc.MyHttpMessageConverter;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -30,13 +32,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 @Controller
-public class SpringAllTestController {
+public class SpringAllTestController implements ApplicationContextAware {
 
     @Autowired
     CommonConfig commonConfig;
@@ -46,8 +45,7 @@ public class SpringAllTestController {
     ActivityDaoImpl activityDao;
     @Autowired
     MyFactoryBean myFactoryBean;
-    @Autowired
-    ApplicationContext applicationContext;
+
     @Autowired
     MyService myService;
     @Autowired
@@ -57,6 +55,9 @@ public class SpringAllTestController {
      */
     @Autowired
     WebApplicationContext webApplicationConnect;
+
+
+    ApplicationContext applicationContext;
 
     ///springMVC核心注解
 
@@ -449,4 +450,51 @@ public class SpringAllTestController {
     }
 
 
+    /**
+     * 类型转换器测试
+     *
+     * @param source
+     */
+    @RequestMapping("/converter2")
+    @ResponseBody
+    public Object converter2(Date source) {
+        System.err.println(source);
+        System.err.println(source);
+        System.err.println(source);
+        return source;
+    }
+
+    /**
+     * 类型转换器测试
+     *
+     * @param user
+     */
+    @RequestMapping("/converter3")
+    @ResponseBody
+    public Object converter3(@RequestBody User user) {
+        System.err.println(user);
+        System.err.println(user);
+        System.err.println(user);
+        return user;
+    }
+
+    /**
+     * 默认加载类
+     *
+     * @para
+     */
+    @RequestMapping("/defaultBeans")
+    @ResponseBody
+    public Object defaultBeans() {
+        String[] defaultBeans = applicationContext.getBeanDefinitionNames();
+        System.out.println(defaultBeans.length);
+        return defaultBeans;
+    }
+
+
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+         this.applicationContext = applicationContext;
+    }
 }

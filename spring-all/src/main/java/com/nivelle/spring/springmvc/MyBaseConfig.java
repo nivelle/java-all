@@ -23,15 +23,7 @@ import org.springframework.web.servlet.handler.MappedInterceptor;
 @Configuration
 public class MyBaseConfig {
 
-    /**
-     * 自定义消息转换器
-     *
-     * @return
-     */
-    @Bean
-    public MyHttpMessageConverter converter() {
-        return new MyHttpMessageConverter();
-    }
+
 
     /**
      * 自定义servle有三种注入方式

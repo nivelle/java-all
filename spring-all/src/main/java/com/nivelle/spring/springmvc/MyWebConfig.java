@@ -3,6 +3,7 @@ package com.nivelle.spring.springmvc;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -84,8 +85,33 @@ public class MyWebConfig implements WebMvcConfigurer {
         //设置的index越靠前越优先尝试。 若设置为尾部则优先生效的是 MappingJackson2HttpMessageConverter
         //converters.add(0,fjc);
         converters.add(fjc);
-        MyHttpMessageConverter myHttpMessageConverter = new MyHttpMessageConverter();
-        converters.add(myHttpMessageConverter);
+        converters.add(converter1());
+        converters.add(converter2());
+        //converters 注入有三种方式：
+        //1.  @Bean
+        //2.  configureMessageConverters
+        //3.  extendMessageConverters
+
+    }
+
+    /**
+     * 自定义消息转换器
+     *
+     * @return
+     */
+    @Bean
+    public MyHttpMessageConverter converter1() {
+        return new MyHttpMessageConverter();
+    }
+
+    /**
+     * 自定义消息转换器
+     *
+     * @return
+     */
+    @Bean
+    public MyHttpMessageConverter2 converter2() {
+        return new MyHttpMessageConverter2();
     }
 
     /**

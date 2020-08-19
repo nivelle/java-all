@@ -17,7 +17,21 @@ import java.util.Properties;
 /**
  * 自定义 properties 类型参数转换
  *
- * @Author nivelle
+ * HttpMessageConverter虽然功能上也表现为HttpMessage与任意类型的转换，但其接口和Convert SPI并没有继承关系。
+ *
+ * HttpMessageConverter属于spring-web。
+ *
+ * HttpMessage是SpringMVC对Servlet规范中HttpServletRequest和HttpServletResponse的包装，因此接受请求时需要把Ht
+ * tpMessage转换成用户需要的数据，在生成响应时需要把用户生成的数据转换成HttpMessage。
+ * 如果用户在XML的<mvc:message-converters>中没有指定register-defaults=false，SpringMVC默认至少会注册一些自带的HttpMessageConvertor
+ *
+ * 从先后顺序排列分别为:
+ *
+ * 1. ByteArrayHttpMessageConverter
+ * 2.StringHttpMessageConverter
+ * 3.ResourceHttpMessageConverter
+ * 4.SourceHttpMessageConverter
+ * 5.AllEncompassingFormHttpMessageConverter
  */
 //若不指定消息转换器，则优先使用后自定义后加入的消息转换器。 通过 Accept 消息头来指定
 public class MyHttpMessageConverter extends AbstractGenericHttpMessageConverter<Properties> {
