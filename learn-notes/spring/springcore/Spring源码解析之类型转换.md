@@ -280,3 +280,209 @@ public interface ConditionalConverter {
 public interface Formatter<T> extends Printer<T>, Parser<T> {
 }
 ```
+
+
+#### HttpMessage 转换
+
+- HttpInputMessage 转为入参
+
+```
+protected <T> Object readWithMessageConverters(HttpInputMessage inputMessage, MethodParameter parameter,Type targetType) throws IOException, HttpMediaTypeNotSupportedException, HttpMessageNotReadableException {
+
+		MediaType contentType;
+		boolean noContentType = false;
+		try {
+			contentType = inputMessage.getHeaders().getContentType();
+		}
+		catch (InvalidMediaTypeException ex) {
+			throw new HttpMediaTypeNotSupportedException(ex.getMessage());
+		}
+		if (contentType == null) {
+			noContentType = true;
+			contentType = MediaType.APPLICATION_OCTET_STREAM;
+		}
+		Class<?> contextClass = parameter.getContainingClass();
+		Class<T> targetClass = (targetType instanceof Class ? (Class<T>) targetType : null);
+		if (targetClass == null) {
+			ResolvableType resolvableType = ResolvableType.forMethodParameter(parameter);
+			targetClass = (Class<T>) resolvableType.resolve();
+		}
+		HttpMethod httpMethod = (inputMessage instanceof HttpRequest ? ((HttpRequest) inputMessage).getMethod() : null);
+		Object body = NO_VALUE;
+
+		EmptyBodyCheckingHttpInputMessage message;
+		try {
+			message = new EmptyBodyCheckingHttpInputMessage(inputMessage);
+            //遍历排好序的消息转换器: beforeBodyRead() ,read(),afterBodyRead()
+			for (HttpMessageConverter<?> converter : this.messageConverters) {
+				Class<HttpMessageConverter<?>> converterType = (Class<HttpMessageConverter<?>>) converter.getClass();
+				GenericHttpMessageConverter<?> genericConverter =
+						(converter instanceof GenericHttpMessageConverter ? (GenericHttpMessageConverter<?>) converter : null);
+				if (genericConverter != null ? genericConverter.canRead(targetType, contextClass, contentType) :
+						(targetClass != null && converter.canRead(targetClass, contentType))) {
+					if (message.hasBody()) {
+						HttpInputMessage msgToUse =getAdvice().beforeBodyRead(message, parameter, targetType, converterType);
+						body = (genericConverter != null ? genericConverter.read(targetType, contextClass, msgToUse) :((HttpMessageConverter<T>) converter).read(targetClass, msgToUse));
+						body = getAdvice().afterBodyRead(body, msgToUse, parameter, targetType, converterType);
+					}
+					else {
+						body = getAdvice().handleEmptyBody(null, message, parameter, targetType, converterType);
+					}
+					break;
+				}
+			}
+		}
+		catch (IOException ex) {
+			throw new HttpMessageNotReadableException("I/O error while reading input message", ex, inputMessage);
+		}
+
+		if (body == NO_VALUE) {
+			if (httpMethod == null || !SUPPORTED_METHODS.contains(httpMethod) ||(noContentType && !message.hasBody())) {
+				return null;
+			}
+			throw new HttpMediaTypeNotSupportedException(contentType, this.allSupportedMediaTypes);
+		}
+		MediaType selectedContentType = contentType;
+		Object theBody = body;
+		LogFormatUtils.traceDebug(logger, traceOn -> {
+			String formatted = LogFormatUtils.formatValue(theBody, !traceOn);
+			return "Read \"" + selectedContentType + "\" to [" + formatted + "]";
+		});
+
+		return body;
+	}
+
+
+```
+
+- 返参转 HttpOutMessage
+
+```
+
+protected <T> void writeWithMessageConverters(@Nullable T value, MethodParameter returnType,ServletServerHttpRequest inputMessage, ServletServerHttpResponse outputMessage)
+			throws IOException, HttpMediaTypeNotAcceptableException, HttpMessageNotWritableException {
+		Object body;
+		Class<?> valueType;
+		Type targetType;
+
+		if (value instanceof CharSequence) {
+			body = value.toString();
+			valueType = String.class;
+			targetType = String.class;
+		}
+		else {
+			body = value;
+			valueType = getReturnValueType(body, returnType);
+			targetType = GenericTypeResolver.resolveType(getGenericType(returnType), returnType.getContainingClass());
+		}
+
+		if (isResourceType(value, returnType)) {
+			outputMessage.getHeaders().set(HttpHeaders.ACCEPT_RANGES, "bytes");
+			if (value != null && inputMessage.getHeaders().getFirst(HttpHeaders.RANGE) != null &&
+					outputMessage.getServletResponse().getStatus() == 200) {
+				Resource resource = (Resource) value;
+				try {
+					List<HttpRange> httpRanges = inputMessage.getHeaders().getRange();
+					outputMessage.getServletResponse().setStatus(HttpStatus.PARTIAL_CONTENT.value());
+					body = HttpRange.toResourceRegions(httpRanges, resource);
+					valueType = body.getClass();
+					targetType = RESOURCE_REGION_LIST_TYPE;
+				}
+				catch (IllegalArgumentException ex) {
+					outputMessage.getHeaders().set(HttpHeaders.CONTENT_RANGE, "bytes */" + resource.contentLength());
+					outputMessage.getServletResponse().setStatus(HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE.value());
+				}
+			}
+		}
+
+		MediaType selectedMediaType = null;
+		MediaType contentType = outputMessage.getHeaders().getContentType();
+		if (contentType != null && contentType.isConcrete()) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Found 'Content-Type:" + contentType + "' in response");
+			}
+			selectedMediaType = contentType;
+		}
+		else {
+			HttpServletRequest request = inputMessage.getServletRequest();
+			List<MediaType> acceptableTypes = getAcceptableMediaTypes(request);
+			List<MediaType> producibleTypes = getProducibleMediaTypes(request, valueType, targetType);
+
+			if (body != null && producibleTypes.isEmpty()) {
+				throw new HttpMessageNotWritableException(
+						"No converter found for return value of type: " + valueType);
+			}
+			List<MediaType> mediaTypesToUse = new ArrayList<>();
+			for (MediaType requestedType : acceptableTypes) {
+				for (MediaType producibleType : producibleTypes) {
+					if (requestedType.isCompatibleWith(producibleType)) {
+						mediaTypesToUse.add(getMostSpecificMediaType(requestedType, producibleType));
+					}
+				}
+			}
+			if (mediaTypesToUse.isEmpty()) {
+				if (body != null) {
+					throw new HttpMediaTypeNotAcceptableException(producibleTypes);
+				}
+				if (logger.isDebugEnabled()) {
+					logger.debug("No match for " + acceptableTypes + ", supported: " + producibleTypes);
+				}
+				return;
+			}
+
+			MediaType.sortBySpecificityAndQuality(mediaTypesToUse);
+
+			for (MediaType mediaType : mediaTypesToUse) {
+				if (mediaType.isConcrete()) {
+					selectedMediaType = mediaType;
+					break;
+				}
+				else if (mediaType.isPresentIn(ALL_APPLICATION_MEDIA_TYPES)) {
+					selectedMediaType = MediaType.APPLICATION_OCTET_STREAM;
+					break;
+				}
+			}
+
+			if (logger.isDebugEnabled()) {
+				logger.debug("Using '" + selectedMediaType + "', given " +
+						acceptableTypes + " and supported " + producibleTypes);
+			}
+		}
+
+		if (selectedMediaType != null) {
+			selectedMediaType = selectedMediaType.removeQualityValue();
+			// beforeBodyWrite(),converter.write(),
+			for (HttpMessageConverter<?> converter : this.messageConverters) {
+				GenericHttpMessageConverter genericConverter = (converter instanceof GenericHttpMessageConverter ?
+						(GenericHttpMessageConverter<?>) converter : null);
+				if (genericConverter != null ?
+						((GenericHttpMessageConverter) converter).canWrite(targetType, valueType, selectedMediaType) :
+						converter.canWrite(valueType, selectedMediaType)) {
+					body = getAdvice().beforeBodyWrite(body, returnType, selectedMediaType,(Class<? extends HttpMessageConverter<?>>) converter.getClass(),inputMessage, outputMessage);
+					if (body != null) {
+						Object theBody = body;
+						LogFormatUtils.traceDebug(logger, traceOn ->"Writing [" + LogFormatUtils.formatValue(theBody, !traceOn) + "]");
+						addContentDispositionHeader(inputMessage, outputMessage);
+						if (genericConverter != null) {
+							genericConverter.write(body, targetType, selectedMediaType, outputMessage);
+						}
+						else {
+							((HttpMessageConverter) converter).write(body, selectedMediaType, outputMessage);
+						}
+					}
+					else {
+						if (logger.isDebugEnabled()) {
+							logger.debug("Nothing to write: null body");
+						}
+					}
+					return;
+				}
+			}
+		}
+
+		if (body != null) {
+			throw new HttpMediaTypeNotAcceptableException(this.allSupportedMediaTypes);
+		}
+	}
+
+```

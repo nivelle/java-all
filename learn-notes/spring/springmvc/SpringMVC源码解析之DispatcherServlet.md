@@ -241,7 +241,6 @@ protected ModelAndView handleInternal(HttpServletRequest request,
 
 		ModelAndView mav;
 		checkRequest(request);
-
 		// Execute invokeHandlerMethod in synchronized block if required.
 		if (this.synchronizeOnSession) {
 			HttpSession session = request.getSession(false);

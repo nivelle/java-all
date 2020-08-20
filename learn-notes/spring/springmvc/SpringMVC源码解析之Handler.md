@@ -39,9 +39,10 @@ public InvocableHandlerMethod(HandlerMethod handlerMethod) {
 
 //基于Web控制器对象和相应的控制器方法构造一个InvocableHandlerMethod对象
 public InvocableHandlerMethod(Object bean, Method method) {
-		super(bean, method);
+     super(bean, method);
 }
 
+// 真正调用handler方法(反射)
 public Object invokeForRequest(NativeWebRequest request, @Nullable ModelAndViewContainer mavContainer,
 			Object... providedArgs) throws Exception {
         // 从请求上下文中解析控制器方法参数对应的参数值
