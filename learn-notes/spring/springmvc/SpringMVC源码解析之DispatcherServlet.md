@@ -377,13 +377,11 @@ protected ModelAndView invokeHandlerMethod(HttpServletRequest request,HttpServle
 ##### invokeAndHandle 方法子类实现 : public class ServletInvocableHandlerMethod extends InvocableHandlerMethod 
 
 ```
-public void invokeAndHandle(ServletWebRequest webRequest, ModelAndViewContainer mavContainer,
-			Object... providedArgs) throws Exception {
+public void invokeAndHandle(ServletWebRequest webRequest, ModelAndViewContainer mavContainer,Object... providedArgs) throws Exception {
         
         //真正执行控制器方法
 		Object returnValue = invokeForRequest(webRequest, mavContainer, providedArgs);
 		setResponseStatus(webRequest);
-
 		if (returnValue == null) {
 			if (isRequestNotModified(webRequest) || getResponseStatus() != null || mavContainer.isRequestHandled()) {
 				disableContentCachingIfNecessary(webRequest);
@@ -395,13 +393,11 @@ public void invokeAndHandle(ServletWebRequest webRequest, ModelAndViewContainer 
 			mavContainer.setRequestHandled(true);
 			return;
 		}
-
 		mavContainer.setRequestHandled(false);
 		Assert.state(this.returnValueHandlers != null, "No return value handlers");
 		try {
 		   //对返回值做处理 
-			this.returnValueHandlers.handleReturnValue(
-					returnValue, getReturnValueType(returnValue), mavContainer, webRequest);
+			this.returnValueHandlers.handleReturnValue(returnValue, getReturnValueType(returnValue), mavContainer, webRequest);
 		}
 		catch (Exception ex) {
 			if (logger.isTraceEnabled()) {
@@ -424,8 +420,85 @@ public Object invokeForRequest(NativeWebRequest request, @Nullable ModelAndViewC
 		}
 		return doInvoke(args);
 }
+
+```
+##### 执行反射方法之前执行 methodArgumentResolvers.resolveArgument
+
+```
+protected Object[] getMethodArgumentValues(NativeWebRequest request, @Nullable ModelAndViewContainer mavContainer,
+			Object... providedArgs) throws Exception {
+
+		MethodParameter[] parameters = getMethodParameters();
+		if (ObjectUtils.isEmpty(parameters)) {
+			return EMPTY_ARGS;
+		}
+		Object[] args = new Object[parameters.length];
+		for (int i = 0; i < parameters.length; i++) {
+			MethodParameter parameter = parameters[i];
+			parameter.initParameterNameDiscovery(this.parameterNameDiscoverer);
+			args[i] = findProvidedArgument(parameter, providedArgs);
+			if (args[i] != null) {
+				continue;
+			}
+			if (!this.resolvers.supportsParameter(parameter)) {
+				throw new IllegalStateException(formatArgumentError(parameter, "No suitable resolver"));
+			}
+			try {
+				args[i] = this.resolvers.resolveArgument(parameter, mavContainer, request, this.dataBinderFactory);
+			}
+			catch (Exception ex) {
+				// Leave stack trace for later, exception may actually be resolved and handled...
+				if (logger.isDebugEnabled()) {
+					String exMsg = ex.getMessage();
+					if (exMsg != null && !exMsg.contains(parameter.getExecutable().toGenericString())) {
+						logger.debug(formatArgumentError(parameter, exMsg));
+					}
+				}
+				throw ex;
+			}
+		}
+		return args;
+	}
+
+```
+
+#### 子类实现: public class RequestResponseBodyMethodProcessor extends AbstractMessageConverterMethodProcessor 
+
+```
+public Object resolveArgument(MethodParameter parameter, @Nullable ModelAndViewContainer mavContainer,NativeWebRequest webRequest, @Nullable WebDataBinderFactory binderFactory) throws Exception {
+		parameter = parameter.nestedIfOptional();
+		Object arg = readWithMessageConverters(webRequest, parameter, parameter.getNestedGenericParameterType());
+		String name = Conventions.getVariableNameForParameter(parameter);
+		if (binderFactory != null) {
+			WebDataBinder binder = binderFactory.createBinder(webRequest, arg, name);
+			if (arg != null) {
+				validateIfApplicable(binder, parameter);
+				if (binder.getBindingResult().hasErrors() && isBindExceptionRequired(binder, parameter)) {
+					throw new MethodArgumentNotValidException(parameter, binder.getBindingResult());
+				}
+			}
+			if (mavContainer != null) {
+				mavContainer.addAttribute(BindingResult.MODEL_KEY_PREFIX + name, binder.getBindingResult());
+			}
+		}
+
+		return adaptArgumentIfNecessary(arg, parameter);
+	}
+```
+##### 执行类型转换 [SpringMVC源码解析只类型转换](./SpringMVC源码解析之类型转换.md)
+
+
+```	
+protected <T> Object readWithMessageConverters(NativeWebRequest webRequest, MethodParameter parameter,Type paramType) throws IOException, HttpMediaTypeNotSupportedException, HttpMessageNotReadableException {
+		HttpInputMessage inputMessage = createInputMessage(webRequest);
+		return readWithMessageConverters(inputMessage, parameter, paramType);
+	}
 	
-//执行反射方法	
+```
+
+#### 执行反射方法
+
+```
 protected Object doInvoke(Object... args) throws Exception {
 		ReflectionUtils.makeAccessible(getBridgedMethod());
 		try {
@@ -453,7 +526,7 @@ protected Object doInvoke(Object... args) throws Exception {
 			}
 		}
 	}
-
+	
 ```
 
 #### doDispatch()
