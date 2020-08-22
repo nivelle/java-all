@@ -1,4 +1,3 @@
-
 ### Tomcat生命周期
 
 ![生命周期结构图](https://s1.ax1x.com/2020/07/16/UrDI1g.jpg)

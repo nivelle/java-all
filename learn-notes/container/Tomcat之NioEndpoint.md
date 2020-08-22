@@ -1,8 +1,8 @@
-## tomcat 模型
+### tomcat 模型
 
-## 组件1：Acceptor 线程组。用于接受新连接，并将新连接封装,选择一个 Poller 将新连接添加到 Poller 的事件队列中
+#### 组件1：Acceptor 线程组。用于接受新连接，并将新连接封装,选择一个 Poller 将新连接添加到 Poller 的事件队列中
 
-#### public abstract class AbstractEndpoint<S,U>
+##### public abstract class AbstractEndpoint<S,U>
 
 1. initServerSocket():通过 ServerSocketChannel.open() 打开一个 ServerSocket,默认绑定到 8080 端口,默认的连接等待队列长度是 100,当超过 100 个时会拒绝服务。我们可以通过配置 conf/server.xml 中 Connector 的 acceptCount 属性对其进行定制
 
@@ -20,10 +20,9 @@
 
 3. addEvent() 方法会将 Socket 添加到该 Poller 的 PollerEvent 队列中。到此 Acceptor 的任务就完成了。
 
-#### public abstract void startInternal() throws Exception;
+##### public abstract void startInternal() throws Exception;
 
-#### startInternal()方法
-
+##### startInternal()方法
 
 ##### NioEndpoint
 
@@ -33,7 +32,6 @@ public void startInternal() throws Exception {
         if (!running) {
             running = true;
             paused = false;
-
             if (socketProperties.getProcessorCache() != 0) {
                 processorCache = new SynchronizedStack<>(SynchronizedStack.DEFAULT_SIZE,socketProperties.getProcessorCache());
             }
@@ -49,9 +47,7 @@ public void startInternal() throws Exception {
                 //用于创建 Worker线程池
                 createExecutor();
             }
-
             initializeConnectionLatch();
-
             // 启动poller 线程 Start poller thread 
             poller = new Poller();
             Thread pollerThread = new Thread(poller, getName() + "-ClientPoller");
@@ -68,27 +64,21 @@ public void startInternal() throws Exception {
 
 ```
 public void startInternal() throws Exception {
-
         if (!running) {
             allClosed = false;
             running = true;
             paused = false;
-
             if (socketProperties.getProcessorCache() != 0) {
-                processorCache = new SynchronizedStack<>(SynchronizedStack.DEFAULT_SIZE,
-                        socketProperties.getProcessorCache());
+                processorCache = new SynchronizedStack<>(SynchronizedStack.DEFAULT_SIZE,socketProperties.getProcessorCache());
             }
             if (socketProperties.getBufferPool() != 0) {
-                nioChannels = new SynchronizedStack<>(SynchronizedStack.DEFAULT_SIZE,
-                        socketProperties.getBufferPool());
+                nioChannels = new SynchronizedStack<>(SynchronizedStack.DEFAULT_SIZE,socketProperties.getBufferPool());
             }
-
             // Create worker collection
             if (getExecutor() == null) {
                 //用于创建 Worker线程池
                 createExecutor();
             }
-
             initializeConnectionLatch();
             //创建并启动acceptor线程
             startAcceptorThread();
@@ -162,8 +152,12 @@ public void bind() throws Exception {
 
         selectorPool.open(getName());
     }
-    
-## initServerSocket()
+
+```
+   
+##### initServerSocket()
+
+```
 protected void initServerSocket() throws Exception {
         if (!getUseInheritedChannel()) {
             serverSock = ServerSocketChannel.open();
@@ -185,6 +179,7 @@ protected void initServerSocket() throws Exception {
     
 ```
 ##### Nio2Endpoint
+
 ````
 public void bind() throws Exception {
 
@@ -212,6 +207,7 @@ public void bind() throws Exception {
  ````   
  
 ##### AprEndpoint
+
 ```
 public void bind() throws Exception {
 
@@ -329,19 +325,20 @@ public void createExecutor() {
 ```
 
 #### protected abstract U serverSocketAccept() throws Exception;
-
+- NioEndpoint
 ```
-## NioEndpoint
  protected SocketChannel serverSocketAccept() throws Exception {
         return serverSock.accept();
     }
-    
-## Nio2Endpoint
+```    
+- Nio2Endpoint
+```
 protected AsynchronousSocketChannel serverSocketAccept() throws Exception {
         return serverSock.accept().get();
     }
-    
-## AprEndpoint
+```    
+- AprEndpoint
+```
 protected Long serverSocketAccept() throws Exception {
         long socket = Socket.accept(serverSock);
         if (log.isDebugEnabled()) {
@@ -367,15 +364,13 @@ protected Long serverSocketAccept() throws Exception {
 
 4) execute(SocketProcessor) 方法将 SocketProcessor 提交到线程池，放入线程池的 workQueue 中。workQueue 是 BlockingQueue 的实例。到此 Poller 的任务就完成了。
 
-```
-## NioEndpoint
 
+- NioEndpoint
+```
 public void run() {
             // Loop until destroy() is called
             while (true) {
-
                 boolean hasEvents = false;
-
                 try {
                     if (!close) {
                         hasEvents = events();
@@ -434,27 +429,32 @@ public void run() {
         
 ```
 
-### protected abstract SocketProcessorBase<S> createSocketProcessor(SocketWrapperBase<S> socketWrapper, SocketEvent event);
-```
-## NioEndpoint
-protected SocketProcessorBase<NioChannel> createSocketProcessor(
-            SocketWrapperBase<NioChannel> socketWrapper, SocketEvent event) {
-        return new SocketProcessor(socketWrapper, event);
-    }
+#### protected abstract SocketProcessorBase<S> createSocketProcessor(SocketWrapperBase<S> socketWrapper, SocketEvent event);
 
-## Nio2Endpoint
-protected SocketProcessorBase<Nio2Channel> createSocketProcessor(
-            SocketWrapperBase<Nio2Channel> socketWrapper, SocketEvent event) {
-        return new SocketProcessor(socketWrapper, event);
-    }
-## aprEndPoint
-protected SocketProcessorBase<Long> createSocketProcessor(
-            SocketWrapperBase<Long> socketWrapper, SocketEvent event) {
+- NioEndpoint
+
+```
+protected SocketProcessorBase<NioChannel> createSocketProcessor(SocketWrapperBase<NioChannel> socketWrapper, SocketEvent event) {
         return new SocketProcessor(socketWrapper, event);
     }
 ```
+- Nio2Endpoint
 
-###  public boolean processSocket(SocketWrapperBase<S> socketWrapper, SocketEvent event, boolean dispatch) 
+```
+protected SocketProcessorBase<Nio2Channel> createSocketProcessor(SocketWrapperBase<Nio2Channel> socketWrapper, SocketEvent event) {
+        return new SocketProcessor(socketWrapper, event);
+    }
+ ```
+- aprEndPoint
+
+```
+protected SocketProcessorBase<Long> createSocketProcessor(SocketWrapperBase<Long> socketWrapper, SocketEvent event) {
+        return new SocketProcessor(socketWrapper, event);
+    }
+```
+
+####  public boolean processSocket(SocketWrapperBase<S> socketWrapper, SocketEvent event, boolean dispatch) 
+
 ```
 public boolean processSocket(SocketWrapperBase<S> socketWrapper,
             SocketEvent event, boolean dispatch) {
@@ -506,9 +506,10 @@ public boolean processSocket(SocketWrapperBase<S> socketWrapper,
 
 5）CoyoteAdapter 将 Rquest 提交给 Container 处理之前，并将 org.apache.coyote.Request 封装到 org.apache.catalina.connector.Request，传递给 Container 处理的 Request 是 org.apache.catalina.connector.Request。
 
-6）connector.getService().getMapper().map()，用来在 Mapper 中查询 URL 的映射关系。映射关系会保留到 org.apache.catalina.connector.Request 中，Container 处理阶段 request.getHost() 是使用的就是这个阶段查询到的映射主机，以此类推 request.getContext()、request.getWrapper() 都是。
+6）connector.getService().getMapper().map()，用来在 Mapper 中查询 URL 的映射关系。映射关系会保留到 org.apache.catalina.connector.Request 中，Container 处理阶段 request.getHost() 是使用的就是这个阶段查询到的映射主机，
+以此类推 request.getContext()、request.getWrapper() 都是。
 
-7）connector.getService().getContainer().getPipeline().getFirst().invoke() 会将请求传递到 Container 处理，当然了 Container 处理也是在 Worker 线程中执行的，但是这是一个相对独立的模块，所以单独分出来一节。
+7）connector.getService().getContainer().getPipeline().getFirst().invoke() 会将请求传递到 Container 处理，当然了 Container 处理也是在 Worker 线程中执行的，但是这是一个相对独立的模块。
 
 ### Container
 
@@ -520,9 +521,7 @@ public boolean processSocket(SocketWrapperBase<S> socketWrapper,
 
 4）request.getWrapper().getPipeline().getFirst().invoke() 先获取对应的 StandardWrapper，并执行其 pipeline。
 
-
-
-## public abstract class AbstractJsseEndpoint<S,U> extends AbstractEndpoint<S,U> 
+#### public abstract class AbstractJsseEndpoint<S,U> extends AbstractEndpoint<S,U> 
 
 ```
 protected boolean setSocketOptions(SocketChannel socket) {
@@ -535,10 +534,7 @@ protected boolean setSocketOptions(SocketChannel socket) {
                 channel = nioChannels.pop();
             }
             if (channel == null) {
-                SocketBufferHandler bufhandler = new SocketBufferHandler(
-                        socketProperties.getAppReadBufSize(),
-                        socketProperties.getAppWriteBufSize(),
-                        socketProperties.getDirectBuffer());
+                SocketBufferHandler bufhandler = new SocketBufferHandler(socketProperties.getAppReadBufSize(),socketProperties.getAppWriteBufSize(),socketProperties.getDirectBuffer());
                 if (isSSLEnabled()) {
                     channel = new SecureNioChannel(bufhandler, selectorPool, this);
                 } else {
@@ -549,12 +545,10 @@ protected boolean setSocketOptions(SocketChannel socket) {
             channel.reset(socket, newWrapper);
             connections.put(socket, newWrapper);
             socketWrapper = newWrapper;
-
             // Set socket properties
             // Disable blocking, polling will be used
             socket.configureBlocking(false);
             socketProperties.setProperties(socket.socket());
-
             socketWrapper.setReadTimeout(getConnectionTimeout());
             socketWrapper.setWriteTimeout(getConnectionTimeout());
             socketWrapper.setKeepAliveLeft(NioEndpoint.this.getMaxKeepAliveRequests());

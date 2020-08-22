@@ -28,7 +28,6 @@ public class MyRequestBodyAdvice implements RequestBodyAdvice {
         System.out.println("parameter method:" + methodParameter.getMethod());
         System.out.println("parameter toString:" + methodParameter.getParameter().toString());
         System.out.println("parameter modifiers:" + methodParameter.getParameter().getModifiers());
-
         System.out.println("MyRequestBodyAdvice support==》methodParameter：" + methodParameter + "\n targetType:" + targetType + "\n converterType:" + converterType + "\n support is:" + methodParameter.getParameterType().equals(User.class));
         return methodParameter.getParameterType().equals(User.class);
     }
