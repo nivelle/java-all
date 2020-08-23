@@ -14,9 +14,10 @@
 
 ![Acceptor](https://s1.ax1x.com/2020/07/04/Nv7KOA.png)
 
-1. Acceptor 在启动后会阻塞在 serverSocketAccept.accept(); 方法处，当有新连接到达时，该方法返回一个 SocketChannel。
+1. Acceptor 在启动后会阻塞在 serverSocketAccept.accept(); 方法处,当有新连接到达时,该方法返回一个 SocketChannel.
 
-2. 配置完 Socket 以后将 Socket 封装到 NioChannel 中，并注册到 Poller,值的一提的是，我们一开始就启动了多个 Poller 线程，注册的时候，连接是公平的分配到每个 Poller 的。NioEndpoint 维护了一个 Poller 数组，当一个连接分配给 pollers[index] 时，下一个连接就会分配给 pollers[(index+1)%pollers.length].
+2. 配置完Socket以后将Socket封装到NioChannel中,并注册到Poller,值的一提的是，我们一开始就启动了多个Poller线程,注册的时候,连接是公平的分配到每个 Poller 的.
+NioEndpoint 维护了一个 Poller 数组，当一个连接分配给 pollers[index] 时，下一个连接就会分配给 pollers[(index+1)%pollers.length].
 
 3. addEvent() 方法会将 Socket 添加到该 Poller 的 PollerEvent 队列中。到此 Acceptor 的任务就完成了。
 
@@ -24,11 +25,10 @@
 
 ##### startInternal()方法
 
-##### NioEndpoint
+##### 子类实现:NioEndpoint
 
 ```
 public void startInternal() throws Exception {
-
         if (!running) {
             running = true;
             paused = false;
@@ -41,7 +41,6 @@ public void startInternal() throws Exception {
             if (socketProperties.getBufferPool() != 0) {
                 nioChannels = new SynchronizedStack<>(SynchronizedStack.DEFAULT_SIZE,socketProperties.getBufferPool());
             }
-
             // Create worker collection
             if (getExecutor() == null) {
                 //用于创建 Worker线程池
@@ -60,7 +59,7 @@ public void startInternal() throws Exception {
     }
 
 ```
-##### Nio2Endpoint
+##### 子类实现:Nio2Endpoint
 
 ```
 public void startInternal() throws Exception {
@@ -86,30 +85,25 @@ public void startInternal() throws Exception {
     }
 
 ```
-##### AprEndpoint 
+##### 子类实现:AprEndpoint 
 ```
 public void startInternal() throws Exception {
 
         if (!running) {
             running = true;
             paused = false;
-
             if (socketProperties.getProcessorCache() != 0) {
                 processorCache = new SynchronizedStack<>(SynchronizedStack.DEFAULT_SIZE,socketProperties.getProcessorCache());
             }
-
             // Create worker collection
             if (getExecutor() == null) {
                 createExecutor();
             }
-
             initializeConnectionLatch();
-
             // Start poller thread
             poller = new Poller();
             poller.init();
             poller.start();
-
             // Start sendfile thread
             if (getUseSendfile()) {
                 sendfile = new Sendfile();
@@ -139,7 +133,7 @@ protected void startAcceptorThread() {
 
 #### bind()方法
 
-##### NioEndpoint
+- 子类实现：NioEndpoint
 
 ```
 public void bind() throws Exception {
@@ -155,7 +149,7 @@ public void bind() throws Exception {
 
 ```
    
-##### initServerSocket()
+- 子类实现：initServerSocket()
 
 ```
 protected void initServerSocket() throws Exception {
@@ -178,7 +172,7 @@ protected void initServerSocket() throws Exception {
     }
     
 ```
-##### Nio2Endpoint
+- 子类实现:Nio2Endpoint
 
 ````
 public void bind() throws Exception {
@@ -206,7 +200,7 @@ public void bind() throws Exception {
     }
  ````   
  
-##### AprEndpoint
+##### 子类实现:AprEndpoint
 
 ```
 public void bind() throws Exception {
@@ -325,19 +319,23 @@ public void createExecutor() {
 ```
 
 #### protected abstract U serverSocketAccept() throws Exception;
+
 - NioEndpoint
+
 ```
  protected SocketChannel serverSocketAccept() throws Exception {
         return serverSock.accept();
     }
 ```    
 - Nio2Endpoint
+
 ```
 protected AsynchronousSocketChannel serverSocketAccept() throws Exception {
         return serverSock.accept().get();
     }
 ```    
 - AprEndpoint
+
 ```
 protected Long serverSocketAccept() throws Exception {
         long socket = Socket.accept(serverSock);
@@ -366,6 +364,7 @@ protected Long serverSocketAccept() throws Exception {
 
 
 - NioEndpoint
+
 ```
 public void run() {
             // Loop until destroy() is called
@@ -494,7 +493,6 @@ public boolean processSocket(SocketWrapperBase<S> socketWrapper,
 ```
 
 ### worker 线程组。用于对请求进行处理，包括分析请求报文并创建 Request 对象，调用容器的 pipeline 进行处理
-
 
 1）worker 线程被创建以后就执行 ThreadPoolExecutor 的 runWorker() 方法，试图从 workQueue 中取待处理任务，但是一开始 workQueue 是空的，所以 worker 线程会阻塞在 workQueue.take() 方法。
 

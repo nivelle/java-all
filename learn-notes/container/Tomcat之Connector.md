@@ -17,8 +17,7 @@
 ### Connector 构造函数
 ```
 public Connector(String protocol) {
-        boolean aprConnector = AprLifecycleListener.isAprAvailable() &&
-                AprLifecycleListener.getUseAprConnector();
+        boolean aprConnector = AprLifecycleListener.isAprAvailable() && AprLifecycleListener.getUseAprConnector();
 
         if ("HTTP/1.1".equals(protocol) || protocol == null) {
             if (aprConnector) {
