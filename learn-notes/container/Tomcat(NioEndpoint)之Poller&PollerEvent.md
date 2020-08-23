@@ -1,6 +1,6 @@
 ### Poller
 
-Tomcat NioEndpoint内部类Poller实现了Runnable接口，主要用来作为独立的后台线程来完成以下轮询服务 :
+#### Tomcat NioEndpoint 内部类Poller实现了Runnable接口，主要用来作为独立的后台线程来完成以下轮询服务 :
 
 1. acceptor线程接收到的连接请求注册到所包含的NIO selector;从 acceptor 线程接受请求，注册到 Poller （所包含的 NIO selector）
 
@@ -70,8 +70,7 @@ public class Poller implements Runnable {
          * however).
          *
          * @param socketWrapper to add to the poller
-         * @param interestOps Operations for which to register this socket with
-         *                    the Poller
+         * @param interestOps Operations for which to register this socket with the Poller
          */
         public void add(NioSocketWrapper socketWrapper, int interestOps) {
             PollerEvent r = null;

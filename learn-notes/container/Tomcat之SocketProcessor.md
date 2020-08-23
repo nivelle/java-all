@@ -4,7 +4,7 @@
 ```
 NioEndpoint$Poller.run()
 	=> processkey()
-		=> NioEndpoint父类AbstractEndpoint.processSocket()
+		=> NioEndpoint父类 AbstractEndpoint.processSocket()
 		=> createSocketProcessor() // 创建SocketProcessor,随后在Worker线程池上执行其逻辑
 ```
 
@@ -257,7 +257,8 @@ public SocketState process(SocketWrapperBase<?> socketWrapper, SocketEvent statu
                     }
                 }
                 if (processor == null) {
-                    /*          
+                    /*         
+                     *  创建了 Http11Processor  
                      ** protected Processor createProcessor() {
                      **         Http11Processor processor = new Http11Processor(this, adapter);
                      **         return processor;
@@ -461,15 +462,13 @@ public SocketState service(SocketWrapperBase<?> socketWrapper)throws IOException
                 sendfileState == SendfileState.DONE && !protocol.isPaused()) {
             // Parsing the request header
             try {
-                if (!inputBuffer.parseRequestLine(keptAlive, protocol.getConnectionTimeout(),
-                        protocol.getKeepAliveTimeout())) {
+                if (!inputBuffer.parseRequestLine(keptAlive, protocol.getConnectionTimeout(),protocol.getKeepAliveTimeout())) {
                     if (inputBuffer.getParsingRequestLinePhase() == -1) {
                         return SocketState.UPGRADING;
                     } else if (handleIncompleteRequestLineRead()) {
                         break;
                     }
                 }
-
                 // Process the Protocol component of the request line
                 // Need to know if this is an HTTP 0.9 request before trying to
                 // parse headers.
@@ -534,7 +533,6 @@ public SocketState service(SocketWrapperBase<?> socketWrapper)throws IOException
                         response.setHeader("Upgrade", requestedProtocol);
                         action(ActionCode.CLOSE,  null);
                         getAdapter().log(request, response, 0);
-
                         InternalHttpUpgradeHandler upgradeHandler =upgradeProtocol.getInternalUpgradeHandler(socketWrapper, getAdapter(), cloneRequest(request));
                         UpgradeToken upgradeToken = new UpgradeToken(upgradeHandler, null, null);
                         action(ActionCode.UPGRADE, upgradeToken);
@@ -573,13 +571,7 @@ public SocketState service(SocketWrapperBase<?> socketWrapper)throws IOException
                     rp.setStage(org.apache.coyote.Constants.STAGE_SERVICE);
                     // CoyoteAdapter 处理请求
                     getAdapter().service(request, response);
-                    // Handle when the response was committed before a serious
-                    // error occurred.  Throwing a ServletException should both
-                    // set the status to 500 and set the errorException.
-                    // If we fail here, then the response is likely already
-                    // committed, so we can't try and set headers.
-                    if(keepAlive && !getErrorState().isError() && !isAsync() &&
-                            statusDropsConnection(response.getStatus())) {
+                    if(keepAlive && !getErrorState().isError() && !isAsync() && statusDropsConnection(response.getStatus())) {
                         setErrorState(ErrorState.CLOSE_CLEAN, null);
                     }
                 } catch (InterruptedIOException e) {

@@ -46,6 +46,7 @@ public void close() {
 ```
 
 ####  连接计数
+
 ```
 //if we have reached max connections, wait
 protected void countUpOrAwaitConnection() throws InterruptedException {
@@ -66,7 +67,6 @@ public void run() {
 
         //该方法运行在 acceptor 线程中,用来接收来自网络的客户端请求，然后封装后注册到 poller 的事件队列,最终 poller 线程将要处理的请求交给 worker 线程    
         int errorDelay = 0;
-  
         while (endpoint.isRunning()) {
             // running变量是所属NioEndpoint实例是否处于运行状态的标记;
             // true 表示处于运行中，false表示处于停止服务状态;NioEndpoint实例,还有另外一个状态paused用来表示服务的暂停，比如 running==true&&
@@ -96,7 +96,6 @@ public void run() {
                 if (endpoint.isPaused()) {
                     continue;
                 }
-
                 U socket = null;
                 try {
                     // Accept the next incoming connection from the server
@@ -118,7 +117,6 @@ public void run() {
                 }
                 // Successful accept, reset the error delay
                 errorDelay = 0;
-
                 // Configure the socket
                 if (endpoint.isRunning() && !endpoint.isPaused()) {
                     // setSocketOptions() will hand the socket off to

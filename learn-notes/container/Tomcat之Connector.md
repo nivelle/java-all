@@ -1,6 +1,6 @@
-## Connector
+### Connector
 
-### connector支持的 协议/模式
+#### connector 支持的 协议/模式
 
 - AjpAprProtocol
 
@@ -14,11 +14,11 @@
 
 - Http11NioProtocol
 
-### Connector 构造函数
+#### Connector 构造函数
+
 ```
 public Connector(String protocol) {
         boolean aprConnector = AprLifecycleListener.isAprAvailable() && AprLifecycleListener.getUseAprConnector();
-
         if ("HTTP/1.1".equals(protocol) || protocol == null) {
             if (aprConnector) {
                 protocolHandlerClassName = "org.apache.coyote.http11.Http11AprProtocol";
@@ -34,7 +34,6 @@ public Connector(String protocol) {
         } else {
             protocolHandlerClassName = protocol;
         }
-
         // Instantiate protocol handler
         ProtocolHandler p = null;
         try {
@@ -57,9 +56,7 @@ public Connector(String protocol) {
     }
 ```
 
-
- 
-### createRequest
+#### createRequest
 
 ```
  /**
@@ -74,7 +71,7 @@ public Connector(String protocol) {
 
 ```
 
-### createResponse
+#### createResponse
 
 ```
     /**
@@ -94,7 +91,7 @@ public Connector(String protocol) {
     
   ```
   
-### initInternal
+#### initInternal 初始化函数
 
 ```
 protected void initInternal() throws LifecycleException {
@@ -104,51 +101,63 @@ protected void initInternal() throws LifecycleException {
         if (protocolHandler == null) {
             throw new LifecycleException(sm.getString("coyoteConnector.protocolHandlerInstantiationFailed"));
         }
-
-        // 第一步: 初始化 CoyoteAdapter,并且将其设置为ProtocolHandler的Adapter
+        // 第一步: 初始化 CoyoteAdapter,并且将其设置为ProtocolHandler的Adapter(CoyoteAdapter负责连接 connecoter和 Container)
         adapter = new CoyoteAdapter(this);
         // 将 CoyoteAdapter 设置到 ProtocolHandler
         protocolHandler.setAdapter(adapter);
         if (service != null) {
             protocolHandler.setUtilityExecutor(service.getServer().getUtilityExecutor());
         }
-
         // Make sure parseBodyMethodsSet has a default
         if (null == parseBodyMethodsSet) {
             setParseBodyMethods(getParseBodyMethods());
         }
-
         if (protocolHandler.isAprRequired() && !AprLifecycleListener.isInstanceCreated()) {
-            throw new LifecycleException(sm.getString("coyoteConnector.protocolHandlerNoAprListener",
-                    getProtocolHandlerClassName()));
+            throw new LifecycleException(sm.getString("coyoteConnector.protocolHandlerNoAprListener",getProtocolHandlerClassName()));
         }
         if (protocolHandler.isAprRequired() && !AprLifecycleListener.isAprAvailable()) {
-            throw new LifecycleException(sm.getString("coyoteConnector.protocolHandlerNoAprLibrary",
-                    getProtocolHandlerClassName()));
+            throw new LifecycleException(sm.getString("coyoteConnector.protocolHandlerNoAprLibrary",getProtocolHandlerClassName()));
         }
-        if (AprLifecycleListener.isAprAvailable() && AprLifecycleListener.getUseOpenSSL() &&
-                protocolHandler instanceof AbstractHttp11JsseProtocol) {
-            AbstractHttp11JsseProtocol<?> jsseProtocolHandler =
-                    (AbstractHttp11JsseProtocol<?>) protocolHandler;
-            if (jsseProtocolHandler.isSSLEnabled() &&
-                    jsseProtocolHandler.getSslImplementationName() == null) {
+        if (AprLifecycleListener.isAprAvailable() && AprLifecycleListener.getUseOpenSSL() && protocolHandler instanceof AbstractHttp11JsseProtocol) {
+            AbstractHttp11JsseProtocol<?> jsseProtocolHandler =(AbstractHttp11JsseProtocol<?>) protocolHandler;
+            if (jsseProtocolHandler.isSSLEnabled() && jsseProtocolHandler.getSslImplementationName() == null) {
                 // OpenSSL is compatible with the JSSE configuration, so use it if APR is available
                 jsseProtocolHandler.setSslImplementationName(OpenSSLImplementation.class.getName());
             }
         }
-
         try {
-            // 第二步: ProtocolHandler 调用其父类AbstractProtocol的init方法
+            // 第二步: ProtocolHandler 调用其父类 AbstractProtocol 的init方法
             protocolHandler.init();
         } catch (Exception e) {
-            throw new LifecycleException(
-                    sm.getString("coyoteConnector.protocolHandlerInitializationFailed"), e);
+            throw new LifecycleException(sm.getString("coyoteConnector.protocolHandlerInitializationFailed"), e);
         }
     }
 
 ```
+#### startInternal 开始化函数
 
-###  public abstract class AbstractProtocol<S> implements ProtocolHandler,MBeanRegistration
+```
+
+ protected void startInternal() throws LifecycleException {
+        // Validate settings before starting
+        if (getPortWithOffset() < 0) {
+            throw new LifecycleException(sm.getString("coyoteConnector.invalidPort", Integer.valueOf(getPortWithOffset())));
+        }
+        setState(LifecycleState.STARTING);
+        try {
+            //启动端口监听,最终调用的是 endPoint的startInternal; startInternal方法,初始化了处理连接请求的线程池(默认最大线程数200个)开启Acceptor线程接收请求
+            //子类实现: AbstractProtocol
+            protocolHandler.start();
+        } catch (Exception e) {
+            throw new LifecycleException(sm.getString("coyoteConnector.protocolHandlerStartFailed"), e);
+        }
+    }
+```
+
+
+### 子类: public abstract class AbstractProtocol<S> implements ProtocolHandler,MBeanRegistration
+
+- init()
 
 ```
 public void init() throws Exception {
@@ -156,7 +165,6 @@ public void init() throws Exception {
             getLog().info(sm.getString("abstractProtocolHandler.init", getName()));
             logPortOffset();
         }
-
         if (oname == null) {
             // Component not pre-registered so register it
             oname = createObjectName();
@@ -164,13 +172,10 @@ public void init() throws Exception {
                 Registry.getRegistry(null, null).registerComponent(this, oname, null);
             }
         }
-
         if (this.domain != null) {
             rgOname = new ObjectName(domain + ":type=GlobalRequestProcessor,name=" + getName());
-            Registry.getRegistry(null, null).registerComponent(
-                    getHandler().getGlobal(), rgOname, null);
+            Registry.getRegistry(null, null).registerComponent(getHandler().getGlobal(), rgOname, null);
         }
-
         String endpointName = getName();
         endpoint.setName(endpointName.substring(1, endpointName.length()-1));
         //对endpoint（Http11Protocol使用的是JIoEndPoint）进行了初始化
@@ -181,7 +186,33 @@ public void init() throws Exception {
 
 ```
 
+- start()
+
+```
+ public void start() throws Exception {
+        if (getLog().isInfoEnabled()) {
+            getLog().info(sm.getString("abstractProtocolHandler.start", getName()));
+            logPortOffset();
+        }
+        // 子类实现: AbstractEndpoint
+        endpoint.start();
+        monitorFuture = getUtilityExecutor().scheduleWithFixedDelay(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        if (!isPaused()) {
+                            startAsyncTimeout();
+                        }
+                    }
+                }, 0, 60, TimeUnit.SECONDS);
+    }
+
+```
+
 ### public abstract class AbstractEndpoint<S,U> 
+
+- init()方法
+
 ```
 public final void init() throws Exception {
         if (bindOnInit) {
@@ -205,42 +236,23 @@ public final void init() throws Exception {
     }
 ```
 
-###  bindWithCleanup();
+- start()方法
+
+### 子类实现
+
+1) AprEndpoint
+
+2) Nio2Endpoint
+
+3) NioEndpoint
+
 
 ```
-private void bindWithCleanup() throws Exception {
-        try {
-            bind();
-        } catch (Throwable t) {
-            // Ensure open sockets etc. are cleaned up if something goes
-            // wrong during bind
-            ExceptionUtils.handleThrowable(t);
-            unbind();
-            throw t;
+public final void start() throws Exception {
+        if (bindState == BindState.UNBOUND) {
+            bindWithCleanup();
+            bindState = BindState.BOUND_ON_START;
         }
+        startInternal();
     }
-
-```
-
-### startInternal()方法
-
-```
-protected void startInternal() throws LifecycleException {
-
-        // Validate settings before starting
-        if (getPortWithOffset() < 0) {
-            throw new LifecycleException(sm.getString(
-                    "coyoteConnector.invalidPort", Integer.valueOf(getPortWithOffset())));
-        }
-        //发送STARTING事件 
-        setState(LifecycleState.STARTING);
-
-        try {
-            //启动端口监听 ,最终调用的是 endPoint的startInternal; startInternal方法，初始化了处理连接请求的线程池（默认最大线程数200个），开启Acceptor线程接收请求
-            protocolHandler.start();
-        } catch (Exception e) {
-            throw new LifecycleException(sm.getString("coyoteConnector.protocolHandlerStartFailed"), e);
-        }
-    }
-
 ```
