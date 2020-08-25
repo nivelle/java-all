@@ -9,7 +9,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;
 
 /**
- * TODO:DOCUMENT ME!
+ * 等效web.xml
  *
  * @author fuxinzhong
  * @date 2020/08/25
@@ -20,7 +20,7 @@ public class SimpleWebApplicationInitializer implements WebApplicationInitialize
         AnnotationConfigWebApplicationContext webContext = new AnnotationConfigWebApplicationContext();
         servletContext.addListener(new ContextLoaderListener(webContext));
         webContext.register(WebConfig.class);
-        ServletRegistration.Dynamic registration = servletContext.addServlet("myCustomServletName", new DispatcherServlet(webContext));
+        ServletRegistration.Dynamic registration = servletContext.addServlet("myServlet", new DispatcherServlet(webContext));
         registration.setLoadOnStartup(1);
         registration.addMapping("/");
     }

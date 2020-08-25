@@ -4,7 +4,9 @@ import org.springframework.lang.Nullable;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
 /**
- * TODO:DOCUMENT ME!
+ * 继承Spring为我们提供的AbstractAnnotationConfigDispatcherServletInitializer,不需要添加@Configuration等注解，
+ * 因为Servlet容器会自动将我们自定义的MyCustomWebApplicationInitializer class传入SpringServletContainerInitializer#onStartup，
+ * 而SpringServletContainerInitializer会为我们实例化这个类并调用它。
  *
  * @author fuxinzhong
  * @date 2020/08/25
@@ -49,6 +51,6 @@ public class MyCustomWebApplicationInitializer extends AbstractAnnotationConfigD
      */
     @Override
     protected String getServletName() {
-        return "myCustomServletName";
+        return "myServlet";
     }
 }
