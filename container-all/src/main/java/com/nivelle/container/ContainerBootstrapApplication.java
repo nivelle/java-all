@@ -11,7 +11,15 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
  * @author nivelle
  * @date 2020/01/06
  */
-@SpringBootApplication
+
+/**
+ *  WebApplicationInitializer 让我们可以使用传统的WAR包的方式部署运行 SpringApplication，可以将 servlet、filter 和 ServletContextInitializer 从应用程序上下文绑定到服务器。
+ *
+ *  如果要配置应用程序，要么覆盖 configure(SpringApplicationBuilder) 方法(调用 SpringApplicationBuilder#Sources(Class.))，要么使初始化式本身成为 @configuration。
+ *
+ *  如果将SpringBootServletInitializer与其他 WebApplicationInitializer 结合使用，则可能还需要添加@Ordered注解来配置特定的启动顺序。
+ */
+
 public class ContainerBootstrapApplication extends SpringBootServletInitializer {
 
     public static void main(String[] args) {

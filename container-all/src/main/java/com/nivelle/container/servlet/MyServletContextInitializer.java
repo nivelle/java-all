@@ -1,4 +1,4 @@
-package com.nivelle.spring.springmvc.servlet;
+package com.nivelle.container.servlet;
 
 import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.stereotype.Component;
@@ -13,13 +13,13 @@ import javax.servlet.ServletRegistration;
  * @date 2020/01/15
  */
 @Component
-public class RegisterMyServlet2 implements ServletContextInitializer {
+public class MyServletContextInitializer implements ServletContextInitializer {
 
     @Override
     public void onStartup(ServletContext servletContext) {
         ServletRegistration initServlet = servletContext
-                .addServlet("initServlet2", MyServlet2.class);
-        initServlet.addMapping("/initServlet2");
+                .addServlet("initMyServlet", MyServlet.class);
+        initServlet.addMapping("/initMyServlet");
         initServlet.setInitParameter("desc2", "nivelle");
     }
 }

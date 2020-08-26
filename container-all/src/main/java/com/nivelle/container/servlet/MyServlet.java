@@ -41,7 +41,7 @@ public class MyServlet implements Servlet {
         servletResponse.setCharacterEncoding("utf-8");
         PrintWriter writer = servletResponse.getWriter();
         writer.println("===============================");
-        writer.println("<a href='myser2?username=2'>去myser2</a>");
+        writer.println("<a href='http://nivelle.me'>去nivelle</a>");
     }
 
     @Override

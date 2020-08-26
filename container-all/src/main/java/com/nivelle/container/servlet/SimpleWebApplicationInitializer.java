@@ -22,7 +22,7 @@ public class SimpleWebApplicationInitializer implements WebApplicationInitialize
         webContext.register(WebConfig.class);
         ServletRegistration.Dynamic registration = servletContext.addServlet("myServlet", new DispatcherServlet(webContext));
         registration.setLoadOnStartup(1);
-        registration.addMapping("/");
+        registration.addMapping("/myServlet");
     }
 
 }
