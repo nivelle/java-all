@@ -194,7 +194,19 @@ docker整合【下载:docker pull nivelle/nivelle:1.0.2】【运行:sudo docker 
 
 ✅ 【SPI&SCI机制】
 
-✅ 【Tomcat调优】
+✅ 【AbstractAnnotationConfigDispatcherServletInitializer】
+
+✅ 【ServletContainerInitializer】
+
+✅ 【ServletContextInitializer】
+
+✅ 【SpringBootServletInitializer】
+
+✅ 【SpringServletContainerInitializer】
+
+✅ 【WebApplicationInitializer】
+
+
 
 -------------------------
 
