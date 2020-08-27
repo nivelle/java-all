@@ -214,13 +214,13 @@
 
 #### 具体类型子类 ServletWebServerApplicationContext;ReactiveWebServerApplicationContext;StaticWebApplicationContext
    
-   - createWebServer() [springBoot tomcat启动](./SpringBoot源码解析之Tomcat启动过程.md)
+   - createWebServer() [springBoot tomcat启动](../springboot/SpringBoot源码解析之Tomcat启动过程.md)
      
      - ServletContext servletContext = getServletContext();//获取Servlet容器
      
      - ServletWebServerFactory factory = getWebServerFactory();//获取WebServerFactory工厂方法
      
-       - getSelfInitializer(); //获取 ServletContextInitializer 接口的实现类实现 onStartup(ServletContext servletContext)
+       - getSelfInitializer(); // 获取 **ServletContextInitializer** 接口的实现类实现 onStartup(ServletContext servletContext)
        
          - selfInitialize(ServletContext servletContext)；
        

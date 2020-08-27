@@ -60,7 +60,7 @@
     - configureEngine(tomcat.getEngine());
     
     - tomcat.getService().addConnector(additionalConnector);
-
+    
     - prepareContext(tomcat.getHost(), initializers);//纯程序方式创建并准备Tomcat StandardContext，它对应一个web应用，把它绑定到host上。
     
       - File documentRoot = getValidDocumentRoot();//准备Host的docBase,
@@ -71,7 +71,7 @@
       
       - addJspServlet(context);//Spring boot 提供了一个工具类 org.springframework.boot.context.embedded.JspServlet检测类 org.apache.jasper.servlet.JspServlet 是否存在于 classpath 中，如果存在，则认为应该注册JSP Servlet。
         
-         **缺省情况下,不注册(换句话讲,Springboot web应用缺省不支持JSP)注意 !!! 这一点和使用Tomcat充当外部容器的情况是不一样的,使用Tomcat作为外部容器的时候，JSP Servlet 缺省是被注册的。**
+         **缺省情况下,不注册(换句话讲,SpringBoot web应用缺省不支持JSP)注意 !!! 这一点和使用Tomcat充当外部容器的情况是不一样的,使用Tomcat作为外部容器的时候，JSP Servlet 缺省是被注册的。**
          
       - ServletContextInitializer[] initializersToUse = mergeInitializers(initializers);
         
@@ -103,7 +103,7 @@
         
         - removeServiceConnectors();//在 service 启动后 protocal binding 尚未发生之前执行删除 service 中 connector 的逻辑。
         
-        - this.tomcat.start();//在这里启动了DispatcherServlet [Spring DispatcherServlet](SpringBoot源码解析之DispatcherServlet.md)
+        - this.tomcat.start();//在这里启动了DispatcherServlet [Spring DispatcherServlet](../springboot/SpringBoot源码解析之DispatcherServlet.md)
         
           ```
            1. 触发启动Tomcat容器中除了Connector之外的其他部分，Connector此处没被启动意味着该启动过程完成后，服务器还是不能接受来自网络的请求,因为Connector才是真正负责接受网络请求的入口。
@@ -143,7 +143,7 @@
 
 ###### 除了Tomcat Connector之外的Tomcat组件启动完毕,接下来继续启动Connector
 
-- WebServer webServer = startWebServer(); // [父类 finishRefresh()](./Spring源码解析之refresh()方法.md)
+- WebServer webServer = startWebServer(); // [父类 finishRefresh()](../springcore/Spring源码解析之refresh()方法.md)
 
   - webServer.start();
      

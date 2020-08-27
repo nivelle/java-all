@@ -118,7 +118,7 @@
 
 ##### doDispatch
 
-[DispatcherServlet](SpringMVC源码解析之DispatcherServlet.md)
+[DispatcherServlet](../springmvc/SpringMVC源码解析之DispatcherServlet.md)
 
 
 

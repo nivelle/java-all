@@ -20,11 +20,13 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
  */
 
 public class MySpringBootServletInitializer extends SpringBootServletInitializer {
-
+    //使用内嵌容器时，main方法入口在这里，启动初始化的某个时间段我也启动了我的内嵌容器使用外部容器时，忽略我的存在
     public static void main(String[] args) {
         SpringApplication.run(MySpringBootServletInitializer.class, args);
     }
 
+    //使用内嵌容器时，我不会被调用
+    //外部容器时，外部容器检测到 SpringServletContainerInitializer，然后又检测到继承自WebApplicationInitializer的我，然后我被调用了，初始化也开始了
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
         return application.sources(MySpringBootServletInitializer.class);
@@ -32,5 +34,7 @@ public class MySpringBootServletInitializer extends SpringBootServletInitializer
 
     /**
      * 它是一个 WebApplicationInitializer，它的启动靠的是 SpringServletContainerInitializer，而 SpringServletContainerInitializer靠的是Servlet容器。所以它的启动靠的就是外部容器
+     *
+     * 内嵌的tomcat不会以spi方式加载ServletContainerInitializer，而是用TomcatStarter的onStartup，间接启动ServletContextInitializers，来达到ServletContainerInitializer的效果
      */
 }

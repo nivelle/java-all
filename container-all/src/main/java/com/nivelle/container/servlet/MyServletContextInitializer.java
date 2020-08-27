@@ -12,13 +12,11 @@ import javax.servlet.ServletRegistration;
  * @author nivelle
  * @date 2020/01/15
  */
-@Component
 public class MyServletContextInitializer implements ServletContextInitializer {
 
     @Override
     public void onStartup(ServletContext servletContext) {
-        ServletRegistration initServlet = servletContext
-                .addServlet("initMyServlet", MyServlet.class);
+        ServletRegistration initServlet = servletContext.addServlet("initMyServlet", MyServlet.class);
         initServlet.addMapping("/initMyServlet");
         initServlet.setInitParameter("desc2", "nivelle");
     }

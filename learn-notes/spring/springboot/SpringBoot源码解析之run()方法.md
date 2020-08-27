@@ -188,7 +188,7 @@
 
 - refreshContext(context);//((AbstractApplicationContext) applicationContext).refresh()
 
-  - refresh(context);//子类 Spring源码分析值refresh()方法; [Spring refresh()方法](./Spring源码解析之refresh()方法.md)
+  - refresh(context);//子类 Spring源码分析值refresh()方法; [Spring refresh()方法](../springcore/Spring源码解析之refresh()方法.md)
 
 
 #### 第十步: 刷新之后
