@@ -1,4 +1,4 @@
-package com.nivelle.base.jdk.concurrent;
+package com.nivelle.base.utils;
 
 import java.util.Arrays;
 
@@ -13,5 +13,11 @@ public class ArraysTest {
         int[] test = new int[]{1, 3, 9, 10, 2};
         Arrays.sort(test);
         Arrays.stream(test).forEach(System.out::println);
+
+        System.out.println(Arrays.asList(test).get(1));
+
+
+
+
     }
 }

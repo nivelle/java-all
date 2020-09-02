@@ -1,4 +1,4 @@
-package com.nivelle.base.jdk.synlock;
+package com.nivelle.base.jdk.thread;
 
 import java.util.concurrent.CountDownLatch;
 
