@@ -1,9 +1,14 @@
 package com.nivelle.container;
 
+import com.alibaba.dubbo.common.extension.ExtensionLoader;
+import com.nivelle.container.dubbospi.MySpi;
+import com.sun.tools.javac.util.ServiceLoader;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+
+import java.util.Iterator;
 
 /**
  * war包方式启动
@@ -13,17 +18,34 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
  */
 
 /**
- *  WebApplicationInitializer 让我们可以使用传统的WAR包的方式部署运行 SpringApplication，可以将 servlet、filter 和 ServletContextInitializer 从应用程序上下文绑定到服务器。
- *
- *  如果要配置应用程序，要么覆盖 configure(SpringApplicationBuilder) 方法(调用 SpringApplicationBuilder#Sources(Class.))，要么使初始化式本身成为 @configuration。
- *
- *  如果将SpringBootServletInitializer与其他 WebApplicationInitializer 结合使用，则可能还需要添加@Ordered注解来配置特定的启动顺序。
+ * WebApplicationInitializer 让我们可以使用传统的WAR包的方式部署运行 SpringApplication，可以将 servlet、filter 和 ServletContextInitializer 从应用程序上下文绑定到服务器。
+ * <p>
+ * 如果要配置应用程序，要么覆盖 configure(SpringApplicationBuilder) 方法(调用 SpringApplicationBuilder#Sources(Class.))，要么使初始化式本身成为 @configuration。
+ * <p>
+ * 如果将SpringBootServletInitializer与其他 WebApplicationInitializer 结合使用，则可能还需要添加@Ordered注解来配置特定的启动顺序。
  */
-
+@SpringBootApplication
 public class ContainerBootstrapApplication extends SpringBootServletInitializer {
 
     public static void main(String[] args) {
         SpringApplication.run(ContainerBootstrapApplication.class, args);
+        //JDK SPI机制
+        ServiceLoader<MySpi> serviceLoader = ServiceLoader.load(MySpi.class);
+        Iterator iterator = serviceLoader.iterator();
+        while (iterator.hasNext())
+
+        {
+            System.err.println(iterator.next());
+        }
+        /**
+         * dubbo的spi机制
+         */
+        ExtensionLoader<MySpi> extensionLoader = ExtensionLoader.getExtensionLoader(MySpi.class);
+
+        MySpi mySpi1 = extensionLoader.getExtension("MySpiService1");
+        mySpi1.sayHelloSpi();
+        MySpi mySpi2 = extensionLoader.getExtension("MySpiService2");
+        mySpi2.sayHelloSpi();
     }
 
     @Override

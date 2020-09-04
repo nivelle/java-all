@@ -96,8 +96,8 @@ public class CollectionsTest {
         Collections.swap(list6, 0, 1);
         System.out.println("swap after:" + list6);
         list6.add(4);
-        System.out.println("rotate before:"+list6);
-        Collections.rotate(list6,2);
-        System.out.println("rotate after:"+list6);
+        System.out.println("rotate before:" + list6);
+        Collections.rotate(list6, 2);
+        System.out.println("rotate after:" + list6);
     }
 }
