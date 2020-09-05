@@ -3,7 +3,7 @@ package com.nivelle.base.jdk.jvm;
 /**
  * 类加载器
  */
-public class ClassLoaderMessage {
+public class ClassLoaderInfo {
     public static void main(String[] args) {
 
         /**

@@ -8,11 +8,17 @@ public class Son extends Parent {
     int j = 1;
 
     public Son() {
+        System.out.println("子类构造函数前，j=" + j);
         j = 2;
+        System.out.println("子类构造函数后，j=" + j);
+
     }
 
     {
+        System.out.println("子类代码块前，j=" + j);
         j = 3;
+        System.out.println("子类代码块后，j=" + j);
+
     }
 
     @Override

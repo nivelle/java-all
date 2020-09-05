@@ -76,35 +76,40 @@ class Sub extends Base {
 }
 
 
-public class ClassInitOrderDemo {
+public class ClassExtendsInitOrderDemo {
 
     public static void main(String[] args) {
-        /**
-         * 父类静态代码块
-         * 子类静态属性
-         * 子类静态代码块
-         * 子类静态方法
-         */
-        Sub.subStaticMethod();
-
-        /**
-         * 父类静态代码块
-         * 父类静态变量
-         */
-         System.out.println(Base.baseStaticVariable);
-
-
-        /**
-         * 父类静态代码块
-         * 子类静态属性
-         * 子类静态代码块
-         * 父类实例代码块
-         * 父类构造方法
-         * 子类实例代码块
-         * 子类构造方法
-         */
-        Sub sub = new Sub();
-        Sub.subStaticMethod();
+        int type = Integer.parseInt(args[0]);
+        switch (type) {
+            case 1:
+                /**
+                 * 父类静态代码块
+                 * 子类静态属性
+                 * 子类静态代码块
+                 * 子类静态方法
+                 */
+                Sub.subStaticMethod();
+                break;
+            case 2:
+                /**
+                 * 父类静态代码块
+                 * 父类静态变量
+                 */
+                System.out.println(Base.baseStaticVariable);
+                break;
+            case 3:
+                /**
+                 * 父类静态代码块
+                 * 子类静态属性
+                 * 子类静态代码块
+                 * 父类实例代码块
+                 * 父类构造方法
+                 * 子类实例代码块
+                 * 子类构造方法
+                 */
+                Sub sub = new Sub();
+                //Sub.subStaticMethod();
+        }
 
 
     }

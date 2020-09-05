@@ -1,4 +1,4 @@
-package com.nivelle.base.jdk.concurrent;
+package com.nivelle.base.jdk.concurrentcollection;
 
 import java.util.HashMap;
 import java.util.Map;

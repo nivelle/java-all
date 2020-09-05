@@ -13,9 +13,9 @@ public class ClassForNameDemo {
         try {
 
             System.out.println(System.getProperty("java.class.path"));
-            //获取类对象
+            System.out.println("全路径名字:" + TestBean.class.getName());
+            //获取类型对象
             Class classObject = Class.forName(TestBean.class.getName());
-
             System.out.println("classLoader:" + classObject.getClassLoader());
             //获取构造函数
             Constructor<?>[] constructor = classObject.getConstructors();
@@ -29,6 +29,7 @@ public class ClassForNameDemo {
         }
     }
 }
+
 class TestBean {
 
     private String message = "jessy";
@@ -37,7 +38,7 @@ class TestBean {
         this.message = message;
     }
 
-    public String getMessage(){
+    public String getMessage() {
         return this.message;
     }
 }

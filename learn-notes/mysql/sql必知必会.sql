@@ -72,6 +72,17 @@ select count(*),gender from students group by gender;//分组计数,分组内数
 |       18 | girl   |
 +----------+--------+
 
+ select gender,cls_id, count(*) from students group by gender, cls_id;//多个字段分组
+ //组合分组字段如果能分在一个分组就按一个组，否则就新建一个分组
++--------+--------+----------+
+| gender | cls_id | count(*) |
++--------+--------+----------+
+| hide   |    111 |        1 |
+| boy    |    111 |        8 |
+| girl   |    111 |       17 |
+| girl   |    112 |        1 |
++--------+--------+----------+
+
 select count(*),gender,age from students where age>7 group by gender; //先过滤再分组,分组之后就不能过滤了
 +----------+--------+-----+
 | count(*) | gender | age |

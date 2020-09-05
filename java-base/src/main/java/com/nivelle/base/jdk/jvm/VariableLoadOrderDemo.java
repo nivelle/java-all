@@ -3,7 +3,7 @@ package com.nivelle.base.jdk.jvm;
 /**
  * 成员变量初始化顺序
  */
-public class VariableOrderDemo {
+public class VariableLoadOrderDemo {
 
     /**
      * 成员变量->代码块->构造函数
@@ -12,7 +12,7 @@ public class VariableOrderDemo {
     private int i = 1;
     private int j = i + 1;
 
-    public VariableOrderDemo(int var) {
+    public VariableLoadOrderDemo(int var) {
         System.out.println(i);
         System.out.println(j);
         this.i = var;
@@ -26,7 +26,7 @@ public class VariableOrderDemo {
     }
 
     public static void main(String args[]) {
-        new VariableOrderDemo(8);
+        new VariableLoadOrderDemo(8);
     }
 
 }

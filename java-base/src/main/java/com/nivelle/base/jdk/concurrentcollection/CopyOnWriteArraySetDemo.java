@@ -1,4 +1,4 @@
-package com.nivelle.base.jdk.concurrent;
+package com.nivelle.base.jdk.concurrentcollection;
 
 import java.util.concurrent.CopyOnWriteArraySet;
 

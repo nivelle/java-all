@@ -14,7 +14,7 @@ class FinalFieldClass {
     public static String name = "nivelle";
 }
 
-public class StaticVariableOrderDemo {
+public class StaticVariableLoadOrderDemo {
 
     public static void main(String[] args) {
         /**
