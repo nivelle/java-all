@@ -1,4 +1,4 @@
-package com.nivelle.spring.springcore.utils;
+package com.nivelle.spring.springcore;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.*;

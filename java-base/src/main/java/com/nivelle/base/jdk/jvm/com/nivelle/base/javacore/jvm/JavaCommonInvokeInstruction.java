@@ -1,4 +1,7 @@
-package com.nivelle.base.jdk.jvm;
+package com.nivelle.base.jdk.jvm.com.nivelle.base.javacore.jvm;
+
+import com.nivelle.base.jdk.jvm.com.nivelle.base.javacore.jvm.InvokeInterface;
+import com.nivelle.base.jdk.jvm.com.nivelle.base.javacore.jvm.InvokeInterfaceImpl;
 
 /**
  * javap 命令学习

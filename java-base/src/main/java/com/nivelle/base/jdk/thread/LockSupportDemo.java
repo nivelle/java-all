@@ -3,8 +3,8 @@ package com.nivelle.base.jdk.thread;
 import java.util.concurrent.locks.LockSupport;
 
 /**
- * TODO:DOCUMENT ME!
  *
+ * LockSupport
  * @author fuxinzhong
  * @date 2020/05/06
  */

@@ -236,22 +236,26 @@ this.scheduledTasks 数据结构为Map: key:是一个对象,其类就是含有�
 
 ```
 
-#### 经过ScheduledAnnotationBeanPostProcessor以上这些处理，每个bean中所包含的@Scheduled注解都被发现了，这样的每条信息最终对应生成一个ScheduledTask,该ScheduledTask会被 ScheduledTaskRegistrar registrar 登记调度。这意味着该ScheduledTask从此刻起在程序运行期间就会按照@Scheduled注解所设定的时间点被执行。
+#### 经过ScheduledAnnotationBeanPostProcessor以上这些处理，每个bean中所包含的@Scheduled注解都被发现了，这样的每条信息最终对应生成一个ScheduledTask,该ScheduledTask会被 ScheduledTaskRegistrar registrar 登记调度。
+#### 这意味着该ScheduledTask从此刻起在程序运行期间就会按照@Scheduled注解所设定的时间点被执行。
 
-#### 备注1: 从上面的代码可以看出,如果多个定时任务定义的是同一个时间,那么也是顺序执行的，会根据程序加载Scheduled方法的先后来执行。
+### 备注1: 从上面的代码可以看出,如果多个定时任务定义的是同一个时间,那么也是顺序执行的，会根据程序加载Scheduled方法的先后来执行。
 
-#### 备注2: 但是如果某个定时任务执行未完成此任务一直无法执行完成，无法设置下次任务执行时间，之后会导致此任务后面的所有定时任务无法继续执行，也就会出现所有的定时任务“失效”现象
+### 备注2: 但是如果某个定时任务执行未完成此任务一直无法执行完成，无法设置下次任务执行时间，之后会导致此任务后面的所有定时任务无法继续执行，也就会出现所有的定时任务“失效”现象
         
 
 ### 定时任务处理
 
+- command: 任务
+
+- initialDelay:初始化多久后开始执行
+
+- period:周期
+       
+- unit: 时间单位
+    
+    
 ```
-     /**
-       command: 任务
-       initialDelay:初始化多久后开始执行
-       period:周期
-       unit: 时间单位
-      **/
      
       public ScheduledFuture<?> scheduleAtFixedRate(Runnable command,long initialDelay,long period,TimeUnit unit) {
               if (command == null || unit == null){
@@ -329,8 +333,9 @@ ScheduledThreadPoolExecutor.delayedExecute(RunnableScheduledFuture task)
                   }
                   //一次性任务，直接调用父类的run()方法，这个父类实际上是FutureTask
                   else if (!periodic){
-                      ScheduledFutureTask.super.run();                                         
-                  } else if (ScheduledFutureTask.super.runAndReset()) {//重复性任务，先调用父类的runAndReset()方法，这个父类也是FutureTask
+                      ScheduledFutureTask.super.run();
+                      //重复性任务，先调用父类的runAndReset()方法，这个父类也是FutureTask                                        
+                  } else if (ScheduledFutureTask.super.runAndReset()) {
                       //设置下次执行的时间
                       setNextRunTime();
                       reExecutePeriodic(outerTask);
@@ -379,7 +384,7 @@ ScheduledThreadPoolExecutor.delayedExecute(RunnableScheduledFuture task)
                               }
                                //还没有到时间
                               first = null; // don't retain ref while waiting
-                              //如果前面有线程在等待，直接进入等待
+                              //如果前面有线程在等待,直接进入等待;任务是按顺序执行的。
                               if (leader != null){
                                   available.await();
                               }else {

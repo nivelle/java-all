@@ -1,4 +1,6 @@
-package com.nivelle.base.jdk.jvm;
+package com.nivelle.base.jdk.jvm.com.nivelle.base.javacore.jvm;
+
+import com.nivelle.base.jdk.jvm.com.nivelle.base.javacore.jvm.InvokeInterface;
 
 /**
  * TODO:DOCUMENT ME!

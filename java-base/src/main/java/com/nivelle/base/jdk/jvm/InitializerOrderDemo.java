@@ -16,27 +16,32 @@ public class InitializerOrderDemo {
      * j=0 -> j->getI()
      * </p>
      */
-
     public int j = getI();
     public int i = 1;
-    public int k = 0;
+    public int k = getI();//再次调用的时候，i已经实例化了
 
     public InitializerOrderDemo() {
         i = 2;
     }
 
     public int getI() {
-        System.out.println("实例化前i=：" + i);
-        System.out.println("设置当前j=：" + i);
-        System.out.println("这个时候i还没实例化");
+        System.out.println("i实例化前i=：" + i);
+        System.out.println("j=" + j);
+        System.out.println("k=" + k);
         return i;
     }
 
     public static void main(String[] args) {
-        InitializerOrderDemo ii = new InitializerOrderDemo();
+        InitializerOrderDemo initializerOrderDemo = new InitializerOrderDemo();
         System.out.println("实例化之后，构造函数调用完毕：");
-        System.out.println("实例化之后j=" + ii.j);
-        System.out.println("实例化之后i=" + ii.i);
+        System.out.println("实例化之后k=" + initializerOrderDemo.k);
+        System.out.println("实例化之后j=" + initializerOrderDemo.j);
+        System.out.println("实例化之后i=" + initializerOrderDemo.i);
+
+        System.out.println("===============");
+
+        int i = initializerOrderDemo.getI();
+        System.out.println("构造函数执行完之后i：" + i);
     }
 
 }
