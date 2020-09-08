@@ -79,7 +79,7 @@ public class ThreadLocalDemo {
      * ThreadLocal里面使用了一个存在弱引用的map, map的类型是ThreadLocal.ThreadLocalMap. Map中的key为一个threadlocal实例。
      * 这个Map的确使用了弱引用，不过弱引用只是针对key。每个key都弱引用指向 ThreadLocal。
      *
-     * 当把threadlocal实例置为null以后，没有任何强引用指向 ThreadLocal 实例，所以 ThreadLocal 将会被gc回收
+     * 当把 threadLocal 实例置为null以后，没有任何强引用指向 ThreadLocal 实例，所以 ThreadLocal 将会被gc回收
      */
 
 

@@ -35,6 +35,7 @@ public class MakeSqlString {
             stringBuilder2.append(i);
             stringBuilder2.append(",");
         }
-        System.out.println(stringBuilder2.toString());
+        //System.out.println(stringBuilder2.toString());
+
     }
 }

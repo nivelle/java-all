@@ -3,7 +3,7 @@ package com.nivelle.base.jdk.thread;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 
-public class ThreadTargetDemo {
+public class ThreadResultDemo {
     public static void main(String[] args) {
         Callable<Integer> myCallable = new MyCallable();
         //使用FutureTask来包装MyCallable对象

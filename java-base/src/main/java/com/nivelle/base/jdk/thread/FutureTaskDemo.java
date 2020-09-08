@@ -19,29 +19,23 @@ public class FutureTaskDemo {
      * <p>
      * 问题:submit()方法返回的为什么是Future接口而不是RunnableFuture接口或者FutureTask类呢？
      * <p>
-     * 答:这是因为submit()返回的结果，对外部调用者只想暴露其get()的能力（Future接口），而不想暴露其run()的能力（Runaable接口）.
+     * 答:这是因为submit()返回的结果，对外部调用者只想暴露其get()的能力（Future接口），而不想暴露其run()的能力（RunAble接口）.
      */
     public static void main(String[] args) throws ExecutionException, InterruptedException {
         ExecutorService threadPool = Executors.newFixedThreadPool(5);
-
         List<Future<Integer>> futureList = new ArrayList<>();
-
         for (int i = 0; i < 5; i++) {
             int num = i;
-
             Future<Integer> future = threadPool.submit(() -> {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     System.out.println(e);
                 }
-
                 System.out.println("return:" + num);
                 return num;
             });
-
             futureList.add(future);
-
         }
         int sum = 0;
         for (Future<Integer> future1 : futureList) {

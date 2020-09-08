@@ -15,34 +15,30 @@ public class CyclicBarrierDemo {
          * 栅栏,
          */
         CyclicBarrier cyclicBarrier = new CyclicBarrier(3);
-
-
         new Thread(() -> {
             System.out.println(Thread.currentThread().getName() + ":CyclicBarrier 执行前" + cyclicBarrier.getParties());
             try {
                 System.out.println(Thread.currentThread().getName() + ":等待其他线程");
                 cyclicBarrier.await();
                 Thread.sleep(500);
-                System.err.println(Thread.currentThread().getName() + ":执行完毕");
+                System.out.println(Thread.currentThread().getName() + ":执行完毕");
             } catch (Exception e) {
                 System.out.println(e);
             }
         }).start();
-
         new Thread(() -> {
             System.out.println(Thread.currentThread().getName() + "->CyclicBarrier 执行前" + cyclicBarrier.getParties());
             try {
                 System.out.println(Thread.currentThread().getName() + ":等待其他线程");
                 cyclicBarrier.await();
                 Thread.sleep(1000);
-                System.err.println(Thread.currentThread().getName() + ":执行完毕");
+                System.out.println(Thread.currentThread().getName() + ":执行完毕");
             } catch (Exception e) {
                 System.out.println(e);
             }
         }).start();
-
-        System.out.println("主线程等待其他线程执行完毕:" + Thread.currentThread().getName());
+        System.out.println("主线程等待其他线程执行完毕:" + Thread.currentThread().getName() + "parties:" + cyclicBarrier.getParties());
         cyclicBarrier.await();
-        System.err.println(Thread.currentThread().getName() + "执行完毕");
+        System.out.println(Thread.currentThread().getName() + "执行完毕");
     }
 }
