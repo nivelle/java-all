@@ -72,9 +72,4 @@ public class ScheduledThreadPoolExecutorDemo {
         }, 1, 2, TimeUnit.SECONDS);
 
     }
-
-
-
-
-
 }

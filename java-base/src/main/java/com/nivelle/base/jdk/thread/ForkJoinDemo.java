@@ -29,7 +29,9 @@ public class ForkJoinDemo {
         long endTime = System.currentTimeMillis();
         System.out.println("Fork/join sum: " + result + " in " + (endTime - startTime) + " ms.");
     }
+
     static Random random = new Random(0);
+
     static long random() {
         return random.nextInt(10000);
     }
@@ -65,13 +67,13 @@ class SumTask extends RecursiveTask<Long> {
         // 任务太大,一分为二:
         int middle = (end + start) / 2;
         System.out.println(String.format("split %d~%d ==> %d~%d, %d~%d", start, end, start, middle, middle, end));
-        SumTask subtask1 = new SumTask(this.array, start, middle);
-        SumTask subtask2 = new SumTask(this.array, middle, end);
-        invokeAll(subtask1, subtask2);
-        Long subresult1 = subtask1.join();
-        Long subresult2 = subtask2.join();
-        Long result = subresult1 + subresult2;
-        System.out.println("result = " + subresult1 + " + " + subresult2 + " ==> " + result);
+        SumTask subTask1 = new SumTask(this.array, start, middle);
+        SumTask subTask2 = new SumTask(this.array, middle, end);
+        invokeAll(subTask1, subTask2);
+        Long subResult1 = subTask1.join();
+        Long subResult2 = subTask1.join();
+        Long result = subResult1 + subResult2;
+        System.out.println("result = " + subResult1 + " + " + subResult2 + " ==> " + result);
         return result;
     }
 }

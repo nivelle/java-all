@@ -12,9 +12,7 @@ public class GsonUtils {
 
     static {
         gson = new Gson();
-        gsonFormat = new GsonBuilder()
-                .setDateFormat("yyyy-MM-dd HH:mm:ss")
-                .create();
+        gsonFormat = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
     }
 
     private GsonUtils() {

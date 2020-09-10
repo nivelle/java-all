@@ -44,7 +44,6 @@ public class Java8MethodTest {
         String converted3 = convertMethod2.convert("Nivelle");
         System.out.println(converted3);
 
-
         FunctionInterface<String, Long> convertMethod3 = Long::valueOf;
         Long converted4 = convertMethod3.convert("23");
         System.out.println(converted4);
@@ -87,9 +86,19 @@ public class Java8MethodTest {
 
         //防止空指针异常的Optional
         Optional<Integer> optional = Optional.of(123);
-        System.out.println(optional.isPresent());
-        System.out.println(optional.get());
-        System.out.println(optional.orElse(new Integer(0)));
+        System.out.println("isPresent:" + optional.isPresent());
+        System.out.println("get:" + optional.get());
+        System.out.println("orElse:" + optional.orElse(new Integer(0)));
         //optional.ifPresent((s) -> System.out.println(s.charAt(0)));
+
+        Optional<Integer> optional1 = Optional.empty();
+        System.out.println("orElseGet:" + optional1.orElseGet(() -> {
+            return 100;
+        }));
+
+        System.out.println("ofNullAble:" + optional1.ofNullable(99).orElseGet(() -> {
+            return 20;
+        }));
+
     }
 }
