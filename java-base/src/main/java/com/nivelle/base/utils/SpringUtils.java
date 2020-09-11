@@ -2,8 +2,6 @@ package com.nivelle.base.utils;
 
 import org.springframework.util.StringUtils;
 
-import java.util.regex.Pattern;
-
 /**
  * spring工具类
  *
@@ -33,10 +31,22 @@ public class SpringUtils {
             System.out.println("字符串转数组:" + appendArray[i]);
         }
         String whitSpace = "ad, b,cdd dds, ";
-        System.out.println("包含字符串："+StringUtils.containsWhitespace(whitSpace));
+        System.out.println("包含字符串：" + StringUtils.containsWhitespace(whitSpace));
         String noWhitespace = StringUtils.trimAllWhitespace(whitSpace);
         System.out.println("去除空白字符：" + noWhitespace);
-        System.out.println("包含字符串："+StringUtils.containsWhitespace(noWhitespace));
+        System.out.println("包含字符串：" + StringUtils.containsWhitespace(noWhitespace));
+
+        System.out.println();
+        String testStr = "abcdefg";
+        System.out.println("是否以某个字符结尾:" + StringUtils.endsWithIgnoreCase(testStr, "g"));
+
+        String testStr1 = "a.b.c.d.e.f.g";
+        System.out.println("取文件名，最后点号后面的字符:" + StringUtils.unqualify(testStr1));
+
+        System.out.println("parseLocale:" + StringUtils.parseLocale("2020-09-11"));
+
+
+        System.out.println("字符判空：" + StringUtils.hasLength(testStr1));
 
     }
 }
