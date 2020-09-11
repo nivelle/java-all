@@ -3,8 +3,8 @@
     <el-form label-width="100px" class="demo-ruleForm">
 
       <el-form-item>
-        <el-button type="primary" @click="sendMessage">向父组件传值</el-button>
-        <el-button type="info" @click="goBack">返回上一级</el-button>
+        <el-button type="primary" @click="sendMessage">这里是父组件引入的子组件，向父组件传值</el-button>
+        <el-button type="info" @click="goBack">这里是子组件</el-button>
         <p>通过路由地址带到子组件的值:{{routerMsg}}</p>
       </el-form-item>
     </el-form>
@@ -12,7 +12,7 @@
 
       <el-col :span="24">
         <el-card shadow="never" v-if="message">
-          <p>{{message}}</p>
+          <p>这里是子组件位置：内容来自父组件 {{message}}</p>
         </el-card>
         <el-card shadow="never" v-else>
           <p>我是子组件在没有父组件传值时的默认值1</p>

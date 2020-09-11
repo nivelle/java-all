@@ -37,10 +37,9 @@
       <el-col :style="{color:'#F56C6C'}">这里是父组件,可以接收当前引入的子组件传递过来的值：{{message}}</el-col>
     </el-row>
 
-
     <el-row>
       <el-col>
-        <Child message="当前为子组件,父组件调用子组件,但是当前显示内容由父组件传递过去的，props来实现" @change='getVal'></Child>
+        <Child message="当前为父组件内容,父组件调用子组件,但是当前显示内容由父组件传递过去的，props来实现" @change='getVal'></Child>
       </el-col>
     </el-row>
 
@@ -53,10 +52,10 @@
         父组件向子组件分发的内容
       </div>
       <div slot="nameSlot1">
-        具名分发1
+        父组件向子组件 具名分发1
       </div>
       <div slot="nameSlot2">
-        具名分发2
+        父组件向子组件 具名分发2
       </div>
     </ContentSlot>
   </div>
@@ -75,7 +74,7 @@ export default {
   },
   data() {
     return {
-      message: '父组件在没有收到子组件的默认值'
+      message: '我来自父组件'
     }
   },
   methods: {
