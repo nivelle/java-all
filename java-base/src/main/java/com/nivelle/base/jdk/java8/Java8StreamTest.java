@@ -23,7 +23,43 @@ public class Java8StreamTest {
     static List<User> users;
     static List<User> users2;
 
-
+    /**
+     * 中间操作：
+     * sequential:返回一个相等的串行的Stream对象，如果原Stream对象已经是串行就可能会返回原对象
+     * parallel:返回一个相等的并行的Stream对象，如果原Stream对象已经是并行的就会返回原对象
+     * unordered:返回一个不关心顺序的Stream对象，如果原对象已经是这类型的对象就会返回原对象
+     * onClose:返回一个相等的Steam对象，同时新的Stream对象在执行Close方法时会调用传入的Runnable对象
+     * close:关闭Stream对象
+     * filter:元素过滤：对Stream对象按指定的Predicate进行过滤，返回的Stream对象中仅包含未被过滤的元素
+     * map:元素一对一转换：使用传入的Function对象对Stream中的所有元素进行处理，返回的Stream对象中的元素为原元素处理后的结果
+     * mapToInt:元素一对一转换：将原Stream中的使用传入的IntFunction加工后返回一个IntStream对象
+     * flatMap:元素一对多转换：对原Stream中的所有元素进行操作，每个元素会有一个或者多个结果，然后将返回的所有元素组合成一个统一的Stream并返回；
+     * distinct:去重：返回一个去重后的Stream对象
+     * sorted:排序：返回排序后的Stream对象
+     * peek:使用传入的Consumer对象对所有元素进行消费后，返回一个新的包含所有原来元素的Stream对象
+     * limit:获取有限个元素组成新的Stream对象返回
+     * skip:抛弃前指定个元素后使用剩下的元素组成新的Stream返回
+     * takeWhile:如果Stream是有序的（Ordered），那么返回最长命中序列（符合传入的Predicate的最长命中序列）组成的Stream；如果是无序的，那么返回的是所有符合传入的Predicate的元素序列组成的Stream。
+     * dropWhile:与takeWhile相反，如果是有序的，返回除最长命中序列外的所有元素组成的Stream；如果是无序的，返回所有未命中的元素组成的Stream。
+     *
+     * 终结操作：
+     * iterator:返回Stream中所有对象的迭代器;
+     * spliterator:返回对所有对象进行的spliterator对象
+     * forEach:对所有元素进行迭代处理，无返回值
+     * forEachOrdered:按Stream的Encounter所决定的序列进行迭代处理，无返回值
+     * toArray:回所有元素的数组
+     * reduce:使用一个初始化的值，与Stream中的元素一一做传入的二合运算后返回最终的值。每与一个元素做运算后的结果，再与下一个元素做运算。它不保证会按序列执行整个过程。
+     * collect:根据传入参数做相关汇聚计算
+     * min:返回所有元素中最小值的Optional对象；如果Stream中无任何元素，那么返回的Optional对象为Empty
+     * max:与Min相反
+     * count:所有元素个数
+     * anyMatch:只要其中有一个元素满足传入的Predicate时返回True，否则返回False
+     * allMatch:所有元素均满足传入的Predicate时返回True，否则False
+     * noneMatch:所有元素均不满足传入的Predicate时返回True，否则False
+     * findFirst:返回第一个元素的Optioanl对象;如果无元素返回的是空的Optional;如果Stream是无序的,那么任何元素都可能被返回。
+     * findAny:返回任意一个元素的Optional对象，如果无元素返回的是空的Optioanl。
+     * isParallel:判断是否当前Stream对象是并行的
+     */
     static {
         users = Arrays.asList(
                 new User(50, "张三"),
@@ -54,12 +90,13 @@ public class Java8StreamTest {
     public static void main(String[] args) {
 
         Stream.of("a1", "a2", "a3").filter(x -> x.equals("a2")).findFirst().ifPresent(System.out::print);
+        System.out.println();
         /**
          * 基础类型流支持一些特殊用法
          */
         IntStream.range(1, 10).forEach(System.out::print);
         System.out.println();
-        System.out.println("start ===");
+        System.out.println("求平均值之前先一对一处理➕2-> start ===");
         Arrays.stream(new int[]{100, 100, 100}).map(n -> n + 2).average().ifPresent(System.out::print);
         System.out.println();
         System.out.println("end ===");
@@ -87,11 +124,10 @@ public class Java8StreamTest {
         /**
          * 每一个元素沿着链垂直移动，第一个字符串"d2"执行完filter和forEach后第二个元素"a2"才开始执行
          */
-        Stream.of("d2", "a2", "b1", "b3", "c")
-                .filter(s -> {
-                    System.out.print("filter: " + s + "--");
-                    return true;
-                }).forEach(s -> System.out.print("forEach: " + s + ";"));
+        Stream.of("d2", "a2", "b1", "b3", "c").filter(s -> {
+            System.out.print("每一个元素沿着链垂直移动:filter: " + s + "-->");
+            return true;
+        }).forEach(s -> System.out.println("每一个元素沿着链垂直移动:forEach: " + s + ";"));
 
 
         System.out.println();
@@ -101,7 +137,7 @@ public class Java8StreamTest {
                     return s.toUpperCase();
                 })
                 .anyMatch(s -> {
-                    System.out.println("anyMatch: " + s);
+                    System.out.println("anyMatch是一个短路运算: " + s);
                     return s.startsWith("A");
                 });
         System.out.println(result);
@@ -128,7 +164,7 @@ public class Java8StreamTest {
         Stream.of("d2", "a2", "b1", "b3", "c")
                 //先两两比较，比较完毕后再挨个元素进行filter和map
                 .sorted((s1, s2) -> {
-                    System.out.printf("sort: %s; %s\n", s1, s2);
+                    System.out.printf("中间有状态操作,需要先执行完获取状态,然后再链式操作, sorted: %s-%s=%s\n", s1, s2, (s1.compareTo(s2)));
                     return s1.compareTo(s2);
                 })
                 .filter(s -> {
@@ -144,19 +180,23 @@ public class Java8StreamTest {
          * Java 8 streams不能被复用，当你执行完任何一个最终操作（terminal operation）的时候流就被关闭了。
          */
         Stream<String> stream = Stream.of("d2", "a2", "b1", "b3", "c").filter(s -> s.startsWith("a"));
-
         stream.anyMatch(s -> true);
+        System.out.println();
+        try {
+            stream.forEach(System.out::println);
+        } catch (Exception e) {
+            //java.lang.IllegalStateException: stream has already been operated upon or closed
+            System.out.println(e.getMessage());
+        }
         /**
-         * stream.noneMatch(s -> true); java.lang.IllegalStateException: stream has already been operated upon or closed
-         *
          *  为每个最终操作（terminal operation）创建一个新的stream链的方式来解决上面的重用问题,
          *  Stream api中已经提供了一个stream supplier类来在已经存在的中间操作（intermediate operations ）的stream基础上构建一个新的stream。
          */
         Supplier<Stream<String>> streamSupplier = () -> Stream.of("d2", "a2", "b1", "b3", "c").filter(s -> s.startsWith("a"));
-
         streamSupplier.get().anyMatch(s -> true);
         streamSupplier.get().noneMatch(s -> true);
 
+        System.out.println();
 
         List<String> stringCollection = new ArrayList<>();
         stringCollection.add("ddd2");
@@ -176,21 +216,50 @@ public class Java8StreamTest {
         //sorted
         stringCollectionStream.get().filter(s -> s.startsWith("b")).sorted().forEach(System.out::print);
         //map:map是一种中间过程操作，借助函数表达式将元素转换成另一种形式。可以使用map将每个对象转换为另一种类型。最终输出的结果类型依赖于你传入的函数表达式。
-        stringCollectionStream.get().map(String::toUpperCase).sorted().forEach(System.out::print);
+        System.out.println();
+        stringCollectionStream.get().map(String::toUpperCase).map(s -> {
+            return s + "sufix";
+        }).sorted().forEach(System.out::print);
+        System.out.println();
         System.out.print("映射然后去重复:" + stringCollectionStream.get().map(String::toLowerCase).distinct().collect(Collectors.toList()));
+        System.out.println();
         //Match 匹配 //任意一个元素满足
         boolean anyStartsWithA = stringCollectionStream.get().anyMatch((s) -> s.startsWith("a"));
         System.out.print("任意一个匹配到a:" + anyStartsWithA);
+        System.out.println();
+
         //所有元素满足
         boolean allStartsWithA = stringCollectionStream.get().allMatch((s) -> s.startsWith("b"));
         System.out.print("全部匹配到b:" + allStartsWithA);
+        System.out.println();
+
         //没有元素满足
         boolean noneStartsWithZ = stringCollectionStream.get().noneMatch((s) -> s.startsWith("z"));
         System.out.print("没有元素匹配z:" + noneStartsWithZ);
+        System.out.println();
+
         //计数
         Long count = stringCollection.stream().count();
         System.out.print("元素个数:" + count);
 
+        System.out.println();
+        //todo
+        stringCollection.stream().map(s -> {
+            return s + s;
+        }).peek(System.out::println).forEach(System.out::println);
+
+        System.out.println();
+        //每个元素经过处理后生成一个多个元素的Stream对象，然后将返回的所有Stream对象中的所有元素组合成一个统一的Stream并返回
+        stringCollection.stream().flatMap(s -> Stream.of(s.split(""))).forEach(System.out::println);
+
+        System.out.println();
+        Stream<String> s = Stream.of("test", "t1", "t2", "teeeee", "aaaa", "taaa");
+        // Java9 : 如果Stream是有序的（Ordered），那么返回最长命中序列（符合传入的Predicate的最长命中序列）组成的Stream；如果是无序的，那么返回的是所有符合传入的Predicate的元素序列组成的Stream。
+        //s.takeWhile(n -> n.contains("t")).forEach(System.out::println);
+        //java9: dropWhile 与takeWhile相反，如果是有序的，返回除最长命中序列外的所有元素组成的Stream；如果是无序的，返回所有未命中的元素组成的Stream
+
+
+        System.out.println("user start");
 
         User user1 = new User(1, "nivelle");
         User user2 = new User(2, "nivelle2");
