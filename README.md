@@ -414,3 +414,24 @@ docker整合【下载:docker pull nivelle/nivelle:1.0.2】【运行:sudo docker 
 ✅【nginx 基础】
 
 ✅【maven 基础】
+
+----------------------------
+
+#### vue
+
+
+✅ router 路由 【router-link】【this.$router.push】【this.$router.go】
+
+✅ 数据绑定
+
+✅ 计算属性和属性侦听 【computed】【watch】
+
+✅ 列表渲染 
+
+✅ Axios 请求
+
+✅ props&emit 【父组件子组件传值】
+
+✅ slot 【匿名分发】【具名分发】
+
+
