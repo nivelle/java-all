@@ -8,17 +8,13 @@ import com.nivelle.base.pojo.Menu;
  */
 public abstract class AbstractFactory {
 
-    public boolean addMenu(Long id,String name){
-
-        Menu menu = createMenu(id,name);
-
-        Boolean result = registMenu(menu);
-
+    public boolean addMenu(Long id, String name) {
+        Menu menu = createMenu(id, name);
+        Boolean result = registerMenu(menu);
         return result;
-
     }
 
     public abstract Menu createMenu(Long id, String name);
 
-    public abstract boolean registMenu(Compont compont);
+    public abstract boolean registerMenu(Compont compont);
 }

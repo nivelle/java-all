@@ -14,13 +14,12 @@ public class Main {
         AbstractFactory factory = new MenuFactory();
 
         Menu menu = factory.createMenu(1L, "用户管理");
-        factory.registMenu(menu);
+        factory.registerMenu(menu);
         menu.canShow();
 
         Menu menu2 = factory.createMenu(2L, "权限管理");
-        factory.registMenu(menu2);
+        factory.registerMenu(menu2);
         menu2.canShow();
-
         System.out.println("总共有" + ((MenuFactory) factory).getList().size() + "个菜单");
     }
 

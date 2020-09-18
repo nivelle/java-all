@@ -1,7 +1,7 @@
 package com.nivelle.base.patterns.pipeline;
 
 /**
- * TODO:DOCUMENT ME!
+ * 管道模式
  *
  * @author fuxinzhong
  * @date 2020/07/07

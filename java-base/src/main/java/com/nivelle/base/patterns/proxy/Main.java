@@ -13,9 +13,7 @@ public class Main {
     public static void main(String[] args) {
 
         CompanyUser realObject = new ProxyObject();
-
         User user = new User(1, "jessy");
-
         realObject.doEasyWork(user);
         realObject.doHardWork(user);
 
