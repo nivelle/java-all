@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @date 2020/04/03
  */
 @Controller
-@RequestMapping(value = "/test")
+@RequestMapping("/test")
 public class BaseTestController {
 
     @RequestMapping("/sayHello")
