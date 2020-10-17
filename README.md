@@ -181,7 +181,11 @@ docker整合【下载:docker pull nivelle/nivelle:1.0.2】【运行:sudo docker 
 
 #### ElasticSearch实践
 
+✅ 【ElasticSearch实践】
+
 #### Kibana
+
+✅ 【Kibana实践】
 
 --------------------------
 
