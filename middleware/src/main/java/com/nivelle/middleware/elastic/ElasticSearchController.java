@@ -18,6 +18,9 @@ public class ElasticSearchController {
     @Autowired
     ElasticsearchTemplate elasticsearchTemplate;
 
+    /**
+     * http://127.0.0.1:9200/_cat/indices?v  //查看所有的索引
+     */
     @RequestMapping("test")
     public String esTest() {
         elasticsearchTemplate.createIndex(Item.class);
