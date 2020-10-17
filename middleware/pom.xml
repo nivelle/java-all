@@ -97,6 +97,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-elasticsearch</artifactId>
+            <!--<version>4.0.4.RELEASE</version>-->
         </dependency>
 
         <dependency>
