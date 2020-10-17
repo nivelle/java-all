@@ -1,4 +1,4 @@
-package com.nivelle.middleware;
+package com.nivelle.middleware.mongodb;
 
 import com.google.common.collect.Maps;
 import com.nivelle.middleware.pojo.ResponseResult;
@@ -22,7 +22,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/mongo")
-public class TestController {
+public class MongodbTest {
 
     private static final String CLOUD_TABLE_NAME = "nd_cloud_book";
 

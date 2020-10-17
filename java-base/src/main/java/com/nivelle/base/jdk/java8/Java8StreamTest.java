@@ -437,7 +437,15 @@ public class Java8StreamTest {
         long totalAge = testList.stream().collect(Collectors.summingLong(x -> x.getAge()));
         System.out.print(totalAge);
 
+        testList = testList.stream().filter(x -> {
+            if (x.getAge() > 10) {
+                x.setAge(3);
+                return true;
+            }
+            return false;
+        }).collect(Collectors.toList());
 
+        System.out.println("testList" + testList);
     }
 
     public static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
