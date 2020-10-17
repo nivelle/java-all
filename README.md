@@ -154,7 +154,7 @@ docker整合【下载:docker pull nivelle/nivelle:1.0.2】【运行:sudo docker 
 
 ✅ 【mysql常用语句】
 
-⌛️ 乐观锁，悲观锁，事物，传播特性
+✅️ 乐观锁，悲观锁，事物，传播特性
 
 ✅ 【mysql explain】
 
