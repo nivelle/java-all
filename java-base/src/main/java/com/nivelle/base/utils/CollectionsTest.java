@@ -1,8 +1,10 @@
 package com.nivelle.base.utils;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -99,5 +101,16 @@ public class CollectionsTest {
         System.out.println("rotate before:" + list6);
         Collections.rotate(list6, 2);
         System.out.println("rotate after:" + list6);
+
+        HashMap hashMap = Maps.newHashMap();
+        hashMap.put(1,2);
+        System.out.println(hashMap.getOrDefault(1,defaultValue()));
+        System.out.println(hashMap.getOrDefault(2,defaultValue()));
+
+    }
+
+    private static int defaultValue(){
+        System.out.println("default value action");
+        return 1;
     }
 }

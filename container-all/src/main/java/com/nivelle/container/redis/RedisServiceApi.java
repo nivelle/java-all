@@ -138,8 +138,7 @@ public class RedisServiceApi {
     }
 
     /**
-     * 从当前数据库中随机返回一个 key
-=【】     * @return
+     * 从当前数据库中随机返回一个 key=【】     * @return
      */
     public String randomKey() {
         return redisTemplate.randomKey();
@@ -244,7 +243,7 @@ public class RedisServiceApi {
 
     /**
      * 设置ASCII码, 字符串'a'的ASCII码是97, 转为二进制是'01100001', 此方法是将二进制第offset位值变为value
-     *
+     * 位图 offset 参数必须大于或等于 0 ，小于 2^32 (bit 映射被限制在 512 MB 之内)。
      * @param key
      * @param
      * @param value 值,true为1, false为0
@@ -1366,4 +1365,42 @@ public class RedisServiceApi {
         });
         return result;
     }
+
+    // 基数   hyperLoglog
+
+    /**
+     * 基数 HyperLoglog
+     *
+     * @param key
+     * @param values
+     * @return
+     */
+    public long pfadd(String key, String... values) {
+        return redisTemplate.opsForHyperLogLog().add(key, values);
+    }
+
+    /**
+     * 基数 HyperLoglog 返回单个键的个数，多个键0.81准确率的并集
+     *
+     * @param key
+     * @return
+     */
+    public long pfCount(String key) {
+        return redisTemplate.opsForHyperLogLog().size(key);
+    }
+
+    /**
+     * 多个
+     *
+     * @param key
+     * @return
+     */
+    public long pfMerge(String key, String... keys) {
+        return redisTemplate.opsForHyperLogLog().union(key, keys);
+    }
+
+    //位图 offset 参数必须大于或等于 0 ，小于 2^32 (bit 映射被限制在 512 MB 之内)。
+
+
+
 }
