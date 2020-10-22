@@ -37,7 +37,7 @@ public class MakeSqlString {
         }
         StringBuilder stringBuilder4 = new StringBuilder();
         //System.out.println(stringBuilder2.toString());
-        for (int i = 0; i < 64; i++) {
+        for (int i = 64; i < 256; i++) {
             StringBuilder stringBuilder1 = new StringBuilder("ALTER TABLE `push_info_");
             stringBuilder1.append(i);
             stringBuilder1.append("`");

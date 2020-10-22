@@ -3,6 +3,7 @@ package com.nivelle.base.jdk.java8;
 import com.google.common.collect.Lists;
 import com.nivelle.base.pojo.Bar;
 import com.nivelle.base.pojo.Foo;
+import com.nivelle.base.pojo.SubUser;
 import com.nivelle.base.pojo.User;
 
 import java.util.*;
@@ -271,6 +272,10 @@ public class Java8StreamTest {
         userList.add(user2);
         userList.add(user3);
         userList.add(user4);
+        List<SubUser> subUserList = userList.stream().map(x -> {
+            return new SubUser(x.getName());
+        }).collect(Collectors.toList());
+        System.err.println("subUserList:" + subUserList);
         /**
          * reduce: 根据一定的规则将Stream中的元素进行计算后返回一个唯一的值。它有三个变种，输入参数分别是一个参数、二个参数以及三个参数；
          *

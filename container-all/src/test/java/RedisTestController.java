@@ -20,6 +20,8 @@ public class RedisTestController {
     @Autowired
     RedisServiceApi redisCommandService;
 
+
+
     //@Test
     public void setGetString() {
         redisCommandService.set("name", "nivelle");
@@ -47,11 +49,12 @@ public class RedisTestController {
         Assert.assertEquals(result, 2L);
     }
 
-    @Test
+    //@Test
     public void pfMerge(){
         long result = redisCommandService.pfMerge("user","user2");
         Assert.assertEquals(result, 3L);
-
     }
+
+
 
 }
