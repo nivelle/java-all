@@ -9,7 +9,9 @@
 <suite name="Default Suite" parallel="tests" verbose="10" thread-count="4">
     <test name="test_ng">
         <classes>
-            <class name="com.nivelle.spring.testng.TestNgCase"/>
+            <class name="com.nivelle.spring.testng.TestNgCase1"/>
+            <class name="com.nivelle.spring.testng.TestNgCase2"/>
+
         </classes>
     </test> <!-- Java_Learn -->
 </suite> <!-- Default Suite -->
