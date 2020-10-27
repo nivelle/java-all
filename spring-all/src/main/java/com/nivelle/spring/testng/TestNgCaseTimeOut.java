@@ -9,23 +9,23 @@ import org.testng.annotations.Test;
  * @author fuxinzhong
  * @date 2020/10/21
  */
-public class TestNgCase2 {
+public class TestNgCaseTimeOut {
 
 
     @Test
-    public void f3() {
-        System.out.println("test3 ng");
+    public void f1() {
+        System.out.println("test1 ng");
         Assert.assertTrue(true);
     }
 
     /**
-     * 超时设置
+     * 超时测试
      *
      * @throws Exception
      */
-    @Test
-    public void f4() throws Exception {
-        System.out.println("test4 ng");
+    @Test(timeOut = 1000)
+    public void f2() throws Exception {
+        System.out.println("test2 ng");
         Thread.sleep(1500);
         Assert.assertTrue(true);
     }

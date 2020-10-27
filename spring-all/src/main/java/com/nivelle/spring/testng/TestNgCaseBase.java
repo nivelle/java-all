@@ -9,12 +9,12 @@ import org.testng.annotations.Test;
  * @author fuxinzhong
  * @date 2020/10/21
  */
-public class TestNgCase1 {
+public class TestNgCaseBase {
 
 
     @Test
-    public void f1() {
-        System.out.println("test1 ng");
+    public void f3() {
+        System.out.println("test3 ng");
         Assert.assertTrue(true);
     }
 
@@ -23,9 +23,9 @@ public class TestNgCase1 {
      *
      * @throws Exception
      */
-    @Test(timeOut = 1000)
-    public void f2() throws Exception {
-        System.out.println("test2 ng");
+    @Test
+    public void f4() throws Exception {
+        System.out.println("test4 ng");
         Thread.sleep(1500);
         Assert.assertTrue(true);
     }

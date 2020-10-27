@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results skipped="0" failed="0" ignored="0" total="5" passed="5">
+  <reporter-output>
+  </reporter-output>
+  <suite name="Suite3" duration-ms="52" started-at="2020-10-27T12:12:51Z" finished-at="2020-10-27T12:12:52Z">
+    <groups>
+    </groups>
+    <test name="test_ng" duration-ms="52" started-at="2020-10-27T12:12:51Z" finished-at="2020-10-27T12:12:52Z">
+      <class name="com.nivelle.spring.testng.TestNgParams">
+        <test-method status="PASS" signature="paramsTest1(java.lang.String, java.lang.String)[pri:0, instance:com.nivelle.spring.testng.TestNgParams@50c87b21]" name="paramsTest1" duration-ms="14" started-at="2020-10-27T20:12:52Z" finished-at="2020-10-27T20:12:52Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[110]]>
+              </value>
+            </param>
+            <param index="1">
+              <value>
+                <![CDATA[fuck]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- paramsTest1 -->
+        <test-method status="PASS" signature="paramsTest3(java.lang.String, java.lang.String)[pri:0, instance:com.nivelle.spring.testng.TestNgParams@50c87b21]" name="paramsTest3" duration-ms="14" started-at="2020-10-27T20:12:52Z" data-provider="provideNumbers" finished-at="2020-10-27T20:12:52Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[fuck]]>
+              </value>
+            </param>
+            <param index="1">
+              <value>
+                <![CDATA[20]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- paramsTest3 -->
+        <test-method status="PASS" signature="paramsTest3(java.lang.String, java.lang.String)[pri:0, instance:com.nivelle.spring.testng.TestNgParams@50c87b21]" name="paramsTest3" duration-ms="1" started-at="2020-10-27T20:12:52Z" data-provider="provideNumbers" finished-at="2020-10-27T20:12:52Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[100]]>
+              </value>
+            </param>
+            <param index="1">
+              <value>
+                <![CDATA[100]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- paramsTest3 -->
+        <test-method status="PASS" signature="paramsTest3(java.lang.String, java.lang.String)[pri:0, instance:com.nivelle.spring.testng.TestNgParams@50c87b21]" name="paramsTest3" duration-ms="0" started-at="2020-10-27T20:12:52Z" data-provider="provideNumbers" finished-at="2020-10-27T20:12:52Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[200]]>
+              </value>
+            </param>
+            <param index="1">
+              <value>
+                <![CDATA[20]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- paramsTest3 -->
+        <test-method status="PASS" signature="paramsTest2()[pri:0, instance:com.nivelle.spring.testng.TestNgParams@50c87b21]" name="paramsTest2" duration-ms="0" started-at="2020-10-27T20:12:52Z" depends-on-methods="com.nivelle.spring.testng.TestNgParams.paramsTest1" finished-at="2020-10-27T20:12:52Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- paramsTest2 -->
+      </class> <!-- com.nivelle.spring.testng.TestNgParams -->
+    </test> <!-- test_ng -->
+  </suite> <!-- Suite3 -->
+</testng-results>
