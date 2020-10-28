@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author fuxinzhong
  * @date 2020/10/20
  */
-public class BloomFilter implements Serializable{
+public class MyBloomFilter implements Serializable{
 
     private final int[] seeds;
     private final int size;
@@ -20,14 +20,14 @@ public class BloomFilter implements Serializable{
     private final Double autoClearRate;
 
     //dataCount逾预期处理的数据规模
-    public BloomFilter(int dataCount){
+    public MyBloomFilter(int dataCount){
         this(MisjudgmentRate.MIDDLE, dataCount, null);
     }
 
     //自动清空过滤器内部信息的使用比率，传null则表示不会自动清理;
     //当过滤器使用率达到100%时，则无论传入什么数据，都会认为在数据已经存在了;
     //当希望过滤器使用率达到80%时自动清空重新使用，则传入0.8
-    public BloomFilter(MisjudgmentRate rate, int dataCount, Double autoClearRate){
+    public MyBloomFilter(MisjudgmentRate rate, int dataCount, Double autoClearRate){
         //每个字符串需要的bit位数*总数据量
         long bitSize = rate.seeds.length * dataCount;
         if(bitSize<0 || bitSize>Integer.MAX_VALUE){
@@ -117,9 +117,9 @@ public class BloomFilter implements Serializable{
         }
     }
 
-    public static BloomFilter readFilterFromFile(String path) {
+    public static MyBloomFilter readFilterFromFile(String path) {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(path))) {
-            return (BloomFilter) ois.readObject();
+            return (MyBloomFilter) ois.readObject();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -186,7 +186,7 @@ public class BloomFilter implements Serializable{
     }
 
     public static void main(String[] args) {
-        BloomFilter fileter = new BloomFilter(7);
+        MyBloomFilter fileter = new MyBloomFilter(7);
         System.out.println(fileter.addIfNotExist("1111111111111"));
         System.out.println(fileter.addIfNotExist("2222222222222222"));
         System.out.println(fileter.addIfNotExist("3333333333333333"));
