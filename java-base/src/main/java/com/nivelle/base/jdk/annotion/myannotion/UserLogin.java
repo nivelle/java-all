@@ -6,18 +6,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class UserLogin {
 
     @Autowired
-    @MyAnnotation(nation = "test")
-    private IUser userdao;
+    private IUser userService;
 
-    public void setUserdao(IUser userdao) {
-        this.userdao = userdao;
-    }
-    public IUser getUserdao() {
-        return userdao;
+    public void setUserService(IUser userService) {
+        this.userService = userService;
     }
 
+    @MyAnnotation(nation = "ChineseUserImpl")
     public void loginTest() {
-        userdao.login();
+        userService.login();
     }
 }
 

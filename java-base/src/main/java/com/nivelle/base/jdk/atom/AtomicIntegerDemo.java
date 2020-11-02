@@ -1,5 +1,7 @@
 package com.nivelle.base.jdk.atom;
 
+import org.testng.annotations.Test;
+
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -10,7 +12,24 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class AtomicIntegerDemo {
 
-    public static void main(String[] args) {
-        AtomicInteger atomicInteger = new AtomicInteger();
+//    @Test()
+//    public void parallelTest1() {
+//        System.out.println("thread id:" + Thread.currentThread().getId());
+//        AtomicInteger atomicInteger = new AtomicInteger(1);
+//        atomicInteger.incrementAndGet();
+//        System.out.println(atomicInteger);
+//    }
+
+    @Test()
+    public void parallelTest2() {
+        System.out.println("thread id:" + Thread.currentThread().getId());
+        Integer integer = new Integer(1);
+        while (true) {
+            integer++;
+            System.out.println(integer);
+            if (integer>50){
+                break;
+            }
+        }
     }
 }

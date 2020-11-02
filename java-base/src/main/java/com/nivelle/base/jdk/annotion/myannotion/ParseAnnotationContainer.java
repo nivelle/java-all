@@ -2,7 +2,7 @@ package com.nivelle.base.jdk.annotion.myannotion;
 
 import java.lang.reflect.Method;
 
-public class Container {
+public class ParseAnnotationContainer {
 
     public static UserLogin getBean() {
         UserLogin userLogin = new UserLogin();
@@ -13,14 +13,16 @@ public class Container {
                 System.out.println(method);
                 if (method.isAnnotationPresent(MyAnnotation.class)) {
                     System.out.println("方法上的注解：" + method.isAnnotationPresent(MyAnnotation.class));
-                    MyAnnotation annotest = method.getAnnotation(MyAnnotation.class);
-                    System.out.println("MyAnnotation(field=" + method.getName() + ",nation=" + annotest.nation() + ")");
-                    IUser userdao;
+                    MyAnnotation annotationTest = method.getAnnotation(MyAnnotation.class);
+                    System.out.println("MyAnnotation(field=" + method.getName() + ",nation=" + annotationTest.nation() + ")");
+                    IUser userService;
                     try {
-                        System.out.println("当前注解值" + annotest.nation());
-                        userdao = (IUser) Class.forName("com.nivelle.programming.java2e.annotion."+annotest.nation()).newInstance();
-                        System.out.println("userdao is"+userdao);
-                        userLogin.setUserdao(userdao);
+                        System.out.println("当前注解值" + annotationTest.nation());
+                        System.err.println(IUser.class.getPackage().getName());
+                        //根据不通的注解内容,获取不同的实例
+                        userService = (IUser) Class.forName(IUser.class.getPackage().getName() + "." + annotationTest.nation()).newInstance();
+                        System.out.println("userService is:" + userService);
+                        userLogin.setUserService(userService);
                     } catch (Exception ex) {
                         System.out.println(ex);
                     }
