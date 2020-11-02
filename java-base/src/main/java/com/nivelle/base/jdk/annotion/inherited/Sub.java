@@ -1,6 +1,6 @@
 package com.nivelle.base.jdk.annotion.inherited;
 
-@DBTable2
+@DBTable2(name = " i am sub")
 class Sub extends Super {
     private int subPrivateField;
     public int subPublicField;
@@ -14,6 +14,11 @@ class Sub extends Super {
     private int subPrivateMethod() {
         return 0;
     }
+
+    protected int subProtedMethod() {
+        return 0;
+    }
+
 
     public int subPubliceMethod() {
         return 0;

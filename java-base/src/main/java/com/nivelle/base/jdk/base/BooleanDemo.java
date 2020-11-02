@@ -12,5 +12,11 @@ public class BooleanDemo {
         boolean a = true;
         boolean b = true;
         System.out.println("与操作:" + Boolean.logicalAnd(a, b));
+
+
+        Boolean my = new Boolean(true);
+
+        boolean result = Boolean.getBoolean("os");
+        System.out.println(result);
     }
 }
