@@ -5,6 +5,7 @@ import com.nivelle.base.pojo.Bar;
 import com.nivelle.base.pojo.Foo;
 import com.nivelle.base.pojo.SubUser;
 import com.nivelle.base.pojo.User;
+import org.apache.logging.log4j.util.Strings;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -451,11 +452,34 @@ public class Java8StreamTest {
         }).collect(Collectors.toList());
 
         System.out.println("testList" + testList);
+
+
+        System.out.println("~~~~~~~~~~~~~~~~~");
+
+        testDistinct();
     }
 
     public static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
         Set<Object> seen = ConcurrentHashMap.newKeySet();
         return t -> seen.add(keyExtractor.apply(t));
+    }
+
+    public static void testDistinct() {
+        User user11 = new User(1, null);
+        User user22 = new User(2, null);
+        User user33 = new User(2, null);
+        User user44 = new User(100, null);
+
+        List<User> list = Lists.newArrayList();
+        list.add(user11);
+        list.add(user22);
+        list.add(user33);
+        list.add(user44);
+
+        String groupIds = list.stream().map(x -> x.getName()).distinct().collect(Collectors.joining(","));
+        System.out.println(groupIds);
+        System.out.println(Strings.isBlank(groupIds));
+
     }
 
 

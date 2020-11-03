@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <!-- verbose	运行的级别或详细程度，级别为0-10，其中10最详细-->
+<!-- parallel : methods 每个method使用一个线程， test 每个test标签中的所有方法使用一个线程，class 每个classes使用一个线程-->
 <!-- parallel	TestNG是否运行不同的线程来运行这个套件，默认为none，其他级别为methods、tests、classes、instances-->
      <!--methods：方法层级,若为此值，则该suite下所有的测试方法都将进行多线程，即测试用例级别的多线程。如果用例之间有依赖，则执行顺序会按照设定的依赖来运行；-->
      <!--tests:TestNG将在同一线程中运行相同的<Test>标签中的所有方法，每个<test>标签都将处于一个单独的线程中，这允许您将不是线程安全的所有类分组在同一个<test>中，并保证它们都将在同一个线程中运行，同时利用TestNG使用尽可能多的线程运行测试。-->
@@ -10,10 +11,10 @@
 <!-- annotations 在测试中使用的注释类型-->
 <!-- time-out	 在本测试中的所有测试方法上使用的默认超时-->
 <!--preserve-order 值可输入true或者false，如果为true，则用例执行会按照在xml中的顺序执行，否则会乱序执行，不添加此属性的话默认是按顺序执行的；-->
-<suite name="Suite1" parallel="classes" verbose="1" thread-count="14">
+<suite name="Suite1" parallel="methods" verbose="1" thread-count="10">
     <test name="test_ng1">
         <classes>
-            <class name="com.nivelle.base.jdk.atom.AtomicIntegerDemo"/>
+            <class name="com.nivelle.base.jdk.concurrent.atom.AtomicIntegerDemo"/>
         </classes>
     </test> <!-- Java_Learn -->
 
