@@ -8,7 +8,7 @@ import java.util.concurrent.locks.AbstractQueuedSynchronizer;
  * @author nivelle
  * @date 2019/07/19
  */
-public class AQSTest {
+public class AbstractQueuedSynchronizerDemo {
 
     public static void main(String[] args) throws Exception {
 
@@ -88,9 +88,9 @@ public class AQSTest {
  *
  * 1. AQS定义了两种资源共享方式：
  *
- *   1.1 Exclusive（独占，只有一个线程能获取锁，其他线程都必须等到拥有锁的线程释放掉锁之后才可以争夺锁，如ReentrantLock）
+ *   1.1 Exclusive（独占，只有一个线程能获取锁，其他线程都必须等到拥有锁的线程释放掉锁之后才可以争夺锁，如 ReentrantLock ）
  *
- *   1.2 Share（共享，多个线程可同时获得锁，同时执行。如 Semaphore/ CountDownLatch）
+ *   1.2 Share（共享，多个线程可同时获得锁，同时执行，如 Semaphore/ CountDownLatch）
  */
 class MyAQSDemo extends AbstractQueuedSynchronizer {
 
@@ -103,8 +103,8 @@ class MyAQSDemo extends AbstractQueuedSynchronizer {
             if (current.getId() == exclusiveThread.getId()) {
                 if (super.compareAndSetState(getState(), getState() + arg)) {
                     super.setExclusiveOwnerThread(current);
-                    System.out.println("tryAcquire again true:" + Thread.currentThread().getName() + ":state:" + getState());
-                    System.out.println("tryAcquire again true:" + Thread.currentThread().getName() + ":isHeldExclusively:" + isHeldExclusively());
+                    System.out.println("tryAcquire again true again:" + Thread.currentThread().getName() + ":state:" + getState());
+                    System.out.println("tryAcquire again true again:" + Thread.currentThread().getName() + ":isHeldExclusively:" + isHeldExclusively());
                     return true;
                 }
             }
@@ -112,8 +112,8 @@ class MyAQSDemo extends AbstractQueuedSynchronizer {
         if (super.compareAndSetState(0, getState() + arg)) {
             //设置独占锁拥有者线程（模版方法）
             setExclusiveOwnerThread(current);
-            System.out.println("tryAcquire true:" + Thread.currentThread().getName() + ":state:" + getState());
-            System.out.println("tryAcquire true:" + Thread.currentThread().getName() + ":isHeldExclusively:" + isHeldExclusively());
+            System.out.println("tryAcquire true first:" + Thread.currentThread().getName() + ":state:" + getState());
+            System.out.println("tryAcquire true first :" + Thread.currentThread().getName() + ":isHeldExclusively:" + isHeldExclusively());
             return true;
         }
         return false;

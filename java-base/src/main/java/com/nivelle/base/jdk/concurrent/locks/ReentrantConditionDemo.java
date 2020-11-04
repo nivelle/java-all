@@ -9,7 +9,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * @author fuxinzhong
  * @date 2020/04/30
  */
-public class ReentrantConditionTest {
+public class ReentrantConditionDemo {
 
     /**
      * ConditionObject 是 AbstractQueuedSynchronizer 的内部类
