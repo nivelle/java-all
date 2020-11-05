@@ -412,6 +412,20 @@ public class ArrayListDemo {
         System.out.println("list3:" + list3);
 
 
+        List<String> list4 = new ArrayList();
+        list4.add("9");
+        list4.add("10");
+        list4.add("11");
+        list4.add("11");
+        list4.add("11");
+        list4.add("11");
+
+
+        System.out.println("subList1:" + list4.subList(0, 1));
+        System.out.println("subList1:" + list4.subList(1, 2));
+        System.out.println("subList1:" + list4.subList(2, 3));
+
+
     }
 
 

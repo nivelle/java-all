@@ -8,12 +8,36 @@ public class User implements Serializable {
 
     public String name;
 
+     static public int flag;
+
+     public Integer number;
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public static int getFlag() {
+        return flag;
+    }
+
+    public static void setFlag(int flag) {
+        User.flag = flag;
+    }
+
+    public Integer getNumber() {
+        return number;
+    }
+
+    public void setNumber(Integer number) {
+        this.number = number;
+    }
 
     @Override
     public String toString() {
         return "User{" +
                 "age=" + age +
                 ", name='" + name + '\'' +
+                ", number=" + number +
                 '}';
     }
 
@@ -73,4 +97,8 @@ public class User implements Serializable {
         this.name = name;
     }
 
+    public User(int age, String name) {
+        this.age = age;
+        this.name = name;
+    }
 }
