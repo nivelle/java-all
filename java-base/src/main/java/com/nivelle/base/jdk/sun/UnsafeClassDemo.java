@@ -113,7 +113,7 @@ public class UnsafeClassDemo {
         }).start();
 
         /**
-         * ## 线程调度
+         * 3. 线程调度
          *
          * 包括线程挂起、恢复、锁机制
          */
@@ -126,7 +126,7 @@ public class UnsafeClassDemo {
         Thread.sleep(1000);
 
         /**
-         * ## Class相关
+         * 4. Class相关
          *
          * 提供Class和它的静态字段的操作相关方法，包含静态字段内存定位、定义类、定义匿名类、检验&确保初始化等
          */
