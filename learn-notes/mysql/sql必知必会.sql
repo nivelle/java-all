@@ -134,6 +134,9 @@ select sum(age),gender from students group by gender limit 1,2; //对分组后�
 |      183 | girl   |
 +----------+--------+
 
+## 统计group by 之后的count()
+select count(*) from(SELECT count(*) FROM 表名 WHERE 条件 GROUP BY id ) a ;
+
 ## 关联查询
 
 select s.id as sId,s.name sName,s.cls_id sclsId, c.id as cid ,c.name as cname from students as s inner join classes as c;// innner join s表和c表每一行数据关联 s(n)*c(n)

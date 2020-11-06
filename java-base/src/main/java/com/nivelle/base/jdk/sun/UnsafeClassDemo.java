@@ -1,6 +1,7 @@
 package com.nivelle.base.jdk.sun;
 
 import com.nivelle.base.pojo.User;
+import com.nivelle.base.utils.GsonUtils;
 import sun.misc.Unsafe;
 
 import java.lang.reflect.Field;
@@ -99,7 +100,36 @@ public class UnsafeClassDemo {
         System.out.println("userOffset:" + userAgeOffset);
         System.out.println("user2 age is:" + user.getAge());
 
-
+        /**
+         * 3. 线程调度
+         *
+         * 包括线程挂起、恢复、锁机制
+         */
+        boolean monitorEnter = unsafe.tryMonitorEnter(user);
+        System.out.println("获取对象锁,monitorEnter:" + monitorEnter);
+        boolean monitorEnter2 = unsafe.tryMonitorEnter(user);
+        System.out.println("获取对象锁,monitorEnter2:" + monitorEnter2);
+        System.out.println("当前锁:" + Thread.currentThread().getName());
+        Thread.sleep(1000);
+        /**
+         * public native void park(boolean isAbsolute, long time); // 第一个参数是是否是绝对时间，第二个参数是等待时间值。如果isAbsolute是true则会实现ms定时。如果isAbsolute是false则会实现ns定时。
+         *
+         * 1. isAbsolute = false,time=0 【LockSupport 的park操作就是此种情况】 :
+         * (1) 在调用park()之前调用了unPark或者interrupt则park直接返回,不会挂起
+         * (2) 未调用则park会挂起当前线程
+         * (3) park未知原因调用则直接返回
+         *
+         * 2. isAbsolute = false,time>0
+         * (1) 在调用park()之前调用了unPark或者interrupt则park直接返回,不会挂起
+         * (2) 如果未调用则会挂起当前线程，但是在挂起time ns时如果未收到唤醒信号也会返回继续执行
+         * (3) park未知原因调用出错则直接返回（一般不会出现）
+         *
+         * 3. isAbsolute = true,time为任意数值
+         * (1) 在调用park()之前调用了unPark或者interrupt则park直接返回,不会挂起
+         * (2) 如果time <= 0则直接返回
+         * (3) 如果之前未调用park unpark并且time > 0,则会挂起当前线程，但是在挂起time ms时如果未收到唤醒信号也会返回继续执行
+         * (4) park未知原因调用出错则直接返回
+         */
         new Thread(() -> {
             synchronized (user) {
                 try {
@@ -107,33 +137,70 @@ public class UnsafeClassDemo {
                 } catch (Exception e) {
                     System.out.println(e + e.getMessage());
                 }
-
             }
-            unsafe.park(true, 5000);
+            System.out.println("线程：" + Thread.currentThread().getName() + "被挂起！");
+            unsafe.park(false, 0);
+            unsafe.unpark(Thread.currentThread());
+            System.out.println("挂起超时");
         }).start();
 
-        /**
-         * 3. 线程调度
-         *
-         * 包括线程挂起、恢复、锁机制
-         */
-        //可重入锁
-        boolean monitorEnter = unsafe.tryMonitorEnter(user);
-        System.out.println("获取对象锁,monitorEnter:" + monitorEnter);
-        boolean monitorEnter2 = unsafe.tryMonitorEnter(user);
-        System.out.println("获取对象锁,monitorEnter2:" + monitorEnter2);
-        System.out.println("当前锁:" + Thread.currentThread().getName());
-        Thread.sleep(1000);
-
+        Thread.sleep(600);
         /**
          * 4. Class相关
          *
          * 提供Class和它的静态字段的操作相关方法，包含静态字段内存定位、定义类、定义匿名类、检验&确保初始化等
+         *
+         *
+         */
+        /**
+         * 而Unsafe中提供allocateInstance方法，仅通过Class对象就可以创建此类的实例对象，而且不需要调用其构造函数、初始化代码、JVM安全检查等。
+         * 它抑制修饰符检测，也就是即使构造器是private修饰的也能通过此方法实例化，只需提类对象即可创建相应的对象。由于这种特性，allocateInstance在java.lang.invoke、Objenesis（提供绕过类构造器的对象生成方式）、Gson（反序列化时用到）中都有相应的应用
          */
         User userAllocateInstance = (User) unsafe.allocateInstance(User.class);
+        System.out.println("userAllocateInstance before is:" + userAllocateInstance);
         userAllocateInstance.setAge(20);
         userAllocateInstance.setName("AllocateUser");
-        System.out.println("userAllocateInstance is:" + userAllocateInstance);
+        System.out.println("userAllocateInstance after is:" + userAllocateInstance);
+        //定义一个类，此方法会跳过JVM的所有安全检查，默认情况下，ClassLoader（类加载器）和ProtectionDomain（保护域）实例来源于调用者
+        //unsafe.defineClass(className, classFile, 0, classFile.length,BoundMethodHandle.class.getClassLoader(), null)
+        final byte[] classFile = GsonUtils.toJson(userAllocateInstance).getBytes();
+        //Class<?> myDefineClass = unsafe.defineClass("myDefineClassName", classFile, 0, classFile.length, UnsafeClassDemo.class.getClassLoader(), null);
+        //System.out.println("自定义Class:" + myDefineClass.getName());
+        //检测给定的类是否已经初始化。通常在获取一个类的静态属性的时候（因为一个类如果没初始化，它的静态属性也不会初始化）使用
+        unsafe.ensureClassInitialized(User.class);
+
+        /**
+         * 5. 数组相关
+         */
+        Integer[] array = new Integer[]{1, 2, 3, 4, 7, 8, 9};
+        //返回数组中第一个元素的偏移地址
+        long startElementAddress = unsafe.arrayBaseOffset(Integer[].class);
+        System.out.println("数组首元素地址:" + startElementAddress);
+        //返回数组中一个元素占用的大小
+        int elementScale = unsafe.arrayIndexScale(Integer[].class);
+        System.out.println("数组元素的大小:" + elementScale);
+
+        /**
+         * 6.内存屏障相关 例如：stampedLock
+         */
+        //内存屏障:禁止load操作重排序。屏障前的load操作不能被重排序到屏障后，屏障后的load操作不能被重排序到屏障前
+        unsafe.loadFence();
+        //内存屏障:禁止store操作重排序。屏障前的store操作不能被重排序到屏障后，屏障后的store操作不能被重排序到屏障前
+        unsafe.storeFence();
+        //内存屏障: 禁止load、store操作重排序
+        unsafe.fullFence();
+
+
+        /**
+         * 7.系统相关
+         */
+        //返回系统指针的大小。返回值为4（32位系统）或 8（64位系统）。
+        int addressSize = unsafe.addressSize();
+        System.out.println("系统指针大小：" + addressSize);
+
+        //内存页的大小，此值为2的幂次方
+        int pageSize = unsafe.pageSize();
+        System.out.println("内存页大小：" + pageSize);
 
     }
 

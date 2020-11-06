@@ -70,9 +70,7 @@ public class ThreadConditionLockDemo {
         });
 
         thread0.start();
-
         thread1.start();
-
         thread2.start();
 
     }

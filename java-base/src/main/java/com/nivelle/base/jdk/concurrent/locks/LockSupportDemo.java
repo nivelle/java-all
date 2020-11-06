@@ -27,6 +27,7 @@ public class LockSupportDemo {
         System.out.println(currentThread.getId() + ",before state:" + currentThread.getState());
         LockSupport.park();
         System.out.println(currentThread.getId() + ",after state:" + currentThread.getState());
+        LockSupport.unpark(currentThread);
         /**
          * nivelleMac:java-guides nivellefu$ jstack -l 75445
          * 2020-11-04 23:02:34
