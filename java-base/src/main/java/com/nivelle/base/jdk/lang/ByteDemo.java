@@ -1,5 +1,7 @@
 package com.nivelle.base.jdk.lang;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -35,32 +37,38 @@ public class ByteDemo {
     /**
      * 1. &表示按位与,只有两个位同时为1,才能得到1,
      * <p>
-     * todo 0x代表16进制数,0xff 表示的数二进制 1111 1111 占一个字节.和其进行&操作的数,最低8位,不会发生变化.
+     * 0x代表16进制数,0xff 表示的数二进制 1111 1111 占一个字节.和其进行&操作的数,最低8位,不会发生变化.
      * <p>
-     * 2. Java中使用补码来表示负数，具体就是除符号位之外，剩余位取反加1，符号位不变还是1（符号位0-正数，1-负数）
+     * 2. Java中使用补码来表示负数,具体就是除符号位之外,剩余位取反加1,符号位不变还是1（符号位0:正数，1:负数）
      */
     public static void main(String[] args) {
 
         Integer intToByte = 127;
-        System.out.println(Integer.toBinaryString(intToByte));
+        System.out.println("2的7次方减1:" + Integer.toBinaryString(intToByte));
+
+        System.out.println("2的7次方:" + Integer.toBinaryString(128));
 
         Integer negativeIntToByte = -128;
-        System.out.println(Integer.toBinaryString(negativeIntToByte));
+        System.out.println("int的二进制长度:" + "11111111111111111111111110000000".length());
+        System.out.println("二进制负数表示,128二进制取反数加1:" + Integer.toBinaryString(negativeIntToByte));
+
 
         String byteTests = "你";
-
+        //1个字节=8位
         byte[] bytesArray = byteTests.getBytes();
-        //byte类型的数据最高位是符号位，通过和0xff进行与操作,转换为int类型的正整数
+        //byte类型的数据最高位是符号位,通过和0xff进行与操作,转换为int类型的正整数
         for (int i = 0; i < bytesArray.length; i++) {
-            System.out.println("当前字节:" + Integer.toBinaryString(bytesArray[i]));
-            System.out.println("当前字节与0xff与" + Integer.toBinaryString(bytesArray[i] & 0xff));
+            System.out.println("当前字节:" + bytesArray[i]);
+            String binaryString = StringUtils.leftPad(Integer.toBinaryString(bytesArray[i] & 0xff), 8, '0');
+            System.out.println("二进制展示:" + binaryString);
+            System.out.println("当前字节与0xff与" + (bytesArray[i] & 0xff));
         }
 
         /**
          *  最大最小值
          */
-        System.out.println("max value:" + Byte.MAX_VALUE);
-        System.out.println("min value:" + Byte.MIN_VALUE);
+        System.out.println("二进制最大值 max value:" + Byte.MAX_VALUE);
+        System.out.println("二进制最小值 min value:" + Byte.MIN_VALUE);
 
         byte byteValue = 11;
         Byte byteToString = new Byte(byteValue);
@@ -71,7 +79,7 @@ public class ByteDemo {
         System.out.println();
 
         /**
-         * todo 0就是false,1就是true
+         * 0:就是false,1:就是true
          *
          * 与运算,两位全为1才是1
          *
@@ -91,11 +99,11 @@ public class ByteDemo {
          * 二进制的表示: 0b开头+(0或1表示的二进制)
          */
         int getLow4Byte = (0b10101110 & 0b00001111);
-        System.out.println("低四位整数:" + getLow4Byte);
+        System.out.println("低四位整数:" + Integer.toBinaryString(getLow4Byte));
         System.out.println("取低四位二进制表示:" + Integer.toBinaryString(getLow4Byte));
-
+        int clearByte = (0b10101110 & 0b00000000);
+        System.out.println("清0所有位:" + StringUtils.leftPad(Integer.toBinaryString(clearByte), 8, '0'));
         System.out.println();
-
 
         /**
          * 或运算,只要有一个1结果就是1(1代表true)
@@ -111,9 +119,7 @@ public class ByteDemo {
          */
         int set4LowByte = 0b10101110;
         int show4LowByte = (set4LowByte | 0b00001111);
-        System.out.println("置低四位全为1:" + show4LowByte);
-        System.out.println(Integer.toBinaryString(show4LowByte));
-
+        System.out.println("置低四位全为1:" + Integer.toBinaryString(show4LowByte));
 
         /**
          * 异或运算（两个相应位为"异"则该位结果为1,否则为0）
@@ -141,7 +147,6 @@ public class ByteDemo {
         int showHoldByte = (holdByte ^ 0b00000000);
         System.out.println("指定位保留原值:" + Integer.toBinaryString(showHoldByte));
 
-
         /**
          *  左移 <<
          *
@@ -154,7 +159,7 @@ public class ByteDemo {
         int negativeNum = -11;
         System.out.println("-11的二进制位:" + Integer.toBinaryString(negativeNum));
 
-        int leftNegativeNum = -11 << 300;
+        int leftNegativeNum = -11 << 1;
         System.out.println("-11的二进制位左移一位:" + Integer.toBinaryString(leftNegativeNum));
 
         System.out.println(leftNegativeNum / negativeIntToByte);
@@ -216,7 +221,9 @@ public class ByteDemo {
         /**
          * x的反数
          */
-        System.out.println("1的反数:" + ((~1) + 1));
+        System.out.println("1的反数:" + ((~1)+1));
+        System.out.println("2的反数:" + ((~2)));
+
 
         /**
          * 输入2的n次方
@@ -244,7 +251,6 @@ public class ByteDemo {
         Byte byte1 = new Byte("1");
         System.out.println(byte1);
         System.out.println();
-
 
     }
 
