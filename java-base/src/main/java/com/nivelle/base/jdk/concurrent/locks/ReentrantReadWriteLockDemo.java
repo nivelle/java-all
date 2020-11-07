@@ -4,7 +4,7 @@ package com.nivelle.base.jdk.concurrent.locks;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
- * ReentrantReadWriteLock 读写锁
+ * ReentrantReadWriteLock 读写锁 对标 StampedLock
  *
  * @author nivelle
  * @date 2019/06/16

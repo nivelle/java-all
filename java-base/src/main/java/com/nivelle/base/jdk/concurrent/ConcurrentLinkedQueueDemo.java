@@ -6,7 +6,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 /**
  * ConcurrentLinkedQueue
  *
- * ConcurrentLinkedDeque
  *
  * @author nivelle
  * @date 2020/04/12

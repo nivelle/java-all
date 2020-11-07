@@ -11,6 +11,6 @@ import java.util.concurrent.Phaser;
 public class PhaserDemo {
 
     public static void main(String[] args) {
-        Phaser phaser = new Phaser();
+        Phaser phaser = new Phaser(2);
     }
 }
