@@ -83,7 +83,7 @@ public class StringDemo {
          * 特例：The hash value of the empty string is zero
          */
         System.out.println("字符串string1的hash码:" + string1.hashCode());
-        System.out.println("字符串string2的hash码:" + string1.hashCode());
+        System.out.println("字符串string2的hash码:" + string2.hashCode());
         System.out.println("字符串string4的hash码:" + string4.hashCode());
 
         /**
