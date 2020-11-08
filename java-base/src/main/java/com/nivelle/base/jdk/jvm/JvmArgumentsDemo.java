@@ -7,7 +7,7 @@ package com.nivelle.base.jdk.jvm;
  * @author nivelle
  * @date 2020/03/21
  */
-public class JvmArgumentsTest {
+public class JvmArgumentsDemo {
 
     public static void main(String[] args) {
 
