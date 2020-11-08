@@ -12,5 +12,7 @@ public class ArrayBlockingQueueDemo {
 
     public static void main(String[] args) {
         ArrayBlockingQueue arrayBlockingQueue = new ArrayBlockingQueue(1);
+        arrayBlockingQueue.add(1);
+
     }
 }
