@@ -9,7 +9,7 @@ import java.util.List;
  * @author nivelle
  * @date 2020/04/14
  */
-public class ArraysTest {
+public class ArraysTestDemo {
     public static void main(String[] args) {
         Integer[] test1 = new Integer[]{1, 3, 9, 10, 2};
         /**

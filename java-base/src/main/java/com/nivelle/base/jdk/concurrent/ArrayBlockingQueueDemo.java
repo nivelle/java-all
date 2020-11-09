@@ -34,15 +34,15 @@ public class ArrayBlockingQueueDemo {
      * int count;
      * 用于并发控制：使用经典的双Condition算法
      * final ReentrantLock lock;
-     * 获取操作等待条件
+     * //获取操作等待条件
      * private final Condition notEmpty;
-     * 插入操作等待条件
+     * //插入操作等待条件
      * private final Condition notFull;
      **/
 
 
     public static void main(String[] args) {
-        ArrayBlockingQueue arrayBlockingQueue1 = new ArrayBlockingQueue(3, true);
+        ArrayBlockingQueue arrayBlockingQueue1 = new ArrayBlockingQueue(2, true);
         arrayBlockingQueue1.add(1);
         arrayBlockingQueue1.add(2);
         arrayBlockingQueue1.add(3);

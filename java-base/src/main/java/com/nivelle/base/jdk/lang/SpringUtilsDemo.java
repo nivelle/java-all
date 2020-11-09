@@ -8,7 +8,7 @@ import org.springframework.util.StringUtils;
  * @author fuxinzhong
  * @date 2020/09/04
  */
-public class SpringUtils {
+public class SpringUtilsDemo {
     public static void main(String[] args) {
 
         /**

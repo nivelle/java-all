@@ -14,7 +14,7 @@ import java.util.List;
  * @author nivelle
  * @date 2020/04/14
  */
-public class CollectionsTest {
+public class CollectionsTestDemo {
 
     public static void main(String[] args) {
         List<Integer> list1 = Lists.newArrayList();
