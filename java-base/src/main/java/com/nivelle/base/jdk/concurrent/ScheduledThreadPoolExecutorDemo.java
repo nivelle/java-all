@@ -28,13 +28,18 @@ public class ScheduledThreadPoolExecutorDemo {
      *
      */
 
-
     /**
      * （1）指定某个时刻执行任务,是通过延时队列的特性来解决的;
      * <p>
      * （2）重复执行,是通过在任务执行后再次把任务加入到队列中来解决的。
      */
     public static void main(String[] args) throws Exception {
+        /**
+         * // 默认定时任务线程池，最大线程数目不限制,keepLiveTime = 0 ,使用 延迟队列
+         *  public ScheduledThreadPoolExecutor(int corePoolSize) {
+         *         super(corePoolSize, Integer.MAX_VALUE, 0, NANOSECONDS,new DelayedWorkQueue());
+         *     }
+         */
         ScheduledThreadPoolExecutor scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(5);
         System.out.println("start:" + System.currentTimeMillis());
 

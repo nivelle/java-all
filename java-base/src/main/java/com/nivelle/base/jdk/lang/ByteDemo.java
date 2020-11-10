@@ -221,8 +221,12 @@ public class ByteDemo {
         /**
          * x的反数
          */
-        System.out.println("1的反数:" + ((~1)+1));
+        System.out.println("1的反数:" + ((~1)));
+        System.out.println("-2的反数:" + ((~-2)));
+
         System.out.println("2的反数:" + ((~2)));
+        System.out.println("-3的反数:" + ((~-3)));
+
 
 
         /**
