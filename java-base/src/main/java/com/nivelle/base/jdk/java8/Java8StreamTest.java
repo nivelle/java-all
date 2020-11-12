@@ -457,6 +457,8 @@ public class Java8StreamTest {
         System.out.println("~~~~~~~~~~~~~~~~~");
 
         testDistinct();
+
+        testForEach();
     }
 
     public static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
@@ -479,6 +481,27 @@ public class Java8StreamTest {
         String groupIds = list.stream().map(x -> x.getName()).distinct().collect(Collectors.joining(","));
         System.out.println(groupIds);
         System.out.println(Strings.isBlank(groupIds));
+
+    }
+
+    public static void testForEach() {
+        User user11 = new User(1, null);
+        User user22 = new User(2, null);
+        User user33 = new User(2, null);
+        User user44 = new User(100, null);
+
+        List<User> list = Lists.newArrayList();
+        list.add(user11);
+        list.add(user22);
+        list.add(user33);
+        list.add(user44);
+
+        list.forEach(x -> {
+            if (x.getAge() == 2) {
+                return;
+            }
+            System.err.println("半路return:" + x);
+        });
 
     }
 
