@@ -1,14 +1,3 @@
----
-layout: post
-title:  "redis深入学习(十)之集合对象"
-date:   2017-09-09 01:06:05
-categories: noSQL
-tags: redis
-excerpt: redis
----
-
-
-* conten
 
 ### 集合对象
 
