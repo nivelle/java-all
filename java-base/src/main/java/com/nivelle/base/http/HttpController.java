@@ -40,7 +40,7 @@ public class HttpController {
      * <p>
      * method： 指定请求的method类型， GET、POST、PUT、DELETE等；
      * <p>
-     * （4）consumes，produces；
+     * （4） ，produces；
      * <p>
      * consumes:指定处理 请求的提交内容类型（Content-Type），例如application/json, text/html;
      * <p>

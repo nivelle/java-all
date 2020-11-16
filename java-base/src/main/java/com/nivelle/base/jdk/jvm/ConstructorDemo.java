@@ -1,8 +1,5 @@
 package com.nivelle.base.jdk.jvm;
 
-
-import com.nivelle.base.jdk.atom.UnsafeClassDemo;
-
 import java.io.*;
 import java.lang.reflect.Constructor;
 

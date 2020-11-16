@@ -30,8 +30,6 @@ typedef struct zskiplistNode{
 
 ```
 
-![image](https://ws1.sinaimg.cn/large/b1eb59d9ly1fwxpaj3bvtj20lr08xgnc.jpg)
-
 - header:指向跳跃表的表头节点
 - tail:指向跳跃表的表尾节点
 - level:记录目前跳跃表内,层数最大的那个节点的层数

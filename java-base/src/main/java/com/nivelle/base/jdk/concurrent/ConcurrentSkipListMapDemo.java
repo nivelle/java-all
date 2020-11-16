@@ -64,7 +64,7 @@ public class ConcurrentSkipListMapDemo {
          * 数据节点:
          * ## 单链表结构:
          * static final class Node<K,V> {
-         *         ## 这里value的类型是Object，而不是V;在删除元素的时候value会指向当前元素本身
+         *         //这里value的类型是Object，而不是V;在删除元素的时候value会指向当前元素本身
          *         final K key;
          *         volatile Object value;
          *         volatile Node<K,V> next;
@@ -73,7 +73,7 @@ public class ConcurrentSkipListMapDemo {
          *
          * ## 索引节点:
          * static class Index<K,V> {
-         *         ## 存储着对应的node值，及向下和向右的索引指针
+         *         //存储着对应的node值，及向下和向右的索引指针
          *         final Node<K,V> node;
          *         final Index<K,V> down;
          *         volatile Index<K,V> right;
@@ -88,7 +88,7 @@ public class ConcurrentSkipListMapDemo {
          *
          * ## 头索引节点
          * static final class HeadIndex<K,V> extends Index<K,V> {
-         *         ##  头索引节点，继承自Index，并扩展一个level字段，用于记录索引的层级
+         *         //头索引节点，继承自Index，并扩展一个level字段，用于记录索引的层级
          *         final int level;
          *         HeadIndex(Node<K,V> node, Index<K,V> down, Index<K,V> right, int level) {
          *             super(node, down, right);
@@ -103,8 +103,8 @@ public class ConcurrentSkipListMapDemo {
          *         entrySet = null;
          *         values = null;
          *         descendingMap = null;
-         *         ## 创建了一个头索引节点，里面存储着一个数据节点，这个数据节点的值是空对象，且它的层级是1。
-         *         ## 初始化的时候，跳表中只有一个头索引节点，层级是1，数据节点是一个空对象，down和right都是null
+         *         //创建了一个头索引节点,里面存储着一个数据节点,这个数据节点的值是空对象,且它的层级是1。
+         *         //初始化的时候，跳表中只有一个头索引节点，层级是1，数据节点是一个空对象，down和right都是null
          *         head = new HeadIndex<K,V>(new Node<K,V>(null, BASE_HEADER, null),null, null, 1);
          *     }
          *
@@ -114,70 +114,70 @@ public class ConcurrentSkipListMapDemo {
      * 添加元素:
      *
      * public V put(K key, V value) {
-     *         ## 不能存储value为null的元素，因为value为null标记该元素被删除
+     *         //不能存储value为null的元素，因为value为null标记该元素被删除
      *         if (value == null){
      *            throw new NullPointerException();
      *         }
-     *         ## 调用doPut()方法添加元素
+     *         //调用doPut()方法添加元素
      *         return doPut(key, value, false);
      *     }
      *
      *
      *    private V doPut(K key, V value, boolean onlyIfAbsent) {
-     *         ## 添加元素后存储在z中
+     *         //添加元素后存储在z中
      *         Node<K,V> z;
-     *         ## key也不能为null
+     *         //key也不能为null
      *         if (key == null){
      *             throw new NullPointerException();
      *         }
      *         Comparator<? super K> cmp = comparator;
-     *         ## Part 1:找到目标节点的位置并插入，这里的目标节点是数据节点，也就是最底层的那条链
-     *         ## 自旋
+     *         //Part 1:找到目标节点的位置并插入，这里的目标节点是数据节点，也就是最底层的那条链
+     *         //自旋
      *         outer: for (;;) {
-     *             ## 寻找目标节点之前最近的一个索引对应的数据节点，存储在b中，b= before 并把b的下一个数据节点存储在n中，n=next为了便于描述，
-     *             ## 这里把b叫做当前节点，n叫做下一个节点
+     *             // 寻找目标节点之前最近的一个索引对应的数据节点,存储在b中，b = before 并把b的下一个数据节点存储在n中，n=next为了便于描述，
+     *             // 这里把b叫做当前节点，n 叫做下一个节点
      *             for (Node<K,V> b = findPredecessor(key, cmp), n = b.next;;) {
      *                 ## 如果下一个节点不为空;就拿其key与目标节点的key比较，找到目标节点应该插入的位置
      *                 if (n != null) {
-     *                     ## v=value,存储节点value值
+     *                     // v=value,存储节点value值
      *                     Object v;
-     *                     ## c = compare,存储两个节点比较的大小
+     *                     //c = compare,存储两个节点比较的大小
      *                     int c;
-     *                     ## n的下一个数据节点，也就是b的下一个节点的下一个节点（孙子节点）
+     *                     // n的下一个数据节点，也就是b的下一个节点的下一个节点（孙子节点）
      *                     Node<K,V> f = n.next;
-     *                     ## 如果n不为b的下一个节点，说明有其他线程修改了数据，跳出内层循环，
-     *                     ## 也就是回到了外层循环自旋的位置，从头来过
+     *                     // 如果n不为b的下一个节点，说明有其他线程修改了数据，跳出内层循环，
+     *                     // 也就是回到了外层循环自旋的位置，从头来过
      *                     if (n != b.next){
      *                         break;
      *                     }
-     *                     ## 如果n的value值为空，说明该节点已经删除，协助删除节点
+     *                     // 如果n的value值为空，说明该节点已经删除，协助删除节点
      *                     if ((v = n.value) == null) {   // n is deleted
-     *                         ## 协助删除
+     *                         // 协助删除
      *                         n.helpDelete(b, f);
      *                         break;
      *                     }
-     *                     ## 如果b的值为空或者v等于n,说明b已被删除
-     *                     ## 这时候n就是marker节点，那b就是被删除的那个
+     *                     //如果b的值为空或者v等于n,说明b已被删除
+     *                     //这时候n就是marker节点，那b就是被删除的那个
      *                     if (b.value == null || v == n){ // b is deleted
      *                         break;
      *                     }
-     *                     ## 如果目标key比下一个节点的key大
-     *                     ## 数目目标元素所在的位置还在下一个节点的后面
+     *                     // 如果目标key比下一个节点的key大
+     *                     //数目目标元素所在的位置还在下一个节点的后面
      *                     if ((c = cpr(cmp, key, n.key)) > 0) {
-     *                         ## 就把当前节点往后移一位，同样的下一个节点也往后移一位
-     *                         ## 再重新检查新n是否为空，它与目标key的关系
+     *                         // 就把当前节点往后移一位，同样的下一个节点也往后移一位
+     *                         // 再重新检查新n是否为空，它与目标key的关系
      *                         b = n;
      *                         n = f;
      *                         continue;
      *                     }
-     *                     ## 如果比较时发现下一个节点的key与目标key相同，说明链表中本身句存在目标节点
+     *                     //如果比较时发现下一个节点的key与目标key相同，说明链表中本身句存在目标节点
      *                     if (c == 0) {
      *                         ## 则用新值替换旧值，并返回旧值（onlyIfAbset=false）
      *                         if (onlyIfAbsent || n.casValue(v, value)) {
      *                             @SuppressWarnings("unchecked") V vv = (V)v;
      *                             return vv;
      *                         }
-     *                         ## 如果替换旧值时失败，说明其它先一步修改了值，从头来过
+     *                         //如果替换旧值时失败，说明其它先一步修改了值，从头来过
      *                         break; // restart if lost race to replace value
      *                     }
      *                     // else c < 0; fall through
@@ -416,11 +416,11 @@ public class ConcurrentSkipListMapDemo {
      *  }
      * ##  Index.class中的方法，在当前节点与succ之间插入newSucc节点
      *  final boolean link(Index<K,V> succ, Index<K,V> newSucc) {
-     *             ## 在当前节点与下一个节点中间插入一个节点
+     *             //在当前节点与下一个节点中间插入一个节点
      *             Node<K,V> n = node;
-     *             ## 新节点指向当前节点的下一个节点
+     *             //新节点指向当前节点的下一个节点
      *             newSucc.right = succ;
-     *             ## 原子更新当前节点的下一个节点指向新节点
+     *             //原子更新当前节点的下一个节点指向新节点
      *             return n.value != null && casRight(succ, newSucc);
      *   }
      */
