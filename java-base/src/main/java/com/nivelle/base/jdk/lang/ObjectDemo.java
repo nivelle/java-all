@@ -10,7 +10,7 @@ import java.lang.reflect.Method;
  */
 public class ObjectDemo {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
 
         Method[] methods = Object.class.getMethods();
         for (int i = 0; i < methods.length; i++) {
@@ -116,10 +116,10 @@ public class ObjectDemo {
              *
              * ## 持有监视器的线程调用wait让出CPU后进入该监视器的等待队列，线程处于阻塞状态，当当前持有监视器的线程调用notify()然后唤醒等待线程；该线程以常规方式与其他线程竞争，以获得在该对象上同步的权利；一旦获得对该对象的控制权，该对象上的所有其同步声明都将被恢复到以前的状态，这就是调用wait方法时的情况。然后，线程T从wait方法的调用中返回。所以，从wait方法返回时，该对象和线程T的同步状态与调用wait方法时的情况完全相同。
              */
-            object.wait();
-            object.wait(12, 123);
-            object.wait(13);
-        } catch (InterruptedException e) {
+            //object.wait();
+            //object.wait(12, 123);
+            //object.wait(13);
+        } catch (Exception e) {
             System.out.println(e);
         }
         /**
@@ -127,5 +127,24 @@ public class ObjectDemo {
          *
          * 该方法的作用是实例被垃圾回收器回收的时候触发的操作，就好比 “死前的最后一波挣扎”。
          */
+        System.out.println("=====================");
+        waitTest();
+        Thread.sleep(100000);
+    }
+
+    private static void waitTest() {
+
+        System.out.println("wait before...");
+        Object object = new Object();
+        synchronized (object) {
+            try {
+                //该方法只能在同步方法或同步块内部调用。
+                // 如果当前线程不是对象所得持有者，该方法抛出一个java.lang.IllegalMonitorStateException 异常
+                object.wait(10000);
+            } catch (InterruptedException e) {
+                System.out.println("wait is done");
+            }
+        }
+        System.out.println("wait after...");
     }
 }

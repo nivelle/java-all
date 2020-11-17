@@ -14,8 +14,8 @@ import java.util.concurrent.TimeUnit;
 public class DelayQueueDemo {
     /**
      * DelayQueue是java并发包下的延时阻塞队列，常用于实现定时任务。
-     *
-     * 延时队列主要使用优先级队列来实现，并辅以重入锁和条件来控制并发安全
+     * <p>
+     * 延时队列主要使用优先级队列来实现,并辅以重入锁和条件来控制并发安全
      */
     public static void main(String[] args) {
         /**
@@ -27,13 +27,13 @@ public class DelayQueueDemo {
         /**
          * 主要属性:
          *
-         * ## 用于控制并发的锁
+         * //用于控制并发的锁
          * 1.private final transient ReentrantLock lock = new ReentrantLock();
-         * ## 优先级队列
+         * //优先级队列
          * 2.private final PriorityQueue<E> q = new PriorityQueue<E>();
-         * ## 用于标记当前是否有线程在排队（仅用于取元素时）
+         * //用于标记当前是否有线程在排队（仅用于取元素时）
          * 3.private Thread leader = null;
-         * ## 条件，用于表示现在是否有可取的元素
+         * //条件，用于表示现在是否有可取的元素
          * 4.private final Condition available = lock.newCondition();
          */
         DelayQueue<DelayElement> delayQueue = new DelayQueue();
@@ -56,12 +56,12 @@ public class DelayQueueDemo {
          * public boolean offer(E e) {
          *
          *         final ReentrantLock lock = this.lock;
-         *         ## 加锁
+         *         //加锁
          *         lock.lock();
          *         try {
-         *             ## 添加元素到 PriorityQueue
+         *             //添加元素到 PriorityQueue
          *             q.offer(e);
-         *             ## 如果添加的元素是堆顶元素,就把leader置为空，并唤醒等待在条件avaliable上的线程
+         *             //如果添加的元素是堆顶元素,就把leader置为空，并唤醒等待在条件 avaliable 上的线程
          *             if (q.peek() == e) {
          *                 leader = null;
          *                 available.signal();
@@ -87,22 +87,23 @@ public class DelayQueueDemo {
          *
          * （4）解锁。
          *
+         *  //不会阻塞，如果队列为空或者元素未到期，则直接返回null
          * public E poll() {
          *         final ReentrantLock lock = this.lock;
-         *         ## 加锁
+         *         //加锁
          *         lock.lock();
          *         try {
-         *             ## 获取 PriorityQueue 队列首个元素
+         *             //获取 PriorityQueue 队列首个元素
          *             E first = q.peek();
-         *             ## 队列首元素为空或者
+         *             //队列首元素为空或者
          *             if (first == null || first.getDelay(NANOSECONDS) > 0){
          *                 return null;
          *             } else{
-         *                 ## 获取第一个元素:PriorityQueue
+         *                 //获取第一个元素:PriorityQueue
          *                 return q.poll();
          *             }
          *         } finally {
-         *             ## 解锁
+         *             //解锁
          *             lock.unlock();
          *         }
          *     }
@@ -134,33 +135,33 @@ public class DelayQueueDemo {
              *         lock.lockInterruptibly();
              *         try {
              *             for (;;) {
-             *                 ## 堆顶元素
+             *                 //堆顶元素
              *                 E first = q.peek();
              *                 if (first == null){
-             *                     ## 如果堆顶元素为空，说明队列中还没有元素，直接阻塞等待
+             *                     //如果堆顶元素为空，说明队列中还没有元素，直接阻塞等待
              *                     available.await();
              *                 }
              *                 else {
-             *                     ## 堆顶元素的到期时间
+             *                     //堆顶元素的到期时间
              *                     long delay = first.getDelay(NANOSECONDS);
              *                     if (delay <= 0){
-             *                         ## 获取第一个元素:PriorityQueue
+             *                         //获取第一个元素:PriorityQueue
              *                         return q.poll();
              *                     }
-             *                     ## 如果delay大于0 ，则下面要阻塞了;
-             *                     ## 将first置为空方便gc，因为有可能其它元素弹出了这个元素,这里还持有着引用不会被清理
+             *                     //如果delay大于0 ，则下面要阻塞了;
+             *                     //将first置为空方便gc，因为有可能其它元素弹出了这个元素,这里还持有着引用不会被清理
              *                     first = null; // don't retain ref while waiting
-             *                     ## 如果前面有其它线程在等待，直接进入等待
+             *                     //如果前面有其它线程在等待，直接进入等待
              *                     if (leader != null)
              *                         available.await();
              *                     else {
-             *                         ## 如果leader为null，把当前线程赋值给它
+             *                         //如果leader为null，把当前线程赋值给它
              *                         Thread thisThread = Thread.currentThread();
              *                         leader = thisThread;
              *                         try {
-             *                             ## 等待delay时间后自动醒过来，醒过来后把leader置空并重新进入循环判断堆顶元素是否到期。
-             *                             ## 这里即使醒过来后也不一定能获取到元素,因为有可能其它线程先一步获取了锁并弹出了堆顶元素
-             *                             ## 条件锁的唤醒分成两步，先从Condition的队列里出队,再入队到AQS的队列中，当其它线程调用LockSupport.unpark(t)的时候才会真正唤醒
+             *                             //等待delay时间后自动醒过来,醒过来后把leader置空并重新进入循环判断堆顶元素是否到期。
+             *                             //这里即使醒过来后也不一定能获取到元素,因为有可能其它线程先一步获取了锁并弹出了堆顶元素
+             *                             //条件锁的唤醒分成两步,先从Condition的队列里出队,再入队到AQS的队列中,当其它线程调用LockSupport.unpark(t)的时候才会真正唤醒
              *                             available.awaitNanos(delay);
              *                         } finally {
              *                             if (leader == thisThread){
@@ -171,9 +172,9 @@ public class DelayQueueDemo {
              *                 }
              *             }
              *         } finally {
-             *             ## 成功出队后，如果leader为空且堆顶还有元素，就唤醒下一个等待的线程
+             *             //成功出队后,如果leader为空且堆顶还有元素，就唤醒下一个等待的线程
              *             if (leader == null && q.peek() != null){
-             *                 ## signal()只是把等待的线程放到AQS的队列里面，并不是真正的唤醒
+             *                 //signal()只是把等待的线程放到AQS的队列里面，并不是真正的唤醒
              *                 available.signal();
              *             }
              *             lock.unlock();
