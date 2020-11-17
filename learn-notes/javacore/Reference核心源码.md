@@ -1,8 +1,8 @@
-## Reference处理流程
+### Reference处理流程
 
 ![YIGs91.png](https://s1.ax1x.com/2020/05/19/YIGs91.png)
 
-## Reference 生命周期状态
+#### Reference 生命周期状态
 
 - Active:每个引用的创建之初都是活动状态,直到下次 GC 的时候引用的强弱关系发生变化,同时不同的引用根据不同的策略改变状态;
 
@@ -250,3 +250,5 @@ private Reference<? extends T> reallyPoll() {
         return null;
     }
 ```
+
+#### 

@@ -42,8 +42,8 @@ public class DelayQueueDemo {
         DelayElement delayElement3 = new DelayElement(3L);
 
         delayQueue.add(delayElement1);
-        delayQueue.add(delayElement2);
-        delayQueue.add(delayElement3);
+        delayQueue.offer(delayElement2);
+        delayQueue.put(delayElement3);
 
         System.out.println(delayQueue);
         DelayElement delayElement4 = new DelayElement(4L);
