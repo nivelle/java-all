@@ -35,6 +35,9 @@ public class WeakHashMapDemo {
         /**
          * //引用队列，当弱键失效的时候会把Entry添加到这个队列中;Reference queue for cleared WeakEntries
          * private final ReferenceQueue<Object> queue = new ReferenceQueue<>();
+         *
+         * WeakHashMap里声明了一个queue,Entry继承WeakReference,构造函数中用key和queue关联构造一个weakReference,
+         * 当key不再被使用gc后会自动把把key注册到queue中
          */
         map.put(new String("1"), 1);
         map.put(new String("2"), 2);

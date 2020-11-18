@@ -32,21 +32,17 @@ public class EnumDemo {
 
 
         /**
-         * 枚举类型实际上会被编译成一个对应的类，这个类继承了Enum类，enum有name和ordinal两个实例变量，
+         * 1. 枚举类型实际上会被编译成一个对应的类，这个类继承了 Enum 类，Enum 有name和ordinal两个实例变量，
          * 在构造方法中需要传递,name(),toString(),ordinal().compareTo(), equlas()方法都是由Enum类根据其实例变量name和ordinal实现的。
          *
-         * values()和valueOf()是编译器给每个枚举类型自动添加的。
+         * 2. values()和valueOf()是编译器给每个枚举类型自动添加的方法
          *
-         * 枚举有一个私有的构造方法，接受name(String)和ordinal(int)，传递给父类，私有表示不能在外部创新新的实例
+         * 3. 枚举有一个私有的构造方法，接受name(String)和ordinal(int)，传递给父类，私有表示不能在外部创新新的实例
          *
-         * 枚举值实际是三个静态变量，也是final的，不能被修改。
+         * 4. 枚举值实际是个静态变量,也是final的，不能被修改。
          *
-         * 一般枚举变量会转换为对应的类变量，在switch语句中，枚举值会被转换为对应的ordinal值。可以看出，枚举类型本质上也是类，但由于编译器做了很多事情，因此它的使用更为简单和安全。
+         * 5. 一般枚举变量会转换为对应的类变量，在switch语句中，枚举值会被转换为对应的ordinal值。可以看出，枚举类型本质上也是类，但由于编译器做了很多事情，因此它的使用更为简单和安全。
          *
-         */
-
-        /**
-         * 所有Enum继承自抽象Enum
          */
 
         MyEnum oneEnum = MyEnum.ONE;
