@@ -1,7 +1,6 @@
 package com.nivelle.middleware.redis;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.DataType;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.Cursor;
@@ -1336,7 +1335,7 @@ public class RedisServiceApi {
     public <T> List<T> getListCache(final String key, Class<T> targetClass) {
         byte[] result = redisTemplate.execute(new RedisCallback<byte[]>() {
             @Override
-            public byte[] doInRedis(RedisConnection connection) throws DataAccessException {
+            public byte[] doInRedis(RedisConnection connection) {
                 return connection.get(key.getBytes());
             }
         });
@@ -1359,7 +1358,7 @@ public class RedisServiceApi {
         final byte[] bvalue = ProtoStuffSerializerUtil.serializeList(objList);
         boolean result = redisTemplate.execute(new RedisCallback<Boolean>() {
             @Override
-            public Boolean doInRedis(RedisConnection connection) throws DataAccessException {
+            public Boolean doInRedis(RedisConnection connection) {
                 connection.setEx(bkey, expireTime, bvalue);
                 return true;
             }
