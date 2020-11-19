@@ -32,16 +32,28 @@ public class ReferenceDemo {
         final WeakReference<Object> weakReference = new WeakReference(object, weakQueue);
         //reference get 返回的是它关联的对象
         System.out.println("element equals weakReference.get():" + Objects.equals(object, weakReference.get()));
-        System.out.println("weakReference is:" + weakReference);
-        System.out.println("before gc object is:" + object);
+        System.out.println("reference is:" + weakReference.hashCode());
+        System.out.println("before gc object is:" + object.hashCode());
         object = null;
-        System.out.println("被引用对象直接置为null后，但是并没有gc:" + weakReference.get());
-        System.gc();
+        System.out.println("before gc 被引用对象直接置为null后，但是并没有gc,reference:" + weakReference.hashCode());
+        System.out.println("before gc 被引用对象直接置为null后，但是并没有gc,关联的object:" + weakReference.get().hashCode());
+       System.gc();
         //gc之后，引用关联的兑现置空了
-        System.out.println("after gc weakReference.get() is null:" + Objects.isNull(weakReference.get()));
-        System.out.println("after gc referenceQueue poll element:" + weakQueue.poll());
+        System.out.println("after gc reference object:" + weakReference.get());
+        System.out.println("after gc reference:" + weakReference.hashCode());
+        Reference referenceQueueQueue = weakQueue.poll();
+        long hashCode = referenceQueueQueue != null ? referenceQueueQueue.hashCode() : 0L;
+        System.out.println("after gc referenceQueue poll element:" +hashCode);
         System.out.println("=========================");
 
+//        Object object1 = new Object();
+//        final WeakReference<Object> weakReference1 = new WeakReference(object1, weakQueue);
+//        System.out.println("before gc 被引用对象直接置为null后，但是并没有gc,reference:" + weakReference1.hashCode());
+//        System.out.println("before gc 被引用对象直接置为null后，但是并没有gc,关联的object:" + weakReference1.get().hashCode());
+//        System.gc();
+//        System.out.println("after gc reference 关联的对象:" + weakReference1.get());
+//        System.out.println("after gc reference:" + weakReference1.hashCode());
+//        System.out.println("after gc referenceQueue poll element:" + weakQueue.poll().hashCode());
 
         System.out.println("SoftReference:软引用是Java中一个类, 它的Referent只有在内存不够的时候在抛出OutOfMemoryError前会被 JVM GC, " +
                 "软引用一般用来实现内存敏感缓存(memory-sensitive caches)");
@@ -58,7 +70,7 @@ public class ReferenceDemo {
         b = null;
         System.out.println("被引用对象直接置为null后:" + softReference.get());
         try {
-            while (true){
+            while (true) {
                 byte[] c = new byte[50 * M];
             }
         } catch (Error error) {
