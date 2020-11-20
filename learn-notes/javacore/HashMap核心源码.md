@@ -1,10 +1,77 @@
-## put 方法底层逻辑
+#### 属性
 
-（1）计算key的hash值；
+````
 
-（2）如果桶（数组）数量为0，则初始化桶；
+/**
+ * 默认的初始容量为16
+ */
+static final int DEFAULT_INITIAL_CAPACITY = 1 << 4;
 
-（3）如果key所在的桶没有元素，则直接插入；
+/**
+ * 最大的容量为2的30次方
+ */
+static final int MAXIMUM_CAPACITY = 1 << 30;
+
+/**
+ * 默认的装载因子
+ */
+static final float DEFAULT_LOAD_FACTOR = 0.75f;
+
+/**
+ * 当一个桶中的元素个数大于等于8时进行树化
+ */
+static final int TREEIFY_THRESHOLD = 8;
+
+/**
+ * 当一个桶中的元素个数小于等于6时把树转化为链表
+ */
+static final int UNTREEIFY_THRESHOLD = 6;
+
+/**
+ * 树化，当容量达到64且链表的长度达到8时进行树化，当链表的长度小于6时反树化。
+ *  
+ */
+static final int MIN_TREEIFY_CAPACITY = 64;
+
+/**
+ * 数组，又叫作桶（bucket）
+ */
+transient Node<K,V>[] table;
+
+/**
+ * 作为entrySet()的缓存
+ */
+transient Set<Map.Entry<K,V>> entrySet;
+
+/**
+ * 元素的数量
+ */
+transient int size;
+
+/**
+ * 修改次数，用于在迭代的时候执行快速失败策略
+ */
+transient int modCount;
+
+/**
+ * 当桶的使用数量达到多少时进行扩容，threshold = capacity * loadFactor
+ */
+int threshold;
+
+/**
+ * 装载因子
+ */
+final float loadFactor;
+
+````
+
+#### put 方法底层逻辑
+
+（1）计算key的hash值;
+
+（2）如果桶（数组）数量为0，则初始化桶;
+
+（3）如果key所在的桶没有元素,则直接插入;
 
 （4）如果key所在的桶中的第一个元素的key与待插入的key相同，说明找到了元素，转后续流程（9）处理；
 
@@ -14,7 +81,7 @@
 
 （7）如果找到了对应key的元素，则转后续流程（9）处理；
 
-（8）如果没找到对应key的元素，则在链表最后插入一个新节点并判断是否需要树化；
+（8）如果没找到对应key的元素，则在链表最后插入一个新节点并判断是否需要树化；【尾查法】
 
 （9）如果找到了对应key的元素，则判断是否需要替换旧值，并直接返回旧值；
 
@@ -27,34 +94,39 @@
      * @param hash         hash for key
      * @param key          the key
      * @param value        the value to put
-     * @param onlyIfAbsent if true, don't change existing value(如果为true则不改变存在的值，hashMap put方法默认是false)
+     * @param onlyIfAbsent if true, don't change existing value(如果为true则不改变存在的值,hashMap put方法默认是false)
      * @param evict        if false, the table is in creation mode.(hashMap put方法默认是true)
      * @return  如果存在指定key则返回旧值 如果不存在则返回null
      *
      */
     public V putVal(int hash, K key, V value, boolean onlyIfAbsent, boolean evict) {
-
-        Node<K, V>[] tab;//数组
-        Node<K, V> p;//数组中第一个位置的元素
-        int n;//数组长度
-        int i; //数组index
+        //数组
+        Node<K, V>[] tab;
+        //数组中第一个位置的元素
+        Node<K, V> p;
+        //数组长度
+        int n;
+        //数组index
+        int i; 
         // 如果桶的数量为0，则初始化
         if ((tab = table) == null || (n = tab.length) == 0) {
-            //调用resize()初始化
+            //调用resize()初始化数组
             n = (tab = resize()).length;
         }
         // 如果这个桶中还没有元素，则把这个元素放在桶中的第一个位置(先赋值再比较)
+        // p 是桶的第一个元素
         if ((p = tab[i = (n - 1) & hash]) == null) {
             //新建一个节点放在桶中
             tab[i] = newNode(hash, key, value, null);
-        } else {// 如果桶中已经有元素存在了
-            //暂时存指定位置某个node(最后一个)
+        } else {
+            // 如果桶中已经有元素存在了
+            // 暂时存指定位置某个node(最后一个)
             Node<K, V> e;
             K k;
-            //如果桶中第一个元素的key与待插入元素的key相同，保存到e中用于后续修改value值
+            //如果桶中第一个元素的key与待插入元素的key相同,保存到e中用于后续修改value值
             if (p.hash == hash && ((k = p.key) == key || (key != null && key.equals(k)))) {
                 e = p;
-                // 如果第一个元素是树节点，则调用树节点的putTreeVal插入元素
+                //如果第一个元素是树节点,则调用树节点的putTreeVal插入元素
             } else if (p instanceof TreeNode) {
                 e = ((TreeNode<K, V>) p).putTreeVal(this, tab, hash, key, value);
             } else {
@@ -72,7 +144,7 @@
                         }
                         break;
                     }
-                    //如果指定key存在则跳出循环
+                    //如果指定key存在则跳出循环,此时的e 是 该桶位置的链表里的元素。
                     if (e.hash == hash && ((k = e.key) == key || (key != null && key.equals(k)))) {
                         break;
                     }
@@ -88,7 +160,7 @@
                     // 替换旧值为新值
                     e.value = value;
                 }
-                // 在节点被访问后做点什么事，在LinkedHashMap中用到
+                // 在节点被访问后做点什么事，在LinkedHashMap中用到(LRU)
                 afterNodeAccess(e);
                 // 返回旧值
                 return oldValue;
@@ -101,7 +173,7 @@
             //扩容
             resize();
         }
-        // 在节点插入后做点什么事，在LinkedHashMap中用到
+        // 在节点插入后做点什么事，在LinkedHashMap中用到(LRU)
         afterNodeInsertion(evict);
         return null;
     }
@@ -110,9 +182,9 @@
 
 ---
 
-## 扩容方法
+### 扩容方法
 
-（1）如果使用是默认构造方法，则第一次插入元素时初始化为默认值，容量为16，扩容门槛为12；
+（1）如果使用是默认构造方法，则第一次插入元素时初始化为默认值,容量为16，扩容门槛为12；
 
 （2）如果使用的是非默认构造方法，则第一次插入元素时初始化容量等于扩容门槛，扩容门槛在构造方法里等于传入容量向上最近的2的n次方；
 
@@ -123,13 +195,12 @@
 （5）搬移元素，原链表分化成两个链表，低位链表存储在原来桶的位置，高位链表搬移到原来桶的位置加旧容量的位置； 
 
 
-### 优化点: 
+#### 优化点: 
 
 #### 容量变为原来的二倍后，二进制位就多了一位，这一位可能是0可能是1(0就是原位置,1就是原来的位置+原来的数组长度[oldCap])  
        
 #### JDK1.7扩容采取的是头插法，数据会倒置，会产生环形链表或者丢失值； 但是1.8采用了尾插法，避免了环形链表，但是还是可能丢失值
          
-   
 ```
    final HashMap.Node<K,V>[] resize() {
         // 旧数组

@@ -48,26 +48,30 @@ public class HashMapDemo {
         System.out.println("判断是否为空hashMap:" + hashMap2.isEmpty());
 
         /**
-         * 1. 集合元素的key的hashCode之和，这个方法继承之AbstractMap
+         * hashMap的hashCode 值：
          *
-         * 2. hashCode的具体求发是k的hashCode 异或 v的hashCode
+         * 1. 集合元素的的hashCode之和，这个方法继承之AbstractMap
+         *
+         * 2. 集合元素的hashCode的具体求发是k的hashCode 异或 v的hashCode
          */
         int hash = hashMap2.hashCode();
         System.out.println("hashMap的hashCode:" + hash);
 
         HashMap hashMap3 = new HashMap();
         hashMap3.putIfAbsent("1", "2");
-        hashMap3.putIfAbsent("2", "1");
+        //hashMap3.putIfAbsent("2", "1");
 
         int hashMap3Key = "1".hashCode();
         int hashMap3Value = "2".hashCode();
-        System.err.println("hashMap3的hashCode:" + (hashMap3Key ^ hashMap3Value));
+        System.err.println("hashMap3的 元素的hashCode:" + (hashMap3Key ^ hashMap3Value));
         System.err.println("hashMap3的hashCode:" + hashMap3.hashCode());
 
         /**
          * 判断是否存在某个指定键/值
          */
+        // 直接定位速度快
         System.out.println("是否包含指定键:" + hashMap2.containsKey("3"));
+        // 挨个桶来遍历
         System.out.println("是否包含指定值:" + hashMap2.containsValue("xihui"));
 
         /**
@@ -145,10 +149,12 @@ public class HashMapDemo {
         /**
          * HashMap 中指定hash值在数组中(桶)的位置求解:
          *
-         * HashMap 使用的方法很巧妙，它通过 hash & (table.length -1)来得到该对象的保存位，HashMap 底层数组的长度总是2的n次方，这是HashMap在速度上的优化。
+         * HashMap 使用的方法很巧妙，它通过 hash & (table.length -1)来得到该对象的保存位置,HashMap 底层数组的长度总是2的n次方，这是HashMap在速度上的优化。
          * 当 length 总是2的n次方时，hash & (length-1)运算等价于对 length 取模，也就是 hash%length，但是&比%具有更高的效率。
          *
-         * 1. 2^n 次方的数组长度-1 保证了length的高位都是0，低位都是1,与操作后得到了hash值地位且不越界
+         * 2^n 次方的数组长度-1 保证了length的高位都是0，低位都是1,与操作后得到了hash值地位且不越界
+         *
+         *
          *
          * todo hash&(length-1) = hash%length 前提是length 也就是数组长度是2的n次方
          */
@@ -161,8 +167,7 @@ public class HashMapDemo {
 
 
         /**
-
-         * tableSizeFor(initialCapacity) 扩容门槛:会计算出一个最近的2的n次方作为threshold的初始值，加载因子会使用指定的加载因子
+         * tableSizeFor(initialCapacity) 扩容门槛:会计算出一个initialCapacity 往上取最近的2的n次方作为threshold的初始值
          *
          * static final int tableSizeFor(int cap) {//大于输入参数且最近的2的整数次幂的数,最高位1后面的全部设置成1,然后+1成2的整数次幂
          *         int n = cap - 1;
