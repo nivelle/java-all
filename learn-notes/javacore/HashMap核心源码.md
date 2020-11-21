@@ -319,24 +319,26 @@ final float loadFactor;
 
 （2）从根节点开始查找；
 
-（3）比较hash值及key值，如果都相同，直接返回，在putVal()方法中决定是否要替换value值；
+（3）比较hash值及key值,如果都相同,直接返回，在putVal()方法中决定是否要替换value值；
 
-（4）根据hash值及key值确定在树的左子树还是右子树查找，找到了直接返回；
+（4）根据hash值及key值确定在树的左子树还是右子树查找,找到了直接返回;
 
-（5）如果最后没有找到则在树的相应位置插入元素，并做平衡；
+（5）如果最后没有找到则在树的相应位置插入元素,并做平衡;
 
 ```
 
     /*
+     * 红黑树 结构的HashMap 的put操作
      *
      * @param map      原来的hashMap结构
      * @param tab      底层的数组结构
      * @param h        当前节点的hash值
-     * @param k  
-     * @param v        
+     * @param k        key
+     * @param v        value 
      * @return  如果存在指定key则返回旧值 如果不存在则返回null
      *
      */
+
 final TreeNode<K,V> putTreeVal(HashMap<K,V> map, Node<K,V>[] tab,int h, K k, V v) {
             //key的真实类型或者为null
             Class<?> kc = null;
@@ -346,51 +348,52 @@ final TreeNode<K,V> putTreeVal(HashMap<K,V> map, Node<K,V>[] tab,int h, K k, V v
             TreeNode<K,V> root = (parent != null) ? root() : this;
             // 从树的根节点开始遍历
             for (TreeNode<K,V> p = root;;) {
-                int dir;//标记是在左边还是右边 direction
-                int ph; //当前节点的hash只
-                K pk;//当前节点的key值
+                int dir;//标记是在左边还是右边,标记目标节点:direction
+                int ph; //遍历的当前节点的hash只
+                K pk;//遍历的当前节点的key值
                 
-                if ((ph = p.hash) > h)// 当前hash比目标hash大，说明目标在左边                                    
+                if ((ph = p.hash) > h)// 当前hash比目标hash大,说明目标在左边                                    
                     dir = -1;
-                else if (ph < h){//当前hash比目标hash大，说明目标在右边
+                else if (ph < h){//当前hash比目标hash大,说明目标在右边
                     dir = 1;
                 }
                 //hash值相等，key相等说明找到了;回到putVal()中判断是否需要修改其value值
-                else if ((pk = p.key) == k || (k != null && k.equals(pk)))
+                else if ((pk = p.key) == k || (k != null && k.equals(pk))){
                     return p;
-                // 如果k是Comparable的子类则返回其真实的类，否则返回null
-                // 如果k和pk不是同样的类型则返回0，否则返回两者比较的结果
-                // 这个条件表示两者hash相同但是其中一个不是Comparable类型或者两者类型不同;比如key是Object类型，这时可以传String也可以传Integer，两者hash值可能相同;
-                // 在红黑树中把同样hash值的元素存储在同一颗子树，这里相当于找到了这颗子树的顶点从这个顶点分别遍历其左右子树去寻找有没有跟待插入的key相同的元素
+                }
+                // 如果k是Comparable的子类则返回其真实的类,否则返回null;如果k和pk不是同样的类型则返回0,否则返回两者比较的结果
+                // 这个条件表示两者hash相同但是其中一个不是Comparable类型或者两者类型不同;比如key是Object类型,这时可以传String也可以传Integer,两者hash值可能相同;
+                // 在红黑树中把同样hash值的元素存储在同一颗子树,这里相当于找到了这颗子树的顶点从这个顶点分别遍历其左右子树去寻找有没有跟待插入的key相同的元素
                 else if ((kc == null && (kc = comparableClassFor(k)) == null) ||(dir = compareComparables(kc, k, pk)) == 0) {
                     if (!searched) {
                         TreeNode<K,V> q, ch;
                         searched = true;
                         // 遍历左右子树找到了直接返回
-                        if (((ch = p.left) != null &&
-                             (q = ch.find(h, k, kc)) != null) ||
-                            ((ch = p.right) != null &&
-                             (q = ch.find(h, k, kc)) != null))
+                        if (((ch = p.left) != null && (q = ch.find(h, k, kc)) != null) ||((ch = p.right) != null && (q = ch.find(h, k, kc)) != null)){
                             return q;
+                        }
                     }
-                    // 如果两者类型相同，再根据它们的内存地址计算hash值进行比较
+                    // 如果两者类型相同,再根据它们的内存地址计算hash值进行比较
                     dir = tieBreakOrder(k, pk);
                 }
 
                 TreeNode<K,V> xp = p;
-                // 如果最后确实没找到对应key的元素，则新建一个节点
+                // 如果最后确实没找到对应key的元素,则新建一个节点
                 if ((p = (dir <= 0) ? p.left : p.right) == null) {
                     Node<K,V> xpn = xp.next;
                     TreeNode<K,V> x = map.newTreeNode(h, k, v, xpn);
-                    if (dir <= 0)
+                    if (dir <= 0){
                         xp.left = x;
-                    else
+                    }
+                    else {
                         xp.right = x;
+                    }
                     xp.next = x;
                     x.parent = x.prev = xp;
-                    if (xpn != null)
+                    if (xpn != null){
                         ((TreeNode<K,V>)xpn).prev = x;
-                    //插入树节点后平衡
+                    }
+                    // 插入树节点后平衡
                     // 把root节点移动到链表的第一个节点
                     moveRootToFront(tab, balanceInsertion(root, x));
                     return null;
@@ -401,25 +404,27 @@ final TreeNode<K,V> putTreeVal(HashMap<K,V> map, Node<K,V>[] tab,int h, K k, V v
 
 ```
 
-### 链表变树方法treeifyBin() 
+### 链表变树方法 treeifyBin() 
 
 ```
 final void treeifyBin(Node<K,V>[] tab, int hash) {
         int n; //数组长度
         int index;
         Node<K,V> e;
-        //如果数组长度桶数量小于64，直接扩容而不用树化
-        //因为扩容之后，链表会分化成两个链表，达到减少元素的作用
+        //如果数组长度桶数量小于64,直接扩容而不用树化
+        //因为扩容之后,链表会分化成两个链表,达到减少元素的作用
         if (tab == null || (n = tab.length) < MIN_TREEIFY_CAPACITY){
+            //扩容
             resize();
          }
         else if ((e = tab[index = (n - 1) & hash]) != null) {
-            TreeNode<K,V> hd = null;//被包装成树节点的节点第一个
+            TreeNode<K,V> hd = null;//遍历时被包装成的树节点，head
             TreeNode tl = null;//最后一个
             do {
-                // 把所有节点换成树节点；树节点继承只 LinkedHashMap.Entry
+                // 把所有节点换成树节点;树节点继承只 LinkedHashMap.Entry
                 TreeNode<K,V> p = replacementTreeNode(e, null);
                 if (tl == null)
+                    //暂存的节点
                     hd = p;
                 else {
                     //将所有TreeNode连接在一起此时只是链表结构。
@@ -428,7 +433,7 @@ final void treeifyBin(Node<K,V>[] tab, int hash) {
                 }
                 tl = p;
             } while ((e = e.next) != null);
-            //把树节点链表结构赋值给数组某个捅中
+            //把树节点链表结构赋值给数组某个捅中,先转换成树节点，链接起来，然后放到tab[index] 桶结构
             if ((tab[index] = hd) != null){
                 // 对TreeNode链表进行树化
                 hd.treeify(tab);
@@ -437,36 +442,33 @@ final void treeifyBin(Node<K,V>[] tab, int hash) {
     }
     
 ```
-### TreeNode.treeify()方法
+### TreeNode.treeify() 方法
 
 ```
 final void treeify(Node<K,V>[] tab) {
             TreeNode<K,V> root = null;
-            //this 为树化的链表头
+            //this 为节点树化后的链表头
             for (TreeNode<K,V> x = this, next; x != null; x = next) {
                 next = (TreeNode<K,V>)x.next;
                 x.left = x.right = null;
-                // 第一个元素作为根节点且为黑节点，其它元素依次插入到树中再做平衡
+                // 第一个元素作为根节点且为黑节点,其它元素依次插入到树中再做平衡
                 if (root == null) {
                     x.parent = null;
                     x.red = false;
                     root = x;
                 }
                 else {
-                     //x即为当前访问链表中的项。
+                    //x即为当前访问链表中的项。
                     //从根节点查找元素插入的位置                
                     K k = x.key;
                     int h = x.hash;
                     Class<?> kc = null;
                     //此时红黑树已经有了根节点，上面获取了当前加入红黑树的项的key和hash值进入核心循环。
-                    //这里从root开始，是以一个自顶向下的方式遍历添加
-                    //for循环没有控制条件，由代码内break跳出循环
-                    for (TreeNode<K,V> p = root;;) {
-                    
-                        int dir; // dir：directory，比较添加项与当前树中访问节点的hash值判断加入项的路径，-1为左子树，+1为右子树。
-
+                    //这里从root开始,是以一个自顶向下的方式遍历添加
+                    //for循环没有控制条件,由代码内break跳出循环
+                    for (TreeNode<K,V> p = root;;) {                    
+                        int dir; // dir：directory,比较添加项与当前树中访问节点的hash值判断加入项的路径，-1为左子树，+1为右子树。
                         int ph; // ph：parent hash。
-
                         K pk = p.key;
                         if ((ph = p.hash) > h){
                             dir = -1;
@@ -477,9 +479,9 @@ final void treeify(Node<K,V>[] tab) {
                         else if ((kc == null &&(kc = comparableClassFor(k)) == null) ||(dir = compareComparables(kc, k, pk)) == 0){
                             dir = tieBreakOrder(k, pk);
                         }
-                        // 如果最后没找到元素，则插入  // xp：x parent。
+                        //如果最后没找到元素，则插入  // xp：x parent。
                         TreeNode<K,V> xp = p;
-                         // 找到符合x添加条件的节点。
+                        //找到符合x添加条件的节点。
                         if ((p = (dir <= 0) ? p.left : p.right) == null) {
                             x.parent = xp;
                             // 如果xp的hash值大于x的hash值，将x添加在xp的左边。
@@ -500,7 +502,7 @@ final void treeify(Node<K,V>[] tab) {
         }
         
 ```        
-### get(Object key)方法
+### get(Object key) 方法
 
 （1）计算key的hash值；
 
@@ -515,7 +517,10 @@ public V get(Object key) {
         Node<K,V> e;
         return (e = getNode(hash(key), key)) == null ? null : e.value;
     }
-    
+```
+
+#### 真正的查找方法
+```
 
 final Node<K,V> getNode(int hash, Object key) {
         Node<K,V>[] tab; 
@@ -523,9 +528,10 @@ final Node<K,V> getNode(int hash, Object key) {
         Node<K,V> e; 
         int n; 
         K k;
-        //// 如果桶的数量大于0并且待查找的key所在的桶的第一个元素不为空         
+        //如果桶的数量大于0并且待查找的key所在的桶的第一个元素不为空         
         if ((tab = table) != null && (n = tab.length) > 0 && (first = tab[(n - 1) & hash]) != null) {
-            //检查第一个元素是不是要查的元素，如果是直接返回            
+            //检查第一个元素是不是要查的元素，如果是直接返回 
+            //hash值相等，key相等           
             if (first.hash == hash && ((k = first.key) == key || (key != null && key.equals(k)))){
                 return first;
             }
@@ -547,20 +553,21 @@ final Node<K,V> getNode(int hash, Object key) {
 ```
 
 
-##### getTreeNode - > find
+##### getTreeNode - > find // 树类型的hashMap 查找
 
 ```
 
 final TreeNode<K,V> getTreeNode(int h, Object k) {
             return ((parent != null) ? root() : this).find(h, k, null);
         }
-        
-        
+```
+##### 树节点查找
+````                
 final TreeNode<K,V> find(int h, Object k, Class<?> kc) {
             TreeNode<K,V> p = this; // 桶的首节点｜parent节点
             do {
                 int ph; // parent hash 
-                int dir; //dierction 路径
+                int dir; //dierction 目标路径
                 K pk;
                 TreeNode<K,V> pl = p.left, pr = p.right, q;
                 if ((ph = p.hash) > h)
@@ -573,17 +580,21 @@ final TreeNode<K,V> find(int h, Object k, Class<?> kc) {
                     p = pr;  
                 else if (pr == null)//右子树为空查左子树
                     p = pl;
-                else if ((kc != null ||(kc = comparableClassFor(k)) != null) &&(dir = compareComparables(kc, k, pk)) != 0)
-                    p = (dir < 0) ? pl : pr; // 通过compare方法比较key值的大小决定使用左子树还是右子树                                             
-                else if ((q = pr.find(h, k, kc)) != null)//如果以上条件都不通过，则尝试在右子树查找
-                    return q;
+                else if ((kc != null ||(kc = comparableClassFor(k)) != null) &&(dir = compareComparables(kc, k, pk)) != 0){
+                    //通过compare方法比较key值的大小决定使用左子树还是右子树  
+                    p = (dir < 0) ? pl : pr; 
+                }                                          
+                else if ((q = pr.find(h, k, kc)) != null){
+                    //如果以上条件都不通过，则尝试在右子树查找
+                    return q; 
+                }
                 else
                     p = pl; //都没找到就在左子树查找
             } while (p != null);
             return null;
         }
-```
-### remove(Object key)方法
+````
+####  remove(Object key)方法
 
 （1）先查找元素所在的节点；
 
@@ -602,8 +613,11 @@ public V remove(Object key) {
             null : e.value;
     }
   
+```  
   
-  
+#### 真正删除操作
+
+````
 final Node<K,V> removeNode(int hash, Object key, Object value,boolean matchValue, boolean movable) {
         Node<K,V>[] tab; 
         Node<K,V> p; 
@@ -616,7 +630,8 @@ final Node<K,V> removeNode(int hash, Object key, Object value,boolean matchValue
             K k;
             V v;
             if (p.hash == hash &&((k = p.key) == key || (key != null && key.equals(k)))){
-              node = p;//如果第一个元素正好就是要找的元素，赋值给node变量后续删除使用
+              // 如果第一个元素正好就是要找的元素，赋值给node变量后续删除使用
+              node = p；
             }
             //否则开始遍历查找节点
             else if ((e = p.next) != null) {
@@ -634,28 +649,32 @@ final Node<K,V> removeNode(int hash, Object key, Object value,boolean matchValue
                     } while ((e = e.next) != null);
                 }
             }
-            // 如果找到了元素，则看参数是否需要匹配value值，如果不需要匹配直接删除，如果需要匹配则看value值是否与传入的value相等
+            // 如果找到了元素，则看参数是否需要匹配value值, 如果不需要匹配直接删除,如果需要匹配则看value值是否与传入的value相等
             if (node != null && (!matchValue || (v = node.value) == value || (value != null && value.equals(v)))) {
                 if (node instanceof TreeNode){
-                    ((TreeNode<K,V>)node).removeTreeNode(this, tab, movable);//如果是树节点，调用树的删除方法（以node调用的，是删除自己）                                                                              
+                    //如果是树节点，调用树的删除方法（以node调用的，是删除自己）
+                    ((TreeNode<K,V>)node).removeTreeNode(this, tab, movable);                                                                              
                 }
                 else if (node == p){
-                    tab[index] = node.next;// 如果待删除的元素是第一个元素，则把第二个元素移到第一的位置                                          
+                    // 如果待删除的元素是第一个元素,则把第二个元素移到第一的位置
+                    tab[index] = node.next;                                          
                 }else{
-                    p.next = node.next;// 否则删除node节点                                       
+                    // 否则删除node节点 
+                    p.next = node.next;                                      
                 }
                 ++modCount;
                 --size;
-                afterNodeRemoval(node);// 删除节点后置处理                                       
+                // 删除节点后置处理     
+                afterNodeRemoval(node);                                  
                 return node;
             }
         }
         return null;
     }
 
-```
+````
 
-### TreeNode.removeTreeNode(HashMap<K,V> map, Node<K,V>[] tab,boolean movable)
+### TreeNode.removeTreeNode(HashMap<K,V> map, Node<K,V>[] tab,boolean movable) //树节点的删除
 
 ```
  final void removeTreeNode(HashMap<K,V> map, Node<K,V>[] tab,boolean movable) {
