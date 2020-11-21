@@ -1,13 +1,9 @@
 
 ### java 核心基础总结
 
-
-### 姊妹项目:[java天天学](https://github.com/nivelle/programdayandnight)
-
 ---
 
 #### 算法数据结构
-
 #### 海量数据如何去重？
 - [海量数据去重](https://blog.csdn.net/paul_wei2008/article/details/21170999)
 - [大数据排序](https://blog.csdn.net/michellechouu/article/details/27230451)
@@ -42,8 +38,7 @@
 - [红黑树](http://daoluan.net/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E7%AE%97%E6%B3%95/2013/09/25/rbtree-is-not-difficult.html)
 - [hashMap扩容分析](https://blog.csdn.net/pange1991/article/details/82347284)
 - [hashMap的树化](https://www.cnblogs.com/finite/p/8251587.html)
-## java基础相关
-
+### java基础相关
 #### hashcode相等两个类一定相等吗equals 呢 相反呢
 - [hashCode()和equals()](https://www.cnblogs.com/skywang12345/p/3324958.html)
 
@@ -110,7 +105,6 @@
 - [设计模式](https://java-design-patterns.com/patterns/)
 
 ### 数据库相关
-
 #### 使用mysql索引都有哪些原则？索引有什么数据结构？ B+tree 和 B tree 什么区别
 - [mysql索引实现](https://www.cnblogs.com/zlcxbb/p/5757245.html)
 - [索引使用](https://juejin.im/post/5b14e0fd6fb9a01e8c5fc663)
@@ -191,11 +185,10 @@
 - [集群节点个数](https://blog.csdn.net/u010476994/article/details/79806041)
 
 #### 分布式事物
-
 - [分布式事物解决方案](https://juejin.im/post/5cb967cbe51d456e403772b5?utm_source=gold_browser_extension)
 
 #### dubbo的实现过程？注册中心挂了可以继续通信么？dubbo常见配置有哪些
-- [dubbo常见配置](http://www.cnblogs.com/yxh1008/p/9251693.html)
+- [dubbo 常见配置](http://www.cnblogs.com/yxh1008/p/9251693.html)
 
 #### dubbo支持哪些序列化协议？hession?hession数据结构？ pb知道么？为啥PB的效率是最高的？
 - [dubbo学习](https://www.cnblogs.com/aspirant/p/9002631.html)
@@ -260,7 +253,7 @@
 - [知识点](https://blog.csdn.net/qq_30764991/article/details/80573352)
 
 
-## jvm相关
+### jvm相关
 
 #### jvm内存模型？用过哪些垃圾回收器？说说
 - [java内存模型](https://juejin.im/post/5b7d69e4e51d4538ca5730cb)
@@ -293,8 +286,7 @@
 - [oom排查2](https://mp.weixin.qq.com/s/IPi3xiordGh-zcSSRie6nA)
 
 
-## 框架相关
-
+### 框架相关
 #### spring 哪些机制？aop如何实现？IOC如何实现
 - [自己实现AOP和IOC](https://www.cnblogs.com/aspirant/p/9187973.html)
 - [IOC原理](https://blog.csdn.net/it_man/article/details/4402245)
@@ -319,8 +311,7 @@
 - [springMVC原理](https://www.cnblogs.com/fangjian0423/p/springMVC-directory-summary.html)
 - [springMVC核心原理分享](https://my.oschina.net/lichhao?tab=newest&catalogId=285356)
 
-## 网络相关
-
+### 网络相关
 #### https
 - [https原理](https://juejin.im/post/5a2ff29c6fb9a045132aac5a)
 
@@ -346,7 +337,7 @@
 #### dump
 - [dump使用](https://www.cnblogs.com/aspirant/p/8881047.html)
 
-## 其他
+### 其他
 #### git原理
 - [git原理](https://juejin.im/post/5a65ac67f265da3e330473f7)
 
@@ -362,21 +353,17 @@
 
 
 
-## 系统设计
-
-  - [秒杀设计一](https://juejin.im/entry/59c34acef265da066d33456c)
-  - [秒杀设计二](https://www.ibm.com/developerworks/cn/web/wa-design-small-and-good-kill-system/index.html)
-  - [秒杀设计三](https://www.zhihu.com/question/54895548)
-  - [秒杀设计](https://github.com/qiurunze123/miaosha)
-
-
+### 系统设计
+- [秒杀设计一](https://juejin.im/entry/59c34acef265da066d33456c)
+- [秒杀设计二](https://www.ibm.com/developerworks/cn/web/wa-design-small-and-good-kill-system/index.html)
+- [秒杀设计三](https://www.zhihu.com/question/54895548)
+- [秒杀设计](https://github.com/qiurunze123/miaosha)
 
 ### 链接收集
-
-   - [大厂面试集锦](https://www.cnblogs.com/aspirant/p/8575628.html)
-   - [备战阿里](http://www.cnblogs.com/zhengbin/category/787240.html)
-   - [java core](https://www.cnblogs.com/skywang12345/archive/2013/06/14/index.html)
-   - [经典面试](https://juejin.im/entry/58f2e3bf0ce463006baf31a1)
-   - [面试大纲](https://www.jianshu.com/p/a07d1d4004b0)
-   - [面试大纲答案](https://www.cnblogs.com/xyang/tag/%E9%9D%A2%E8%AF%95/)
+- [大厂面试集锦](https://www.cnblogs.com/aspirant/p/8575628.html)
+- [备战阿里](http://www.cnblogs.com/zhengbin/category/787240.html)
+- [java core](https://www.cnblogs.com/skywang12345/archive/2013/06/14/index.html)
+- [经典面试](https://juejin.im/entry/58f2e3bf0ce463006baf31a1)
+- [面试大纲](https://www.jianshu.com/p/a07d1d4004b0)
+- [面试大纲答案](https://www.cnblogs.com/xyang/tag/%E9%9D%A2%E8%AF%95/)
    
