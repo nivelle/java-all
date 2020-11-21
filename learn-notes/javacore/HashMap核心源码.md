@@ -182,13 +182,13 @@ final float loadFactor;
 
 ---
 
-### 扩容方法
+#### 扩容方法
 
 （1）如果使用是默认构造方法，则第一次插入元素时初始化为默认值,容量为16，扩容门槛为12；
 
-（2）如果使用的是非默认构造方法，则第一次插入元素时初始化容量等于扩容门槛，扩容门槛在构造方法里等于传入容量向上最近的2的n次方；
+（2）如果使用的是非默认构造方法则第一次插入元素时初始化容量等于扩容门槛,扩容门槛在构造方法里等于传入容量向上最近的2的n次方；
 
-（3）如果旧容量大于0，则新容量等于旧容量的2倍，但不超过最大容量2的30次方，新扩容门槛为旧扩容门槛的2倍；
+（3）如果旧容量大于0，则新容量等于旧容量的2倍，但不超过最大容量:2的30次方，新扩容门槛为旧扩容门槛的2倍；
 
 （4）创建一个新容量的桶；
 
@@ -197,10 +197,12 @@ final float loadFactor;
 
 #### 优化点: 
 
-#### 容量变为原来的二倍后，二进制位就多了一位，这一位可能是0可能是1(0就是原位置,1就是原来的位置+原来的数组长度[oldCap])  
+#### 容量变为原来的二倍后,二进制位就多了一位,这一位可能是0可能是1(0就是原位置,1就是原来的位置+原来的数组长度[oldCap])  
        
-#### JDK1.7扩容采取的是头插法，数据会倒置，会产生环形链表或者丢失值； 但是1.8采用了尾插法，避免了环形链表，但是还是可能丢失值
-         
+#### JDK1.7 扩容采取的是头插法，数据会倒置，会产生环形链表或者丢失值;但是1.8采用了尾插法，避免了环形链表，但是还是可能丢失值
+     
+[![D1uz24.png](https://s3.ax1x.com/2020/11/21/D1uz24.png)](https://imgchr.com/i/D1uz24)
+    
 ```
    final HashMap.Node<K,V>[] resize() {
         // 旧数组
@@ -215,19 +217,20 @@ final float loadFactor;
         int newThr = 0;
         //旧容量大于0
         if (oldCap > 0) {
-            //如果旧容量达到了最大容量，则不再进行扩容
+            //如果旧容量达到了最大容量,则不再进行扩容
             if (oldCap >= MAXIMUM_CAPACITY) {
                 //扩容门槛设置为最大值
                 threshold = Integer.MAX_VALUE;
                 //返回旧的Node数组
                 return oldTab;
-                // 新数组容量（就数组容量2倍）小于最大容量，而且旧的容量大于等于默认初始化容量(16)则扩容门槛也扩大为原来2倍
-            }else if ((newCap = oldCap << 1) < MAXIMUM_CAPACITY &&oldCap >= DEFAULT_INITIAL_CAPACITY){
+            }else if ((newCap = oldCap << 1) < MAXIMUM_CAPACITY && oldCap >= DEFAULT_INITIAL_CAPACITY){
+                // 新数组容量（就数组容量2倍）小于最大容量,而且旧的容量大于等于默认初始化容量(16)则扩容门槛也扩大为原来2倍
                 newThr = oldThr << 1; // double threshold
             }
         }
-        //使用非默认构造方法创建的map，第一次插入元素会走到这里,设置初始容量的时候初始化了扩容门槛,非默认方法没有设置容量，只设置了扩容门槛
-        else if (oldCap==0 && oldThr > 0) // initial capacity was placed in threshold//                                                                         
+       
+        //使用非默认构造方法创建的map，第一次插入元素会走到这里,设置初始容量的时候初始化了扩容门槛(非默认方法没有设置容量,只设置了扩容门槛)
+        else if (oldCap==0 && oldThr > 0) // initial capacity was placed in threshold                                                                      
             newCap = oldThr;// 如果旧容量为0且旧扩容门槛大于0，则把新容量赋值为旧门槛     
         else { // zero initial threshold signifies using defaults
             //默认构造方法创建的map,第一次插入会走到这里
@@ -235,11 +238,10 @@ final float loadFactor;
             newCap = DEFAULT_INITIAL_CAPACITY;
             newThr = (int)(DEFAULT_LOAD_FACTOR * DEFAULT_INITIAL_CAPACITY);
         }
-        // 如果新扩容门槛为0，则计算为容量*装载因子，但不能超过最大容量,对应 line:141
+        // 如果新扩容门槛为0,则计算为容量*装载因子,但不能超过最大容量
         if (newThr == 0) {
             float ft = (float)newCap * loadFactor;
-            newThr = (newCap < MAXIMUM_CAPACITY && ft < (float)MAXIMUM_CAPACITY ?
-                    (int)ft : Integer.MAX_VALUE);
+            newThr = (newCap < MAXIMUM_CAPACITY && ft < (float)MAXIMUM_CAPACITY ?(int)ft : Integer.MAX_VALUE);
         }
         // 赋值扩容门槛为新门槛
         threshold = newThr;
@@ -248,7 +250,7 @@ final float loadFactor;
         HashMap.Node<K,V>[] newTab = (HashMap.Node<K,V>[])new HashMap.Node[newCap];
         // 把桶赋值为新数组
         table = newTab;
-        // 如果旧数组不为空，则迁移数据
+        // 如果旧数组不为空,则迁移数据
         if (oldTab != null) {
             // 遍历旧数组
             for (int j = 0; j < oldCap; ++j) {
@@ -262,18 +264,19 @@ final float loadFactor;
                         //因为每次都扩容两倍，所以这里的第一个元素搬移到新桶的时候新桶肯定还没有元素
                         newTab[e.hash & (newCap - 1)] = e;
                     else if (e instanceof HashMap.TreeNode){
-                         //如果第一个元素是树节点，则把这颗树打散成两颗树插入到新桶中去(如果桶中节点小于6个则反树化)                     
+                         //如果第一个元素是树节点,则把这颗树打散成两颗树插入到新桶中去(如果桶中节点小于6个则反树化)                     
                         ((HashMap.TreeNode<K,V>)e).split(this, newTab, j, oldCap);
                     }else { // preserve order
                         //如果这个链表不止一个元素且不是一颗树则分化成两个链表插入到新的桶中去
                         HashMap.Node<K,V> loHead = null;
                         HashMap.Node<K,V> loTail = null;
+
                         HashMap.Node<K,V> hiHead = null;
                         HasHMap.Node<L,V> hiTail = null;
                         HashMap.Node<K,V> next;
                         do {
                             next = e.next;
-                            //(e.hash & oldCap) == 0的元素放在低位链表中(扩展位位0)
+                            //(e.hash & oldCap) == 0 的元素放在低位链表中(扩展位位0)
                             if ((e.hash & oldCap) == 0) {
                                 if (loTail == null)
                                     loHead = e;
@@ -281,7 +284,7 @@ final float loadFactor;
                                     loTail.next = e;
                                 loTail = e;
                             }
-                            // (e.hash & oldCap) != 0的元素放在高位链表中（扩展位为1）
+                            //(e.hash & oldCap) != 0 的元素放在高位链表中（扩展位为1）
                             else {
                                 if (hiTail == null)
                                     hiHead = e;
