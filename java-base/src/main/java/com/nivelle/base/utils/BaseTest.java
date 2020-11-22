@@ -1,5 +1,7 @@
 package com.nivelle.base.utils;
 
+import java.util.HashMap;
+
 /**
  * 测试用
  *
@@ -15,5 +17,18 @@ public class BaseTest {
             System.out.println("in if  e:" + e + ";p:" + p);
         }
         System.out.println("out if  e:" + e + ";p:" + p);
+
+        new Thread(() -> {
+            hashMapTest1();
+        }).start();
+        hashMapTest1();
+    }
+
+
+    public static void hashMapTest1() {
+        HashMap hashMap = new HashMap();
+        hashMap.put(1, 1);
+        hashMap.put(10, 1);
+        System.out.println(hashMap.hashCode() + ":in=> " + Thread.currentThread().getName());
     }
 }
