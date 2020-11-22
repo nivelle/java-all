@@ -337,22 +337,6 @@
 #### dump
 - [dump使用](https://www.cnblogs.com/aspirant/p/8881047.html)
 
-### 其他
-#### git原理
-- [git原理](https://juejin.im/post/5a65ac67f265da3e330473f7)
-
-#### maven
-- [maven](https://blog.csdn.net/u012225679/article/details/73740785)
-- [理论教程](https://juejin.im/post/5cb967cbe51d456e403772b5?utm_source=gold_browser_extension)
-
-#### 常见加解密算法
-- [加解密](https://blog.csdn.net/u013565368/article/details/53081195)
-
-#### docker理解
-- [docker](https://blog.csdn.net/wo18237095579/article/details/80540571#workdir-%E6%8C%87%E5%AE%9A%E5%B7%A5%E4%BD%9C%E7%9B%AE%E5%BD%95)
-
-
-
 ### 系统设计
 - [秒杀设计一](https://juejin.im/entry/59c34acef265da066d33456c)
 - [秒杀设计二](https://www.ibm.com/developerworks/cn/web/wa-design-small-and-good-kill-system/index.html)
