@@ -79,6 +79,7 @@
 #### javaCore
 - [序列化](https://juejin.im/post/5b4c69dcf265da0fa959aa06)
 - [位运算](https://blog.csdn.net/xiaopihaierletian/article/details/78162863)
+- [快速失败，安全失败](https://blog.csdn.net/ch717828/article/details/46892051)
 
 #### 动态代理
 - [基于CGLIB](https://juejin.im/post/5b3e05caf265da0f652364ce)
@@ -99,7 +100,6 @@
 
 #### 注解原理
 - [注解原理](https://blog.csdn.net/zhang0558/article/details/52643016)
-- [快速失败，安全失败](https://blog.csdn.net/ch717828/article/details/46892051)
 
 #### 设计模式
 - [设计模式](https://java-design-patterns.com/patterns/)
