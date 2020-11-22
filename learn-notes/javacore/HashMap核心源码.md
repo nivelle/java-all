@@ -313,6 +313,66 @@ final float loadFactor;
     
 ```
 
+#### 红黑树节点扩容 // 把一颗树打成两颗树插入到新桶
+```
+//split(this, newTab, j, oldCap)
+final void split(HashMap<K,V> map, Node<K,V>[] tab, int index, int bit) {
+            TreeNode<K,V> b = this;
+            // Relink into lo and hi lists, preserving order
+            TreeNode<K,V> loHead = null, loTail = null;
+            TreeNode<K,V> hiHead = null, hiTail = null;
+            int lc = 0, hc = 0;
+            for (TreeNode<K,V> e = b, next; e != null; e = next) {              
+                next = (TreeNode<K,V>)e.next;
+                e.next = null;
+                //如果当前节点哈希值的最后一位等于要修剪的 bit 值
+                if ((e.hash & bit) == 0) {
+                   //就把当前节点放到 lXXX 树中
+                    if ((e.prev = loTail) == null)
+                        loHead = e;
+                    else
+                        loTail.next = e;
+                    //然后 loTail 记录 e
+                    loTail = e;
+                    //记录 lXXX 树的节点数量
+                    ++lc;
+                }
+                else {
+                    //如果当前节点哈希值最后一位不是要修剪的 就把当前节点放到 hXXX 树中
+                    if ((e.prev = hiTail) == null)
+                        hiHead = e;
+                    else
+                        hiTail.next = e;
+                    hiTail = e;
+                    //记录 hXXX 树的节点数量
+                    ++hc;
+                }
+            }
+
+            if (loHead != null) {
+                //如果 lXXX 树的数量小于 6，就把 lXXX 树的枝枝叶叶都置为空，变成一个单节点 然后让这个桶中，要还原索引位置开始往后的结点都变成还原成链表的 lXXX 节点 这一段元素以后就是一个链表结构
+                if (lc <= UNTREEIFY_THRESHOLD)
+                    tab[index] = loHead.untreeify(map);
+                else {
+                   //否则让索引位置的结点指向 lXXX 树，这个树被修剪过，元素少了
+                    tab[index] = loHead;
+                    if (hiHead != null) // (else is already treeified)
+                        loHead.treeify(tab);
+                }
+            }
+            if (hiHead != null) {
+               //同理，让 指定位置 index + bit 之后的元素指向 hXXX 还原成链表或者修剪过的树
+                if (hc <= UNTREEIFY_THRESHOLD)
+                    tab[index + bit] = hiHead.untreeify(map);
+                else {
+                    tab[index + bit] = hiHead;
+                    if (loHead != null)
+                        hiHead.treeify(tab);
+                }
+            }
+        }
+```
+
 ### 树结构添加数据
 
 （1）寻找根节点；
