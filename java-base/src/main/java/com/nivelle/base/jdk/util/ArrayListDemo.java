@@ -17,6 +17,9 @@ public class ArrayListDemo {
      * public class ArrayList<E> extends AbstractList<E> implements List<E>, RandomAccess, Cloneable, java.io.Serializable
      * <p>
      * elementData 是 transient修饰的，自定义了序列化
+     * <p>
+     * todo :// size = index +1; index 初始值是0,所以下一个元素的index 就是 size
+     * todo :// 每次添加元素前，需要检查底层数组容量，添加元素前确保容量大于等于 size+1
      */
     public static void main(String[] args) throws Exception {
         Object[] EMPTY_ELEMENTDATA = {};
@@ -25,13 +28,24 @@ public class ArrayListDemo {
         System.out.println(EMPTY_ELEMENTDATA == DEFAULTCAPACITY_EMPTY_ELEMENTDATA);
 
         /**
-         * 底层默认数组是:EMPTY_ELEMENTDATA 区别于DEFAULTCAPACITY_EMPTY_ELEMENTDATA
+         * 底层默认数组是:EMPTY_ELEMENTDATA 区别于 DEFAULTCAPACITY_EMPTY_ELEMENTDATA
          */
         ArrayList arrayListDefault = new ArrayList(0);
         /**
          * 如果是空数组,第一次添加元素扩容的时候,默认容量为10
          *
          * 底层数组扩容会导致复制原数组，然后赋值给elementData[]
+         */
+        //todo 非线程安全1: size++没挂起，值被覆盖
+        /**
+         * public boolean add(E e) {
+         *         ensureCapacityInternal(size + 1);  // Increments modCount!!
+         *         //步骤分为两步骤:
+         *         //1. elementData[size] = e;
+         *         //2. size++
+         *         elementData[size++] = e;
+         *         return true;
+         *     }
          */
         arrayListDefault.add(1);
         try {
@@ -123,7 +137,7 @@ public class ArrayListDemo {
          * private void grow(int minCapacity) {
          *         // overflow-conscious code
          *         int oldCapacity = elementData.length;
-         *         int newCapacity = oldCapacity + (oldCapacity >> 1);//1.5倍
+         *         int newCapacity = oldCapacity + (oldCapacity >> 1);//新的list容量是旧容量的1.5倍
          *         if (newCapacity - minCapacity < 0)
          *             newCapacity = minCapacity;
          *         if (newCapacity - MAX_ARRAY_SIZE > 0)
@@ -133,8 +147,9 @@ public class ArrayListDemo {
          *     }
          *
          * private static int hugeCapacity(int minCapacity) {
-         *         if (minCapacity < 0) // overflow
+         *         if (minCapacity < 0) {
          *             throw new OutOfMemoryError();
+         *         }
          *         return (minCapacity > MAX_ARRAY_SIZE) ?Integer.MAX_VALUE :MAX_ARRAY_SIZE;
          *     }
          *
@@ -275,6 +290,9 @@ public class ArrayListDemo {
         arrayList7.add(6);
         arrayList7.add(3);
 
+        //todo 非线程安全2: ensureCapacityInternal(size + 1)挂起
+        // 另外线程将add成功，将size+1,导致挂起线程再添加时 越界
+        //
         /**
          * Object[] a = c.toArray();
          * int numNew = a.length;

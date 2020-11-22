@@ -21,6 +21,13 @@ public class HashMapDemo {
          * 默认无参构造函数,初始化的加载因子:0.75
          */
         HashMap hashMap = new HashMap();
+        /**
+         * key == null, 则 hash=0
+         * tab[i = (n - 1) & hash] 所以index = 0 在数组首个桶位置
+         */
+        hashMap.put(null,"fuck");
+        hashMap.put(null,"dl");
+
 
         hashMap.put("1", "nivelle");
         hashMap.put("2", "jessy");
