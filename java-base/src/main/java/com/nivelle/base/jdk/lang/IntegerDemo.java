@@ -25,7 +25,7 @@ public class IntegerDemo {
         /**
          * 精度超过36会默认为10
          */
-        String integer2 = Integer.toUnsignedString(-300, 80);
+        String integer2 = Integer.toUnsignedString(-300, 10);
         System.out.println("超过36精度默认为10进制:" + integer2);
 
         /**
@@ -48,16 +48,14 @@ public class IntegerDemo {
          * 静态内部类 IntegerCache 为自动装箱机制中的-128～127提供缓存
          * 1. The cache is initialized on first usage
          *
-         * 2. The size of the cache may be controlled by the {@code -XX:AutoBoxCacheMax=<size>} option
+         * 2. The size of the cache may be controlled by the {@code -Djava.lang.Integer.IntegerCache.high=255} option
          *
          * 3. java.lang.Integer.IntegerCache.high property may be set and saved in the private system properties in the
          *    sun.misc.VM class.
          */
-        Integer a = new Integer(127);
-        Integer b = new Integer(127);
-
-        System.err.println("a=b is " + a.equals(b));
-
+        Integer a = Integer.valueOf(254);
+        Integer b = Integer.valueOf(254);
+        System.out.println(a == b);
         /**
          * 这两种hashCode 方法是兼容的
          */
