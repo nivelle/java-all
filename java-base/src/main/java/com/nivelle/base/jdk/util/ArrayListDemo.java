@@ -374,11 +374,58 @@ public class ArrayListDemo {
         while (it.hasNext()) {
             String str = it.next();
             if (str.equals("9")) {
+                /**
+                 *  ArrayList.Itr //内部类的删除方法，线程安全
+                 *  public void remove() {
+                 *             if (lastRet < 0)
+                 *                 throw new IllegalStateException();
+                 *             checkForComodification();
+                 *
+                 *             try {
+                 *                 ArrayList.this.remove(lastRet);
+                 *                 cursor = lastRet;
+                 *                 lastRet = -1;
+                 *                 //删除元素后设置 ：expectedModCount = modCount;
+                 *                 expectedModCount = modCount;
+                 *             } catch (IndexOutOfBoundsException ex) {
+                 *                 throw new ConcurrentModificationException();
+                 *             }
+                 *         }
+                 */
                 it.remove();//remove 方法会删除原数组元素，线程安全： expectedModCount = modCount;
             }
         }
         System.out.println("排序之后删除9后的集合:" + list2);
         try {
+            /**
+             *  public boolean remove(Object o) {
+             *         if (o == null) {
+             *             //删除空元素，删除第一个null元素
+             *             for (int index = 0; index < size; index++)
+             *                 if (elementData[index] == null) {
+             *                     fastRemove(index);
+             *                     return true;
+             *                 }
+             *         } else {
+             *             for (int index = 0; index < size; index++)
+             *                 if (o.equals(elementData[index])) {
+             *                     fastRemove(index);
+             *                     return true;
+             *                 }
+             *         }
+             *         return false;
+             *     }
+             *
+             *     //快速删除，通过数组拷贝实现
+             *     private void fastRemove(int index) {
+             *         modCount++;
+             *         int numMoved = size - index - 1;
+             *         if (numMoved > 0)
+             *             System.arraycopy(elementData, index+1, elementData, index,
+             *                              numMoved);
+             *         elementData[--size] = null; // clear to let GC do its work
+             *     }
+             */
             for (String s : list2) {
                 if (s.equals("10")) {
                     list2.remove(s);
@@ -405,7 +452,7 @@ public class ArrayListDemo {
         System.out.println(list3);
 
         /**
-         *  Arrays.asList 返回的list是一个内部类,没有remove,add等方法 subList方法也是这样的
+         *  Arrays.asList 返回的list是一Arrays的内部类,没有remove,add等方法，subList方法也是这样的
          *
          *  异常:java.lang.UnsupportedOperationException
          */
@@ -430,6 +477,9 @@ public class ArrayListDemo {
         System.out.println("list3:" + list3);
 
 
+        /**
+         * List<E> subList(int fromIndex, int toIndex) //a view of the specified range within this list 返回指定范围的ArrayList视图
+         */
         List<String> list4 = new ArrayList();
         list4.add("9");
         list4.add("10");
@@ -437,12 +487,12 @@ public class ArrayListDemo {
         list4.add("11");
         list4.add("11");
         list4.add("11");
-
-
         System.out.println("subList1:" + list4.subList(0, 1));
-        System.out.println("subList1:" + list4.subList(1, 2));
-        System.out.println("subList1:" + list4.subList(2, 3));
-
+        System.out.println("subList2:" + list4.subList(1, 2));
+        System.out.println("subList3:" + list4.subList(2, 3));
+        List<String> subList = list4.subList(2, 3);
+        //subList 继承了ArrayList的modCount,moudCount+1,但是 expectModCount 没有改变，故非线程安全
+        System.out.println(subList.remove(0));
 
     }
 
