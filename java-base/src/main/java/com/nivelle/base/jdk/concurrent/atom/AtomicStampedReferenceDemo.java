@@ -12,7 +12,7 @@ public class AtomicStampedReferenceDemo {
 
     public static void main(String[] args) {
         /**
-         *  主要用来避免ABA问题,给数据设置版本戳
+         *  主要用来避免ABA问题,给数据引用设置版本戳
          */
         String string1 = "aaa";
         String string2 = "bbb";

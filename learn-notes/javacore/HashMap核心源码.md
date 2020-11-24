@@ -173,7 +173,7 @@ final float loadFactor;
             //扩容
             resize();
         }
-        // 在节点插入后做点什么事，在LinkedHashMap中用到(LRU)
+        // 在节点插入后做点什么事，在LinkedHashMap中用到(LRU)，默认是TRUE,在 hashMap的 readObject方法调用中为false
         afterNodeInsertion(evict);
         return null;
     }

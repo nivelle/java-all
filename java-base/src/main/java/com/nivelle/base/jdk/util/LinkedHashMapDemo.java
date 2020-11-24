@@ -1,14 +1,11 @@
 package com.nivelle.base.jdk.util;
 
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * LinkedHashMap
  * <p>
- * LinkedHashMap内部维护了一个双向链表，能保证元素按插入的顺序访问，也能以访问顺序访问，可以用来实现LRU缓存策略。
+ * LinkedHashMap内部维护了一个双向链表,能保证元素按插入的顺序迭代,也能以访问顺序迭代,可以用来实现LRU缓存策略。
  *
  * @author nivelle
  * @date 2019/06/16
@@ -20,47 +17,60 @@ public class LinkedHashMapDemo {
          * 继承自HashMap,区别与HashMap,链表是双向列表
          *
          *  accessOrder 代表迭代顺序，默认按插入顺序迭代(afterNodeAccess:在put已经存的元素或者get时调用)
-         *  1. true  代表按访问顺序存迭代
-         *  2. false 代表按插入顺序存储迭代,默认值
+         *  1. true  代表按访问顺序存迭代，最近访问的在前
+         *  2. false 代表按插入顺序存储迭代,默认值,先插的在前
          */
 
         /**
-         * HashMap是无序的，当我们希望有顺序地去存储key-value时，就需要使用LinkedHashMap了
+         * HashMap是无序的,当我们希望有顺序地去存储key-value时，就需要使用LinkedHashMap了
          */
         LinkedHashMap linkedHashMap = new LinkedHashMap();
         linkedHashMap.put(2, 1);
         linkedHashMap.put(1, 2);
-        System.out.println("插入顺序访问->linkedHashMap:" + linkedHashMap);
+        System.out.println("插入顺迭代->linkedHashMap:" + linkedHashMap);
 
-        LinkedHashMap linkedHashMap1 = new LinkedHashMap(4, 0.5F, false);
+        LinkedHashMap<Integer, Integer> linkedHashMap1 = new LinkedHashMap(4, 0.5F, true);
         linkedHashMap1.put(3, 3);
         linkedHashMap1.put(4, 4);
-        System.out.println("插入顺序访问->linkedHashMap1:" + linkedHashMap1);
+        System.out.println("访问顺序迭代,初始化->linkedHashMap1:" + linkedHashMap1);
+        System.out.println("访问顺序迭代,初始化->linkedHashMap1 after:" + linkedHashMap1);
+
+        /**
+         * key视图
+         */
+        Iterator<Integer> iterator = linkedHashMap1.keySet().iterator();
+        try {
+            /**
+             * accessOrder=true 时，get()操作会将访问节点放到队列末尾,导致modCount++,继续遍历就会导致：ConcurrentModificationException
+             */
+            while (iterator.hasNext()) {
+                int x = iterator.next();
+                System.out.print(x);
+                System.out.print("?");
+                System.out.println(x);
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
         /**
          * entry视图
          */
-        Set<Map.Entry> entrySet = linkedHashMap1.entrySet();
-
+        Set<Map.Entry<Integer, Integer>> entrySet = linkedHashMap1.entrySet();
+        System.out.println("entry视图||");
         entrySet.forEach(x -> {
             System.out.print(x.getKey() + ":");
             System.out.println(x.getValue());
         });
-        /**
-         * key视图
-         */
-        Set set = linkedHashMap1.keySet();
+        System.out.println("访问顺序迭代->linkedHashMap1:" + linkedHashMap1);
 
-        set.forEach(x -> {
-            System.out.print(x);
-            System.out.print("?");
-            System.out.println(linkedHashMap1.get(x));
-        });
+
         /**
-         * ## 插入一个HashMap节点后-》是否要删除最老元素,在插入节点之后的动作:
+         * // 插入一个HashMap节点后-》是否要删除最老元素,在插入节点之后的动作:
          *
          * ```
          * void afterNodeInsertion(boolean evict) {
          *         LinkedHashMap.Entry<K,V> first;
+         *         //todo linkedHashMap 中 removeEldestEntry 默认返回false,也就是不删除最老元素，一些内存敏感的缓存实现类会根据情况返回TRUE
          *         if (evict && (first = head) != null && removeEldestEntry(first)) {
          *             K key = first.key;
          *             removeNode(hash(key), key, null, false, true);
@@ -72,12 +82,12 @@ public class LinkedHashMapDemo {
          *
          * （2）HashMap.removeNode()从HashMap中把这个节点移除之后，会调用afterNodeRemoval()方法；
          *
-         * （3）afterNodeRemoval()方法在LinkedHashMap中也有实现，用来在移除元素后修改双向链表；//把节点从双向链表中删除
+         * （3）afterNodeRemoval()方法在LinkedHashMap中也有实现,用来在移除元素后修改双向链表;//把节点从双向链表中删除
          *
          * （4）默认removeEldestEntry()方法返回false，也就是不删除元素。
          *
          *
-         * ## 删除一个HashMap节点后-》双向链表删除这个节点:
+         * // 删除一个HashMap节点后-》双向链表删除这个节点:
          *
          *  ```
          *  void afterNodeRemoval(Node<K,V> e) {
@@ -97,7 +107,7 @@ public class LinkedHashMapDemo {
          *
          *  ```
          *
-         * ## afterNodeAccess(Node e)方法 //在节点访问之后被调用,主要在put()已经存在的元素或get()时被调用,如果accessOrder为true，调用这个方法把访问到的节点移动到双向链表的末尾。
+         * //afterNodeAccess(Node e)方法 //在节点访问之后被调用,主要在put()已经存在的元素或get()时被调用,如果accessOrder为true,调用这个方法把访问到的节点移动到双向链表的末尾。
          *
          * ```
          * void afterNodeAccess(Node<K,V> e) { // move node to last

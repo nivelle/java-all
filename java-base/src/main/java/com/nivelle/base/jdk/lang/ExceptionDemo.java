@@ -36,5 +36,6 @@ public class ExceptionDemo {
      */
     public static void main(String[] args) {
         Throwable id = new Throwable();
+        System.out.println(id.fillInStackTrace());
     }
 }

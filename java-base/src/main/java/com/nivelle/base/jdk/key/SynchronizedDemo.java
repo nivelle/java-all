@@ -22,11 +22,11 @@ public class SynchronizedDemo {
         if (synchronizedDemo == null) {
             System.out.println(synchronizedDemo + "is null");
         } else {
-            System.out.println("main 方法里面corePoolSize:" + synchronizedDemo.threadPoolExecutor.getCorePoolSize());
+            System.out.println("main 方法里面corePoolSize:" + SynchronizedDemo.threadPoolExecutor.getCorePoolSize());
         }
         int count = 1;
         for (int i = 0; i < 20; i++) {
-            synchronizedDemo.threadPoolExecutor.execute(new SynchronizedTask(count));
+            SynchronizedDemo.threadPoolExecutor.execute(new SynchronizedTask(count));
         }
     }
 }
