@@ -1,6 +1,5 @@
 package com.nivelle.rpc.dubbo.controller;
 
-import com.google.common.collect.Lists;
 import com.nivelle.rpc.dubbo.model.Menu;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -9,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -33,7 +33,7 @@ public class SwaggerController {
             response = String.class)
     @ResponseBody
     public String swaggerTest() {
-        List<Menu> menus = Lists.newArrayList();
+        List<Menu> menus = new ArrayList<>();
         menus.add(new Menu(1L, "资源"));
         menus.add(new Menu(2L, "菜单"));
         return menus.toString();
