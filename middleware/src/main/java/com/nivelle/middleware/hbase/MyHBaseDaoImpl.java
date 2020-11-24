@@ -1,6 +1,5 @@
 package com.nivelle.middleware.hbase;
 
-import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.hadoop.hbase.client.*;
 import org.apache.hadoop.hbase.util.Bytes;
@@ -146,7 +145,7 @@ public class MyHBaseDaoImpl {
      * @return
      */
     public Map<String, String> getData(String tableName, String rowKey, String family, String qualifier) {
-        Map<String, String> dataMap = Maps.newHashMap();
+        Map<String, String> dataMap = new HashMap<>();
         try {
             return hbaseTemplate.get(tableName, getRowKey(rowKey), family, qualifier, (Result result, int row) -> {
                 dataMap.put(getGetKey(family, qualifier), Bytes.toString(result.getValue(family.getBytes(), qualifier.getBytes())));

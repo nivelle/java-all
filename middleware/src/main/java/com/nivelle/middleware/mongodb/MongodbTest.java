@@ -1,6 +1,5 @@
 package com.nivelle.middleware.mongodb;
 
-import com.google.common.collect.Maps;
 import com.nivelle.middleware.pojo.ResponseResult;
 import com.nivelle.middleware.pojo.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +10,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,7 +38,7 @@ public class MongodbTest {
      */
     @RequestMapping("/add")
     public Object add() {
-        Map<String, Object> data = Maps.newHashMap();
+        Map<String, Object> data = new HashMap<>();
         data.put("name", "nivelle");
         data.put("age", "28");
         data.put("_id", "111");
@@ -87,7 +87,7 @@ public class MongodbTest {
         List<Map> resultList = mongoTemplate.findAll(Map.class, CLOUD_TABLE_NAME);
 
         Object object = resultList.get(1).get("user");
-        User user = (User)object;
+        User user = (User) object;
         String userName = user.getName();
         return ResponseResult.newResponseResult().setSuccess(userName);
 
