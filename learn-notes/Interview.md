@@ -183,6 +183,7 @@
 - [zk选举过程分析](http://shift-alt-ctrl.iteye.com/blog/1846562)
 - [zkWatcher机制分析](http://shift-alt-ctrl.iteye.com/blog/1847320)
 - [集群节点个数](https://blog.csdn.net/u010476994/article/details/79806041)
+- [zk知识点合集](https://mp.weixin.qq.com/s/K4ovR9T0merQRdUv9h580A)
 
 #### 分布式事物
 - [分布式事物解决方案](https://juejin.im/post/5cb967cbe51d456e403772b5?utm_source=gold_browser_extension)
