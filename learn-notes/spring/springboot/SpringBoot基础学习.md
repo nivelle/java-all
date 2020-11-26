@@ -3,8 +3,8 @@
 ```
 /Library/Java/JavaVirtualMachines/jdk1.8.0_191.jdk/Contents/Home/bin/java 
 
--XX:TieredStopAtLevel=1 
--noverify -Dspring.output.ansi.enabled=always
+-XX:TieredStopAtLevel=1  //使用C1进行编译
+-noverify -Dspring.output.ansi.enabled=always //
 -Dcom.sun.management.jmxremote 
 -Dcom.sun.management.jmxremote.port=56107 
 -Dcom.sun.management.jmxremote.authenticate=false 
