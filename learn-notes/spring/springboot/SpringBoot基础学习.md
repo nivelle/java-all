@@ -5,15 +5,15 @@
 
 -XX:TieredStopAtLevel=1  //使用C1进行编译
 -noverify -Dspring.output.ansi.enabled=always //彩色日志
--Dcom.sun.management.jmxremote 
+-Dcom.sun.management.jmxremote // 使用 jmx 对java程序进行监控
 -Dcom.sun.management.jmxremote.port=56107 
 -Dcom.sun.management.jmxremote.authenticate=false 
 -Dcom.sun.management.jmxremote.ssl=false 
 -Djava.rmi.server.hostname=127.0.0.1 
 -Dspring.liveBeansView.mbeanDomain 
--Dspring.application.admin.enabled=true 
-"-javaagent:/Applications/IntelliJ IDEA.app/Contents/lib/idea_rt.jar=56108:/Applications/IntelliJ IDEA.app/Contents/bin" 
--Dfile.encoding=UTF-8 
+-Dspring.application.admin.enabled=true //
+"-javaagent:/Applications/IntelliJ IDEA.app/Contents/lib/idea_rt.jar=56108:/Applications/IntelliJ IDEA.app/Contents/bin" //id代理
+-Dfile.encoding=UTF-8 //指定源文件使用的字符编码
 -classpath 
 /Library/Java/JavaVirtualMachines/jdk1.8.0_191.jdk/Contents/Home/jre/lib/charsets.jar
 :/Library/Java/JavaVirtualMachines/jdk1.8.0_191.jdk/Contents/Home/jre/lib/deploy.jar
@@ -50,7 +50,6 @@
 
 第一步：BootstrapApplication开始启动(启动类,进程号):2020-07-08 18:05:56.965  INFO 40430 --- [           main] c.n.container.BootstrapApplication       : Starting BootstrapApplication on nivelleMac with PID 40430 (/Users/nivellefu/IdeaProjects/programdayandnight/container-all/target/classes started by nivellefu in /Users/nivellefu/IdeaProjects/programdayandnight/parent)
 第二步: 配置文件激活:2020-07-08 18:05:56.968  INFO 40430 --- [           main] c.n.container.BootstrapApplication       : No active profile set, falling back to default profiles: default
-
 第三步: tomcat初始化:2020-07-08 18:05:58.170  INFO 40430 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
 第四步: tomcat启动开始:2020-07-08 18:05:58.187  INFO 40430 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
 第五步: 启动容器engin:2020-07-08 18:05:58.187  INFO 40430 --- [           main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.34]
