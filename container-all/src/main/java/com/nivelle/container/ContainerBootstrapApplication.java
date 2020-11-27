@@ -9,6 +9,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 
 import java.util.Iterator;
+
 import com.sun.tools.attach.*;
 
 import java.io.IOException;
@@ -22,16 +23,19 @@ import java.util.List;
  */
 
 /**
- * WebApplicationInitializer 让我们可以使用传统的WAR包的方式部署运行 SpringApplication，可以将 servlet、filter 和 ServletContextInitializer 从应用程序上下文绑定到服务器。
+ * WebApplicationInitializer 让我们可以使用传统的WAR包的方式部署运行 SpringApplication，
+ * 可以将 servlet、filter 和 ServletContextInitializer 从应用程序上下文绑定到服务器。
  * <p>
- * 如果要配置应用程序，要么覆盖 configure(SpringApplicationBuilder) 方法(调用 SpringApplicationBuilder#Sources(Class.))，要么使初始化式本身成为 @configuration。
+ * 如果要配置应用程序：
+ * 1. 要么覆盖 configure(SpringApplicationBuilder) 方法(调用 SpringApplicationBuilder#Sources(Class.))，
+ * 2. 要么使初始化式本身成为 @configuration。
  * <p>
- * 如果将SpringBootServletInitializer与其他 WebApplicationInitializer 结合使用，则可能还需要添加@Ordered注解来配置特定的启动顺序。
+ * 如果将 SpringBootServletInitializer与其他 WebApplicationInitializer 结合使用，则可能还需要添加@Ordered注解来配置特定的启动顺序。
  */
 @SpringBootApplication
 public class ContainerBootstrapApplication extends SpringBootServletInitializer {
 
-    public static void main(String[] args) throws IOException, AttachNotSupportedException, AgentLoadException, AgentInitializationException{
+    public static void main(String[] args) throws IOException, AttachNotSupportedException, AgentLoadException, AgentInitializationException {
 
         //获取当前系统中所有 运行中的 虚拟机
         System.out.println("running JVM start ");
@@ -39,10 +43,11 @@ public class ContainerBootstrapApplication extends SpringBootServletInitializer 
         for (VirtualMachineDescriptor vmd : list) {
             //如果虚拟机的名称为 xxx 则 该虚拟机为目标虚拟机，获取该虚拟机的 pid
             //然后加载 agent.jar 发送给该虚拟机
-            System.out.println(vmd.displayName());
-            if (vmd.displayName().endsWith("com.rickiyang.learn.job.TestAgentMain")) {
+            System.out.println("vm displayName:" + vmd.displayName());
+            if (vmd.displayName().endsWith("com.nivelle.container.ContainerBootstrapApplication")) {
+                System.out.println("vmd is:" + vmd.id());
                 VirtualMachine virtualMachine = VirtualMachine.attach(vmd.id());
-                virtualMachine.loadAgent("/Users/yangyue/Documents/java-agent.jar");
+                virtualMachine.loadAgent("/Users/nivellefu/IdeaProjects/java-guides/java-agent/target/java-agent-1.0-SNAPSHOT.jar");
                 virtualMachine.detach();
             }
         }
@@ -51,9 +56,7 @@ public class ContainerBootstrapApplication extends SpringBootServletInitializer 
         //JDK SPI机制
         ServiceLoader<MySpi> serviceLoader = ServiceLoader.load(MySpi.class);
         Iterator iterator = serviceLoader.iterator();
-        while (iterator.hasNext())
-
-        {
+        while (iterator.hasNext()) {
             System.err.println(iterator.next());
         }
         /**

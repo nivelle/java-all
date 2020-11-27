@@ -14,7 +14,7 @@ import java.security.ProtectionDomain;
 public class PreMainTraceAgent {
 
     public static void premain(String agentArgs, Instrumentation inst) {
-        System.out.println("my agentArgs : " + agentArgs);
+        System.out.println("java-agent agentArgs : " + agentArgs);
         inst.addTransformer(new DefineTransformer(), true);
     }
 
@@ -22,7 +22,7 @@ public class PreMainTraceAgent {
 
         @Override
         public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
-            System.out.println("my  load Class:" + className);
+            System.out.println("java-agent load Class:" + className);
             return classfileBuffer;
         }
     }
