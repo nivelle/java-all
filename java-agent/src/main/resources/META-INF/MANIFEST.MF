@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Premain-Class: com.nivelle.agent.PreMainTraceAgent
+Built-By: nivellefu
+Agent-Class: com.nivelle.agent.PreMainTraceAgent
+Can-Redefine-Classes: true
+Can-Retransform-Classes: true
+Created-By: Apache Maven 3.6.1
+Build-Jdk: 1.8.0_191
+
