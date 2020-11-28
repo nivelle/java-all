@@ -1,6 +1,6 @@
-## SpringBoot 之 DispatcherServlet
+### SpringBoot 之 DispatcherServlet
 
-### 1. ServletWebServerFactoryAutoConfiguration
+#### 1. ServletWebServerFactoryAutoConfiguration
 
 - @ConditionalOnClass(ServletRequest.class)//类 ServletRequest 存在于 classpath 上时才生效,也就是要求javax.servlet-api包必须被引用;
 
