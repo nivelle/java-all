@@ -1,5 +1,13 @@
 ### SpringApplication
 
+#### 属性
+````
+
+//springboot中，allowBeanDefinitionOverriding 默认为false；spring默认为true。需要在application.properties中新增spring.main.allow-bean-definition-overriding=true
+//Sets if bean definition overriding, by registering a definition with the same name as an existing definition, should be allowed. Defaults to {@code false} :是否允许注册已经存在的类定义,springboot默认是不允许的
+private boolean allowBeanDefinitionOverriding;
+
+````
 #### 构造函数
 
 ````
@@ -19,14 +27,15 @@ public SpringApplication(Class<?>... primarySources) {
         this.registerShutdownHook = true;
         this.additionalProfiles = new HashSet();
         this.isCustomEnvironment = false;
+        // Sets if beans should be initialized lazily. Defaults to {@code false}.
         this.lazyInitialization = false;
         this.resourceLoader = resourceLoader;
         Assert.notNull(primarySources, "PrimarySources must not be null");
         
-        //保存主配置类到一个Set集合primarySources中
+        //保存主配置类到一个Set集合primarySources中,也就是XXXBootStrapApplication类，加了@SpringBootApplication 注解的类
         this.primarySources = new LinkedHashSet(Arrays.asList(primarySources));
         
-        //获取当前的应用类型，判断是不是web应用
+        //获取当前的应用类型，判断是不是web应用，从ClassPath推断是否是Web应用
         this.webApplicationType = WebApplicationType.deduceFromClasspath();
        
         //从类路径下找到META‐INF/spring.factories 配置的所有 ApplicationContextInitializer；然后保存起来
@@ -34,7 +43,7 @@ public SpringApplication(Class<?>... primarySources) {
        
         //从类路径下找到META‐INF/spring.ApplicationListener；然后保存起来,原理同上
         this.setListeners(this.getSpringFactoriesInstances(ApplicationListener.class));
-        
+       
         //从多个配置类中找到有main方法的主配置类，(在调run方法的时候是可以传递多个配置类的)
         this.mainApplicationClass = this.deduceMainApplicationClass();
         //执行完毕，SpringApplication对象创建完毕
@@ -46,7 +55,9 @@ public SpringApplication(Class<?>... primarySources) {
 
 ````
 static WebApplicationType deduceFromClasspath() {
-        if (ClassUtils.isPresent("org.springframework.web.reactive.DispatcherHandler", (ClassLoader)null) && !ClassUtils.isPresent("org.springframework.web.servlet.DispatcherServlet", (ClassLoader)null) && !ClassUtils.isPresent("org.glassfish.jersey.servlet.ServletContainer", (ClassLoader)null)) {
+        if (ClassUtils.isPresent("org.springframework.web.reactive.DispatcherHandler", (ClassLoader)null) && 
+            !ClassUtils.isPresent("org.springframework.web.servlet.DispatcherServlet", (ClassLoader)null) && 
+            !ClassUtils.isPresent("org.glassfish.jersey.servlet.ServletContainer", (ClassLoader)null)) {
             return REACTIVE;
         } else {
             String[] var0 = SERVLET_INDICATOR_CLASSES;
@@ -132,7 +143,7 @@ private static Map<String, List<String>> loadSpringFactories(@Nullable ClassLoad
     }
 ````
 
-#### createSpringFactoriesInstances
+#### createSpringFactoriesInstances 通过反射创建实例
 
 ````
 private <T> List<T> createSpringFactoriesInstances(Class<T> type, Class<?>[] parameterTypes,
@@ -155,17 +166,22 @@ private <T> List<T> createSpringFactoriesInstances(Class<T> type, Class<?>[] par
 
 ````
 
-#### 环境配置
+#### 环境配置，命令行参数的解析
 
 ````
 
 protected void configurePropertySources(ConfigurableEnvironment environment, String[] args) {
+        //从上面创建的ConfigurableEnvironment实例中获取MutablePropertySources实例
 		MutablePropertySources sources = environment.getPropertySources();
+        //如果有defaultProperties属性的话，则把默认属性添加为最后一个元素
 		if (this.defaultProperties != null && !this.defaultProperties.isEmpty()) {
 			sources.addLast(new MapPropertySource("defaultProperties", this.defaultProperties));
 		}
+        // 这里addCommandLineProperties默认为true 如果有命令行参数的数
 		if (this.addCommandLineProperties && args.length > 0) {
+            //name为：commandLineArgs
 			String name = CommandLinePropertySource.COMMAND_LINE_PROPERTY_SOURCE_NAME;
+            //如果之前的 MutablePropertySources 中有name为 commandLineArgs的PropertySource的话，则把当前命令行参数转换为 CompositePropertySource 类型，和原来的PropertySource进行合并，替换原来的PropertySource
 			if (sources.contains(name)) {
 				PropertySource<?> source = sources.get(name);
 				CompositePropertySource composite = new CompositePropertySource(name);
@@ -174,6 +190,7 @@ protected void configurePropertySources(ConfigurableEnvironment environment, Str
 				sources.replace(name, composite);
 			}
 			else {
+                //如果之前没有name为commandLineArgs的PropertySource的话，则将其添加为MutablePropertySources中的第一个元素，注意了这里讲命令行参数添加为ConfigurableEnvironment中MutablePropertySources实例的第一个元素，且永远是第一个元素
 				sources.addFirst(new SimpleCommandLinePropertySource(args));
 			}
 		}
