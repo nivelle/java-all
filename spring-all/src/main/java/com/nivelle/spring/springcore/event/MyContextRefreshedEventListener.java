@@ -1,4 +1,4 @@
-package com.nivelle.spring.springcore.listener.contextevent;
+package com.nivelle.spring.springcore.event;
 
 import com.nivelle.spring.pojo.TimeLine;
 import org.springframework.context.ApplicationContext;

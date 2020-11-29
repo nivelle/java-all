@@ -241,7 +241,11 @@ Spring 使用接口PropertyResolver抽象了从底层来源获取属性的基本
 
 ### PropertySourcesPropertyResolver 从PropertySources中解析属性
 
-Spring框架将某个属性源抽象成了类PropertySource，又将多个属性源PropertySource组合抽象为接口PropertySources。对某个PropertySource对象中属性的解析，抽象成了接口PropertyResolver,而类PropertySourcesPropertyResolver则是Spring用于解析一个PropertySources对象中属性的工具类。Spring应用Environment对象中对其PropertySources对象的属性解析，就是通过这样一个对象。
+- Spring框架将某个属性源抽象成了类PropertySource，又将多个属性源PropertySource组合抽象为接口PropertySources。
+
+- 对某个PropertySource对象中属性的解析，抽象成了接口PropertyResolver,而类PropertySourcesPropertyResolver则是Spring用于解析一个PropertySources对象中属性的工具类。
+
+- Spring应用Environment对象中对其PropertySources对象的属性解析，就是通过这样一个对象。
 
 ````
 // Spring Environment 实现类的抽象基类 AbstractEnvironment代码片段
@@ -374,6 +378,132 @@ public class PropertySourcesPropertyResolver extends AbstractPropertyResolver {
 
 }
 
+````
 
+### PropertyPlaceholderHelper
+
+#### 将字符串里的占位符内容，用我们配置的properties里的替换。这个是一个单纯的类，没有继承没有实现，而且也没简单，没有依赖Spring框架其他的任何类。
 
 ````
+ protected String parseStringValue(String value, PropertyPlaceholderHelper.PlaceholderResolver placeholderResolver, @Nullable Set<String> visitedPlaceholders) {
+        //获取路径中占位符前缀的索引
+        int startIndex = value.indexOf(this.placeholderPrefix);
+        if (startIndex == -1) {
+            return value;
+        } else {
+            StringBuilder result = new StringBuilder(value);
+
+            while(startIndex != -1) {
+                int endIndex = this.findPlaceholderEndIndex(result, startIndex);
+                if (endIndex != -1) {
+                    //截取前缀占位符和后缀占位符之间的字符串placeholder
+                    String placeholder = result.substring(startIndex + this.placeholderPrefix.length(), endIndex);
+                    String originalPlaceholder = placeholder;
+                    if (visitedPlaceholders == null) {
+                        visitedPlaceholders = new HashSet(4);
+                    }
+                    if (!((Set)visitedPlaceholders).add(placeholder)) {
+                        throw new IllegalArgumentException("Circular placeholder reference '" + placeholder + "' in property definitions");
+                    }
+                    //递归调用,继续解析placeholder
+                    placeholder = this.parseStringValue(placeholder, placeholderResolver, (Set)visitedPlaceholders);
+                    //获取placeholder的值
+                    String propVal = placeholderResolver.resolvePlaceholder(placeholder);
+                    if (propVal == null && this.valueSeparator != null) {
+                        int separatorIndex = placeholder.indexOf(this.valueSeparator);
+                        if (separatorIndex != -1) {
+                            String actualPlaceholder = placeholder.substring(0, separatorIndex);
+                            String defaultValue = placeholder.substring(separatorIndex + this.valueSeparator.length());
+                            propVal = placeholderResolver.resolvePlaceholder(actualPlaceholder);
+                            if (propVal == null) {
+                                propVal = defaultValue;
+                            }
+                        }
+                    }
+
+                    if (propVal != null) {
+                        //对替换完成的value进行解析,防止properties的value值里也有占位符
+                        propVal = this.parseStringValue(propVal, placeholderResolver, (Set)visitedPlaceholders);
+                        result.replace(startIndex, endIndex + this.placeholderSuffix.length(), propVal);
+                        if (logger.isTraceEnabled()) {
+                            logger.trace("Resolved placeholder '" + placeholder + "'");
+                        }
+                        //重新定位开始索引
+                        startIndex = result.indexOf(this.placeholderPrefix, startIndex + propVal.length());
+                    } else {
+                        if (!this.ignoreUnresolvablePlaceholders) {
+                            throw new IllegalArgumentException("Could not resolve placeholder '" + placeholder + "' in value \"" + value + "\"");
+                        }
+
+                        startIndex = result.indexOf(this.placeholderPrefix, endIndex + this.placeholderSuffix.length());
+                    }
+
+                    ((Set)visitedPlaceholders).remove(originalPlaceholder);
+                } else {
+                    startIndex = -1;
+                }
+            }
+
+            return result.toString();
+        }
+    }
+
+````
+
+````
+private int findPlaceholderEndIndex(CharSequence buf, int startIndex) {
+        //获取前缀后面一个字符的索引
+		int index = startIndex + this.placeholderPrefix.length();
+		int withinNestedPlaceholder = 0;
+        //如果前缀后面还有字符的话
+		while (index < buf.length()) {
+            //判断源字符串在index处是否与后缀匹配
+			if (StringUtils.substringMatch(buf, index, this.placeholderSuffix)) {
+                //如果匹配到后缀,但此时前缀数量>后缀,则继续匹配后缀
+				if (withinNestedPlaceholder > 0) {
+					withinNestedPlaceholder--;
+					index = index + this.placeholderSuffix.length();
+				}
+				else {
+					return index;
+				}
+			}
+			else if (StringUtils.substringMatch(buf, index, this.simplePrefix)) {
+                //判断源字符串在index处是否与前缀匹配,若匹配,说明前缀后面还是前缀,则把前缀长度累加到index上,继续循环寻找后缀
+                //withinNestedPlaceholder确保前缀和后缀成对出现后
+				withinNestedPlaceholder++;
+				index = index + this.simplePrefix.length();
+			}
+			else {
+                //如果index出既不能和suffix又不能和simplePrefix匹配,则自增,继续循环
+				index++;
+			}
+		}
+		return -1;
+	}
+
+````
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

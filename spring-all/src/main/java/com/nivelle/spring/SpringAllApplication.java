@@ -1,11 +1,7 @@
 package com.nivelle.spring;
 
 import com.alibaba.dubbo.config.spring.context.annotation.EnableDubbo;
-import com.nivelle.spring.springcore.listener.contextevent.MyContextClosedEventListenerListener;
-import com.nivelle.spring.springcore.listener.contextevent.MyContextRefreshedEventListener;
-import com.nivelle.spring.springcore.listener.contextevent.MyContextStartedEventListener;
-import com.nivelle.spring.springcore.listener.contextevent.MyContextStopedEventEventListener;
-import com.nivelle.spring.springcore.listener.springevent.*;
+import com.nivelle.spring.springcore.event.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletComponentScan;

@@ -1,6 +1,6 @@
 package com.nivelle.spring.springcore.listener;
 
-import com.nivelle.spring.springcore.listener.springevent.MyEvent;
+import com.nivelle.spring.springcore.event.MyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 

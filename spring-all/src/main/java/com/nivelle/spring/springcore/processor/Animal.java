@@ -1,4 +1,4 @@
-package com.nivelle.spring.springcore.basics;
+package com.nivelle.spring.springcore.processor;
 
 /**
  * 通过BeanDefinitionRegisterPostProcess注入的Bean定义

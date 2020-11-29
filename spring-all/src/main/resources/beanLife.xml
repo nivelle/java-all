@@ -5,20 +5,20 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
 
 
-    <bean id="beanPostProcessor" class="com.nivelle.spring.springcore.basics.MyBeanPostProcessor">
+    <bean id="beanPostProcessor" class="com.nivelle.spring.springcore.processor.MyBeanPostProcessor">
     </bean>
 
     <bean id="instantiationAwareBeanPostProcessor"
-          class="com.nivelle.spring.springcore.basics.MyInstantiationAwareBeanPostProcessor">
+          class="com.nivelle.spring.springcore.processor.MyInstantiationAwareBeanPostProcessor">
     </bean>
 
-    <bean id="beanFactoryPostProcessor" class="com.nivelle.spring.springcore.basics.MyBeanFactoryPostProcessor">
+    <bean id="beanFactoryPostProcessor" class="com.nivelle.spring.springcore.processor.MyBeanFactoryPostProcessor">
     </bean>
 
-    <bean id="person" class="com.nivelle.spring.springcore.basics.PersonBeanLife" init-method="myInit"
+    <bean id="person" class="com.nivelle.spring.springcore.processor.PersonBeanLife" init-method="myInit"
           destroy-method="myDestory" scope="singleton" p:name="张三" p:address="广州" p:phone="17600383849"/>
 
     <!-- 注入spring boot无法扫描到的bean. -->
-    <bean id="xmlService" class="com.nivelle.spring.springcore.basics.XmlBean"></bean>
+    <bean id="xmlService" class="com.nivelle.spring.springcore.processor.XmlBean"></bean>
 
 </beans>

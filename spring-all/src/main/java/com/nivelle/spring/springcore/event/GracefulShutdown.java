@@ -1,4 +1,4 @@
-package com.nivelle.spring.springcore.listener.springevent;
+package com.nivelle.spring.springcore.event;
 
 
 import lombok.extern.slf4j.Slf4j;

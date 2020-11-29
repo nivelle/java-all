@@ -1,4 +1,4 @@
-package com.nivelle.spring.springcore.basics;
+package com.nivelle.spring.springcore.processor;
 
 /**
  * @author nivelle

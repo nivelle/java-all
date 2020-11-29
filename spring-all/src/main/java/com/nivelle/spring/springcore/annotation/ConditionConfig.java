@@ -23,7 +23,7 @@ public class ConditionConfig {
      * value : 确定指定类在 classpath 上
      */
     @Bean(name = "myCondition")
-    @ConditionalOnClass(name = "com.nivelle.spring.springcore.basics.Animal")
+    @ConditionalOnClass(name = "com.nivelle.spring.springcore.processor.Animal")
     @ConditionalOnProperty(prefix = "test", name = "name", havingValue="condition",matchIfMissing = false)
     public ConditionBean getConditionBean() {
         return new ConditionBean("我是条件注解加载进来的");

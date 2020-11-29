@@ -1,4 +1,4 @@
-package com.nivelle.spring.springcore.listener.contextevent;
+package com.nivelle.spring.springcore.event;
 
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextStartedEvent;

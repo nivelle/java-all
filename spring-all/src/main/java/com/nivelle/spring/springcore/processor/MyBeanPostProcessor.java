@@ -1,4 +1,4 @@
-package com.nivelle.spring.springcore.basics;
+package com.nivelle.spring.springcore.processor;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;

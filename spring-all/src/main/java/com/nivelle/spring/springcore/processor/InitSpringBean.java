@@ -1,9 +1,8 @@
-package com.nivelle.spring.springcore.basics;
+package com.nivelle.spring.springcore.processor;
 
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 

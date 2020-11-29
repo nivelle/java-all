@@ -1,4 +1,4 @@
-package com.nivelle.spring.springcore.listener.springevent;
+package com.nivelle.spring.springcore.event;
 
 import org.springframework.boot.context.event.ApplicationEnvironmentPreparedEvent;
 import org.springframework.context.ApplicationListener;
