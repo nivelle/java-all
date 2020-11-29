@@ -6,14 +6,12 @@ import com.nivelle.spring.springcore.listener.contextevent.MyContextRefreshedEve
 import com.nivelle.spring.springcore.listener.contextevent.MyContextStartedEventListener;
 import com.nivelle.spring.springcore.listener.contextevent.MyContextStopedEventEventListener;
 import com.nivelle.spring.springcore.listener.springevent.*;
-import de.codecentric.boot.admin.config.EnableAdminServer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @SpringBootApplication
 /**
@@ -28,7 +26,6 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @EnableScheduling
 @EnableDubbo
 @EnableAsync
-@EnableAdminServer
 /**
  * @ComponentScan.Filter 使用过滤器来指定要自动扫描
  */
