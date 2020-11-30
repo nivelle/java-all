@@ -1,4 +1,4 @@
-package com.nivelle.spring.springcore.processor;
+package com.nivelle.spring.springcore.lifecycle;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.PropertyValues;
@@ -18,12 +18,12 @@ public class MyInstantiationAwareBeanPostProcessor extends
 
     public MyInstantiationAwareBeanPostProcessor() {
         super();
-        System.err.println("InstantiationAwareBeanPostProcessorAdapter构造函数");
+        System.out.println("InstantiationAwareBeanPostProcessorAdapter构造函数");
     }
 
 
     /**
-     * 接口方法、实例化Bean之前调用
+     * 接口方法:实例化 Bean之前调用
      * @param beanClass
      * @param beanName
      * @return
@@ -32,12 +32,12 @@ public class MyInstantiationAwareBeanPostProcessor extends
     @Override
     public Object postProcessBeforeInstantiation(Class beanClass,
                                                  String beanName) throws BeansException {
-        System.err.println(beanName + ":" + "调用构造函数前,before,Instantiation:改变类定义,InstantiationAwareBeanPostProcessor=》postProcessBeforeInstantiation方法");
+        System.out.println(beanName + ":" + "调用构造函数前,before,Instantiation:改变类定义,InstantiationAwareBeanPostProcessor=》postProcessBeforeInstantiation方法");
         return null;
     }
 
     /**
-     * 接口方法、实例化Bean之后调用
+     * 接口方法:初始化 Bean之后调用
      * @param bean
      * @param beanName
      * @return
@@ -46,7 +46,7 @@ public class MyInstantiationAwareBeanPostProcessor extends
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName)
             throws BeansException {
-        System.err.println(beanName + ":" + "调用构造函数后,改变实例定义,InstantiationAwareBeanPostProcessor=》postProcessAfterInitialization方法");
+        System.out.println(beanName + ":" + "调用构造函数后,改变实例定义,InstantiationAwareBeanPostProcessor=》postProcessAfterInitialization方法");
         return bean;
     }
 
@@ -64,7 +64,7 @@ public class MyInstantiationAwareBeanPostProcessor extends
     public PropertyValues postProcessPropertyValues(PropertyValues pvs,
                                                     PropertyDescriptor[] pds, Object bean, String beanName)
             throws BeansException {
-        System.err.println(beanName + ":" + "调用构造函数后,设置某个属性,InstantiationAwareBeanPostProcessor=》postProcessPropertyValues()方法");
+        System.out.println(beanName + ":" + "调用构造函数后,设置某个属性,InstantiationAwareBeanPostProcessor=》postProcessPropertyValues()方法");
         return pvs;
     }
 }

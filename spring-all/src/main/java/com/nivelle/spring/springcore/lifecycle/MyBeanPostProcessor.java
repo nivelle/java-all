@@ -1,4 +1,4 @@
-package com.nivelle.spring.springcore.processor;
+package com.nivelle.spring.springcore.lifecycle;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -14,7 +14,7 @@ public class MyBeanPostProcessor implements BeanPostProcessor {
 
     public MyBeanPostProcessor() {
         super();
-        System.err.println("构造函数:BeanPostProcessor");
+        System.out.println("构造函数:BeanPostProcessor");
     }
 
 
@@ -32,14 +32,14 @@ public class MyBeanPostProcessor implements BeanPostProcessor {
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName)
             throws BeansException {
-        System.err.println(beanName + ":" + "后置处理器在Initialization或init方法之前调用 -》postProcessBeforeInitialization");
+        System.out.println(beanName + ":" + "后置处理器在Initialization或init方法之前调用 -》postProcessBeforeInitialization");
         return bean;
     }
 
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName)
             throws BeansException {
-        System.err.println(beanName + ":" + "后置处理器在Initialization或init方法之后调用-》postProcessAfterInitialization");
+        System.out.println(beanName + ":" + "后置处理器在Initialization或init方法之后调用-》postProcessAfterInitialization");
         return bean;
     }
 

@@ -1,6 +1,6 @@
 package com.nivelle.spring;
 
-import com.nivelle.spring.springcore.processor.PersonBeanLife;
+import com.nivelle.spring.springcore.lifecycle.PersonBeanLife;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

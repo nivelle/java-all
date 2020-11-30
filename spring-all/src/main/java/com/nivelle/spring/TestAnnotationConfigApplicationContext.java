@@ -22,12 +22,12 @@ public class TestAnnotationConfigApplicationContext {
         AnnotationConfigApplicationContext annotationConfigApplicationContext = new AnnotationConfigApplicationContext();
         ConfigurableEnvironment configurableEnvironment = annotationConfigApplicationContext.getEnvironment();
         configurableEnvironment.setActiveProfiles("dev");
-        System.err.println("====================加载注册文件========================");
+        System.out.println("====================加载注册文件========================");
 
         annotationConfigApplicationContext.register(ProfileConfig.class,
-                SpringCoreConfig.class, ConditionConfig.class, SelfProperties.class,EnableSelfProperties.class);
+                SpringCoreConfig.class, ConditionConfig.class, SelfProperties.class, EnableSelfProperties.class);
 
-        System.err.println("====================scan 扫描加载需要加载的文件========================");
+        System.out.println("==================== scan 扫描加载需要加载的文件========================");
 
         /**
          * 扫描 @Service @Repository @Controller @Component 注解标注的类
@@ -35,22 +35,21 @@ public class TestAnnotationConfigApplicationContext {
         annotationConfigApplicationContext.scan("com.nivelle.spring.springcore.*.*");
         //必须要刷新一下
         annotationConfigApplicationContext.refresh();
+        System.out.println("扫描加载类完成==================================");
+
         Dog dog = (Dog) annotationConfigApplicationContext.getBean("devDog");
-        System.err.println(dog.getName());
+        System.out.println("从容器获取实例dog:" + dog.getName());
         ProfileConfig profileConfig = (ProfileConfig) annotationConfigApplicationContext.getBean("profileConfig");
-        System.err.println(profileConfig.getApplicationName());
+        System.out.println("从容器获取实例 profileConfig:" + profileConfig.getApplicationName());
         SelfProperties selfProperties = (SelfProperties) annotationConfigApplicationContext.getBean("selfProperties");
         selfProperties.printDesc();
         //获取容器中的bean定义
         String[] beans = annotationConfigApplicationContext.getBeanDefinitionNames();
         for (int i = 0; i < beans.length; i++) {
-            System.err.println("当前扫描到的bean定义2:" + beans[i]);
+            System.out.println("当前扫描到的bean定义:" + beans[i]);
         }
-        System.err.println("====================");
-
+        System.out.println("====================");
         System.out.println("启动成了");
-
-
     }
 
 

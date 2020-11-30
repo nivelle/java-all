@@ -1,4 +1,4 @@
-package com.nivelle.spring.springcore.processor;
+package com.nivelle.spring.springcore.lifecycle;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
@@ -17,13 +17,13 @@ public class MyBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
 
     public MyBeanFactoryPostProcessor() {
         super();
-        System.err.println("构造函数:BeanFactoryPostProcessor ");
+        System.out.println("构造函数:BeanFactoryPostProcessor ");
     }
 
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory arg0)
             throws BeansException {
-        System.err.println("工厂类后置处理器,BeanFactoryPostProcessor:调用postProcessBeanFactory方法,修改beanDefinition属性:");
+        System.out.println("工厂类后置处理器,BeanFactoryPostProcessor:调用postProcessBeanFactory方法,修改beanDefinition属性:");
         BeanDefinition bd = null;
         try {
             bd = arg0.getBeanDefinition("person");

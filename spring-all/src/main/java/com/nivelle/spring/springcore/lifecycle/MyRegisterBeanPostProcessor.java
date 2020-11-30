@@ -1,4 +1,4 @@
-package com.nivelle.spring.springcore.processor;
+package com.nivelle.spring.springcore.lifecycle;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;

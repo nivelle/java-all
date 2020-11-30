@@ -1,4 +1,4 @@
-package com.nivelle.spring.springcore.processor;
+package com.nivelle.spring.springcore.lifecycle;
 
 
 import org.springframework.beans.factory.InitializingBean;
@@ -19,24 +19,24 @@ public class InitSpringBean implements InitializingBean {
 
 
     public InitSpringBean() {
-        System.err.println("----> InitSequenceBean: constructor!!! ");
+        System.out.println("----> InitSpringBean: constructor!!! ");
     }
 
     public InitSpringBean(String name, int age) {
         this.age = 10;
         this.name = "nivelle";
-        System.err.println("----> InitSequenceBean: constructor!!! name=" + name + ":" + "age=" + age);
+        System.err.println("----> InitSpringBean: constructor!!! name=" + name + ":" + "age=" + age);
     }
 
     @PostConstruct
     public void postConstruct() {
-        System.err.println("----> InitSequenceBean: postConstruct!!! before constructor");
+        System.err.println("----> InitSpringBean: postConstruct!!! before constructor");
     }
 
     @Override
     public void afterPropertiesSet() throws Exception {
         this.name = "nivelle2";
-        System.err.println("----> InitSequenceBean: afterPropertiesSet!!! after constructor");
+        System.err.println("----> InitSpringBean: afterPropertiesSet!!! after constructor");
     }
 
     public String getName() {

@@ -23,7 +23,7 @@ public class ConditionConfig {
      * value: 确定指定类在 classpath 上
      */
     @Bean(name = "myCondition")
-    @ConditionalOnClass(name = "com.nivelle.spring.springcore.processor.Animal")
+    @ConditionalOnClass(name = "com.nivelle.spring.springcore.lifecycle.Animal")
     //checks if the specified properties have a specific value,只有指定属性的值是指定值才满足条件，注入当前bean
     //matchIfMissing= true 则如果指定key的配置不存在，也认为匹配，注入如下bean
     @ConditionalOnProperty(prefix = "test", name = "name", havingValue="condition1",matchIfMissing = true)

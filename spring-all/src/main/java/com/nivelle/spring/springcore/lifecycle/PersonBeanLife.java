@@ -1,4 +1,4 @@
-package com.nivelle.spring.springcore.processor;
+package com.nivelle.spring.springcore.lifecycle;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.*;
@@ -36,7 +36,7 @@ public class PersonBeanLife implements BeanFactoryAware, BeanNameAware,
 
 
     public PersonBeanLife() {
-        System.err.println("【构造器】调用Person的构造器实例化");
+        System.out.println("【构造器】调用Person的构造实例化");
     }
 
     public String getName() {
@@ -44,7 +44,7 @@ public class PersonBeanLife implements BeanFactoryAware, BeanNameAware,
     }
 
     public void setName(String name) {
-        System.err.println("【注入属性】注入属性name");
+        System.out.println("【注入属性】注入属性name");
         this.name = name;
     }
 
@@ -53,7 +53,7 @@ public class PersonBeanLife implements BeanFactoryAware, BeanNameAware,
     }
 
     public void setAddress(String address) {
-        System.err.println("【注入属性】注入属性address");
+        System.out.println("【注入属性】注入属性address");
         this.address = address;
     }
 
@@ -62,7 +62,7 @@ public class PersonBeanLife implements BeanFactoryAware, BeanNameAware,
     }
 
     public void setPhone(int phone) {
-        System.err.println("【注入属性】注入属性phone");
+        System.out.println("【注入属性】注入属性phone");
         this.phone = phone;
     }
 
@@ -77,7 +77,7 @@ public class PersonBeanLife implements BeanFactoryAware, BeanNameAware,
      */
     @Override
     public void setBeanFactory(BeanFactory arg0) throws BeansException {
-        System.err.println("【BeanFactoryAware接口】调用BeanFactoryAware.setBeanFactory()");
+        System.out.println("【BeanFactoryAware接口】调用BeanFactoryAware.setBeanFactory()");
         this.beanFactory = arg0;
     }
 
@@ -88,7 +88,7 @@ public class PersonBeanLife implements BeanFactoryAware, BeanNameAware,
      */
     @Override
     public void setBeanName(String arg0) {
-        System.err.println("【BeanNameAware接口】调用BeanNameAware.setBeanName()");
+        System.out.println("【BeanNameAware接口】调用BeanNameAware.setBeanName()");
         this.beanName = arg0;
     }
 
@@ -99,7 +99,7 @@ public class PersonBeanLife implements BeanFactoryAware, BeanNameAware,
      */
     @Override
     public void afterPropertiesSet() throws Exception {
-        System.err.println("【InitializingBean接口】调用InitializingBean.afterPropertiesSet()");
+        System.out.println("【InitializingBean接口】调用InitializingBean.afterPropertiesSet()");
     }
 
     /**
@@ -109,21 +109,21 @@ public class PersonBeanLife implements BeanFactoryAware, BeanNameAware,
      */
     @Override
     public void destroy() throws Exception {
-        System.err.println("【DiposibleBean接口】调用DiposibleBean.destory()");
+        System.out.println("【DiposibleBean接口】调用DiposibleBean.destory()");
     }
 
     /**
      * 通过<bean>的init-method属性指定的初始化方法
      */
     public void myInit() {
-        System.err.println("【init-method】调用<bean>的init-method属性指定的初始化方法");
+        System.out.println("【init-method】调用<bean>的init-method属性指定的初始化方法");
     }
 
     /**
      * 通过<bean>的destroy-method属性指定的初始化方法
      */
     public void myDestory() {
-        System.err.println("【destroy-method】调用<bean>的destroy-method属性指定的初始化方法");
+        System.out.println("【destroy-method】调用<bean>的destroy-method属性指定的初始化方法");
     }
 
     @Override
