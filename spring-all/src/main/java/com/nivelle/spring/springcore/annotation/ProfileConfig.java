@@ -17,7 +17,7 @@ import org.springframework.util.StringValueResolver;
  * <p>
  * 1. 通过@Value 解析配置文件和类对应的属性值
  * <p>
- * 2. 通过实现 EmbeddedValueResolverAware 接口解析配置文件和类对应的属性值
+ * 2. 通过实现 EmbeddedValueResolverAware 接口 解析配置文件和类对应的属性值
  *
  * @author nivelle
  * @date 2019/09/25
@@ -28,7 +28,6 @@ public class ProfileConfig implements EmbeddedValueResolverAware, EnvironmentAwa
 
 
     private String applicationName;
-
 
     private StringValueResolver resolver;
 
@@ -45,7 +44,7 @@ public class ProfileConfig implements EmbeddedValueResolverAware, EnvironmentAwa
 
     /**
      * 1. VM 配置设置启动参数来指定:-Dspring.profiles.active=dev
-     * 2. 启动类 - configurableEnvironment.setActiveProfiles("dev"); - refresh()
+     * 2. 启动类 - configurableEnvironment.setActiveProfiles("dev"); -> refresh()
      */
     @Bean
     @Profile(value = "dev")
@@ -59,7 +58,6 @@ public class ProfileConfig implements EmbeddedValueResolverAware, EnvironmentAwa
         return new Dog("prodDog", 1, "red");
     }
 
-
     @Bean
     @Profile(value = "default")
     public Dog defaultDog() {
@@ -72,7 +70,6 @@ public class ProfileConfig implements EmbeddedValueResolverAware, EnvironmentAwa
         this.resolver = resolver;
         this.applicationName = this.resolver.resolveStringValue("${application.name}");
     }
-
 
     public String getApplicationName() {
         int length = environment.getActiveProfiles().length;

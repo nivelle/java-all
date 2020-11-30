@@ -24,9 +24,9 @@ import org.springframework.context.annotation.*;
  *
  * 1. 导入某个配置类（导入某个加了@Configuration的配置类或者某个类）
  *
- * 2. 导入某个ImportSelector接口的实现类
+ * 2. 导入某个 ImportSelector 接口的实现类
  *
- * 3. 导入某个ImportBeanDefinitionRegistrar接口的实现类
+ * 3. 导入某个 ImportBeanDefinitionRegistrar 接口的实现类
  */
 @Import({Car.class, ImportSelector.class, MySelfImportBeanDefinitionRegistrar.class})
 //此注解为自定义注解,目的是注入一个bean

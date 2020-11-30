@@ -25,7 +25,7 @@ import java.util.Objects;
  *    3. Advice
  *    4. AnnotatedElement
  * 2. 配置参数spring.aop.auto值不为false. 默认为true
- * @author nivelle
+ *
  */
 @Aspect
 @Component

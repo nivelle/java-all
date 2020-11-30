@@ -14,4 +14,11 @@ public class ConditionBean {
         System.err.println("通过条件注解创建了ConditionBean" + desc);
         this.desc = desc;
     }
+
+    @Override
+    public String toString() {
+        return "ConditionBean{" +
+                "desc='" + desc + '\'' +
+                '}';
+    }
 }

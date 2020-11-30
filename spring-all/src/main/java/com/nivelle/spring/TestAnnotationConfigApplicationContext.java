@@ -1,10 +1,7 @@
 package com.nivelle.spring;
 
 import com.nivelle.spring.pojo.Dog;
-import com.nivelle.spring.springcore.annotation.ConditionConfig;
-import com.nivelle.spring.springcore.annotation.ProfileConfig;
-import com.nivelle.spring.springcore.annotation.SelfProperties;
-import com.nivelle.spring.springcore.annotation.SpringCoreConfig;
+import com.nivelle.spring.springcore.annotation.*;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 
@@ -28,7 +25,7 @@ public class TestAnnotationConfigApplicationContext {
         System.err.println("====================加载注册文件========================");
 
         annotationConfigApplicationContext.register(ProfileConfig.class,
-                SpringCoreConfig.class, ConditionConfig.class, SelfProperties.class);
+                SpringCoreConfig.class, ConditionConfig.class, SelfProperties.class,EnableSelfProperties.class);
 
         System.err.println("====================scan 扫描加载需要加载的文件========================");
 

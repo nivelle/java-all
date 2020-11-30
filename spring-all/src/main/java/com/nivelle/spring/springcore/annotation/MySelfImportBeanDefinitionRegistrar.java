@@ -26,14 +26,13 @@ public class MySelfImportBeanDefinitionRegistrar implements ImportBeanDefinition
      */
     @Override
     public void setEnvironment(Environment environment) {
-        System.err.println("My JAVA_HOME:" + environment.getProperty("JAVA_HOME"));
+        System.out.println("My JAVA_HOME:" + environment.getProperty("JAVA_HOME"));
     }
 
     @Override
     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata,
                                         BeanDefinitionRegistry registry) {
-        Map<String, Object> annotationAttributes
-                = importingClassMetadata.getAnnotationAttributes(MyAnnotationImportBeanDefinitionRegistrar.class.getCanonicalName());
+        Map<String, Object> annotationAttributes = importingClassMetadata.getAnnotationAttributes(MyAnnotationImportBeanDefinitionRegistrar.class.getCanonicalName());
         Class<?>[] targets = (Class<?>[]) annotationAttributes.get("targets");
         System.err.println("额外的 beanDefinition targets is:" + targets[0].getName());
 

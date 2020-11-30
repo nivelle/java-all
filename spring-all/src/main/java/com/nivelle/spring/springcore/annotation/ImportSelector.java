@@ -13,6 +13,7 @@ public class ImportSelector implements org.springframework.context.annotation.Im
     @Override
     public String[] selectImports(AnnotationMetadata importingClassMetadata) {
         //要注入类的全限定名
+        System.out.println("importSelector 注入ImportSelector");
         return new String[]{"com.nivelle.spring.pojo.Cat"};
     }
 }

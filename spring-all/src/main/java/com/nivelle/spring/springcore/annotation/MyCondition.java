@@ -15,11 +15,8 @@ public class MyCondition implements Condition {
 
     @Override
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-
         String osName = context.getEnvironment().getProperty("os.name");
-
-        System.err.println("OSNAME is" + osName);
-
+        System.out.println("OSNAME is" + osName);
         if (osName.contains("Mac")) {
             System.err.println("OSNAME is mac");
             return true;

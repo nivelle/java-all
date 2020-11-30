@@ -11,6 +11,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 
 /**
  * 将 SelfProperties 做为一个Bean注册到容器当中
+ *
+ * @EnableConfigurationProperties 相当于把使用 @ConfigurationProperties 的类进行了一次注入。
  */
 @EnableConfigurationProperties(value = SelfProperties.class)
 public class EnableSelfProperties {

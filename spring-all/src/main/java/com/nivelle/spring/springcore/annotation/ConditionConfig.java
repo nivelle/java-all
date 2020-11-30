@@ -20,11 +20,13 @@ public class ConditionConfig {
      * <p>
      * name : 不确定指定类在classpath 上
      * <p>
-     * value : 确定指定类在 classpath 上
+     * value: 确定指定类在 classpath 上
      */
     @Bean(name = "myCondition")
     @ConditionalOnClass(name = "com.nivelle.spring.springcore.processor.Animal")
-    @ConditionalOnProperty(prefix = "test", name = "name", havingValue="condition",matchIfMissing = false)
+    //checks if the specified properties have a specific value,只有指定属性的值是指定值才满足条件，注入当前bean
+    //matchIfMissing= true 则如果指定key的配置不存在，也认为匹配，注入如下bean
+    @ConditionalOnProperty(prefix = "test", name = "name", havingValue="condition1",matchIfMissing = true)
     public ConditionBean getConditionBean() {
         return new ConditionBean("我是条件注解加载进来的");
     }
