@@ -1,4 +1,4 @@
-package com.nivelle.spring.springboot.controllor;
+package com.nivelle.spring.controllor;
 
 import com.nivelle.spring.pojo.ResponseResult;
 import com.nivelle.spring.pojo.ActivityPvEntity;

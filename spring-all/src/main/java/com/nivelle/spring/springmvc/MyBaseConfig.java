@@ -14,7 +14,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 
 /**
- * TODO:DOCUMENT ME!
+ * springMVC配置
  *
  * @author fuxinzhong
  * @date 2020/08/04

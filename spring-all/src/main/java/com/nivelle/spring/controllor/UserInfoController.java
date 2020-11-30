@@ -1,4 +1,4 @@
-package com.nivelle.spring.springboot.controllor;
+package com.nivelle.spring.controllor;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.stereotype.Controller;

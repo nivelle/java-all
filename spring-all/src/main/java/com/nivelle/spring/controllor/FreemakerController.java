@@ -1,4 +1,4 @@
-package com.nivelle.spring.springboot.controllor;
+package com.nivelle.spring.controllor;
 
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapper;

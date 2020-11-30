@@ -1,9 +1,8 @@
 package com.nivelle.spring.springboot.mapper;
 
 import com.nivelle.spring.pojo.ActivityPvEntity;
-import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
-
+import org.apache.ibatis.annotations.Mapper;
 import java.util.List;
 
 

@@ -1,4 +1,4 @@
-package com.nivelle.spring;
+package com.nivelle.spring.controllor;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;

@@ -9,7 +9,10 @@ import org.springframework.format.FormatterRegistry;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
-import org.springframework.web.servlet.config.annotation.*;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.util.UrlPathHelper;
 
 import java.util.List;
@@ -29,7 +32,8 @@ import java.util.List;
  */
 
 /**
- * @EnableWebMvc 完全自定义控制SpringMVC;If you want to take complete control of Spring MVC, you can add your own @Configuration annotated with @EnableWebMvc
+ * @EnableWebMvc 完全自定义控制
+ * 1. SpringMVC;If you want to take complete control of Spring MVC, you can add your own @Configuration annotated with @EnableWebMvc
  * <p>
  * 如果既想保留自动配置的SpringMVC又想使用自己自定义的MVC属性，需要使用实现了WebMvcConfigurer的配置类。该配置类不能加 @EnableWebMvc
  **/

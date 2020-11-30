@@ -1,4 +1,4 @@
-package com.nivelle.spring.springboot.controllor;
+package com.nivelle.spring.controllor;
 
 import com.google.common.collect.Lists;
 import com.nivelle.spring.pojo.Menu;

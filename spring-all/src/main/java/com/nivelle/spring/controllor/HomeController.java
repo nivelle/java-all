@@ -1,4 +1,4 @@
-package com.nivelle.spring.springboot.controllor;
+package com.nivelle.spring.controllor;
 
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UnknownAccountException;

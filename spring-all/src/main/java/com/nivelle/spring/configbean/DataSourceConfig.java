@@ -36,6 +36,8 @@ public class DataSourceConfig {
      */
     @Bean(name = "slaveDataSource")
     @Qualifier("slaveDataSource")
+    //当一个接口有多个实现类注入到spring容器中，使用@AutoWired 是 byType的，而这些实现类类型都相同，此时就需要@Qualifirer明确指定使用那个实现类。
+    //@Qualifier是byName的
     @Primary //当有多个实例时，用该注解表明先于未加该注解的实例注入，并不是表示它是主实例
     @ConfigurationProperties(prefix = "spring.datasource.slave")
     public DataSource slaveDataSource() {

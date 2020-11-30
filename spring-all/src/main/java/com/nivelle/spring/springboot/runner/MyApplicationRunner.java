@@ -1,4 +1,4 @@
-package com.nivelle.spring.springboot.initstart;
+package com.nivelle.spring.springboot.runner;
 
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -16,7 +16,7 @@ public class MyApplicationRunner implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        System.err.println("ApplicationRunner 初始化资源 ");
+        System.out.println("ApplicationRunner 初始化资源，ApplicationArguments=" + args);
     }
 
 }
