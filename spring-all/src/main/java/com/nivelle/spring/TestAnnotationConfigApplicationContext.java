@@ -18,7 +18,7 @@ public class TestAnnotationConfigApplicationContext {
      *
      * @param args
      */
-    public static void main(String args[]) {
+    public static void main(String [] args) {
         AnnotationConfigApplicationContext annotationConfigApplicationContext = new AnnotationConfigApplicationContext();
         ConfigurableEnvironment configurableEnvironment = annotationConfigApplicationContext.getEnvironment();
         configurableEnvironment.setActiveProfiles("dev");

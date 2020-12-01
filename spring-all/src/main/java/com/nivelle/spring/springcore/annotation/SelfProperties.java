@@ -16,6 +16,16 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author nivelle
  * @date 2020/01/16
  */
+
+/**
+ * 三种使用方法：
+ *
+ * 1. @Component + @ConfigurationProperties
+ *
+ * 2. 配置类中 @Bean + @ConfigurationProperties
+ *
+ * 3. @EnableConfigurationProperties + @ConfigurationProperties;Pojo类上注解@ConfigurationProperties，在启动类上注解@EnableConfigurationProperties
+ */
 @ConfigurationProperties(prefix = "spring.my.config")
 public class SelfProperties {
 

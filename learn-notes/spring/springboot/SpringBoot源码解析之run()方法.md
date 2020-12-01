@@ -8,7 +8,7 @@
 
 #### 第二步: 开启headless配置模式
 
-- configureHeadlessProperty();
+- configureHeadlessProperty();//设置该应用程序,即使没有检测到显示器,也允许其启动,默认为true
 
 #### 第二步: 通过 SpringFactoriesLoader 返回监听器
 
@@ -17,17 +17,23 @@
     //构造监听器实例集合
   - new SpringApplicationRunListeners(logger, getSpringFactoriesInstances(SpringApplicationRunListener.class, types, this, args))
     
+    ##### getSpringFactoriesInstances //创建 META-INF/spring.factories 配置文件指定listener
+
     - SpringFactoriesLoader.loadFactoryNames(type, classLoader))-> Set<String> names
     
     - createSpringFactoriesInstances(type, parameterTypes,classLoader, args, names);
     
-- listeners.starting();//springBoot开始启动监听器,监听器集合(starting,environmentPrepared,contextPrepared,contextLoaded,started,running or failed)如果启动失败,则回调失败处理器:callFailedListener
+- **listeners.starting();//触发容器开始启动事件通知**
+
+#### springBoot 启动事件顺序: springBoot开始启动监听器,监听器集合(starting,environmentPrepared,contextPrepared,contextLoaded,started,running or failed)如果启动失败,则回调失败处理器:callFailedListener
 
 #### 第三步: 参数准备以及启动参数准备
 
 - ApplicationArguments applicationArguments = new DefaultApplicationArguments(args);//启动参数构建
 
-- ConfigurableEnvironment environment = prepareEnvironment(listeners,applicationArguments);//参数:监听器集合,启动时的参数,构造一个ConfigurableEnvironment(Environment)
+- ConfigurableEnvironment environment = prepareEnvironment(listeners,applicationArguments);
+  
+  ##### prepareEnvironment //参数:监听器集合,启动时的参数,构造一个ConfigurableEnvironment(Environment)
   
   - ConfigurableEnvironment environment = getOrCreateEnvironment();//根据容器类型创建环境对象(StandardServletEnvironment,StandardReactiveWebEnvironment,StandardEnvironment)
   
@@ -35,21 +41,29 @@
   
     - environment.setConversionService((ConfigurableConversionService) conversionService);//设置参数转换器
     
-    - configurePropertySources(environment, args);//将启动时的参数转换成复合参数添加到Environment中
+    - configurePropertySources(environment, args);//将启动时的参数转换成复合参数添加到Environment中,注意
     
     - configureProfiles(environment, args);//获取激活的Profiles数组
 
-  - listeners.environmentPrepared(environment);//环境准备好事件通知
+  - **listeners.environmentPrepared(environment);//触发环境准备好事件通知**
   
-  - bindToSpringApplication(environment);//将环境变量绑定到SpringApplication
+  - bindToSpringApplication(environment);//将environment环境变量绑定到SpringApplication,key= spring.main
     
     - Binder.get(environment).bind("spring.main", Bindable.ofInstance(this));
     
-  - ConfigurationPropertySources.attach(environment);//Adapts each {@link PropertySource} managed by the environment to a {@link ConfigurationPropertySource} and allows classic {@link PropertySourcesPropertyResolver} calls to resolve using
-
+  - ConfigurationPropertySources.attach(environment);
+     
+    ````
+    1. Adapts each {@link PropertySource} managed by the environment to a {@link ConfigurationPropertySource} and allows classic {@link PropertySourcesPropertyResolver} calls to resolve using
+    
+    2. 删除非本次创建的 environment(configurationProperties)
+    
+    3. 本次创建的 environment addFirst ,优先级最高
+    ````
+    
 #### 第四步: 忽略的配置
 
-- configureIgnoreBeanInfo(environment);
+- configureIgnoreBeanInfo(environment);//配置spring.beaninfo.ignore，并添加到名叫systemProperties的PropertySource中；默认为true即开启
   
 #### 第五步: 打印启动标识
 
@@ -58,69 +72,95 @@
 #### 第六步: 创建容器
 			
 - context = createApplicationContext(); 
-
-  - contextClass = Class.forName(DEFAULT_SERVLET_WEB_CONTEXT_CLASS);//通过Class.forName()获取类实例；根据容器类型创建容器（AnnotationConfigServletWebServerApplicationContext;AnnotationConfigApplicationContext）
-
+  
+  - contextClass = Class.forName(DEFAULT_SERVLET_WEB_CONTEXT_CLASS);
+  
+  ````
+  1. 通过Class.forName()获取类实例;
+  
+  2. 根据容器类型创建容器（AnnotationConfigServletWebServerApplicationContext;默认:AnnotationConfigApplicationContext）
+  ````
   - (ConfigurableApplicationContext) BeanUtils.instantiateClass(contextClass);
   
     - (KotlinDetector.isKotlinReflectPresent() && KotlinDetector.isKotlinType(ctor.getDeclaringClass()) ?KotlinDelegate.instantiateClass(ctor, args) : ctor.newInstance(args));//创建实例
 
 #### 第七步:创建异常处理器
 
+  //META-INF/spring.factories 配置文件
 - exceptionReporters = getSpringFactoriesInstances(SpringBootExceptionReporter.class,new Class[] { ConfigurableApplicationContext.class }, context);
 
 #### 第八步: 容器准备
 
-- prepareContext(context, environment, listeners, applicationArguments,printedBanner);
-  
-  - postProcessApplicationContext(context);//将 internalConfigurationBeanNameGenerator;resourceLoader;ConversionService设置到当前上下文context
-  
-  - applyInitializers(context);//执行所有实现了 ApplicationContextInitializer<C extends ConfigurableApplicationContext> 接口的方法
+- prepareContext(ConfigurableApplicationContext context, ConfigurableEnvironment environment,SpringApplicationRunListeners listeners, ApplicationArguments applicationArguments, Banner printedBanner);
+
+  - context.setEnvironment(environment);
     
+  - postProcessApplicationContext(context);//Apply any relevant post processing the {@link ApplicationContext}，applicationContext的后置处理器
+  
+    ````
+    将 internalConfigurationBeanNameGenerator;resourceLoader;ConversionService设置到当前上下文context
+      
+    ````
+  - applyInitializers(context);//Apply any {@link ApplicationContextInitializer}s to the context before it is refreshed，applicationContext的init方法
+  
+    ````
+    refresh()方法执行之前，执行所有实现了 ApplicationContextInitializer<C extends ConfigurableApplicationContext> 接口的方法
+    
+    ````
     - getInitializers();//获取实现了ApplicationContextInitializer接口的实现类
     
     - initializer.initialize(context);//分别执行initialize方法
   
-  - listeners.contextPrepared(context);//监听器容器准备事件触发
+  - **listeners.contextPrepared(context);//触发 容器准备事件**
   
   - logStartupInfo(context.getParent() == null);//打印启动日志
   
-  - logStartupProfileInfo();//打印 active profile 信息。 例如:No active profile set, falling back to default profiles:### 或则 The following profiles are active:
-
-  - ConfigurableListableBeanFactory beanFactory = context.getBeanFactory();//获取底层的beanFactory
+  - logStartupProfileInfo();
+    `````
+    //打印 active profile 信息。 例如:No active profile set, falling back to default profiles: 
+    或者 The following profiles are active:
+    `````
+  - ConfigurableListableBeanFactory beanFactory = context.getBeanFactory();//**最底层的容器:获取底层的beanFactory**
   
   - beanFactory.registerSingleton("springApplicationArguments", applicationArguments);//注册单实例:springApplicationArguments
 
   - beanFactory.registerSingleton("springBootBanner", printedBanner);//注册单实例:springBootBanner
 
-  - beanFactory instanceof DefaultListableBeanFactory? true ;//beanFactory.setAllowBeanDefinitionOverriding()设置是否可以重写
+  - beanFactory instanceof DefaultListableBeanFactory? true ;//beanFactory.setAllowBeanDefinitionOverriding()设置beanDefinition是否可以重写
+  
+  - context.addBeanFactoryPostProcessor(new LazyInitializationBeanFactoryPostProcessor());//如果设置 lazyInitialization 为true 则bean为懒汉模式，默认为饥汉模式，通过beanFactoryPostProcessor实现
   
   - getAllSources(); //获取 primarySources 和 sources; return Collections.unmodifiableSet(allSources),不可修改的集合
   
-  - load(context, sources.toArray(new Object[0]));//将编译后的bean信息载入SpringApplication容器当中，注册到BeanDefinitionRegistry中
-  
+  -load(ApplicationContext context, Object[] sources) ;
+    ````
+    //将编译后的bean信息载入SpringApplication容器当中，注册到BeanDefinitionRegistry中
+    ````
     - BeanDefinitionLoader loader = createBeanDefinitionLoader(beanDefinitionRegistry, sources);
     
-      - new BeanDefinitionLoader(registry, sources);//参数:当前上下文和需要加载的资源;
+      - new BeanDefinitionLoader(registry, sources);//参数:当前上下文和需要加载的资源;获取类定义加载工具
       
-      ```
+      ````
       
       BeanDefinitionLoader(BeanDefinitionRegistry registry, Object... sources) {
       		Assert.notNull(registry, "Registry must not be null");
       		Assert.notEmpty(sources, "Sources must not be empty");
       		this.sources = sources;
+            //注解类型的解析器,由AnnotationConfigUtils.registerAnnotationConfigProcessors(this.registry)加载了默认的beanPostProcess
       		this.annotatedReader = new AnnotatedBeanDefinitionReader(registry);
-      		//注解类型的解析器,由AnnotationConfigUtils.registerAnnotationConfigProcessors(this.registry)加载了默认的beanPostProcess
-      		this.xmlReader = new XmlBeanDefinitionReader(registry);//xml类型的解析器
+            //xml类型的解析器
+      		this.xmlReader = new XmlBeanDefinitionReader(registry);
       		if (isGroovyPresent()) {
       			this.groovyReader = new GroovyBeanDefinitionReader(registry);
       		}
-      		this.scanner = new ClassPathBeanDefinitionScanner(registry);//环境变量处的解析器
-      		this.scanner.addExcludeFilter(new ClassExcludeFilter(sources));//排除过滤器
+            //环境变量处的解析器
+      		this.scanner = new ClassPathBeanDefinitionScanner(registry);
+            //排除过滤器
+      		this.scanner.addExcludeFilter(new ClassExcludeFilter(sources));
       	}
       	
-      ```
-        
+      ````
+          // 以注解类型解析为例
         - new AnnotatedBeanDefinitionReader(registry);
         
           - this(registry, getOrCreateEnvironment(registry));
@@ -132,12 +172,12 @@
                 - DefaultListableBeanFactory beanFactory = unwrapDefaultListableBeanFactory(registry);//获取原始beanFactory
             
                 - beanFactory.setDependencyComparator(AnnotationAwareOrderComparator.INSTANCE);//设置默认的排序器
-            
+                  //@AutoWired 注解解析
                 - beanFactory.setAutowireCandidateResolver(new ContextAnnotationAutowireCandidateResolver());// providing support for qualifier annotations as well as for lazy resolution
             
                 - beanDefs.add();
                   
-                  ```
+                  ````
                   设置一些基础的 beanPostProcess:
                   
                   1. internalConfigurationAnnotationProcessor(ConfigurationClassPostProcessor);
@@ -150,7 +190,7 @@
                   
                   5. internalEventListenerFactory
                   
-                  ```
+                  ````
 
     - loader.setBeanNameGenerator(this.beanNameGenerator);
     
