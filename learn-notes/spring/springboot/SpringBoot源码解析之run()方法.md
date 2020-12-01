@@ -130,19 +130,23 @@
   
   - context.addBeanFactoryPostProcessor(new LazyInitializationBeanFactoryPostProcessor());//如果设置 lazyInitialization 为true 则bean为懒汉模式，默认为饥汉模式，通过beanFactoryPostProcessor实现
   
-  - getAllSources(); //获取 primarySources 和 sources; return Collections.unmodifiableSet(allSources),不可修改的集合
+  - getAllSources(); 
+     ````
+    //获取主源类，也就XXXApplicationContext类 primarySources 和 sources; return Collections.unmodifiableSet(allSources),不可修改的集合
+     ````
   
   -load(ApplicationContext context, Object[] sources) ;
+  
     ````
-    //将编译后的bean信息载入SpringApplication容器当中，注册到BeanDefinitionRegistry中
+    //将编译后的bean信息载入SpringApplication容器当中,注册到BeanDefinitionRegistry中,包括spring核心基础工具类
     ````
     - BeanDefinitionLoader loader = createBeanDefinitionLoader(beanDefinitionRegistry, sources);
     
       - new BeanDefinitionLoader(registry, sources);//参数:当前上下文和需要加载的资源;获取类定义加载工具
       
-      ````
+        ````
       
-      BeanDefinitionLoader(BeanDefinitionRegistry registry, Object... sources) {
+        BeanDefinitionLoader(BeanDefinitionRegistry registry, Object... sources) {
       		Assert.notNull(registry, "Registry must not be null");
       		Assert.notEmpty(sources, "Sources must not be empty");
       		this.sources = sources;
@@ -157,9 +161,9 @@
       		this.scanner = new ClassPathBeanDefinitionScanner(registry);
             //排除过滤器
       		this.scanner.addExcludeFilter(new ClassExcludeFilter(sources));
-      	}
+      	 }
       	
-      ````
+        ````
           // 以注解类型解析为例
         - new AnnotatedBeanDefinitionReader(registry);
         
@@ -172,23 +176,25 @@
                 - DefaultListableBeanFactory beanFactory = unwrapDefaultListableBeanFactory(registry);//获取原始beanFactory
             
                 - beanFactory.setDependencyComparator(AnnotationAwareOrderComparator.INSTANCE);//设置默认的排序器
-                  //@AutoWired 注解解析
+                  //解析@Lazy、@Qualifier注解的原理
                 - beanFactory.setAutowireCandidateResolver(new ContextAnnotationAutowireCandidateResolver());// providing support for qualifier annotations as well as for lazy resolution
             
                 - beanDefs.add();
                   
                   ````
-                  设置一些基础的 beanPostProcess:
+                  换包括一些其他的基础 的 beanPostProcess 定义:
                   
-                  1. internalConfigurationAnnotationProcessor(ConfigurationClassPostProcessor);
+                  1. internalConfigurationAnnotationProcessor(ConfigurationClassPostProcessor);//解析 @Configuration
                   
-                  2. internalAutowiredAnnotationProcessor(AutowiredAnnotationBeanPostProcessor);
+                  2. internalAutowiredAnnotationProcessor(AutowiredAnnotationBeanPostProcessor);//解析 @Autowired
                   
-                  3. internalCommonAnnotationProcessor(CommonAnnotationBeanPostProcessor);
+                  3. internalCommonAnnotationProcessor(CommonAnnotationBeanPostProcessor);//JSR-250 @Resource
                 
                   4. internalEventListenerProcessor;
                   
                   5. internalEventListenerFactory
+                  
+                  6. PersistenceAnnotationBeanPostProcessor //jpa
                   
                   ````
 
@@ -198,18 +204,24 @@
     
     - loader.setEnvironment(this.environment);
     
-    - loader.load();//加载 Bean 定义, 只根据源类型将源设置到具体的 Bean定义加载器，并没有全面执行Bean定义加载.这里 sources 指定的类，如果有注解@Component，则会被作为Bean定义添加到容器中，比如当前SpringApplication的入口类，因为有注解@SpringBootConfiguration，内含了注解@Component,所以它会作为作为一个Bean被注册进容器;
+    - loader.load();
     
-      ```
+    ````
+     1. 加载 Bean 定义, 只根据 源类型将源设置到具体的 Bean定义加载器，并没有全面执行Bean定义加载.
+     
+     2. 这里 sources 指定的类，如果有注解@Component，则会被作为Bean定义添加到容器中，比如当前SpringApplication的入口类，因为有注解@SpringBootConfiguration，内含了注解@Component,所以它会作为作为一个Bean被注册进容器;
+    ````
+      
+    ````
       private int load(Object source) {
       		Assert.notNull(source, "Source must not be null");
       		if (source instanceof Class<?>) {
       			return load((Class<?>) source);
       		}
-      		if (source instanceof Resource) {
+      		if (source instanceof Resource) {//xmlReader 配置文件格式
       			return load((Resource) source);
       		}
-      		if (source instanceof Package) {
+      		if (source instanceof Package) {//doScan()扫描注解类
       			return load((Package) source);
       		}
       		if (source instanceof CharSequence) {
@@ -218,9 +230,9 @@
       		throw new IllegalArgumentException("Invalid source type " + source.getClass());
       	}
       	
-      ```
+     ````
 
-  - listeners.contextLoaded(context);//监听器容器加载完毕事件触发
+  - listeners.contextLoaded(context);//**触发容器加载完成事件**
 
 
 #### 第九步: 容器刷新
@@ -233,7 +245,7 @@
 
 #### 第十步: 刷新之后
 
-- afterRefresh(context, applicationArguments);
+- afterRefresh(context, applicationArguments); //springBoot空实现，容器刷新之后做一些操作
 
 #### 第十一步: 停止启动时间监控
 
@@ -243,7 +255,7 @@
 
 - listeners.started(context);
 
-#### 第十三步: 启动后回调函数
+#### 第十三步: 启动后回调函数，实现ApplicationRunner 或者 CommandLineRunner 接口的类运行，在容器启动完成后做一些操作
 
 - callRunners(context, applicationArguments);
 
