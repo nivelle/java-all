@@ -1,8 +1,8 @@
 #### Spring容器的 refresh() 方法，synchronized (this.startupShutdownMonitor)实现同步
 
-##### 第一步:prepareRefresh():刷新前的预处理：(Prepare this context for refreshing.)
+##### 第一步:prepareRefresh(); 刷新前的预处理:(Prepare this context for refreshing.)
 
-   (1) initPropertySources():初始化一些属性设置,默认不做任何处理,留给子类自定义属性设置方法;//servletContextInitParams 和 servletConfigInitParams
+   (1) initPropertySources();//初始化一些属性设置,默认不做任何处理,留给子类自定义属性设置方法;//servletContextInitParams 和 servletConfigInitParams
     
        - AbstractRefreshableWebApplicationContext
        
@@ -10,34 +10,37 @@
          
          - ((ConfigurableWebEnvironment) env).initPropertySources(this.servletContext, this.servletConfig);
          
-           - WebApplicationContextUtils.initServletPropertySources(getPropertySources(), servletContext, servletConfig);
-           
-           - 解析 servletContextInitParams 和 servletConfigInitParams 参数
+           - WebApplicationContextUtils.initServletPropertySources(getPropertySources(), servletContext, servletConfig);//解析 servletContextInitParams 和 servletConfigInitParams 参数
    
-   (2) getEnvironment().validateRequiredProperties():校验非空属性是否设置了值，没有设置的话抛出异常(MissingRequiredPropertiesException);//Validate that all properties marked as required are resolvable:see ConfigurablePropertyResolver#setRequiredProperties
+   (2) getEnvironment().validateRequiredProperties();//校验非空属性是否设置了值，没有设置的话抛出异常(MissingRequiredPropertiesException);//Validate that all properties marked as required are resolvable:see ConfigurablePropertyResolver#setRequiredProperties
    
        - systemEnvironment
       
        - systemProperties
        
-   (3) earlyApplicationEvents= new LinkedHashSet<ApplicationEvent>():保存容器中的一些早期的事件,如果存在则先清理掉旧的监听器
+   (3) earlyApplicationEvents= new LinkedHashSet<ApplicationEvent>(); //保存容器中的一些早期的事件,如果存在则先清理掉旧的监听器
   
-##### 第二步:ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory():获取beanFactory （Tell the subclass to refresh the internal bean factory.）
+##### 第二步:ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory(): 获得一个刷新的bean容器 （Tell the subclass to refresh the internal bean factory.）
 
-
-   #### 子类实现: AbstractRefreshableApplicationContext
+   ##### 子类实现: AbstractRefreshableApplicationContext //子类真正的执行配置加载操作,在其他初始化工作之前就先执行完毕。返回一个单例的BeanFactory,这个操作是非线程安全的，会抛出IllegalStateException异常
    
    (1) refreshBeanFactory(): 刷新(CAS刷新容器状态)并创建，this.beanFactory = new DefaultListableBeanFactory()并设置id;
      
-       - destroyBeans()&closeBeanFactory()
+       - destroyBeans()&closeBeanFactory() //如果已经存在beanFactory则先销毁旧的容器
        
        - DefaultListableBeanFactory beanFactory = createBeanFactory();
        
-         - new DefaultListableBeanFactory(getInternalParentBeanFactory());//Return the internal bean factory of the parent context if it implements ConfigurableApplicationContext; else, return the parent context itself.
+         - new DefaultListableBeanFactory(getInternalParentBeanFactory());
          
-       - beanFactory.setSerializationId(getId());//设置Id
+         ````
+         Return the internal bean factory of the parent context if it implements ConfigurableApplicationContext; else, return the parent context itself.
+         返回当前容器父容器的底层容器 beanFactory,如果没有则返回当前容器的父容器本身。
+         
+         ````
+         
+       - beanFactory.setSerializationId(getId());//设置beanFactory 全局唯一 Id
        
-       - customizeBeanFactory(beanFactory);//让子类实现
+       - customizeBeanFactory(beanFactory);//让子类实现,设置bean定义是否允许复写和是否允许循环引用
        
          - beanFactory.setAllowBeanDefinitionOverriding(this.allowBeanDefinitionOverriding);
          

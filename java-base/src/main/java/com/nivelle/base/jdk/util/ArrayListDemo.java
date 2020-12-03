@@ -1,5 +1,6 @@
 package com.nivelle.base.jdk.util;
 
+import com.google.common.collect.Lists;
 import com.nivelle.base.pojo.MyEnum;
 
 import java.lang.reflect.Field;
@@ -493,6 +494,14 @@ public class ArrayListDemo {
         List<String> subList = list4.subList(2, 3);
         //subList 继承了ArrayList的modCount,moudCount+1,但是 expectModCount 没有改变，故非线程安全
         System.out.println(subList.remove(0));
+        Set<String> set = new HashSet<>();
+        set.add("1");
+        set.add("2");
+        /**
+         * list 构造函数初始化set集合的数据
+         */
+        List<String> setToList = Lists.newArrayList(set);
+        System.out.println("setToList:" + setToList);
 
     }
 
