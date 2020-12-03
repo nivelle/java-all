@@ -126,8 +126,8 @@
 
   - beanFactory.registerSingleton("springBootBanner", printedBanner);//注册单实例:springBootBanner
 
-  - beanFactory instanceof DefaultListableBeanFactory? true ;//beanFactory.setAllowBeanDefinitionOverriding()设置beanDefinition是否可以重写
-  
+  - beanFactory instanceof DefaultListableBeanFactory? true ;//beanFactory.setAllowBeanDefinitionOverriding()设置设置是否允许通过注册具有相同名称的不同定义来覆盖bean定义，并自动替换前者。否则，将引发异常。默认值为“true”。
+                                                                                                               
   - context.addBeanFactoryPostProcessor(new LazyInitializationBeanFactoryPostProcessor());//如果设置 lazyInitialization 为true 则bean为懒汉模式，默认为饥汉模式，通过beanFactoryPostProcessor实现
   
   - getAllSources(); 

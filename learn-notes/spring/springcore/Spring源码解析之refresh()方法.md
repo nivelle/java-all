@@ -42,13 +42,13 @@
        
        - customizeBeanFactory(beanFactory);//让子类实现,设置bean定义是否允许复写和是否允许循环引用
        
-         - beanFactory.setAllowBeanDefinitionOverriding(this.allowBeanDefinitionOverriding);
-         
-         - beanFactory.setAllowCircularReferences(this.allowCircularReferences);
+         - beanFactory.setAllowBeanDefinitionOverriding(this.allowBeanDefinitionOverriding);//设置是否允许通过注册具有相同名称的不同定义来覆盖bean定义，并自动替换前者。否则，将引发异常。默认值为“true”。
+                                                                                                     
+         - beanFactory.setAllowCircularReferences(this.allowCircularReferences);//设置是否允许bean之间的循环引用并自动尝试解析它们。默认值为“true”。关闭此选项可在遇到循环引用时引发异常，完全不允许循环引用
          
        - loadBeanDefinitions(beanFactory);//让子类实现
        
-         ### 子类实现:AnnotationConfigWebApplicationContext 
+   ##### 子类实现:AnnotationConfigWebApplicationContext 
          
          - AnnotatedBeanDefinitionReader reader = getAnnotatedBeanDefinitionReader(beanFactory);
 		
@@ -58,48 +58,70 @@
  		
          - ScopeMetadataResolver scopeMetadataResolver = getScopeMetadataResolver();
 
-         - reader.register(ClassUtils.toClassArray(this.annotatedClasses));
+         - reader.register(ClassUtils.toClassArray(this.annotatedClasses));//Registering component classes
 
-	     - scanner.scan(StringUtils.toStringArray(this.basePackages));
+	     - scanner.scan(StringUtils.toStringArray(this.basePackages));//Scanning base packages
 	     
-	     - String[] configLocations = getConfigLocations();//获得 XmlWebApplicationContext 的资源路径
+	     - String[] configLocations = getConfigLocations();//获得 XmlWebApplicationContext 的资源路径,先reader.register(new Class[]{clazz}) 若异常 scanner.scan(new String[]{configLocation})
 
-         - 先reader.register(clazz);出现异常则 scanner.scan(configLocation);
-
-   (2) getBeanFactory(): 返回刚才创建的BeanFactory对象 DefaultListableBeanFactory；
+  
+   (2) getBeanFactory(): 返回刚才创建的BeanFactory对象 DefaultListableBeanFactory;
 	
 ##### 第三步:prepareBeanFactory(beanFactory):BeanFactory的预准备工作（BeanFactory进行一些设置;
+  
+```
+        // Tell the internal bean factory to use the context's class loader etc.
+        //设置类加载器：存在则直接设置/不存在则新建一个默认类加载器
+		beanFactory.setBeanClassLoader(getClassLoader());
+        //设置EL表达式解析器（Bean初始化完成后填充属性时会用到）
+		beanFactory.setBeanExpressionResolver(new StandardBeanExpressionResolver(beanFactory.getBeanClassLoader()));
+        //设置属性注册解析器PropertyEditor
+		beanFactory.addPropertyEditorRegistrar(new ResourceEditorRegistrar(this, getEnvironment()));
 
-       ```
-       // 准备当前上下文使用的Bean容器 BeanFactory,设置其标准上下文特征，比如类加载器等
-	   // 1. BeanFactory 的类加载器设置为当前上下文的类加载器
-	   // 2. BeanFactory 的Bean表达式解析器设置为 new StandardBeanExpressionResolver()
-	   // 3. BeanFactory 增加 BeanPostProcessror new ApplicationListenerDetector(this)
-	   // 4.三个单例Bean被注册 : environment,systemProperties,systemEnvironment
-	    	
-       ```
-	  
-   (1) 设置BeanFactory的类加载器(setBeanClassLoader)、设置表达式解析器(setBeanExpressionResolver)、添加属性注册器(addPropertyEditorRegistrar)
-	
-   (2) 添加部分BeanPostProcessor【ApplicationContextAwareProcessor,设置EmbeddedValueResolver值解析器;设置忽略的自动装配的接口EnvironmentAware;
-	
-   (3) 注册可以解析的自动装配;我们能直接在任何组件中自动注入:BeanFactory、ResourceLoader、ApplicationEventPublisher、ApplicationContext
-   
-   ```
-        beanFactory.registerResolvableDependency(BeanFactory.class, beanFactory);
-   		beanFactory.registerResolvableDependency(ResourceLoader.class, this);
-   		beanFactory.registerResolvableDependency(ApplicationEventPublisher.class, this);
-   		beanFactory.registerResolvableDependency(ApplicationContext.class, this);
-   		
-   		   --> this.resolvableDependencies.put(dependencyType, autowiredValue);
-	
-   ```
+		// Configure the bean factory with context callbacks.
+        //将当前的ApplicationContext对象交给ApplicationContextAwareProcessor类来处理，从而在Aware接口实现类中的注入applicationContext
+		beanFactory.addBeanPostProcessor(new ApplicationContextAwareProcessor(this));
+        //设置忽略自动装配的接口
+		beanFactory.ignoreDependencyInterface(EnvironmentAware.class);
+		beanFactory.ignoreDependencyInterface(EmbeddedValueResolverAware.class);
+		beanFactory.ignoreDependencyInterface(ResourceLoaderAware.class);
+		beanFactory.ignoreDependencyInterface(ApplicationEventPublisherAware.class);
+		beanFactory.ignoreDependencyInterface(MessageSourceAware.class);
+		beanFactory.ignoreDependencyInterface(ApplicationContextAware.class);
 
-   (4) 添加BeanPostProcessor【ApplicationListenerDetector】//Register early post-processor for detecting inner beans as ApplicationListeners.
-	
-   (5) 添加编译时的AspectJ; beanFactory.addBeanPostProcessor(new LoadTimeWeaverAwareProcessor(beanFactory)) & 	beanFactory.setTempClassLoader(new ContextTypeMatchClassLoader(beanFactory.getBeanClassLoader()));
-	
-   (6) 给BeanFactory中注册一些能用的组件: environment,systemProperties,systemEnvironment
+		// BeanFactory interface not registered as resolvable type in a plain factory.
+		// MessageSource registered (and found for autowiring) as a bean.
+        //注册可以解析的自动装配
+		beanFactory.registerResolvableDependency(BeanFactory.class, beanFactory);
+		beanFactory.registerResolvableDependency(ResourceLoader.class, this);
+		beanFactory.registerResolvableDependency(ApplicationEventPublisher.class, this);
+		beanFactory.registerResolvableDependency(ApplicationContext.class, this);
+
+		// Register early post-processor for detecting inner beans as ApplicationListeners.
+		beanFactory.addBeanPostProcessor(new ApplicationListenerDetector(this));
+
+		// Detect a LoadTimeWeaver and prepare for weaving, if found.
+        //如果当前BeanFactory包含loadTimeWeaver Bean，说明存在类加载期织入AspectJ，则把当前BeanFactory交给类加载期BeanPostProcessor实现类LoadTimeWeaverAwareProcessor来处理，从而实现类加载期织入AspectJ的目的。
+		if (beanFactory.containsBean(LOAD_TIME_WEAVER_BEAN_NAME)) {
+			beanFactory.addBeanPostProcessor(new LoadTimeWeaverAwareProcessor(beanFactory));
+			// Set a temporary ClassLoader for type matching.
+			beanFactory.setTempClassLoader(new ContextTypeMatchClassLoader(beanFactory.getBeanClassLoader()));
+		}
+
+		// Register default environment beans.
+        //注册当前容器环境environment组件Bean
+		if (!beanFactory.containsLocalBean(ENVIRONMENT_BEAN_NAME)) {
+			beanFactory.registerSingleton(ENVIRONMENT_BEAN_NAME, getEnvironment());
+		}
+        //注册系统配置systemProperties组件Bean
+		if (!beanFactory.containsLocalBean(SYSTEM_PROPERTIES_BEAN_NAME)) {
+			beanFactory.registerSingleton(SYSTEM_PROPERTIES_BEAN_NAME, getEnvironment().getSystemProperties());
+		}
+        //注册系统环境systemEnvironment组件Bean
+		if (!beanFactory.containsLocalBean(SYSTEM_ENVIRONMENT_BEAN_NAME)) {
+			beanFactory.registerSingleton(SYSTEM_ENVIRONMENT_BEAN_NAME, getEnvironment().getSystemEnvironment());
+		}
+```
 
 ##### 第四步:postProcessBeanFactory(beanFactory);
      

@@ -23,6 +23,8 @@ public class TestAnnotationConfigApplicationContext {
         ConfigurableEnvironment configurableEnvironment = annotationConfigApplicationContext.getEnvironment();
         configurableEnvironment.setActiveProfiles("dev");
         System.out.println("====================加载注册文件========================");
+        annotationConfigApplicationContext.setAllowBeanDefinitionOverriding(false);
+        annotationConfigApplicationContext.setAllowCircularReferences(false);
 
         annotationConfigApplicationContext.register(ProfileConfig.class,
                 SpringCoreConfig.class, ConditionConfig.class, SelfProperties.class, EnableSelfProperties.class);
