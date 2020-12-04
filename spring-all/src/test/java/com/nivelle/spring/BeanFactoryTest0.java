@@ -15,7 +15,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class BeanFactoryTest {
+public class BeanFactoryTest0 {
 
     /**
      * 按类型装配因为有两个实现类，导致装配失败
