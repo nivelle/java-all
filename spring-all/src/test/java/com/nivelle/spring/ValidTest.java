@@ -1,4 +1,4 @@
-package com.nivelle.spring.springboot;
+package com.nivelle.spring;
 
 
 import com.nivelle.spring.pojo.UserInfoEntity;

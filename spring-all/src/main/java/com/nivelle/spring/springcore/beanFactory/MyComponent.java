@@ -6,7 +6,7 @@ package com.nivelle.spring.springcore.beanFactory;
  * @author fuxinzhong
  * @date 2020/12/03
  */
-public interface Component {
+public interface MyComponent {
     /**
      * 在开启Spring的自动装配之后，一个放入到IOC中的对象中有setTestBean()方法:
      *
@@ -14,4 +14,6 @@ public interface Component {
      *
      * 2. 如果是byType的方式,就是会寻找当前setter方法里对应的参数类型的bean。如果找到多个同样抛出异常;
      */
+
+    void print();
 }

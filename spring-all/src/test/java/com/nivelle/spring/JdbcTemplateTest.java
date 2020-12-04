@@ -1,4 +1,4 @@
-package com.nivelle.spring.mysql;
+package com.nivelle.spring;
 
 import com.nivelle.spring.springboot.dao.ActivityDaoImpl;
 import com.nivelle.spring.pojo.ActivityPvEntity;

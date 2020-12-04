@@ -28,6 +28,9 @@ public class ArrayDemo {
          * （3）不支持add和remove方法(该ArrayList是Arrays的一个内部类)
          */
         int[] intArray = {5, 1, 2, 3, 4, 0};
+        for (int i = 0; i < intArray.length; i++) {
+            System.out.println("遍历数组：" + intArray[i]);
+        }
         List list = Arrays.asList(intArray);
         System.out.println("排序前:" + list);
 
@@ -82,6 +85,8 @@ public class ArrayDemo {
         intArraySort.add(0);
         System.out.println();
         System.out.println("排序前:" + intArraySort);
+
+
         /**
          * Collections.sort()->List.sort()->Arrays.sort()->TimSort()
          *
@@ -112,6 +117,9 @@ public class ArrayDemo {
         Arrays.sort(intArraySort.stream().mapToInt(x -> x.intValue()).toArray());
         System.out.println(intArraySort);
 
+        String astr = "1";
+        System.out.println("切割：" + astr.split(",")[0]);
+
     }
 
     private static void rankSort(List<Integer> list) {
@@ -128,8 +136,6 @@ public class ArrayDemo {
             }
         });
     }
-
-
 
 
 }

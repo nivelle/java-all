@@ -1,6 +1,6 @@
 package com.nivelle.spring.configbean;
 
-import com.nivelle.spring.springcore.event.GracefulShutdown;
+import com.nivelle.spring.springcore.event.TomcatShutdownListener;
 import org.apache.catalina.connector.Connector;
 import org.apache.coyote.http11.Http11NioProtocol;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
@@ -19,15 +19,15 @@ import org.springframework.context.annotation.Configuration;
 public class TomcatConfig implements WebServerFactoryCustomizer<ConfigurableServletWebServerFactory> {
 
     @Bean
-    public GracefulShutdown gracefulShutdown() {
-        return new GracefulShutdown();
+    public TomcatShutdownListener gracefulShutdown() {
+        return new TomcatShutdownListener();
     }
 
 
     @Bean
-    public ConfigurableServletWebServerFactory webServerFactory(final GracefulShutdown gracefulShutdown) {
+    public ConfigurableServletWebServerFactory webServerFactory(final TomcatShutdownListener tomcatShutdownListener) {
         TomcatServletWebServerFactory factory = new TomcatServletWebServerFactory();
-        factory.addConnectorCustomizers(gracefulShutdown);
+        factory.addConnectorCustomizers(tomcatShutdownListener);
         return factory;
     }
 
