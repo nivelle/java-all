@@ -19,17 +19,6 @@ import javax.sql.DataSource;
 @Configuration
 public class DataSourceConfig {
 
-    /**
-     * 数据源
-     *
-     * @return
-     */
-    @Bean(name = "masterDataSource")
-    @Qualifier("masterDataSource")
-    @ConfigurationProperties(prefix = "spring.datasource.master")
-    public DataSource masterDataSource() {
-        return DataSourceBuilder.create().build();
-    }
 
     /**
      * @return
@@ -41,6 +30,17 @@ public class DataSourceConfig {
     @Primary //当有多个实例时，用该注解表明先于未加该注解的实例注入，并不是表示它是主实例
     @ConfigurationProperties(prefix = "spring.datasource.slave")
     public DataSource slaveDataSource() {
+        return DataSourceBuilder.create().build();
+    }
+    /**
+     * 数据源
+     *
+     * @return
+     */
+    @Bean(name = "masterDataSource")
+    @Qualifier("masterDataSource")
+    @ConfigurationProperties(prefix = "spring.datasource.master")
+    public DataSource masterDataSource() {
         return DataSourceBuilder.create().build();
     }
 

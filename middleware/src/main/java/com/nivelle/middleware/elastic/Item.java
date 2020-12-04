@@ -6,7 +6,7 @@ import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
 /**
- * TODO:DOCUMENT ME!
+ * es 实体类
  *
  * @author fuxinzhong
  * @date 2020/09/26

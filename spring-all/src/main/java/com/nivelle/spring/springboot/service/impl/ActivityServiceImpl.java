@@ -26,38 +26,14 @@ public class ActivityServiceImpl implements ActivityService {
 
 
     @Autowired
-    private ActivityPvMapper activityPvMapper;
-    @Autowired
     private ActivityDaoImpl activityDaoImpl;
 
-    @Override
-    public List<ActivityPvEntity> getAll() {
-        List<ActivityPvEntity> ativities = activityPvMapper.getAll();
-        return ativities;
-
-    }
-
-    @Override
-    public int insert(ActivityPvEntity activityPvEntity) {
-
-        return activityPvMapper.insert(activityPvEntity);
-    }
 
     @Override
     public int update(ActivityPvEntity activityPvEntity) {
         return 0;
     }
 
-    @Override
-    //@Cacheable(value = "activityPvEntity",key="#id")
-    public ActivityPvEntity getActivityById(Integer id) {
-
-        ActivityPvEntity activityPvEntity = activityPvMapper.getActivityById(id);
-
-        logger.info("查询数据库返回为:{}", activityPvEntity);
-
-        return activityPvEntity;
-    }
 
     /**
      * 1.只有 public 方法打上 @Transactional 注解, 事务控制才能生效.
@@ -97,7 +73,7 @@ public class ActivityServiceImpl implements ActivityService {
      */
 
     public ActivityPvEntity getActivityInTransactional(long id) {
-        ActivityPvEntity activityPvEntity = activityPvMapper.getActivityById(id);
+        ActivityPvEntity activityPvEntity = activityDaoImpl.getActivitiesById(id);
         if (Objects.nonNull(activityPvEntity)) {
             //此时事物不起作用,因为调用者和被调用者同属一个类
             //this.requiredCommited(activityPvEntity.getId());

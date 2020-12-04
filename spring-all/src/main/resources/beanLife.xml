@@ -6,9 +6,6 @@
 
 
 
-
-
-
     <bean id="person" class="com.nivelle.spring.springcore.lifecycle.PersonBeanLife" init-method="myInit"
           destroy-method="myDestory" scope="singleton" p:name="张三" p:address="广州" p:phone="17600383849"/>
     <bean id="beanPostProcessor" class="com.nivelle.spring.springcore.lifecycle.MyBeanPostProcessor">
@@ -19,6 +16,7 @@
 
     <bean id="beanFactoryPostProcessor" class="com.nivelle.spring.springcore.lifecycle.MyBeanFactoryPostProcessor">
     </bean>
+
     <!-- 注入spring boot无法扫描到的bean. -->
     <!--<bean id="xmlService" class="com.nivelle.spring.springcore.lifecycle.XmlBean"></bean>-->
 

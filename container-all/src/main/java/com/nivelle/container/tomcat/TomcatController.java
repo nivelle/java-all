@@ -9,7 +9,6 @@ import org.apache.catalina.connector.Connector;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.coyote.Adapter;
 import org.apache.coyote.ProtocolHandler;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -33,7 +32,7 @@ import java.util.HashMap;
 @RequestMapping(value = "/tomcat")
 public class TomcatController {
 
-    @Autowired
+
     ApplicationContext applicationContext;
 
     @RequestMapping(value = "mytomcat")

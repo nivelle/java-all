@@ -1,6 +1,5 @@
 package com.nivelle.spring.springmvc;
 
-import com.nivelle.spring.GsonUtils;
 import com.nivelle.spring.pojo.User;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpInputMessage;

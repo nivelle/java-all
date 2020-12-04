@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
  *
  * @Author nivelle
  */
-@Component
+//@Component
 public class MyBeanPostProcessor implements BeanPostProcessor {
 
     public MyBeanPostProcessor() {

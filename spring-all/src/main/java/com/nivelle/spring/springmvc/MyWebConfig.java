@@ -37,7 +37,7 @@ import java.util.List;
  * <p>
  * 如果既想保留自动配置的SpringMVC又想使用自己自定义的MVC属性，需要使用实现了WebMvcConfigurer的配置类。该配置类不能加 @EnableWebMvc
  **/
-@Configuration
+//@Configuration
 public class MyWebConfig implements WebMvcConfigurer {
 
     @Override

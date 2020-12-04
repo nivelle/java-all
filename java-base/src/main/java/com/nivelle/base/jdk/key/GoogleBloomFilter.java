@@ -2,7 +2,7 @@ package com.nivelle.base.jdk.key;
 
 import com.google.common.hash.BloomFilter;
 import com.google.common.hash.Funnels;
-import org.junit.Test;
+import org.testng.annotations.Test;
 
 /**
  * 布隆过滤

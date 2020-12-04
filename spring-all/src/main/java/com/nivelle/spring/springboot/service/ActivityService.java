@@ -6,14 +6,8 @@ import java.util.List;
 
 public interface ActivityService {
 
-
-    List<ActivityPvEntity> getAll();
-
-    int insert(ActivityPvEntity activityPvEntity);
-
     int update(ActivityPvEntity activityPvEntity);
 
-    ActivityPvEntity getActivityById(Integer id);
 
     int requiredCommitted(long id);
 

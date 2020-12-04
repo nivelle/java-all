@@ -29,7 +29,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <version>2.3.4.RELEASE</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-test -->
         <dependency>
@@ -66,11 +65,6 @@
             <artifactId>swagger2markup</artifactId>
             <version>1.3.1</version>
         </dependency>
-        <!--<dependency>-->
-        <!--<groupId>com.nivelle</groupId>-->
-        <!--<artifactId>java-base</artifactId>-->
-        <!--<version>0.0.1-SNAPSHOT</version>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>
@@ -89,7 +83,16 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-autoconfigure</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-json</artifactId>
             <version>2.1.7.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.coyote</groupId>
+            <artifactId>com.springsource.org.apache.coyote</artifactId>
+            <version>7.0.26</version>
         </dependency>
     </dependencies>
 

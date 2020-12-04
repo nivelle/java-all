@@ -5,6 +5,7 @@ import com.nivelle.spring.springcore.annotation.MyTypeFilter;
 import com.nivelle.spring.springcore.event.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.ComponentScan;
@@ -16,19 +17,20 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 /**
  * 扫描servlet组件注解
  */
-@ServletComponentScan
+//@ServletComponentScan
 /**
  * 开启缓存注解,mybatis使用redis作为缓存
  * @author nivelle
  */
-@EnableCaching
+//@EnableCaching
 @EnableScheduling
-@EnableDubbo
-@EnableAsync
+//@EnableDubbo
+//@EnableAsync
 /**
  * @ComponentScan.Filter 使用过滤器来指定要自动扫描
  */
-@ComponentScan(includeFilters ={@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,classes = {MyTypeFilter.class})})
+//@EnableConfigurationProperties
+//@ComponentScan(includeFilters ={@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,classes = {MyTypeFilter.class})})
 public class SpringAllApplication {
     public static void main(String[] args) {
         SpringApplication springApplication = new SpringApplication(SpringAllApplication.class);

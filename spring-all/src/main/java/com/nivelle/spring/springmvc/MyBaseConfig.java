@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.InitBinder;
  * @author fuxinzhong
  * @date 2020/08/04
  */
-@Configuration
+//@Configuration
 public class MyBaseConfig {
 
 
