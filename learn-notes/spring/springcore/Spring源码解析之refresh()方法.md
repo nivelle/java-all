@@ -542,34 +542,81 @@
 
    - beanFactory.preInstantiateSingletons();初始化后剩下的单实例非懒加载的bean;// Instantiate all remaining (non-lazy-init) singletons.
    
-     ##### 子类实现: DefaultListableBeanFactory
+   ##### 子类实现: DefaultListableBeanFactory
+     
+   ````
+            // Iterate over a copy to allow for init methods which in turn register new bean definitions.
+     		// While this may not be part of the regular factory bootstrap, it does otherwise work fine.
+            // 遍历一个副本以允许init方法，而init方法反过来注册新的bean定义
+            // 盛放所有的beanName,所有的需要实例化的beanName都在这里,包括Spring断断续续添加的, Aspectj的, 程序员通过注解标识的
+     		List<String> beanNames = new ArrayList<>(this.beanDefinitionNames);
+     
+     		// Trigger initialization of all non-lazy singleton beans...
+            // 触发所有非延迟加载单例beans的初始化，主要步骤为调用getBean
+     		for (String beanName : beanNames) {
+                //合并父类BeanDefinition,可以进入查看
+     			RootBeanDefinition bd = getMergedLocalBeanDefinition(beanName);
+                //三个条件,抽象,单例,非懒加载
+     			if (!bd.isAbstract() && bd.isSingleton() && !bd.isLazyInit()) {
+                    //如果是FactoryBean则加上&;检验是否是 FactoryBean 类型的对象
+     				if (isFactoryBean(beanName)) {
+     					Object bean = getBean(FACTORY_BEAN_PREFIX + beanName);
+     					if (bean instanceof FactoryBean) {
+     						FactoryBean<?> factory = (FactoryBean<?>) bean;
+     						boolean isEagerInit;
+     						if (System.getSecurityManager() != null && factory instanceof SmartFactoryBean) {
+     							isEagerInit = AccessController.doPrivileged((PrivilegedAction<Boolean>) ((SmartFactoryBean<?>) factory)::isEagerInit,getAccessControlContext());
+     						}
+     						else {
+     							isEagerInit = (factory instanceof SmartFactoryBean &&
+     									((SmartFactoryBean<?>) factory).isEagerInit());
+     						}
+     						if (isEagerInit) {
+     							getBean(beanName); 
+     						}
+     					}
+     				}
+     				else {
+                        //因为我们没有添加FactoryBean类型的对象, 一般都会进入这个getBean
+     					getBean(beanName);
+     				}
+     			}
+     		}
+     
+     		// Trigger post-initialization callback for all applicable beans...
+     		for (String beanName : beanNames) {
+     			Object singletonInstance = getSingleton(beanName);
+     			if (singletonInstance instanceof SmartInitializingSingleton) {
+     				SmartInitializingSingleton smartSingleton = (SmartInitializingSingleton) singletonInstance;
+     				if (System.getSecurityManager() != null) {
+     					AccessController.doPrivileged((PrivilegedAction<Object>) () -> {
+     						smartSingleton.afterSingletonsInstantiated();
+     						return null;
+     					}, getAccessControlContext());
+     				}
+     				else {
+     					smartSingleton.afterSingletonsInstantiated();
+     				}
+     			}
+     		}
+   ````
 
-     - List<String> beanNames = new ArrayList<>(this.beanDefinitionNames);//获取容器中的所有的 beanDefinitionNames
+   
+ ##### 赋值之前使用后置处理器: [spring getBean()方法](./Spring源码解析之createBeanInstance()方法.md)
 
-     - RootBeanDefinition = getMergedLocalBeanDefinition(beanName); //获取Bean的定义信息,Bean不是抽象的,是单实例的,不是懒加载;
-      
-     ##### 判断是否是FactoryBean => isFactoryBean(beanName)
-            
-     ##### 是工厂bean,则利用工厂方法创建bean
-            
-      //是 A standard FactoryBean is not expected to initialize eagerly,工厂方法获取bean
-      - Object bean = getBean(FACTORY_BEAN_PREFIX + beanName); [spring getBean()方法](./Spring源码解析之createBeanInstance()方法.md)
+   - 拿到 InstantiationAwareBeanPostProcessor后 置处理器,postProcessAfterInstantiation()；
 
-     ###### 赋值之前使用后置处理器:
+     - 拿到InstantiationAwareBeanPostProcessor后置处理器,postProcessPropertyValues()；
 
-          - 拿到InstantiationAwareBeanPostProcessor后置处理器,postProcessAfterInstantiation()；
+       - 应用Bean属性的值；为属性利用setter方法等进行赋值=> applyPropertyValues(beanName, mbd, bw, pvs);
 
-          - 拿到InstantiationAwareBeanPostProcessor后置处理器,postProcessPropertyValues()；
+         - Bean初始化=>initializeBean(beanName, exposedObject, mbd);
 
-          - 应用Bean属性的值；为属性利用setter方法等进行赋值=> applyPropertyValues(beanName, mbd, bw, pvs);
+           - 执行Aware接口方法=>invokeAwareMethods(beanName, bean);执行xxxAware接口的方法BeanNameAware、BeanClassLoaderAware、BeanFactoryAware
 
-          - Bean初始化=>initializeBean(beanName, exposedObject, mbd);
+           - 执行后置处理器初始化之前=>applyBeanPostProcessorsBeforeInitialization(wrappedBean, beanName)=>BeanPostProcessor.postProcessBeforeInitialization();
 
-            - 执行Aware接口方法=>invokeAwareMethods(beanName, bean);执行xxxAware接口的方法BeanNameAware、BeanClassLoaderAware、BeanFactoryAware
-
-            - 执行后置处理器初始化之前=>applyBeanPostProcessorsBeforeInitialization(wrappedBean, beanName)=>BeanPostProcessor.postProcessBeforeInitialization();
-
-            - 执行初始化方法=>invokeInitMethods(beanName, wrappedBean, mbd):
+           - 执行初始化方法=>invokeInitMethods(beanName, wrappedBean, mbd):
    
               - 是否是InitializingBean接口的实现；执行接口规定的初始化；
    
@@ -580,9 +627,7 @@
              - 注册Bean的销毁方法=>registerDisposableBeanIfNecessary
 
              - 将创建的Bean添加到缓存中singletonObjects;
-					
-     ##### 不是工厂Bean,利用getBean(beanName)直接创建对象
-            
+					            
    - 遍历所有的bean实现了 SmartInitializingSingleton接口的执行=>smartSingleton.afterSingletonsInstantiated()
                  
 #### 第十二步:finishRefresh() => 完成BeanFactory的初始化创建工作；IOC容器就创建完成；[Tomcat真正启动](../springboot/SpringBoot源码解析之tomcat启动过程.md)
@@ -597,7 +642,7 @@
 		
    - liveBeansView.registerApplicationContext(this);
    
-#### 子类: ServletWebServerApplicationContext
+##### 子类: ServletWebServerApplicationContext
 
    - WebServer webServer = startWebServer();//子类启动tomcat容器，发布事件(Tomcat started on port(s): XX (http) with context path '/XX')
      		
