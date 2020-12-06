@@ -142,6 +142,8 @@
 
 #### 第五步:invokeBeanFactoryPostProcessors(beanFactory):
   
+   - Spring Boot调用AbstractApplicationContext的refresh方法，通过refresh的invokeBeanFactoryPostProcessors处理了 DeferredImportSelector 类型，完成了自动装配
+
    ````
    Instantiate and invoke all registered BeanFactoryPostProcessor beans,respecting explicit order if given.Must be called before singleton instantiation.
 
@@ -429,7 +431,7 @@
    	}
    ````
    
-#### 第七步:initMessageSource();在SpringMVC中做初始化MessageSource组件（做国际化功能,消息绑定，消息解析):
+#### 第七步:initMessageSource();在SpringMVC中做初始化MessageSource组件(做国际化功能,消息绑定，消息解析)  :
 
    （1）获取BeanFactory=>getBeanFactory()
 		
@@ -451,62 +453,92 @@
 		
    (1) 获取BeanFactory=>	ConfigurableListableBeanFactory beanFactory = getBeanFactory();
 
-   (2) 从BeanFactory中获取name = "applicationEventMulticaster"的applicationEventMulticaster;
+   (2) 从BeanFactory中获取name = "applicationEventMulticaster"的 applicationEventMulticaster;
    
-   (3) 如果上一步没有配置则创建一个SimpleApplicationEventMulticaster;
+   (3) 如果上一步没有配置则创建一个 SimpleApplicationEventMulticaster;
    
    (4) 将创建的ApplicationEventMulticaster添加到BeanFactory中，以后其他组件直接自动注入=>	beanFactory.registerSingleton(MESSAGE_SOURCE_BEAN_NAME, this.messageSource);
    
    		
 #### 第九步:onRefresh() 模版方法让子类实现
 
-	// Called on initialization of special beans, before instantiation of singletons.
+	// Called on initialization of special beans, before instantiation of singletons.  特定bean初始化的时候调用，实例化之前调用。
    ##### 子类重写这个方法,默认不做任何操作在容器刷新的时候可以自定义逻辑; 内嵌tomcat在这个地方实例化;
    ##### springMVC 中 DispatcherServlet里的initStrategies()初始化九大组件也在这里实现
    
-##### 转为 AbstractApplicationContext  
-
-##### 子类 GenericApplicationContext
-
-##### 具体类型子类 ServletWebServerApplicationContext;ReactiveWebServerApplicationContext;StaticWebApplicationContext
+##### 具体类型子类 AbstractRefreshableWebApplicationContext;GenericWebApplicationContext;ServletWebServerApplicationContext;ReactiveWebServerApplicationContext;StaticWebApplicationContext
    
-   - createWebServer() [springBoot tomcat启动](../springboot/SpringBoot源码解析之tomcat启动过程.md)
-     
-     - ServletContext servletContext = getServletContext();//获取Servlet容器
-     
-     - ServletWebServerFactory factory = getWebServerFactory();//获取WebServerFactory工厂方法
-     
-       - getSelfInitializer(); // 获取 **ServletContextInitializer** 接口的实现类实现 onStartup(ServletContext servletContext)
-       
-         - selfInitialize(ServletContext servletContext)；
-       
-           - prepareWebApplicationContext(servletContext); //Initializing Spring embedded WebApplicationContext 初始化 WebApplicationContext;创建一个 WebApplicationContext.class.getName() + ".ROOT"
-         
-           - registerApplicationScope(servletContext);
-         
-           - WebApplicationContextUtils.registerEnvironmentBeans(getBeanFactory(),servletContext);//Register web-specific environment beans ("contextParameters", "contextAttributes") with the given BeanFactory, as used by the WebApplicationContext
-           
-   - initPropertySources();
-               
+   ##### ServletWebServerApplicationContext;//[springBoot tomcat启动](../springboot/SpringBoot源码解析之tomcat启动过程.md)
+   
+              
 #### 第十步:registerListeners();
-	
-   （1）从容器中获取静态的ApplicationListener; 然后直接触发 => getApplicationEventMulticaster().addApplicationListener(listener);
 
-   （2）将非静态监听器名字添加到事件派发器中 =》 getApplicationEventMulticaster().addApplicationListenerBean(listenerBeanName);
- 
-   （3）派发器派发一些早起的事件 =>getApplicationEventMulticaster().multicastEvent(earlyEvent);		
-
+    ````
+    protected void registerListeners() {
+    		// Register statically specified listeners first.
+    		//（1）从容器中获取静态的ApplicationListener然后注册放入到applicationListeners中
+    		for (ApplicationListener<?> listener : getApplicationListeners()) {
+    			getApplicationEventMulticaster().addApplicationListener(listener);
+    		}
+    
+    		// Do not initialize FactoryBeans here: We need to leave all regular beans
+    		// uninitialized to let post-processors apply to them!
+    		//从容器中获取所有实现了ApplicationListener接口的bd的bdName放入applicationListenerBeans
+    		String[] listenerBeanNames = getBeanNamesForType(ApplicationListener.class, true, false);
+    		for (String listenerBeanName : listenerBeanNames) {
+    			getApplicationEventMulticaster().addApplicationListenerBean(listenerBeanName);
+    		}
+    
+    		// Publish early application events now that we finally have a multicaster...
+    		// 发布早期的事件
+    		Set<ApplicationEvent> earlyEventsToProcess = this.earlyApplicationEvents;
+    		this.earlyApplicationEvents = null;
+    		if (!CollectionUtils.isEmpty(earlyEventsToProcess)) {
+    			for (ApplicationEvent earlyEvent : earlyEventsToProcess) {
+    				getApplicationEventMulticaster().multicastEvent(earlyEvent);
+    			}
+    		}
+    	}
+    ```` 
 #### 第十一步:finishBeanFactoryInitialization(beanFactory);//初始化所有剩下的单实例bean；
 
-   - 设置conversionService方法=>beanFactory.setConversionService(beanFactory.getBean(CONVERSION_SERVICE_BEAN_NAME, ConversionService.class));//Initialize conversion service for this context.
-
-   - 注册一个字符解析器=>beanFactory.addEmbeddedValueResolver(strVal => getEnvironment().resolvePlaceholders(strVal));//Register a default embedded value resolver if no bean post-processor (such as a PropertyPlaceholderConfigurer bean) registered any before:at this point, primarily for resolution in annotation attribute values.
-
-   - **getBean(weaverAwareName);** // Initialize LoadTimeWeaverAware beans early to allow for registering their transformers early.
+   ````
+        // Initialize conversion service for this context.
+   		if (beanFactory.containsBean(CONVERSION_SERVICE_BEAN_NAME) &&
+   				beanFactory.isTypeMatch(CONVERSION_SERVICE_BEAN_NAME, ConversionService.class)) {
+            //为上下文初始化类型转换器
+   			beanFactory.setConversionService(
+   					beanFactory.getBean(CONVERSION_SERVICE_BEAN_NAME, ConversionService.class));
+   		}
    
-   - beanFactory.setTempClassLoader(null);// Stop using the temporary ClassLoader for type matching.
+   		// Register a default embedded value resolver if no bean post-processor
+   		// (such as a PropertyPlaceholderConfigurer bean) registered any before:
+   		// at this point, primarily for resolution in annotation attribute values.
+   		if (!beanFactory.hasEmbeddedValueResolver()) {
+            //检查上下文中是否存在类型转换器
+   			beanFactory.addEmbeddedValueResolver(strVal -> getEnvironment().resolvePlaceholders(strVal));
+   		}
    
-   - beanFactory.freezeConfiguration();//冻结所有bean定义，注册的bean定义不会被修改或进一步后处理，因为马上要创建 Bean 实例对象了;Allow for caching all bean definition metadata, not expecting further changes.
+   		// Initialize LoadTimeWeaverAware beans early to allow for registering their transformers early.
+        // 尽早初始化LoadTimeWeaverAware bean，以便尽早注册它们的转换器
+   		String[] weaverAwareNames = beanFactory.getBeanNamesForType(LoadTimeWeaverAware.class, false, false);
+   		for (String weaverAwareName : weaverAwareNames) {
+   			getBean(weaverAwareName);
+   		}
+   
+   		// Stop using the temporary ClassLoader for type matching.
+        //禁止使用临时类加载器进行类型匹配
+   		beanFactory.setTempClassLoader(null);
+   
+   		// Allow for caching all bean definition metadata, not expecting further changes.
+        //允许缓存所有的bean的定义数据;冻结所有bean定义，注册的bean定义不会被修改或进一步后处理，因为马上要创建 Bean 实例对象了
+   		beanFactory.freezeConfiguration();
+   
+   		// Instantiate all remaining (non-lazy-init) singletons.
+        //准备实例化bean
+   		beanFactory.preInstantiateSingletons();
+
+   ````
 
    - beanFactory.preInstantiateSingletons();初始化后剩下的单实例非懒加载的bean;// Instantiate all remaining (non-lazy-init) singletons.
    
@@ -521,7 +553,7 @@
      ##### 是工厂bean,则利用工厂方法创建bean
             
       //是 A standard FactoryBean is not expected to initialize eagerly,工厂方法获取bean
-      - Object bean = getBean(FACTORY_BEAN_PREFIX + beanName); [spring getBean()方法](./Spring源码解析之createBean()方法.md)
+      - Object bean = getBean(FACTORY_BEAN_PREFIX + beanName); [spring getBean()方法](./Spring源码解析之createBeanInstance()方法.md)
 
      ###### 赋值之前使用后置处理器:
 
@@ -553,15 +585,15 @@
             
    - 遍历所有的bean实现了 SmartInitializingSingleton接口的执行=>smartSingleton.afterSingletonsInstantiated()
                  
-#### 第十二步:finishRefresh() => 完成BeanFactory的初始化创建工作；IOC容器就创建完成；[Tomcat真正启动](SpringBoot源码解析之Tomcat启动过程.md)
+#### 第十二步:finishRefresh() => 完成BeanFactory的初始化创建工作；IOC容器就创建完成；[Tomcat真正启动](../springboot/SpringBoot源码解析之tomcat启动过程.md)
 	
    - clearResourceCaches()
   
-   - initLifecycleProcessor();初始化和生命周期有关的后置处理器；LifecycleProcessor 默认从容器中找是否有lifecycleProcessor的组件【LifecycleProcessor】；如果没有new DefaultLifecycleProcessor();加入到容器；写一个LifecycleProcessor的实现类，可以在BeanFactory void onRefresh();void onClose();	
+   - initLifecycleProcessor();//初始化和生命周期有关的后置处理器；LifecycleProcessor 默认从容器中找是否有lifecycleProcessor的组件【LifecycleProcessor】；如果没有new DefaultLifecycleProcessor();加入到容器；写一个LifecycleProcessor的实现类，可以在BeanFactory void onRefresh();void onClose();	
 		
-   - getLifecycleProcessor().onRefresh();拿到前面定义的生命周期处理器（BeanFactory）；回调onRefresh()；
+   - getLifecycleProcessor().onRefresh();//拿到前面定义的生命周期处理器（BeanFactory）；回调onRefresh()；
    
-   - publishEvent(new ContextRefreshedEvent(this));发布容器刷新完成事件；
+   - publishEvent(new ContextRefreshedEvent(this));//发布容器刷新完成事件；
 		
    - liveBeansView.registerApplicationContext(this);
    

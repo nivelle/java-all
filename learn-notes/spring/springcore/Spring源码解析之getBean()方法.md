@@ -115,7 +115,7 @@
            ### 实例化前的处理，给InstantiationAwareBeanPostProcessor一个机会返回代理对象来替代真正的bean实例，达到“短路”效果
                       
          - Object bean = resolveBeforeInstantiation(beanName, mbdToUse); //Give BeanPostProcessors a chance to return a proxy instead of the target bean ins返回的是代理对象;            [Spring源码解析之AOP实现.md](AnnotationAwareAspectJAutoProxyCreator 后置处理器的使用,返回AOP代理类)
-           [AnnotationAwareAspectJAutoProxyCreator 后置处理器的使用,返回AOP代理类](./Spring源码解析之AOP实现.md) 
+           [AnnotationAwareAspectJAutoProxyCreator 后置处理器的使用,返回AOP代理类](Spring源码解析之aop实现.md) 
            
            #### if (!mbd.isSynthetic() && hasInstantiationAwareBeanPostProcessors());//mbd不是合成的，并且BeanFactory中存在InstantiationAwareBeanPostProcessor
            

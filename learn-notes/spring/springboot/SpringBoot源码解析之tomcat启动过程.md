@@ -1,23 +1,36 @@
-### SpringBoot 之 Tomcat启动过程
+### SpringBoot 之 Tomcat启动过程(SpringBoot->run()-refreshContext()->refresh()->onRefresh()
 
-##### 子类实现: ServletWebServerApplicationContext
-- private void createWebServer()
+#### 子类实现: ServletWebServerApplicationContext
 
-  - WebServer webServer = this.webServer;
+创建的AbstractApplicationContext类型不同,如果AnnotationConfigApplicationContext类型则在onRefresh阶段什么都不执行，
+如果为AnnotationConfigServletWebServerApplicationContext或者AnnotationConfigReactiveWebServerApplication类型则会重写父类的方法，添加创建Servlet服务器(嵌入式)的逻辑
+
+[![DXJXX4.png](https://s3.ax1x.com/2020/12/06/DXJXX4.png)](https://imgchr.com/i/DXJXX4)
+
+- super.onRefresh(); //父类该方法会初始化主题( UiApplicationContextUtils.initThemeSource(this); 
+
+- createWebServer()
+
+  - WebServer webServer = this.webServer; //获取当前的WebServer
+
+  - ServletContext servletContext = getServletContext();//获取当前的ServletContext
+
+  ##### if (webServer == null && servletContext == null) //默认都为空，会创建webServer
+
+    - ServletWebServerFactory factory = getWebServerFactory();//获取Servlet服务器工厂
   
-  - ServletContext servletContext = getServletContext();
-
-###### if (webServer == null && servletContext == null)
-
-  - ServletWebServerFactory factory = getWebServerFactory();//获取webServer的工厂类
-  
-    - String[] beanNames = getBeanFactory().getBeanNamesForType(ServletWebServerFactory.class);
+      - String[] beanNames = getBeanFactory().getBeanNamesForType(ServletWebServerFactory.class);
     
-    - return getBeanFactory().getBean(beanNames[0], ServletWebServerFactory.class);
+      - return getBeanFactory().getBean(beanNames[0], ServletWebServerFactory.class);//[Spring源码解析之getBean()方法](../springcore/Spring源码解析之getBean()方法.md)
+        
+        ````
+        直接从BeanFactory的中获取ServletWebServerFactory类型的Bean, 在SpringBoot启动过程中，自动装配会加载META-INF/spring.factories中的配置,而org.springframework.boot.autoconfigure.EnableAutoConfiguration
+        中有一项是:org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryAutoConfiguration
+        ````
   
-  - this.webServer = factory.getWebServer(getSelfInitializer());//创建webServer,参数:ServletContextInitializer... initializers 实现SCI的组件
+    - this.webServer = factory.getWebServer(getSelfInitializer());
   
-    ####### TomcatServletWebServerFactory 子类实现
+    ##### TomcatServletWebServerFactory 子类实现
     
     ```
     1. tomcat有多种配置和启动方式，最常见的方式是基于server.xml配置的启动器 org.apache.catalina.startup.Bootstrap, 而这里的Tomcat是一个内嵌tomcat的启动器
@@ -27,53 +40,53 @@
     3. 在所创建的那一个 Tomcat Engine 上创建了一个 Tomcat Host;每个 Virtual Host 虚拟主机和某个网络域名Domain Name相匹配,每个虚拟主机下都可以部署(deploy)一个或者多个Web App，每个Web App对应于一个Context，有一个Context path。当Host获得一个请求时，将把该请求匹配到某个Context上。 一个 Tomcat Engine 上面可以有多个 Tomcat Host。
     
     ```
-    - Tomcat tomcat = new Tomcat();
+     - Tomcat tomcat = new Tomcat();
     
-    - File baseDir = (this.baseDirectory != null) ? this.baseDirectory: createTempDir("tomcat");//如果没有设置基础文件目录则创建临时目录
+     - File baseDir = (this.baseDirectory != null) ? this.baseDirectory: createTempDir("tomcat");//如果没有设置基础文件目录则创建临时目录
     
-    - tomcat.setBaseDir(baseDir.getAbsolutePath());
+     - tomcat.setBaseDir(baseDir.getAbsolutePath());
     
-    - Connector connector = new Connector(this.protocol);// 创建tomcat的Connector,缺省协议为org.apache.coyote.http11.Http11NioProtocol,表示处理 http v1.1 协议
+     - Connector connector = new Connector(this.protocol);// 创建tomcat的Connector,缺省协议为org.apache.coyote.http11.Http11NioProtocol,表示处理 http v1.1 协议
 
-    - tomcat.getService().addConnector(connector);//该方法真正创建 Tomcat 的 Server 对象实例，
+     - tomcat.getService().addConnector(connector);//该方法真正创建 Tomcat 的 Server 对象实例，
       
-      - return getServer().findServices()[0]; //Get the service object. Can be used to add more connectors and few other global settings.
+       - return getServer().findServices()[0]; //Get the service object. Can be used to add more connectors and few other global settings.
       
-        - server = new StandardServer();
+         - server = new StandardServer();
         
-        - initBaseDir();
+         - initBaseDir();
         
-        - Service service = new StandardService();
+         - Service service = new StandardService();
         
-        - service.setName("Tomcat");
+         - service.setName("Tomcat");
         
-        - server.addService(service);
+         - server.addService(service);
         
-    - customizeConnector(connector);//根据配置参数定制 connector ：端口，uri encoding字符集，是否启用SSL, 是否使用压缩等
+     - customizeConnector(connector);//根据配置参数定制 connector ：端口，uri encoding字符集，是否启用SSL, 是否使用压缩等
     
-    - tomcat.setConnector(connector);
+     - tomcat.setConnector(connector);
     
-    - tomcat.getHost().setAutoDeploy(false);//关闭应用的自动部署
+     - tomcat.getHost().setAutoDeploy(false);//关闭应用的自动部署
 
-    - configureEngine(tomcat.getEngine());
+     - configureEngine(tomcat.getEngine());
     
-    - configureEngine(tomcat.getEngine());
+     - configureEngine(tomcat.getEngine());
     
-    - tomcat.getService().addConnector(additionalConnector);
+     - tomcat.getService().addConnector(additionalConnector);
     
-    - prepareContext(tomcat.getHost(), initializers);//纯程序方式创建并准备Tomcat StandardContext，它对应一个web应用，把它绑定到host上。
+     - prepareContext(tomcat.getHost(), initializers);//纯程序方式创建并准备Tomcat StandardContext，它对应一个web应用，把它绑定到host上。
     
-      - File documentRoot = getValidDocumentRoot();//准备Host的docBase,
+       - File documentRoot = getValidDocumentRoot();//准备Host的docBase,
 
-      - TomcatEmbeddedContext context = new TomcatEmbeddedContext();//创建StandardContext，这是Tomcat的标准概念，用来对应表示一个web应用，这里使用实现类TomcatEmbeddedContext，由 spring boot 提供。可以认为是往tomcat servlet容器中部署和启动一个web应用的过程，只不过在传统方式下，一个web应用部署到tomcat使用war包的方式，而这里是完全程序化的方式
+       - TomcatEmbeddedContext context = new TomcatEmbeddedContext();//创建StandardContext，这是Tomcat的标准概念，用来对应表示一个web应用，这里使用实现类TomcatEmbeddedContext，由 spring boot 提供。可以认为是往tomcat servlet容器中部署和启动一个web应用的过程，只不过在传统方式下，一个web应用部署到tomcat使用war包的方式，而这里是完全程序化的方式
       
-      - addDefaultServlet(context);//缺省情况下，会注册 Tomcat 的 DefaultServlet,DefaultServlet是Tomcat缺省的资源服务Servlet,用来服务HTML,图片等静态资源
+       - addDefaultServlet(context);//缺省情况下，会注册 Tomcat 的 DefaultServlet,DefaultServlet是Tomcat缺省的资源服务Servlet,用来服务HTML,图片等静态资源
       
-      - addJspServlet(context);//Spring boot 提供了一个工具类 org.springframework.boot.context.embedded.JspServlet检测类 org.apache.jasper.servlet.JspServlet 是否存在于 classpath 中，如果存在，则认为应该注册JSP Servlet。
+       - addJspServlet(context);//Spring boot 提供了一个工具类 org.springframework.boot.context.embedded.JspServlet检测类 org.apache.jasper.servlet.JspServlet 是否存在于 classpath 中，如果存在，则认为应该注册JSP Servlet。
         
          **缺省情况下,不注册(换句话讲,SpringBoot web应用缺省不支持JSP)注意 !!! 这一点和使用Tomcat充当外部容器的情况是不一样的,使用Tomcat作为外部容器的时候，JSP Servlet 缺省是被注册的。**
          
-      - ServletContextInitializer[] initializersToUse = mergeInitializers(initializers);
+       - ServletContextInitializer[] initializersToUse = mergeInitializers(initializers);
         
         ```
         合并参数提供的Spring SCI : EmbeddedWebApplicationContext$1,这是一个匿名内部类，封装的逻辑来自方法 selfInitialize()和当前servlet容器在bean创建时通过EmbeddedServletContainerCustomizer
@@ -82,7 +95,7 @@
         执行
         
         ```
-      - configureContext(context, initializersToUse);
+       - configureContext(context, initializersToUse);
       
         ```
          配置context:
@@ -116,32 +129,52 @@
         - startDaemonAwaitThread();//tomcat 自身所有的线程都是daemon线程。这里spring创建了一个非daemon线程用来阻塞整个应用，避免刚启动就马上结束的情况。
 
 
-###### else if (servletContext != null)
+##### else if (servletContext != null)
   
   - getSelfInitializer().onStartup(servletContext);
   
     - private void selfInitialize(ServletContext servletContext) throws ServletException
     
-      - prepareWebApplicationContext(servletContext);//1. 将当前spring application context作为属性设置到servletContext WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE 随后应用启动完在提供Web服务的时候,Spring MVC dispatchServlet的应用上下文的双亲就会使用这个根Web应用上下文 2. 将servletContext记录到当前web application context，也就是当前EmbeddedWebApplicationContext对象的属性servletContext中
+      - prepareWebApplicationContext(servletContext);
       
+      `````
+        1. 将当前spring applicationContext 作为属性设置到servletContext上下文中; 属性名字：WebApplicationContext.class.getName() + ".ROOT"；
+           随后应用启动完在提供Web服务的时候,Spring MVC dispatchServlet的应用上下文的双亲就会使用这个根Web应用上下文 
+        
+        2. 将servletContext记录到当前web application context,也就是当前EmbeddedWebApplicationContext对象的属性servletContext中
+      `````
       - registerApplicationScope(servletContext);//	注册标准webapp作用域				
    
-      - WebApplicationContextUtils.registerEnvironmentBeans(getBeanFactory(),servletContext);//注册webapp相关环境参数bean : contextParameters,contextAttributes WebApplicationContext.SERVLET_CONTEXT_BEAN_NAME，WebApplicationContext.CONTEXT_PARAMETERS_BEAN_NAME
+      - WebApplicationContextUtils.registerEnvironmentBeans(getBeanFactory(),servletContext);
       
-      - for (ServletContextInitializer beans : getServletContextInitializerBeans());//到目前为止，尚未初始化webapp中的Servlet，Filter 和 EventListener从Bean容器中找到所有的SCI bean,并调用其 onStartup()回调方法getServletContextInitializerBeans()会从bean容器中找到所有的SCI bean将bean容器中所有Servlet, Filter 和EventListener bean转换成SCI 然后返回给该for循环然后逐一调用其 onStartup() 回调
+      ````
+      注册webapp相关环境参数bean : servletContext,servletConfig,contextParameters,contextAttributes
+    
+      ````
+      
+      - for (ServletContextInitializer beans : getServletContextInitializerBeans());
         
-         ```
+         ````
+         到目前为止，尚未初始化webapp中的Servlet，Filter 和 EventListener从Bean容器中找到所有的SCI bean,并调用其 onStartup()回调方法getServletContextInitializerBeans()会从bean容器中找到所有的SCI bean将bean容器中所有Servlet, Filter 和EventListener bean转换成SCI 然后返回给该for循环然后逐一调用其 onStartup() 回调
+
          缺省spring boot web应用中ServletContextInitializerBeans从beanFactory所获得的SCI有 :
          
-         dispatcherServlet(类型:ServletRegistrationBean),characterEncodingFilter,hiddenHttpMethodFilter,httpPutFormContentFilter,requestContextFilter(类型:FilterRegistrationBean)
+         1. dispatcherServlet(类型:ServletRegistrationBean);
+         2. characterEncodingFilter;
+         3. hiddenHttpMethodFilter;
+         4. httpPutFormContentFilter;
+         5. requestContextFilter(类型:FilterRegistrationBean)
 
-         
-         ```
-      - beans.onStartup(servletContext);//这里是真正的Servlet, Filter 和EventListener注入到ServletContext的触发点
+         ````
+      - beans.onStartup(servletContext);//这里是真正的Servlet, Filter 和 EventListener注入到ServletContext的触发点
   
   - initPropertySources();
+   
+  ````
+  Environment根据key（servletContextInitParams、servletConfigInitParams）获取ServletContext、ServletConfig等信息
+  ````
 
-###### 除了Tomcat Connector之外的Tomcat组件启动完毕,接下来继续启动Connector
+#### 除了Tomcat Connector之外的Tomcat组件启动完毕,接下来继续启动Connector
 
 - WebServer webServer = startWebServer(); // [父类 finishRefresh()](../springcore/Spring源码解析之refresh()方法.md)
 
@@ -161,3 +194,11 @@
 	- performDeferredLoadOnStartup();//启动Connector
     
     - checkThatConnectorsHaveStarted();// 检查确保Connector已经启动，如果没启动，抛出异常
+    
+#### 总结
+
+1. Spring Boot利用Spring的启动的refresh模板方法，在onRefresh阶段将WebServer进行创建。而在finishRefresh阶段完成服务器的启动，其本质就是Runnable的run方法的调用
+
+2. 创建Servlet服务器是利用的 Spring Boot的自动装配，将ServletWebServerFactoryAutoConfiguration进行注入，其内部使用@Import将ServletWebServerFactoryConfiguration.EmbeddedTomcat等进行注入。只是在其注入时会根据多种@Conditional方式共同决定注入的服务器工厂类型，如：TomcatServletWebServerFactory
+
+3. 根据工厂生成Tomcat服务器，并且在Spring Boot中使用WebServer接口的实现TomcatWebServer对Tomcat进行管理
