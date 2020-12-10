@@ -310,7 +310,7 @@ public Object doResolveDependency(
 
 ````
 
-##### 3.2 
+##### 3.2 applyPropertyValues
 
 在这一步才真正将 bean 的所有属性全部注入到 bean 实例中，之前虽然已经创建了实例，但是属性仍然存在于 beanDefinition 实例中，applyPropertyValues 会将相应属性转换成 bean 中对应属性的真实类型注入到对应属性上：
 

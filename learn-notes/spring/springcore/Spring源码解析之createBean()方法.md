@@ -33,7 +33,8 @@ protected Object createBean(String beanName, RootBeanDefinition mbd, @Nullable O
 
 		try {
 			// Give BeanPostProcessors a chance to return a proxy instead of the target bean instance.
-            //处理 InstantiationAwareBeanPostProcessor [AnnotationAwareAspectJAutoProxyCreator 后置处理器的使用,返回AOP代理类](./Spring源码解析之aop实现.md) 
+            //处理 InstantiationAwareBeanPostProcessor
+            //[AnnotationAwareAspectJAutoProxyCreator 后置处理器的使用,返回AOP代理类](./Spring源码解析之aop实现.md) 
 			Object bean = resolveBeforeInstantiation(beanName, mbdToUse);
 			if (bean != null) {
                 //如果处理结果不为null，则直接返回，而不执行后续的createBean;返回代理
@@ -65,7 +66,7 @@ protected Object createBean(String beanName, RootBeanDefinition mbd, @Nullable O
 
 `````
 
-##### 处理Override属性
+##### 1.1 处理Override属性
 
 Spring 中并不存在 override-method 的标签，这里的 override 指的是 <lookup-method/> 和 <replaced-method/> 两个标签，之前解析这两个标签时是将这两个标签配置以 MethodOverride 对象的形式记录在 beanDefinition 实例的 methodOverrides 属性中，而这里的处理主要是逐一检查所覆盖的方法是否存在，如果不存在则覆盖无效，如果存在唯一的方法，则覆盖是明确的，标记后期无需依据参数类型以及个数进行推测
 ````
@@ -85,7 +86,7 @@ public void prepareMethodOverrides() throws BeanDefinitionValidationException {
 
 
 ````
-##### 方法复写默认为true,如果仅仅一个方法，则设置 MethodOverride为false
+##### 1.2 方法复写默认为true,如果仅仅一个方法，则设置 MethodOverride为false
 ````
 
 protected void prepareMethodOverride(MethodOverride mo) throws BeanDefinitionValidationException {
