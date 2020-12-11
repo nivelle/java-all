@@ -543,8 +543,7 @@
    - beanFactory.preInstantiateSingletons();初始化后剩下的单实例非懒加载的bean;// Instantiate all remaining (non-lazy-init) singletons.
    
    ##### 子类实现: DefaultListableBeanFactory
-     
-   ````
+````
             // Iterate over a copy to allow for init methods which in turn register new bean definitions.
      		// While this may not be part of the regular factory bootstrap, it does otherwise work fine.
             // 遍历一个副本以允许init方法，而init方法反过来注册新的bean定义
@@ -599,36 +598,80 @@
      				}
      			}
      		}
-   ````
+````
+##### 合并BeanDefinition定义
+````
+protected RootBeanDefinition getMergedBeanDefinition(
+			String beanName, BeanDefinition bd, @Nullable BeanDefinition containingBd)
+			throws BeanDefinitionStoreException {
 
-   
- ##### 赋值之前使用后置处理器: [spring getBean()方法](./Spring源码解析之createBeanInstance()方法.md)
+		synchronized (this.mergedBeanDefinitions) {
+			RootBeanDefinition mbd = null;
 
-   - 拿到 InstantiationAwareBeanPostProcessor后 置处理器,postProcessAfterInstantiation()；
+			// 重新去获取一次，有可能该BeanDefinition已经生成
+			if (containingBd == null) {
+				mbd = this.mergedBeanDefinitions.get(beanName);
+			}
 
-     - 拿到InstantiationAwareBeanPostProcessor后置处理器,postProcessPropertyValues()；
+			if (mbd == null) {
+				if (bd.getParentName() == null) {
+					// 没有父类则深拷贝一个RootBeanDefinition
+					if (bd instanceof RootBeanDefinition) {
+						mbd = ((RootBeanDefinition) bd).cloneBeanDefinition();
+					}
+					else {
+						mbd = new RootBeanDefinition(bd);
+					}
+				}
+				else {
+					// 有父类则需要先获取父类的BeanDefinition，流程和获取子类的BeanDefinition一致
+					BeanDefinition pbd;
+					try {
+						String parentBeanName = transformedBeanName(bd.getParentName());
+						if (!beanName.equals(parentBeanName)) {
+							pbd = getMergedBeanDefinition(parentBeanName);
+						}
+						else {
+							BeanFactory parent = getParentBeanFactory();
+							if (parent instanceof ConfigurableBeanFactory) {
+								pbd = ((ConfigurableBeanFactory) parent).getMergedBeanDefinition(parentBeanName);
+							}
+							else {
+								throw new NoSuchBeanDefinitionException(parentBeanName,"Parent name '" + parentBeanName + "' is equal to bean name '" + beanName +"': cannot be resolved without an AbstractBeanFactory parent");
+							}
+						}
+					}
+					catch (NoSuchBeanDefinitionException ex) {
+						throw new BeanDefinitionStoreException(bd.getResourceDescription(), beanName,
+								"Could not resolve parent bean definition '" + bd.getParentName() + "'", ex);
+					}
+					//这里进行深拷贝，并将子类重写的方法和属性进行覆盖
+					mbd = new RootBeanDefinition(pbd);
+					mbd.overrideFrom(bd);
+				}
 
-       - 应用Bean属性的值；为属性利用setter方法等进行赋值=> applyPropertyValues(beanName, mbd, bw, pvs);
+				// 若前面没配置scope类型，这里设置为单例范围
+				if (!StringUtils.hasLength(mbd.getScope())) {
+					mbd.setScope(RootBeanDefinition.SCOPE_SINGLETON);
+				}
 
-         - Bean初始化=>initializeBean(beanName, exposedObject, mbd);
+				// 这里对内部类做了一些处理，若包含它的bean不是单例的，则该bean也将不会是单例的
+				if (containingBd != null && !containingBd.isSingleton() && mbd.isSingleton()) {
+					mbd.setScope(containingBd.getScope());
+				}
 
-           - 执行Aware接口方法=>invokeAwareMethods(beanName, bean);执行xxxAware接口的方法BeanNameAware、BeanClassLoaderAware、BeanFactoryAware
+				// 将生产的BeanDefinition 缓存起来
+				if (containingBd == null && isCacheBeanMetadata()) {
+					this.mergedBeanDefinitions.put(beanName, mbd);
+				}
+			}
 
-           - 执行后置处理器初始化之前=>applyBeanPostProcessorsBeforeInitialization(wrappedBean, beanName)=>BeanPostProcessor.postProcessBeforeInitialization();
+			return mbd;
+		}
+	}
+````
+##### 赋值之前使用后置处理器: [spring getBean()方法](./Spring源码解析之createBean()方法.md)
 
-           - 执行初始化方法=>invokeInitMethods(beanName, wrappedBean, mbd):
-   
-              - 是否是InitializingBean接口的实现；执行接口规定的初始化；
-   
-              - 是否自定义初始化方法；
-
-          - 执行后置处理器初始化之后=>pplyBeanPostProcessorsAfterInitialization=>BeanPostProcessor.postProcessAfterInitialization();
-
-             - 注册Bean的销毁方法=>registerDisposableBeanIfNecessary
-
-             - 将创建的Bean添加到缓存中singletonObjects;
-					            
-   - 遍历所有的bean实现了 SmartInitializingSingleton接口的执行=>smartSingleton.afterSingletonsInstantiated()
                  
 #### 第十二步:finishRefresh() => 完成BeanFactory的初始化创建工作；IOC容器就创建完成；[Tomcat真正启动](../springboot/SpringBoot源码解析之tomcat启动过程.md)
 	

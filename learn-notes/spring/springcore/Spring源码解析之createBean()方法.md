@@ -12,11 +12,11 @@ protected Object createBean(String beanName, RootBeanDefinition mbd, @Nullable O
 		// Make sure bean class is actually resolved at this point, and
 		// clone the bean definition in case of a dynamically resolved Class
 		// which cannot be stored in the shared merged bean definition.
-        //1. 根据设置的class属性或className来解析得到Class引用
+        //1. 根据设置的class属性或className来解析得到Class引用，会包括解析别名等操作
 		Class<?> resolvedClass = resolveBeanClass(mbd, beanName);
 		if (resolvedClass != null && !mbd.hasBeanClass() && mbd.getBeanClassName() != null) {
-            //如果resolvedClass存在，并且mdb的beanClass类型不是Class，并且mdb的beanClass不为空（则代表beanClass存的是Class的name）,
-            //则使用mdb深拷贝一个新的RootBeanDefinition副本，并且将解析的Class赋值给拷贝的RootBeanDefinition副本的beanClass属性，该拷贝副本取代mdb用于后续的操作
+            //如果resolvedClass存在,并且mdb的beanClass类型不是Class，并且mdb的beanClass不为空（则代表beanClass存的是Class的name）,
+            //则使用mdb深拷贝一个新的RootBeanDefinition副本，并且将解析的Class赋值给拷贝的RootBeanDefinition副本的beanClass属性,该拷贝副本取代mdb用于后续的操作
 			mbdToUse = new RootBeanDefinition(mbd);
 			mbdToUse.setBeanClass(resolvedClass);
 		}
@@ -59,9 +59,8 @@ protected Object createBean(String beanName, RootBeanDefinition mbd, @Nullable O
 			throw ex;
 		}
 		catch (Throwable ex) {
-			throw new BeanCreationException(
-					mbdToUse.getResourceDescription(), beanName, "Unexpected exception during bean creation", ex);
-		}
+			}
+		throw new BeanCreationException(bvvgmbdToUse.getResourceDescription(), beanName, "Unexpected exception during bean creation", ex);
 	}
 
 `````
@@ -86,7 +85,7 @@ public void prepareMethodOverrides() throws BeanDefinitionValidationException {
 
 
 ````
-##### 1.2 方法复写默认为true,如果仅仅一个方法，则设置 MethodOverride为false
+##### 1.1.1 方法复写默认为true,如果仅仅一个方法，则设置 MethodOverride为false
 ````
 
 protected void prepareMethodOverride(MethodOverride mo) throws BeanDefinitionValidationException {
@@ -109,7 +108,7 @@ protected void prepareMethodOverride(MethodOverride mo) throws BeanDefinitionVal
 
 ````
 
-##### 处理后置处理器逻辑
+##### 1.2 处理后置处理器逻辑
 
 ````
 
