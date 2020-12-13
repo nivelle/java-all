@@ -185,3 +185,10 @@ protected String determineAutowireCandidate(Map<String, Object> candidates, Depe
 		return null;
 	}
 ````
+#### MethodOverrides
+
+- MethodOverrides的作用就是在spring配置中存在lookup-method 和replace-method 的，而这两个配置在加载xml的时候就会统一存放在BeanDefinition中的methodOverrides属性里;
+
+- 遍历MethodOverrides,对于一个方法的匹配来讲，如果一个类中存在若干个重载方法，那么，在函数调用以及增强的时候还需要根据参数类型进行匹配，来最终确认当前调用的到底是哪个函数，
+但是，spring将一部分匹配工作在这里完成了，如果当前类中的方法只有一个，那么就设置重载该方法没有被重载，这样在后续调用的时候便可以直接使用找到的方法，而不需要进行方法的参数匹配了，而且还可以提前对方法存在性进行验证;
+
