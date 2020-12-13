@@ -22,9 +22,6 @@
 - 【运行:sudo docker run -p 28080:8088 -it --rm nivelle/nivelle:1.0.2 bash 
 
 
-### spring-all项目(SpringBoot依赖相关中间件,需要安装依赖的中间件,然后使用 local_server_start.sh启动   
-
-
 ✅ 【spring refresh()方法学习路径】
 
 ✅ 【生命周期学习】
