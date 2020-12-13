@@ -1,24 +1,26 @@
 ## java 编程每天学
 
-### 姊妹项目:[java面试常见知识点汇总](http://nivelle.me/javaInterview/)
-
 ### java-notes 多数文章来自网上优秀文章摘要整合,仅供记录学习。
 
-## 依赖环境: 
-**Mysql版本:8.0.16;**
-**Kafka版本:2.2.1;** 
-**RabbitMQ版本:3.7.15;** 
-**Redis版本:5.0.4;** 
-**Maven版本:3.6.1** 
-**JDK版本:1.8;**
-**ZooKeeper版本:3.4.13;**
-**Nginx版本:1.17.1**
-**Dubbo版本：0.2.0**
+### 依赖环境: 
 
-````
-docker整合【下载:docker pull nivelle/nivelle:1.0.2】【运行:sudo docker run -p 28080:8088 -it --rm nivelle/nivelle:1.0.2 bash 
-````
---- 
+- **Mysql版本:8.0.16;**
+- **Kafka版本:2.2.1;** 
+- **RabbitMQ版本:3.7.15;** 
+- **Redis版本:5.0.4;** 
+- **Maven版本:3.6.1** 
+- **JDK版本:1.8;**
+- **ZooKeeper版本:3.4.13;**
+- **Nginx版本:1.17.1**
+- **Dubbo版本：0.2.0**
+- **elasticsearch版本：6.8.6**
+
+#### docker整合
+
+- 【下载:docker pull nivelle/nivelle:1.0.2】
+
+- 【运行:sudo docker run -p 28080:8088 -it --rm nivelle/nivelle:1.0.2 bash 
+
 
 ### spring-all项目(SpringBoot依赖相关中间件,需要安装依赖的中间件,然后使用 local_server_start.sh启动   
 
