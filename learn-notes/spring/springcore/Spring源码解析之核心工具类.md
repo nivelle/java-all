@@ -483,27 +483,3 @@ private int findPlaceholderEndIndex(CharSequence buf, int startIndex) {
 	}
 
 ````
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

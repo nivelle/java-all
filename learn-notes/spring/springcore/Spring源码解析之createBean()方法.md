@@ -809,8 +809,7 @@ public BeanWrapper autowireConstructor(
             }, beanFactory.getAccessControlContext());
         } else {
             // 基于反射创建对象
-            beanInstance = this.beanFactory.getInstantiationStrategy().instantiate(
-                    mbd, beanName, this.beanFactory, constructorToUse, argsToUse);
+            beanInstance = this.beanFactory.getInstantiationStrategy().instantiate(mbd, beanName, this.beanFactory, constructorToUse, argsToUse);
         }
  
         // 将构造的实例加入BeanWrapper
@@ -823,4 +822,6 @@ public BeanWrapper autowireConstructor(
 
 ```
 
-#### 初始化bean实例(属性注入和执行初始化方法) [自动注入](./Spring源码解析之populateBean().md)    
+#### 核心1:实例化bean实例(属性注入) [属性注入](./Spring源码解析之populateBean().md)   
+
+#### 核心2:实例化bean实例(执行初始化方法) [初始化](./Spring源码解析之initializeBean()方法.md)     

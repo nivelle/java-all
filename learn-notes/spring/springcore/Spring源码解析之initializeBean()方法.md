@@ -2,89 +2,71 @@
 
 #### 属性注入(populateBean()方法)完成后，接下来就会执行init-method方法
 
-- 激活 bean 实现的 Aware 类：BeanNameAware, BeanClassLoaderAware, BeanFactoryAware
+- 激活 bean 实现的 Aware 类: BeanNameAware, BeanClassLoaderAware, BeanFactoryAware
 
 - 应用 BeanPostProcessor 的 postProcessBeforeInitialization
 
 - 激活用户自定义的 init-method 方法，以及常用的 afterPropertiesSet 方法
 
 - 应用 BeanPostProcessor 的 postProcessAfterInitialization
+
 ````        
-protected void populateBean(String beanName, RootBeanDefinition mbd, BeanWrapper bw) {
-    // 获取bean实例的属性值集合
-    PropertyValues pvs = mbd.getPropertyValues();
-    if (bw == null) {
-        if (!pvs.isEmpty()) {
-            // null对象，但是存在填充的属性，不合理
-            throw new BeanCreationException(mbd.getResourceDescription(), beanName, "Cannot apply property values to null instance");
+protected Object initializeBean(final String beanName, final Object bean, RootBeanDefinition mbd) {
+    // 1. 激活bean实现的Aware类：BeanNameAware, BeanClassLoaderAware, BeanFactoryAware
+    if (System.getSecurityManager() != null) {
+        AccessController.doPrivileged(new PrivilegedAction<Object>() {
+            @Override
+            public Object run() {
+                invokeAwareMethods(beanName, bean);
+                return null;
+            }
+        }, getAccessControlContext());
+    } else {
+        this.invokeAwareMethods(beanName, bean);
+    }
+ 
+    // 2. 应用 BeanPostProcessor 的 postProcessBeforeInitialization
+    Object wrappedBean = bean;
+    if (mbd == null || !mbd.isSynthetic()) {
+        wrappedBean = this.applyBeanPostProcessorsBeforeInitialization(wrappedBean, beanName);
+    }
+ 
+    // 3. 激活用户自定义的 init-method 方法，以及常用的 afterPropertiesSet 方法
+    try {
+        this.invokeInitMethods(beanName, wrappedBean, mbd);
+    } catch (Throwable ex) {
+        throw new BeanCreationException((mbd != null ? mbd.getResourceDescription() : null), beanName, "Invocation of init method failed", ex);
+    }
+ 
+    // 4. 应用 BeanPostProcessor 的 postProcessAfterInitialization
+    if (mbd == null || !mbd.isSynthetic()) {
+        wrappedBean = this.applyBeanPostProcessorsAfterInitialization(wrappedBean, beanName);
+    }
+    return wrappedBean;
+}
+````
+
+### DisposableBean
+
+在销毁对应的 bean 时能够回调实现的 destroy 方法，从而为销毁前的处理工作提供了入口，容器会利用一个 Map 集合来记录所有实现了 DisposableBean 接口的 bean
+
+````
+protected void registerDisposableBeanIfNecessary(String beanName, Object bean, RootBeanDefinition mbd) {
+    AccessControlContext acc = (System.getSecurityManager() != null ? getAccessControlContext() : null);
+    if (!mbd.isPrototype() && this.requiresDestruction(bean, mbd)) {
+        // 非原型,且需要执行销毁前的处理工作
+        if (mbd.isSingleton()) {
+            // 单例，注册bean到disposableBeans集合
+            this.registerDisposableBean(beanName, new DisposableBeanAdapter(bean, beanName, mbd, this.getBeanPostProcessors(), acc));
         } else {
-            // null 对象，且没有属性可以填充，直接返回
-            return;
-        }
-    }
- 
-    boolean continueWithPropertyPopulation = true;
-    // 给InstantiationAwareBeanPostProcessors最后一次机会在注入属性前改变bean实例
-    if (!mbd.isSynthetic() && this.hasInstantiationAwareBeanPostProcessors()) {
-        for (BeanPostProcessor bp : this.getBeanPostProcessors()) {
-            if (bp instanceof InstantiationAwareBeanPostProcessor) {
-                InstantiationAwareBeanPostProcessor ibp = (InstantiationAwareBeanPostProcessor) bp;
-                // 是否继续填充bean
-                if (!ibp.postProcessAfterInstantiation(bw.getWrappedInstance(), beanName)) {
-                    continueWithPropertyPopulation = false;
-                    break;
-                }
+            // 自定义的scope
+            Scope scope = this.scopes.get(mbd.getScope());
+            if (scope == null) {
+                throw new IllegalStateException("No Scope registered for scope name '" + mbd.getScope() + "'");
             }
+            scope.registerDestructionCallback(beanName, new DisposableBeanAdapter(bean, beanName, mbd, getBeanPostProcessors(), acc));
         }
     }
-    // 如果处理器指明不需要再继续执行属性注入，则返回
-    if (!continueWithPropertyPopulation) {
-        return;
-    }
- 
-    // autowire by name or autowire by type
-    if (mbd.getResolvedAutowireMode() == RootBeanDefinition.AUTOWIRE_BY_NAME
-            || mbd.getResolvedAutowireMode() == RootBeanDefinition.AUTOWIRE_BY_TYPE) {
-        MutablePropertyValues newPvs = new MutablePropertyValues(pvs);
-        // 根据名称自动注入
-        if (mbd.getResolvedAutowireMode() == RootBeanDefinition.AUTOWIRE_BY_NAME) {
-            this.autowireByName(beanName, mbd, bw, newPvs);
-        }
-        // 根据类型自动注入
-        if (mbd.getResolvedAutowireMode() == RootBeanDefinition.AUTOWIRE_BY_TYPE) {
-            this.autowireByType(beanName, mbd, bw, newPvs);
-        }
-        pvs = newPvs;
-    }
- 
-    boolean hasInstAwareBpps = this.hasInstantiationAwareBeanPostProcessors();
-    boolean needsDepCheck = (mbd.getDependencyCheck() != RootBeanDefinition.DEPENDENCY_CHECK_NONE);
-    if (hasInstAwareBpps || needsDepCheck) {
-        PropertyDescriptor[] filteredPds = filterPropertyDescriptorsForDependencyCheck(bw, mbd.allowCaching);
-        // 在属性注入前应用实例化后置处理器
-        if (hasInstAwareBpps) {
-            for (BeanPostProcessor bp : this.getBeanPostProcessors()) {
-                if (bp instanceof InstantiationAwareBeanPostProcessor) {
-                    InstantiationAwareBeanPostProcessor ibp = (InstantiationAwareBeanPostProcessor) bp;
-                    // 调用后置处理器的postProcessPropertyValues方法
-                    pvs = ibp.postProcessPropertyValues(pvs, filteredPds, bw.getWrappedInstance(), beanName);
-                    if (pvs == null) {
-                        // 处理器中把属性值处理没了，则继续执行属性注入已经没有意义
-                        return;
-                    }
-                }
-            }
-        }
-        // 依赖检查，对应depends-on属性，该属性已经弃用
-        if (needsDepCheck) {
-            this.checkDependencies(beanName, mbd, filteredPds, pvs);
-        }
-    }
- 
-    // 执行属性注入
-    this.applyPropertyValues(beanName, mbd, bw, pvs);
 }
 
 ````
-
-### 
