@@ -27,16 +27,16 @@ protected void populateBean(String beanName, RootBeanDefinition mbd, BeanWrapper
     }
  
     boolean continueWithPropertyPopulation = true;
-    // 2. 给InstantiationAwareBeanPostProcessors最后一次机会在注入属性前改变bean实例
-    //bean不是合成的，并且持有InstantionAwareBeanPostProcessors
+    // 2. 给 InstantiationAwareBeanPostProcessors 最后一次机会在注入属性前改变bean实例
+    //bean不是合成的，并且持有InstantionAwareBeanPostProcessors  
     if (!mbd.isSynthetic() && this.hasInstantiationAwareBeanPostProcessors()) {
         for (BeanPostProcessor bp : this.getBeanPostProcessors()) {
             if (bp instanceof InstantiationAwareBeanPostProcessor) {
                 InstantiationAwareBeanPostProcessor ibp = (InstantiationAwareBeanPostProcessor) bp;
                 // 是否继续填充bean，执行实例化后的后置处理器
-                // postProcessAfterInstantiation：如果应该在 bean上面设置属性则返回 true，否则返回 false
+                // postProcessAfterInstantiation:如果应该在 bean上面设置属性则返回 true，否则返回 false
                 // 一般情况下，应该是返回true 。
-                // 返回 false 的话，将会阻止在此 Bean 实例上调用任何后续的 InstantiationAwareBeanPostProcessor 实例
+                // 返回 false 的话，将会阻止在此 Bean 实例上调用任何后续的 InstantiationAwareBeanPostProcessor 实例,破坏@Autowired 的注解解析
                 if (!ibp.postProcessAfterInstantiation(bw.getWrappedInstance(), beanName)) {
                     continueWithPropertyPopulation = false;
                     break;
@@ -76,6 +76,7 @@ protected void populateBean(String beanName, RootBeanDefinition mbd, BeanWrapper
                 if (bp instanceof InstantiationAwareBeanPostProcessor) {
                     InstantiationAwareBeanPostProcessor ibp = (InstantiationAwareBeanPostProcessor) bp;
                     // 调用后置处理器的:postProcessPropertyValues方法
+                    // AutowiredAnnotationBeanPostProcessor: 完成bean实例注入; (beanDefinition)[Spring源码解析之beanDefinition.md]
                     pvs = ibp.postProcessPropertyValues(pvs, filteredPds, bw.getWrappedInstance(), beanName);
                     if (pvs == null) {
                         // 处理器中把属性值处理没了，则继续执行属性注入已经没有意义
@@ -313,8 +314,7 @@ public Object doResolveDependency(DependencyDescriptor descriptor, String beanNa
             autowiredBeanNames.add(autowiredBeanName);
         }
         // 如果不是目标bean实例（比如工厂bean），需要进一步获取所指带的实例
-        return (instanceCandidate instanceof Class ?
-                descriptor.resolveCandidate(autowiredBeanName, type, this) : instanceCandidate);
+        return (instanceCandidate instanceof Class ? descriptor.resolveCandidate(autowiredBeanName, type, this) : instanceCandidate);
     } finally {
         ConstructorResolver.setCurrentInjectionPoint(previousInjectionPoint);
     }
