@@ -1,6 +1,73 @@
 ### 创建bean实例
 
+- 创建 bean 的真正逻辑位于 createBean 方法中，该方法的具体实现位于 AbstractAutowireCapableBeanFactory 中
+
+##### 创建单例对象
+
+````
+public Object getSingleton(String beanName, ObjectFactory<?> singletonFactory) {
+    Assert.notNull(beanName, "'beanName' must not be null");
+    //singletonObjects用于缓存beanName与已创建的单例对象的映射关系
+    synchronized (this.singletonObjects) {
+        Object singletonObject = this.singletonObjects.get(beanName);
+        //对应的bean没有加载过
+        if (singletonObject == null) { 
+            //实例正在创建销毁
+            if (this.singletonsCurrentlyInDestruction) {
+                // 对应的bean正在其它地方的销毁方法中
+                throw new BeanCreationNotAllowedException(beanName,
+                        "Singleton bean creation not allowed while singletons of this factory are in destruction (Do not request a bean from a BeanFactory in a destroy method implementation!)");
+            }
+            if (logger.isDebugEnabled()) {
+                logger.debug("Creating shared instance of singleton bean '" + beanName + "'");
+            }
+ 
+            // 前置处理，对于需要依赖检测的bean，设置状态为“正在创建中”
+            //this.inCreationCheckExclusions.contains(beanName);//忽略依赖检测的
+            //this.singletonsCurrentlyInCreation.add(beanName) 
+            this.beforeSingletonCreation(beanName);
+ 
+            boolean newSingleton = false;
+            boolean recordSuppressedExceptions = (this.suppressedExceptions == null);
+            if (recordSuppressedExceptions) {
+                this.suppressedExceptions = new LinkedHashSet<Exception>();
+            }
+            try {
+                // 实例化bean
+                singletonObject = singletonFactory.getObject();
+                newSingleton = true;
+            } catch (IllegalStateException ex) {
+                // 异常，再次尝试从缓存中获取
+                singletonObject = this.singletonObjects.get(beanName);
+                if (singletonObject == null) {
+                    throw ex;
+                }
+            } catch (BeanCreationException ex) {
+                if (recordSuppressedExceptions) {
+                    for (Exception suppressedException : this.suppressedExceptions) {
+                        ex.addRelatedCause(suppressedException);
+                    }
+                }
+                throw ex;
+            } finally {
+                if (recordSuppressedExceptions) {
+                    this.suppressedExceptions = null;
+                }
+                // 后置处理，对于需要依赖检测的bean，移除“正在创建中”的状态
+                this.afterSingletonCreation(beanName);
+            }
+            if (newSingleton) { // 新实例
+                // 加入缓存
+                this.addSingleton(beanName, singletonObject);
+            }
+        }
+        // 返回实例
+        return (singletonObject != NULL_OBJECT ? singletonObject : null);
+    }
+}
+````
 #### 第一步：尝试获取实例,给后置处理器一次机会创建
+
 `````
 protected Object createBean(String beanName, RootBeanDefinition mbd, @Nullable Object[] args)throws BeanCreationException {
 
@@ -37,16 +104,15 @@ protected Object createBean(String beanName, RootBeanDefinition mbd, @Nullable O
             //[AnnotationAwareAspectJAutoProxyCreator 后置处理器的使用,返回AOP代理类](./Spring源码解析之aop实现.md) 
 			Object bean = resolveBeforeInstantiation(beanName, mbdToUse);
 			if (bean != null) {
-                //如果处理结果不为null，则直接返回，而不执行后续的createBean;返回代理
+                //如果处理结果不为null，则直接返回，而不执行后续的createBean;直接返回代理
 				return bean;
 			}
 		}
 		catch (Throwable ex) {
 			throw new BeanCreationException(mbdToUse.getResourceDescription(), beanName,"BeanPostProcessor before instantiation of bean failed", ex);
 		}
-
 		try {
-            //如果没有后置处理器，doCreateBean正常正规的创建实例bean
+            //如果没有后置处理器，doCreateBean创建实例bean
 			Object beanInstance = doCreateBean(beanName, mbdToUse, args);
 			if (logger.isTraceEnabled()) {
 				logger.trace("Finished creating instance of bean '" + beanName + "'");
@@ -59,15 +125,18 @@ protected Object createBean(String beanName, RootBeanDefinition mbd, @Nullable O
 			throw ex;
 		}
 		catch (Throwable ex) {
-			}
-		throw new BeanCreationException(bvvgmbdToUse.getResourceDescription(), beanName, "Unexpected exception during bean creation", ex);
+           		throw new BeanCreationException(bvvgmbdToUse.getResourceDescription(), beanName, "Unexpected exception during bean creation", ex);
+		}
 	}
 
 `````
 
 ##### 1.1 处理Override属性
 
-Spring 中并不存在 override-method 的标签，这里的 override 指的是 <lookup-method/> 和 <replaced-method/> 两个标签，之前解析这两个标签时是将这两个标签配置以 MethodOverride 对象的形式记录在 beanDefinition 实例的 methodOverrides 属性中，而这里的处理主要是逐一检查所覆盖的方法是否存在，如果不存在则覆盖无效，如果存在唯一的方法，则覆盖是明确的，标记后期无需依据参数类型以及个数进行推测
+Spring 中并不存在 override-method 的标签，这里的 override 指的是 <lookup-method/> 和 <replaced-method/> 两个标签,
+之前解析这两个标签时是将这两个标签配置以 MethodOverride 对象的形式记录在 beanDefinition 实例的 methodOverrides 属性中,
+而这里的处理主要是逐一检查所覆盖的方法是否存在，如果不存在则覆盖无效，如果存在唯一的方法，则覆盖是明确的，标记后期无需依据参数类型以及个数进行推测
+
 ````
 public void prepareMethodOverrides() throws BeanDefinitionValidationException {
     // 获取之前记录的<lookup-method/>和<replaced-method/>标签配置
@@ -83,9 +152,9 @@ public void prepareMethodOverrides() throws BeanDefinitionValidationException {
     }
 }
 
-
 ````
 ##### 1.1.1 方法复写默认为true,如果仅仅一个方法，则设置 MethodOverride为false
+
 ````
 
 protected void prepareMethodOverride(MethodOverride mo) throws BeanDefinitionValidationException {
@@ -128,6 +197,7 @@ protected Object resolveBeforeInstantiation(String beanName, RootBeanDefinition 
                 }
             }
         }
+        //将应用过后置处理器的ben赋值给 RootBeanDefinition 的 beforeInstantiationResolved
         mbd.beforeInstantiationResolved = (bean != null);
     }
     return bean;
@@ -135,18 +205,31 @@ protected Object resolveBeforeInstantiation(String beanName, RootBeanDefinition 
 
 ````
 
-#### 第二步：没有后置处理器创建代理过程，正常的创建实例过程
+#### 第二步: 没有后置处理器创建代理过程，正常的创建实例过程
+
+1. 如果是单例，尝试从缓存中获取 bean 的包装器 BeanWrapper
+
+2. 如果不存在对应的 Wrapper，则说明 bean 未被实例化，创建 bean 实例
+
+3. 应用 MergedBeanDefinitionPostProcessor
+
+4. 检查是否需要提前曝光，避免循环依赖
+
+5. 初始化 bean 实例
+
+6. 再次基于依存关系验证是否存在循环依赖
+
+7. 注册 DisposableBean
 
 ````
-
 protected Object doCreateBean(final String beanName, final RootBeanDefinition mbd, final Object[] args) throws BeanCreationException {
  
     BeanWrapper instanceWrapper = null;
-    // 1. 如果是单例，尝试获取对应的BeanWrapper
+    // 1. 如果是单例,尝试获取对应的BeanWrapper,同时从缓存中移除
     if (mbd.isSingleton()) {
         instanceWrapper = this.factoryBeanInstanceCache.remove(beanName);
     }
-    // 2. bean未实例化，创建 bean 实例
+    // 2. 重点：实例化=》bean未实例化,创建 bean 实例
     if (instanceWrapper == null) {
         /*
          * 说明对应的bean还没有创建，用对应的策略（工厂方法、构造函数）创建bean实例，以及简单初始化
@@ -168,7 +251,7 @@ protected Object doCreateBean(final String beanName, final RootBeanDefinition mb
     synchronized (mbd.postProcessingLock) {
         if (!mbd.postProcessed) {
             try {
-                // 处理 merged bean，Autowired通过此方法实现诸如类型的解析
+                // 处理 merged bean Autowired通过此方法实现诸如类型的解析
                 this.applyMergedBeanDefinitionPostProcessors(mbd, beanType, beanName);
             } catch (Throwable ex) {
                 throw new BeanCreationException(mbd.getResourceDescription(), beanName, "Post-processing of merged bean definition failed", ex);
@@ -177,7 +260,8 @@ protected Object doCreateBean(final String beanName, final RootBeanDefinition mb
         }
     }
  
-    // 4. 检查是否需要提前曝光，避免循环依赖，条件：单例 && 允许循环依赖 && 当前bean正在创建中
+    // 4. 检查是否需要提前曝光，避免循环依赖,条件: 单例 && 允许循环依赖 && 当前bean正在创建中
+    //方法的逻辑是先判断是否允许提前曝光,如果当前为单例 bean,且程序制定允许循环引用,同时当前 bean 正处于创建中,则会将创建 bean 的 ObjectFactory 对象加入到用于保存 beanName 和创建 bean 的工厂之间的关系的集合中
     boolean earlySingletonExposure = (mbd.isSingleton() && this.allowCircularReferences && this.isSingletonCurrentlyInCreation(beanName));
     if (earlySingletonExposure) {
         if (logger.isDebugEnabled()) {
@@ -193,13 +277,13 @@ protected Object doCreateBean(final String beanName, final RootBeanDefinition mb
         });
     }
  
-    // 5. 初始化bean实例
+    // 5. 重点=》初始化:初始化bean实例
     Object exposedObject = bean;
     try {
         // 对bean进行填充，将各个属性值注入，如果存在依赖的bean则进行递归初始化
         this.populateBean(beanName, mbd, instanceWrapper);
         if (exposedObject != null) {
-            // 初始化bean，调用初始化方法，比如init-method
+            // 初始化bean,调用初始化方法，比如init-method
             exposedObject = this.initializeBean(beanName, exposedObject, mbd);
         }
     } catch (Throwable ex) {
@@ -252,72 +336,15 @@ protected Object doCreateBean(final String beanName, final RootBeanDefinition mb
 
 ````
 
-##### 创建单例对象
+#### 2.1 :createBeanInstance 创建实例
+
+1. 如果存在工厂方法，则使用工厂方法初始化
+
+2. 否则，如果存在多个构造函数，则根据参数确定构造函数，并利用构造函数初始化
+
+3. 否则，使用默认构造函数初始化
 
 ````
-public Object getSingleton(String beanName, ObjectFactory<?> singletonFactory) {
-    Assert.notNull(beanName, "'beanName' must not be null");
-    synchronized (this.singletonObjects) {  // singletonObjects用于缓存beanName与已创建的单例对象的映射关系
-        Object singletonObject = this.singletonObjects.get(beanName);
-        if (singletonObject == null) { // 对应的bean没有加载过
-            //实例正在创建
-            if (this.singletonsCurrentlyInDestruction) {
-                // 对应的bean正在其它地方创建中
-                throw new BeanCreationNotAllowedException(beanName,
-                        "Singleton bean creation not allowed while singletons of this factory are in destruction (Do not request a bean from a BeanFactory in a destroy method implementation!)");
-            }
-            if (logger.isDebugEnabled()) {
-                logger.debug("Creating shared instance of singleton bean '" + beanName + "'");
-            }
- 
-            // 前置处理，对于需要依赖检测的bean，设置状态为“正在创建中”
-            this.beforeSingletonCreation(beanName);
- 
-            boolean newSingleton = false;
-            boolean recordSuppressedExceptions = (this.suppressedExceptions == null);
-            if (recordSuppressedExceptions) {
-                this.suppressedExceptions = new LinkedHashSet<Exception>();
-            }
- 
-            try {
-                // 实例化bean
-                singletonObject = singletonFactory.getObject();
-                newSingleton = true;
-            } catch (IllegalStateException ex) {
-                // 异常，再次尝试从缓存中获取
-                singletonObject = this.singletonObjects.get(beanName);
-                if (singletonObject == null) {
-                    throw ex;
-                }
-            } catch (BeanCreationException ex) {
-                if (recordSuppressedExceptions) {
-                    for (Exception suppressedException : this.suppressedExceptions) {
-                        ex.addRelatedCause(suppressedException);
-                    }
-                }
-                throw ex;
-            } finally {
-                if (recordSuppressedExceptions) {
-                    this.suppressedExceptions = null;
-                }
-                // 后置处理，对于需要依赖检测的bean，移除“正在创建中”的状态
-                this.afterSingletonCreation(beanName);
-            }
-            if (newSingleton) { // 新实例
-                // 加入缓存
-                this.addSingleton(beanName, singletonObject);
-            }
-        }
-        // 返回实例
-        return (singletonObject != NULL_OBJECT ? singletonObject : null);
-    }
-}
-````
-
-#### 第三步：createBeanInstance 创建实例
-
-````
-
 protected BeanWrapper createBeanInstance(String beanName, RootBeanDefinition mbd, Object[] args) {
     //解析class引用
     Class<?> beanClass = this.resolveBeanClass(mbd, beanName);
@@ -366,7 +393,7 @@ protected BeanWrapper createBeanInstance(String beanName, RootBeanDefinition mbd
 }
 
 ````
-##### instantiateUsingFactoryMethod 工厂方法执行实例化过程
+##### 2.1.1 instantiateUsingFactoryMethod 工厂方法执行实例化过程
 
 ````
 public BeanWrapper instantiateUsingFactoryMethod(final String beanName, final RootBeanDefinition mbd, final Object[] explicitArgs) {
@@ -607,7 +634,7 @@ public BeanWrapper instantiateUsingFactoryMethod(final String beanName, final Ro
 }
 ````
 
-##### 构造方法执行实例化过程
+##### 2.2.1 构造方法执行实例化过程
 
 ```
 public BeanWrapper autowireConstructor(
@@ -796,58 +823,4 @@ public BeanWrapper autowireConstructor(
 
 ```
 
-##### 提前曝光实例，防止循环依赖
-
-````
-protected void addSingletonFactory(String beanName, ObjectFactory<?> singletonFactory) {
-		Assert.notNull(singletonFactory, "Singleton factory must not be null");
-		synchronized (this.singletonObjects) {
-			if (!this.singletonObjects.containsKey(beanName)) {
-				this.singletonFactories.put(beanName, singletonFactory);
-				this.earlySingletonObjects.remove(beanName);
-				this.registeredSingletons.add(beanName);
-			}
-		}
-	}
-````
-
-##### 获取类引用
-
-````
-protected Class<?> resolveBeanClass(final RootBeanDefinition mbd, String beanName, final Class<?>... typesToMatch)
-        throws CannotLoadBeanClassException {
-    try {
-        if (mbd.hasBeanClass()) {
-            // 如果之前直接存储的class引用则直接返回
-            return mbd.getBeanClass();
-        }
-        // 否则由beanClassName解析得到class引用
-        if (System.getSecurityManager() != null) {
-            return AccessController.doPrivileged(new PrivilegedExceptionAction<Class<?>>() {
-                @Override
-                public Class<?> run() throws Exception {
-                    // 解析得到bean引用
-                    return doResolveBeanClass(mbd, typesToMatch);
-                }
-            }, getAccessControlContext());
-        } else {
-            // 解析得到bean引用
-            return this.doResolveBeanClass(mbd, typesToMatch);
-        }
-    } catch (PrivilegedActionException pae) {
-        ClassNotFoundException ex = (ClassNotFoundException) pae.getException();
-        throw new CannotLoadBeanClassException(mbd.getResourceDescription(), beanName, mbd.getBeanClassName(), ex);
-    } catch (ClassNotFoundException ex) {
-        throw new CannotLoadBeanClassException(mbd.getResourceDescription(), beanName, mbd.getBeanClassName(), ex);
-    } catch (LinkageError ex) {
-        throw new CannotLoadBeanClassException(mbd.getResourceDescription(), beanName, mbd.getBeanClassName(), ex);
-    }
-}
-````
-
-#### 初始化bean实例(属性注入和执行初始化方法) [自动注入](./Spring源码解析之populateBean().md)
-
-
-
-
-        
+#### 初始化bean实例(属性注入和执行初始化方法) [自动注入](./Spring源码解析之populateBean().md)    
