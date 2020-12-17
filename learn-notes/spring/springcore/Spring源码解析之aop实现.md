@@ -4,7 +4,8 @@
 
 ##### @Import(AspectJAutoProxyRegistrar.class) implement ImportBeanDefinitionRegistrar
 
-##### registerBeanDefinitions();//目的是创建类: AnnotationAwareAspectJAutoProxyCreator 其实也就是在refresh()中创建 [refresh中 registerBeanPostProcessors中处理 ](./Spring源码解析之refresh()方法.md)
+##### registerBeanDefinitions();//目的是创建类: AnnotationAwareAspectJAutoProxyCreator 其实也就是在refresh()中创建 [refresh中 registerBeanPostProcessors 中处理 ](./Spring源码解析之refresh()方法.md)
+
 
    - AopConfigUtils.registerAspectJAnnotationAutoProxyCreatorIfNecessary(registry);
     

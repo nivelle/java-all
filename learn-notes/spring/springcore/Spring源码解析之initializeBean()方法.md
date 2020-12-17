@@ -17,6 +17,7 @@ protected Object initializeBean(final String beanName, final Object bean, RootBe
         AccessController.doPrivileged(new PrivilegedAction<Object>() {
             @Override
             public Object run() {
+                //(此处回调了AnnotationAwareAspectJAutoProxyCreator的setBeanFactory方法)
                 invokeAwareMethods(beanName, bean);
                 return null;
             }
