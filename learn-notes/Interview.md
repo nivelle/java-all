@@ -1,8 +1,5 @@
-
 ### java 核心基础总结
-
 ---
-
 #### 算法数据结构
 #### 海量数据如何去重？
 - [海量数据去重](https://blog.csdn.net/paul_wei2008/article/details/21170999)
@@ -21,7 +18,7 @@
 - [常见数据结构](https://blog.csdn.net/zxt0601/article/category/6697194)
 - [hashMap比较](https://juejin.im/post/5aa5d8d26fb9a028d2079264)
 - [arrayList线程不安全分析](https://www.jianshu.com/p/41be1efe5d65)
-- [moudCount的作用](https://blog.csdn.net/qq_24235325/article/details/52450331)
+- [moundCount的作用](https://blog.csdn.net/qq_24235325/article/details/52450331)
 - [CopyOnWriteArrayList](https://blog.csdn.net/linsongbin1/article/details/54581787)
 - [hashtable和hashMap](https://blog.csdn.net/tgxblue/article/details/8479147)
 - [hashMap非线程安全分析](https://mp.weixin.qq.com/s/t4kPX32puAfwyeoxqV-y-w)
@@ -57,9 +54,9 @@
 #### threadLocal是什么？底层如何实现？写一个例子
 - [threadLocal基本原理](https://juejin.im/post/5a0e985df265da430e4ebb92)
 
-#### volidate的工作原理
-- [volidate基本原理](http://www.hollischuang.com/archives/2673)
-- [深入理解volidate](http://www.hollischuang.com/archives/2648)
+#### volidate 的工作原理
+- [volidate 基本原理](http://www.hollischuang.com/archives/2673)
+- [深入理解 volidate](http://www.hollischuang.com/archives/2648)
 
 #### Thread and lock
 - [thread and lock](https://javadoop.com/post/Threads-And-Locks-md#17.5.%20final%20属性的语义（final%20Field%20Semantics）)
@@ -300,7 +297,7 @@
 - [spring常见扩展点](https://blog.csdn.net/qq_38182963/article/details/78795058)
 - [FactoryBean和beanFactory](https://juejin.im/entry/59e3662ef265da43283fe441)
 - [dispatcher](http://jinnianshilongnian.iteye.com/blog/1602617)
-- [sipring面试关注点](https://github.com/Homiss/Java-interview-questions/blob/master/%E6%A1%86%E6%9E%B6/Spring%20%E9%9D%A2%E8%AF%95%E9%A2%98.md)
+- [s pring面试关注点](https://github.com/Homiss/Java-interview-questions/blob/master/%E6%A1%86%E6%9E%B6/Spring%20%E9%9D%A2%E8%AF%95%E9%A2%98.md)
 - [初始化和生命周期](https://github.com/upcAutoLang/SpringBeanLIfeCycleDemo)
 
 #### springboot
