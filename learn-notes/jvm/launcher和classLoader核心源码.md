@@ -179,6 +179,8 @@ public static ClassLoader getAppClassLoader(final ClassLoader var0) throws IOExc
 
 - 自定义类加载器时，会直接覆盖ClassLoader的findClass()方法并编写加载规则，取得要加载类的字节码后转换成流，然后调用defineClass()方法生成类的Class对象
 
+- JVM已经实现了对应的具体功能，解析对应的字节码，产生对应的内部数据结构放置到方法区，所以无需覆写，直接调用就可以了
+
 ````
 protected Class<?> findClass(String name) throws ClassNotFoundException {
 	  // 获取类的字节数组
@@ -296,3 +298,14 @@ Class.forName()是一个静态方法，同样可以用来加载类，Class.forNa
 - 初始化对象构造器：JVM会按照收集成员变量的赋值语句、普通代码块、最后收集构造方法，将它们组成对象构造器，最终由JVM执行。如果没有检测或者收集到构造函数的代码，则将不会执行对象初始化方法。对象初始化方法一般在实例化类对象的时候执行
 
 - 如果在初始化main方法所在类的时候遇到了其他类的初始化，那么就加载对应的类，加载完成之后返回。如果反复循环，最终返回main方法所在类
+
+### 类加载器
+
+- "定义类加载器"和"初始化类加载器"
+- jvm为每个类加载器维护的一个"表"，这个表记录了所有以此类加载器为"初始类加载器"（而不是定义类加载器，所以一个类可以存在于很多的命名空间中）加载的类的列表
+````
+String类，bootstrap是"定义类加载器"，AppClassLoader、ExtClassloader都是String的初始类加载器
+````
+- 一个类，由不同的类加载器实例加载的话，会在方法区产生两个不同的类，彼此不可见，并且在堆中生成不同Class实例
+
+- 所有通过正常双亲委派模式的类加载器加载的classpath下的和ext下的所有类在方法区都是同一个类，堆中的Class实例也是同一个

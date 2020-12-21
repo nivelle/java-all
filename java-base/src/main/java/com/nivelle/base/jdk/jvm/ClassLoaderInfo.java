@@ -6,7 +6,7 @@ import java.io.File;
  * 类加载器
  */
 public class ClassLoaderInfo {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
 
         /**
          *  当前类加载器:sun.misc.Launcher$AppClassLoader@18b4aac2
@@ -32,5 +32,13 @@ public class ClassLoaderInfo {
         System.out.println("app classLoad path:========");
         final String s2 = System.getProperty("java.class.path");
         System.out.println(s2);
+        System.out.println("================================");
+        //调用加载当前类的类加载器（这里即为系统类加载器）加载TestBean
+        //  jar cvf ./ClassLoaderBean.jar ClassLoaderBean.class 打包指令
+        // /Library/Java/JavaVirtualMachines/jdk1.8.0_191.jdk/Contents/Home/jre/lib/ext
+        Class typeLoaded = Class.forName("com.nivelle.base.jdk.jvm.ClassLoaderBean");
+        //classPath:sun.misc.Launcher$AppClassLoader@18b4aac2
+        //classPath:sun.misc.Launcher$ExtClassloader@15db9742
+        System.out.println("classPath:" + typeLoaded.getClassLoader());
     }
 }
