@@ -1,10 +1,7 @@
-package com.nivelle.base.jdk.jvm.com.nivelle.base.javacore.jvm;
-
-import com.nivelle.base.jdk.jvm.com.nivelle.base.javacore.jvm.InvokeInterface;
-import com.nivelle.base.jdk.jvm.com.nivelle.base.javacore.jvm.InvokeInterfaceImpl;
+package com.nivelle.base.jdk.jvm;
 
 /**
- * javap 命令学习
+ * javap 命令学习,转换成汇编代码
  *
  * @author nivelle
  * @date 2020/03/25

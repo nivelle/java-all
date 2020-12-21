@@ -1,5 +1,7 @@
 ### java 核心基础总结
+
 ---
+
 #### 算法数据结构
 #### 海量数据如何去重？
 - [海量数据去重](https://blog.csdn.net/paul_wei2008/article/details/21170999)
@@ -349,3 +351,237 @@
 - [面试大纲](https://www.jianshu.com/p/a07d1d4004b0)
 - [面试大纲答案](https://www.cnblogs.com/xyang/tag/%E9%9D%A2%E8%AF%95/)
    
+### 路线图
+
+#### JVM性能调优
+
+##### jvm类加载机制详解
+
+- 从jdk源码级别深度分析类加载全过程
+- 启动类、拓展类、应用程序类加载器源码深度分析
+- 类加载双亲委派机制以及如何打破
+- 手写自定义类加载器
+- Tomcat类加载机制源码剖析
+
+##### JVM内存模型
+- 堆内存分代机制以及对象生命周期详解
+- 线程以及线程栈内部结构详解
+- 方法区（元空间）以及常量池详解（Hotspot底层C++级别）
+- 程序计数器
+- 本地方法栈
+
+##### 类字节码文件深度剖析
+
+- 数据类型：无符号数，表
+- 组成
+  - 0～3字节：魔数：文件类型
+  - 4～7字节：jdk版本
+  - 常量池： 字面量：常量字符串、final常量值；符号引用：类和接口的full Qualified Name、字段的方法和描述符、方法的名称和描述符
+  - u2访问标志：类/接口、public、final、abstract
+  - 继承关系：u2类索引-> 类的全限定名；u2父索引->父类的全限定名；nu2+1接口索引->实现接口的全新定名
+  - 字段表集合： 描述接口、变量：u2方法标志、u2 name_index、 u2 descriptor_index、u2 attributes_count、u2 attributes
+  - 方法表集合
+  - 属性表集合： code属性、exception属性、LineNumberTable属性、LocalVariableTable属性、sourceFile属性、constantvalue属性(通知)、innerClass属性、Deprecated和Synthetic属性、stackMapTable属性、Signature属性[记录范性信息]、BootstrapMethod属性
+
+##### 垃圾收集机制详解
+
+- 垃圾收集算法详解
+  - 标记清除算法
+  - 复制算法
+  - 标记整理算法
+  - 分代垃圾收集算法详解
+  
+- 复制垃圾收集机制详解
+  - 垃圾收集三色标记算法
+  - 对象漏标解决方案增量更新于原始快照(SATB)详解
+  - 读写内存屏障实现原理分析(深入到Hotspot底层C++级别解析)
+  - 记忆集(Remember set)与卡表(Cardtable)
+  - ZGC底层颜色指针详解  
+
+##### 垃圾收集器详解
+- Serial垃圾收集器
+- ParNew垃圾收集器
+- Parallel垃圾收集器
+- CMS垃圾收集器
+- G1垃圾收集器
+- ZGC垃圾收集器
+- Epsilon与Shenandoah垃圾收集器详解
+
+##### JVM调优工具详解
+- jdk自带jstat、jinfo、jmap、jhat与jstack调优命令
+- jvisualvm、jconsole调优
+- arthas详解
+
+##### GC日志详细分析
+- GCEasy日志分析工具使用
+- GCViewer日志分析工具
+
+#### Mysql性能调优
+
+##### SQL执行原理详解
+- 连接器、分析器、优化器、执行器、
+- innodb的Buffer Pool机制详解
+- redo重做日志、Undo回滚日志、与binlog详解
+
+##### 索引底层分析
+
+###### 数据结构角度
+- B+树索引：索引查找步骤、索引选择、联合索引
+- hash索引
+- FULL TEXT索引
+###### 物理存储角度
+- 聚蔟索引
+- 非聚蔟索引
+###### 逻辑角度
+- 主键索引
+- 唯一索引
+- 单列索引
+- 多列索引
+###### 索引使用角度
+- 覆盖索引
+- 索引下推
+###### 执行计划与SQL优化
+- explain工具深度使用
+
+##### 锁机制与事物隔离级别
+###### mysql锁
+- 性能：乐观锁、悲观锁
+- 操作：读锁，写锁
+- 粒度：表锁，锁
+- 其他：间隙锁，临键锁
+
+###### 事物隔离级别
+- 读未提交
+- 读已提交
+- 可重复读
+- 串行化
+
+###### MVCC多版本并发控制
+- Undo版本链
+- 事物一致性试图readView
+- 实现: read committed级别实现原理、repeated read级别实现原理
+
+#### Tomcat调优
+
+##### tomcat项目架构
+
+- tomct启动流程
+- 理解对http请求解析与处理流程
+
+##### 核心组件
+- wrapper
+- context
+- host
+- engine
+- container
+##### 环境配置
+- Tomcat server.xml配置详解
+- Tomcat集群与会话复制方案
+- Tomcat虚拟主机配置
+##### 线程模型
+- Tomcat支持四种线程模型
+- Bio
+- Nio
+- connector并发参数解读
+
+#### Nginx
+
+##### nginx模块
+- 核心模块
+- 标准http模块
+- 可选http模块
+- 第三方模块
+- nginx事件驱动模型以及特性
+
+##### 核心配置
+- 基本配置
+- 虚拟主机配置
+- upstream
+- location
+- 静态目录配置
+
+##### 负载算法
+
+- 轮询+权重
+- ip hash
+- url hash
+- least_conn
+- least_time
+
+#### 并发编程
+
+##### 操作系统内核原理
+
+- 进程管理详解
+- 内存管理详解
+- 文件系统详解
+- IO输入输出系统详解
+- 进程间通信机制详解
+- 网络通信原理
+
+##### JMM内存模型
+- 现代计算机模型理论
+- 线程
+- JMM volatile缓存一致性协议
+- 指令重排序、可见性、原子性、顺序一致性; happens-before详解 as-if-serial
+
+##### 并发同步处理
+
+- synchronized 内置锁实现原理
+- synchronized 锁的膨胀升级过程分析
+- AQS详解
+- 乐观锁、悲观锁、重入锁、公平锁、非公平锁以及所得粒度详解
+- ReentrantLock、ReentrantReadWriteLock、ReadWriteLock详解
+- Condition条件队列、同步队列
+
+##### 并发包之Tools限制
+- CountDownLatch
+- Semaphore
+- CyclicBarrier
+
+##### atomic原子操作
+- atomic类Thread ABA JMM
+- cas算法乐观锁
+- Unsafe魔法类详解
+
+##### 阻塞队列
+
+- ArrayBlockQueue数组有界队列
+- ConcurrentLinkedQueue连表无界队列
+- PriorityBlockingQueue优先级排序无界队列
+- DelayQueue延时无界队列
+
+##### 并发Map、List和Set
+- HashMap 与 ConcurrentHashMap
+- ArrayList、LinkedList与CopyOnWriteArrayList
+- set 与 CopyOnWriteArraySet
+##### Executor线程池详解以及核心源码
+- Futrue 模型
+- ThreadPoolExecutor
+- ScheduleExecutorService
+
+##### ForkJoin
+
+##### 无锁并发框架Disruptor
+
+#### 框架源码
+
+#### 分布式框架
+
+##### 分布式消息中间件
+##### rabbitMq
+##### kafka
+##### RocketMq
+
+##### 分布式存储中间件
+##### redis
+##### mongoDB
+##### FastDFS
+##### Elasticsearch
+##### 分布式存储中间件
+##### 分布式框架
+##### zookeeper
+##### dubbo
+##### shardingSphere
+##### netty
+

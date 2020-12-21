@@ -1,4 +1,4 @@
-package com.nivelle.base.jdk.jvm.com.nivelle.base.javacore.jvm;
+package com.nivelle.base.jdk.jvm;
 
 /**
  * TODO:DOCUMENT ME!
