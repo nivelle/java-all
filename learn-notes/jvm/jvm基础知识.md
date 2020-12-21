@@ -89,22 +89,31 @@ public class com.nivelle.base.pojo.javaclass.JvmExceptionDemo {
 
 ### 类的加载
 
-#### 加载类
+#### 类加载器
 
 ##### 类加载,是指查找字节流,并且据此创建类的过程
 
-- 启动类加载器:JRE 的 lib 目录下 jar 包中的类（以及由虚拟机参数 -Xbootclasspath 指定的类）
+- Bootstrap 启动类加载器:JRE 的 lib 目录下 jar 包中的类（以及由虚拟机参数 -Xbootclasspath 指定的类）比如 rt.jar、charsets.jar
 
-- 扩展类加载器:JRE 的 lib/ext 目录下 jar 包中的类（以及由系统变量 java.ext.dirs 指定的类）
+- extension 扩展类加载器:JRE 的 lib/ext 目录下 jar 包中的类（以及由系统变量 java.ext.dirs 指定的类）比如 dnsns.jar、zipfs.jar
 
 - 应用类加载器:它负责加载应用程序路径下的类 -cp/-classpath、系统变量 java.class.path 或环境变量 CLASSPATH 所指定的路径
 
 - JVM 会先加载 class 文件，而在 class 文件中除了有类的版本、字段、方法和接口等描述信息外,还有一项信息是常量池 (Constant Pool Table)，用于存放编译期间生成的各种字面量和符号引用
+
 **(类加载进内存后，JVM就会将class文件常量池中的内容存放到运行时常量池中也就是方法区中)**
 
 1. 字面量:字符串,基本类型的常量
 
 2. 符号引用: 类和方法的全限定名
+
+拓展类加载器，引用类加载器、自定义类加载器是java.lang.ClassLoader的子类实例，自定义类加载器直接继承java.lang.classLoader
+
+#### 双亲委派机制
+
+- 避免类的重复加载:当父加载器已经加载了该类的时候,就没必要子ClassLoader再加载一次,保证被加载类的唯一性
+
+- 沙箱子安全机制: 自己写的java.lang.String.class 类不会被加载，这样防止核心API库被随意串改 
 
 #### 链接
 
