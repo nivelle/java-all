@@ -91,13 +91,24 @@ public class com.nivelle.base.pojo.javaclass.JvmExceptionDemo {
 
 #### 类加载器
 
-##### 类加载,是指查找字节流,并且据此创建类的过程
+##### 类加载,是指查找字节流,并且据此创建类的过程；查找并加载类的二进制数据到java虚拟机中
 
-- Bootstrap 启动类加载器:JRE 的 lib 目录下 jar 包中的类（以及由虚拟机参数 -Xbootclasspath 指定的类）比如 rt.jar、charsets.jar
+- Bootstrap 启动类加载器:JDK\jre\lib 目录下 jar包中的类或者由虚拟机参数 **-Xbootclasspath** 指定的类, 比如 rt.jar、charsets.jar;同时所有的java.开头的类
 
-- extension 扩展类加载器:JRE 的 lib/ext 目录下 jar 包中的类（以及由系统变量 java.ext.dirs 指定的类）比如 dnsns.jar、zipfs.jar
+启动类加载器是无法被java程序直接引用的。启动类加载器加载java运行过程中的核心类库：
+````
+1. JRE\lib\rt.jar
+2. sunrsasign.jar
+3. charsets.jar
+4. jce.jar
+5. jsse.jar
+6. plugin.jar
+7. 存放在JRE\classess里面的类，也就是JDK提供的类比如常见的：Object、String、List
+````
 
-- 应用类加载器:它负责加载应用程序路径下的类 -cp/-classpath、系统变量 java.class.path 或环境变量 CLASSPATH 所指定的路径
+- extension 扩展类加载器:JDK\jre\lib\ext 目录下 jar 包中的类或者由系统变量 **java.ext.dirs**指定的类,比如 dnsns.jar、zipfs.jar;以javax.开头的类，开发这可以直接使用拓展类加载器
+
+- 应用类加载器:它负责加载应用程序路径下的类 -cp或者-classpath、系统变量 java.class.path 或环境变量 CLASSPATH 所指定的路径
 
 - JVM 会先加载 class 文件，而在 class 文件中除了有类的版本、字段、方法和接口等描述信息外,还有一项信息是常量池 (Constant Pool Table)，用于存放编译期间生成的各种字面量和符号引用
 
@@ -121,14 +132,26 @@ public class com.nivelle.base.pojo.javaclass.JvmExceptionDemo {
 
 - 验证:文件合法性检查
 
-- 准备：**被加载类的静态字段分配内存**对于 final static 修饰的变量，直接赋值为用户的定义值。
+- 准备：
+
+(1). **被加载类的静态字段分配内存**
+
+(2). 对于 final static 修饰的变量,直接赋值为用户的定义值。
  
  ````
- 例如:private final static int value=123,会在准备阶段分配内存,并初始化值为 123，而如果是 private static int value=123，这个阶段 value 的值仍然为 0。 
+ 例如:private final static int value=123,会在准备阶段分配内存,并初始化值为 123,而如果是 private static int value=123，这个阶段 value 的值仍然为 0。 
  ````
-- 解析：(1).符号引用->实际引用,编译器会生成一个包含目标方法所在类的名字、目标方法的名字、接收参数类型以及返回值类型的符号引用来指代所要调用的方法;(2).形成对常量池字符串的索引值;(3).如果符号引用指向一个未被加载的类，或者未被加载类的字段或方法，那么解析将触发这个类的加载（但未必触发这个类的链接以及初始化。）
+- 解析：
+
+(1).符号引用->实际引用,编译器会生成一个包含目标方法所在类的名字、目标方法的名字、接收参数类型以及返回值类型的符号引用来指代所要调用的方法;
+
+(2).形成对常量池字符串的索引值;
+
+(3).如果符号引用指向一个未被加载的类，或者未被加载类的字段或方法，那么解析将触发这个类的加载（但未必触发这个类的链接以及初始化。）
 
 #### 初始化
+
+- **为类的静态变量赋予正确的初始值**
 
 ##### 为标记为常量值的字段赋值,以及执行 <clinit> 方法的过程。类的初始化仅会被执行一次,这个特性被用来实现单例的延迟初始化。
 

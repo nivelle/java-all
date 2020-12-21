@@ -3,6 +3,7 @@ package com.nivelle.base.jdk.jvm;
 import java.io.InputStream;
 
 /**
+ * 自定义类加载器
  * @author nivellefu
  */
 public class MyClassLoader {
@@ -46,7 +47,6 @@ public class MyClassLoader {
         } catch (Exception e) {
             System.err.println(e);
         }
-
 
     }
 }

@@ -1,5 +1,7 @@
 package com.nivelle.base.jdk.jvm;
 
+import java.io.File;
+
 /**
  * 类加载器
  */
@@ -18,5 +20,17 @@ public class ClassLoaderInfo {
         System.out.println("当前类加载器:" + loader);
         System.out.println("当前类的父亲加载器:" + loader.getParent());
         System.out.println("当前类父亲的父亲加载器:" + loader.getParent().getParent());
+
+        System.out.println("bootstrap classLoad path:========");
+        final String s = System.getProperty("sun.boot.class.path");
+        System.out.println(s);
+        sun.misc.Launcher launcher = sun.misc.Launcher.getLauncher();
+        System.out.println(launcher.getClass().getClassLoader());
+        System.out.println("ext classLoad path:=======");
+        final String s1 = System.getProperty("java.ext.dirs");
+        System.out.println(s1);
+        System.out.println("app classLoad path:========");
+        final String s2 = System.getProperty("java.class.path");
+        System.out.println(s2);
     }
 }
