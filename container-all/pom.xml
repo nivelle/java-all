@@ -109,6 +109,11 @@
             <artifactId>tomcat-catalina</artifactId>
             <version>9.0.35</version>
         </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+            <version>4.1.39.Finall</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

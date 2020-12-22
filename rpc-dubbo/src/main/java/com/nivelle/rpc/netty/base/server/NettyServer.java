@@ -5,6 +5,7 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.oio.OioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
@@ -25,6 +26,8 @@ public class NettyServer {
      * boos:仅处理acceptor, 不设置线程的话 线程数会通过CPU来计算
      */
     private static EventLoopGroup boss = new NioEventLoopGroup(1);
+    //private static EventLoopGroup boss = new OioEventLoopGroup(1);
+
     /**
      * worker
      */
@@ -48,7 +51,7 @@ public class NettyServer {
              * */
             b.channel(NioServerSocketChannel.class);
             /**
-             * “设置被添加到ServerChannel 的ChannelPipeline 中的ChannelHandler 。”
+             * “设置被添加到 ServerChannel 的 ChannelPipeline 中的 ChannelHandler 。”
              *
              * b.handler(null);
              *
