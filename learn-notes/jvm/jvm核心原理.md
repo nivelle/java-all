@@ -132,7 +132,7 @@ public class com.nivelle.base.pojo.javaclass.JvmExceptionDemo {
 
 - 验证:文件合法性检查
 
-- 准备：
+- 准备:
 
 (1). **被加载类的静态字段分配内存**
 
@@ -147,7 +147,7 @@ public class com.nivelle.base.pojo.javaclass.JvmExceptionDemo {
 
 (2).形成对常量池字符串的索引值;
 
-(3).如果符号引用指向一个未被加载的类，或者未被加载类的字段或方法，那么解析将触发这个类的加载（但未必触发这个类的链接以及初始化。）
+(3).如果符号引用指向一个未被加载的类，或者未被加载类的字段或方法，那么解析将触发这个类的加载（但未必触发这个类的链接以及初始化）
 
 #### 初始化
 

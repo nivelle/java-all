@@ -309,3 +309,32 @@ String类，bootstrap是"定义类加载器"，AppClassLoader、ExtClassloader�
 - 一个类，由不同的类加载器实例加载的话，会在方法区产生两个不同的类，彼此不可见，并且在堆中生成不同Class实例
 
 - 所有通过正常双亲委派模式的类加载器加载的classpath下的和ext下的所有类在方法区都是同一个类，堆中的Class实例也是同一个
+
+- java虚拟机出于安全，不会加载lib 下的陌生类
+
+### class.forName()
+
+````
+//java.lang.Class.java  
+publicstatic Class<?> forName(String className) throws ClassNotFoundException {  
+    return forName0(className, true, ClassLoader.getCallerClassLoader());  
+}  
+  
+//java.lang.ClassLoader.java  
+// Returns the invoker's class loader, or null if none.  
+static ClassLoader getCallerClassLoader() {  
+    // 获取调用类（caller）的类型  
+    Class caller = Reflection.getCallerClass(3);  
+    // This can be null if the VM is requesting it  
+    if (caller == null) {  
+        return null;  
+    }  
+    // 调用java.lang.Class中本地方法获取加载该调用类（caller）的ClassLoader  
+    return caller.getClassLoader0();  
+}  
+  
+//java.lang.Class.java  
+//虚拟机本地实现，获取当前类的类加载器，前面介绍的Class的getClassLoader()也使用此方法  
+native ClassLoader getClassLoader0();  
+
+````
