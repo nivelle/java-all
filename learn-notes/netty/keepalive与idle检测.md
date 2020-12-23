@@ -32,7 +32,9 @@
 ### 开启keepalive
 
 - server端开启TCP keepalive
+
 ````
+//两种设置keepalive的风格
 bootstrap.childOption(ChannelOption.SO_KEEPALIVE,true);
 bootstrap.childOption(NioChannelOption.of(StandardSocket.SO_KEEPALIVE),true);
 
