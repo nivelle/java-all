@@ -129,3 +129,17 @@ AbstractChannel.AbstractUnsafe#flush
 - 准备数据：ChannelOutboundBuffer##addFlush
 
 - 发送：NioSocketChannel#doWrite
+
+- 写数据写不进去时，会停止写，注册一个OP_WRITE事件，来通知什么时候可以写进去了
+
+- OP_WRITE不是说有数据可写，而是说可以写进去；
+
+- 批量写数据时，如果尝试写的都写进去了，接下来会尝试写更多(maxBytesPerGatheringWrite)
+
+- 只要有数据要写，且能写，则一直尝试，直到16次（writeSpinCount）,写16次还没有写完，就直接schedule 一个task来继续写，而不是用注册事件来触发，更简洁有力
+
+- 待写数据太多，超过一定的水位线（writeBufferWaterMask.high()）,会将可写的标志位改成false,让应用端自己做决定要不要继续写
+
+- channelHandlerContext.channel().write():从TailContext开始执行；
+
+- channelHandlerContext.write():从当前的Context开始
