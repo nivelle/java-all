@@ -19,10 +19,10 @@ import java.util.Arrays;
 @ComponentScan(basePackages = {"com.nivelle.rpc.dubbo.model",  "com.nivelle.rpc.**"}, includeFilters = {})
 @EnableAsync
 @EnableSwagger2 //swagger2支持
-public class RpcDubboApplication {
+public class RpcBaseApplication {
 
     public static void main(String[] args) {
-        SpringApplication springApplication = new SpringApplication(RpcDubboApplication.class);
+        SpringApplication springApplication = new SpringApplication(RpcBaseApplication.class);
         springApplication.run(args);
     }
 

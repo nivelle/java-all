@@ -9,9 +9,9 @@
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
     <groupId>com.nivelle</groupId>
-    <artifactId>rpc-dubbo</artifactId>
+    <artifactId>rpc-base</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>rpc-dubbo</name>
+    <name>rpc-base</name>
     <packaging>jar</packaging>
     <description>RPC学习</description>
     <properties>
