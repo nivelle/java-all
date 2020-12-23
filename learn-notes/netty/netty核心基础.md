@@ -143,3 +143,18 @@ AbstractChannel.AbstractUnsafe#flush
 - channelHandlerContext.channel().write():从TailContext开始执行；
 
 - channelHandlerContext.write():从当前的Context开始
+
+----------
+
+### 断开连接
+
+#### 多路复用器收到OP_READ事件，处理器：NioSocketChannel.NioSocketChannelUnsafe.read():
+
+- 接受数据
+
+- 判断接受的数据大小是否< 0.如果是，说明是关闭，开始执行关闭
+
+  - 关闭channel(包含cancel多路复用器的key)
+  - 清理消息：不接受新消息，fail掉所有queue中的消息
+  - 触发fireChannelInactive和fireChannelUnregistered
+
