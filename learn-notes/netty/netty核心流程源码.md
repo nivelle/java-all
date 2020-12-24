@@ -437,7 +437,9 @@ protected void doBeginRead() throws Exception {
             }
             // Always handle shutdown even if the loop processing threw an exception.
             try {
+                //判断在关闭服务方法中，状态是否已经改成关闭状态
                 if (isShuttingDown()) {
+                    //关闭channel
                     closeAll();
                     if (confirmShutdown()) {
                         return;
@@ -868,7 +870,7 @@ public static SocketChannel accept(final ServerSocketChannel serverSocketChannel
                     //分配合适的大小ByteBuf,默认1024
                     byteBuf = allocHandle.allocate(allocator);
                     //读并且记录读了多少，如果读满了，下次continue的话就直接扩容
-                    //doReadBytes(byteBuf) ：真正的读数据
+                    //doReadBytes(byteBuf) ：真正的读数据,-1代表正常关闭
                     allocHandle.lastBytesRead(doReadBytes(byteBuf));
                     if (allocHandle.lastBytesRead() <= 0) {
                         // nothing was read. release the buffer.
@@ -966,7 +968,7 @@ public static SocketChannel accept(final ServerSocketChannel serverSocketChannel
 
 -----------
 
-### 业务处理
+### 业务处理(在worker线程里对OP_READ事件的处理)
 
 #### handler执行资格：
 
@@ -976,29 +978,74 @@ public static SocketChannel accept(final ServerSocketChannel serverSocketChannel
 
 #### 处理业务本质：数据在pipeline中所有的handler的channelRead()执行过程
 
-Handler要实现io.netty.channel.ChannelInboundHandler#channelRead(ChannelHandlerContext ctx,Object msg)，且不能加注释@Skip 才能被执行到，中途可退出，不保证执行到Tail Handler
+#### 核心源码
 
-#### 默认处理线程就是Channel 绑定的NioEventLoop线程，也可以设置其他
+- 业务处理详情1： AbstractNioMessageChannel->pipeline.fireChannelRead
+````
+public final ChannelPipeline fireChannelRead(Object msg) {
+        //从Head开始
+        AbstractChannelHandlerContext.invokeChannelRead(head, msg);
+        return this;
+    }
+````
+- 业务处理详情2：
+````
+static void invokeChannelRead(final AbstractChannelHandlerContext next, Object msg) {
+        final Object m = next.pipeline.touch(ObjectUtil.checkNotNull(msg, "msg"), next);
+        //NioEventLoop
+        EventExecutor executor = next.executor();
+        //未指定的话默认是EventLoop里面的线程来执行，也可以指定:
+        // pipeline.addLast(new UnorderedThreadPoolEventExecutor(10),serverHandler)
+        if (executor.inEventLoop()) {
+            //执行ChannelInboudHandler 的channelRead方法
+            next.invokeChannelRead(m);
+        } else {
+            executor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    next.invokeChannelRead(m);
+                }
+            });
+        }
+    }
+````
+- 业务处理详情3：
+````
+public void channelRead(ChannelHandlerContext ctx, Object msg) {
+            //继续在pipleline上传播
+            ctx.fireChannelRead(msg);
+ }
+````
 
+- 业务处理详情4：传播处理
 ````
-pipeline.addLast(new UnorderedThreadPoolEventExecutor(10),serverHandler)
+public ChannelHandlerContext fireChannelRead(final Object msg) {
+        invokeChannelRead(findContextInbound(MASK_CHANNEL_READ), msg);
+        return this;
+    }
+//判断后续是否有资格执行的Handler，如果有的话返回，在invokeChannelRead里面执行
+ private AbstractChannelHandlerContext findContextInbound(int mask) {
+        AbstractChannelHandlerContext ctx = this;
+        do {
+            ctx = ctx.next;
+        } while ((ctx.executionMask & mask) == 0);
+        return ctx;
+    }
 ````
 
-### 发送数据
+### 发送数据(handler业务处理结果的写出)
 
-#### Write : 写数据到buffer
+### Write : 写数据到buffer然后flush发送buffer里面的数据,Write和Flush之间有个ChannelOutboundBuffer用作数据缓存
 
-````
-ChannelOutboundBuffer# addMessage
-````
-#### Flush:发送buffer里面的数据
+#### write 
 
-````
-AbstractChannel.AbstractUnsafe#flush
-````
+- 写数据到buffer : ChannelOutboundBuffer#addMessage
+
+#### flush
+
 - 准备数据：ChannelOutboundBuffer##addFlush
 
-- 发送：NioSocketChannel#doWrite
+- 真正发送：NioSocketChannel#doWrite
 
 - 写数据写不进去时，会停止写，注册一个OP_WRITE事件，来通知什么时候可以写进去了
 
@@ -1010,15 +1057,386 @@ AbstractChannel.AbstractUnsafe#flush
 
 - 待写数据太多，超过一定的水位线（writeBufferWaterMask.high()）,会将可写的标志位改成false,让应用端自己做决定要不要继续写
 
+#### 知识点
+
 - channelHandlerContext.channel().write():从TailContext开始执行；
 
 - channelHandlerContext.write():从当前的Context开始
 
 ----------
 
-### 断开连接
+#### 核心源码
 
-#### 多路复用器收到OP_READ事件，处理器：NioSocketChannel.NioSocketChannelUnsafe.read():
+- 写数据详情1：write 
+
+````
+ private void write(Object msg, boolean flush, ChannelPromise promise) {
+        ObjectUtil.checkNotNull(msg, "msg");
+        try {
+            if (isNotValidPromise(promise, true)) {
+                ReferenceCountUtil.release(msg);
+                // cancelled
+                return;
+            }
+        } catch (RuntimeException e) {
+            ReferenceCountUtil.release(msg);
+            throw e;
+        }
+
+        final AbstractChannelHandlerContext next = findContextOutbound(flush ?(MASK_WRITE | MASK_FLUSH) : MASK_WRITE);
+        //引用计数，用来检测内存泄漏
+        final Object m = pipeline.touch(msg, next);
+        EventExecutor executor = next.executor();
+        if (executor.inEventLoop()) {
+            if (flush) {
+                //writeAndFlush
+                next.invokeWriteAndFlush(m, promise);
+            } else {
+                //仅仅write
+                next.invokeWrite(m, promise);
+            }
+        } else {
+            final AbstractWriteTask task;
+            if (flush) {
+                task = WriteAndFlushTask.newInstance(next, m, promise);
+            }  else {
+                task = WriteTask.newInstance(next, m, promise);
+            }
+            if (!safeExecute(executor, task, promise, m)) {
+                // We failed to submit the AbstractWriteTask. We need to cancel it so we decrement the pending bytes
+                // and put it back in the Recycler for re-use later.
+                //
+                // See https://github.com/netty/netty/issues/8343.
+                task.cancel();
+            }
+        }
+    }
+
+````
+
+- 写数据详情2：ChannelPipeline写数据
+
+````
+public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) {
+            unsafe.write(msg, promise);
+        }
+//真正写数据
+public final void write(Object msg, ChannelPromise promise) {
+            assertEventLoop();
+            //write和flush之间的数据buffer
+            ChannelOutboundBuffer outboundBuffer = this.outboundBuffer;
+            //判断是否channel已经关闭
+            if (outboundBuffer == null) {
+                // If the outboundBuffer is null we know the channel was closed and so
+                // need to fail the future right away. If it is not null the handling of the rest
+                // will be done in flush0()
+                // See https://github.com/netty/netty/issues/2362
+                safeSetFailure(promise, newClosedChannelException(initialCloseCause));
+                // release message now to prevent resource-leak
+                ReferenceCountUtil.release(msg);
+                return;
+            }
+            int size;
+            try {
+                msg = filterOutboundMessage(msg);
+                size = pipeline.estimatorHandle().size(msg);
+                if (size < 0) {
+                    size = 0;
+                }
+            } catch (Throwable t) {
+                safeSetFailure(promise, t);
+                ReferenceCountUtil.release(msg);
+                return;
+            }
+            //把消息放到buffer里面，待flush
+            outboundBuffer.addMessage(msg, size, promise);
+        }
+````
+
+- 发送数据详情3： addMessage()
+
+````
+public void addMessage(Object msg, int size, ChannelPromise promise) {
+        //构建一个消息，放在 linkedList 队列尾部
+        Entry entry = Entry.newInstance(msg, size, total(msg), promise);
+        if (tailEntry == null) {
+            flushedEntry = null;
+        } else {
+            Entry tail = tailEntry;
+            tail.next = entry;
+        }
+        tailEntry = entry;
+        if (unflushedEntry == null) {
+             //队列尾部元素也就是unflushedEntry
+            unflushedEntry = entry;
+        }
+
+        // increment pending bytes after adding message to the unflushed arrays.
+        // See https://github.com/netty/netty/issues/1619
+        incrementPendingOutboundBytes(entry.pendingSize, false);
+    }
+
+````
+
+- 发送数据详情4： incrementPendingOutboundBytes()
+
+````
+
+private void incrementPendingOutboundBytes(long size, boolean invokeLater) {
+        if (size == 0) {
+            return;
+        }
+
+        long newWriteBufferSize = TOTAL_PENDING_SIZE_UPDATER.addAndGet(this, size);
+         //判断待发送的数据的size是否高于水位线
+        if (newWriteBufferSize > channel.config().getWriteBufferHighWaterMark()) {
+            //设置不可写标志，让应用决定是否继续写数据
+            setUnwritable(invokeLater);
+        }
+    }
+
+````
+- 发送数据详情1：flush
+
+````
+public ChannelHandlerContext flush() {
+        //找下一级的handler
+        final AbstractChannelHandlerContext next = findContextOutbound(MASK_FLUSH);
+        EventExecutor executor = next.executor();
+        if (executor.inEventLoop()) {
+            //执行flash
+            next.invokeFlush();
+        } else {
+            Tasks tasks = next.invokeTasks;
+            if (tasks == null) {
+                next.invokeTasks = tasks = new Tasks(next);
+            }
+            safeExecute(executor, tasks.invokeFlushTask, channel().voidPromise(), null);
+        }
+
+        return this;
+    }
+
+```` 
+- 发送数据详情2： invokeFlush0
+
+````
+ private void invokeFlush0() {
+        try {
+            ((ChannelOutboundHandler) handler()).flush(this);
+        } catch (Throwable t) {
+            notifyHandlerException(t);
+        }
+    }
+````
+
+- 发送数据详情3：flush
+
+````
+public final void flush() {
+            assertEventLoop();
+
+            ChannelOutboundBuffer outboundBuffer = this.outboundBuffer;
+            //outboundBuffer == null表明channel关闭了
+            if (outboundBuffer == null) {
+                return;
+            }
+            //addFlush
+            outboundBuffer.addFlush();
+            //最后一步写出数据
+            flush0();
+        }
+````
+
+- 发送数据详情4： addFlush
+
+````
+ 
+public void addFlush() {
+        // There is no need to process all entries if there was already a flush before and no new messages
+        // where added in the meantime.
+        //
+        // See https://github.com/netty/netty/issues/2577
+        //将unflushed 数据转成flushed
+        Entry entry = unflushedEntry;
+        if (entry != null) {
+            if (flushedEntry == null) {
+                // there is no flushedEntry yet, so start with the entry
+                flushedEntry = entry;
+            }
+            do {
+                flushed ++;
+                if (!entry.promise.setUncancellable()) {
+                    // Was cancelled so make sure we free up memory and notify about the freed bytes
+                    int pending = entry.cancel();
+                    decrementPendingOutboundBytes(pending, false, true);
+                }
+                entry = entry.next;
+            } while (entry != null);
+
+            // All flushed so reset unflushedEntry
+            unflushedEntry = null;
+        }
+    }
+
+````
+- 发送数据详情5： flush0()
+
+````
+  protected void flush0() {
+            if (inFlush0) {
+                // Avoid re-entrance
+                return;
+            }
+
+            final ChannelOutboundBuffer outboundBuffer = this.outboundBuffer;
+            if (outboundBuffer == null || outboundBuffer.isEmpty()) {
+                return;
+            }
+
+            inFlush0 = true;
+
+            // Mark all pending write requests as failure if the channel is inactive.
+            if (!isActive()) {
+                try {
+                    if (isOpen()) {
+                        outboundBuffer.failFlushed(new NotYetConnectedException(), true);
+                    } else {
+                        // Do not trigger channelWritabilityChanged because the channel is closed already.
+                        outboundBuffer.failFlushed(newClosedChannelException(initialCloseCause), false);
+                    }
+                } finally {
+                    inFlush0 = false;
+                }
+                return;
+            }
+
+            try {
+                //执行写出逻辑
+                doWrite(outboundBuffer);
+            } catch (Throwable t) {
+                if (t instanceof IOException && config().isAutoClose()) {
+                    /**
+                     * Just call {@link #close(ChannelPromise, Throwable, boolean)} here which will take care of
+                     * failing all flushed messages and also ensure the actual close of the underlying transport
+                     * will happen before the promises are notified.
+                     *
+                     * This is needed as otherwise {@link #isActive()} , {@link #isOpen()} and {@link #isWritable()}
+                     * may still return {@code true} even if the channel should be closed as result of the exception.
+                     */
+                    initialCloseCause = t;
+                    close(voidPromise(), t, newClosedChannelException(t), false);
+                } else {
+                    try {
+                        shutdownOutput(voidPromise(), t);
+                    } catch (Throwable t2) {
+                        initialCloseCause = t;
+                        close(voidPromise(), t2, newClosedChannelException(t), false);
+                    }
+                }
+            } finally {
+                inFlush0 = false;
+            }
+        }
+
+````
+
+- 发送数据详情6： doWrite(outboundBuffer)
+
+````
+ protected void doWrite(ChannelOutboundBuffer in) throws Exception {
+        SocketChannel ch = javaChannel();
+         // 有数据要写，且能写入，最多尝试16次
+        int writeSpinCount = config().getWriteSpinCount();
+        do {
+            if (in.isEmpty()) {
+                // All written so clear OP_WRITE
+                //数据写完，不需要写16次
+                clearOpWrite();
+                // Directly return here so incompleteWrite(...) is not called.
+                return;
+            }
+
+            // Ensure the pending writes are made of ByteBufs only.
+            int maxBytesPerGatheringWrite = ((NioSocketChannelConfig) config).getMaxBytesPerGatheringWrite();
+            //最多返回1024个数据，总的字节尽量不超过maxBytesPerGatheringWrite
+            ByteBuffer[] nioBuffers = in.nioBuffers(1024, maxBytesPerGatheringWrite);
+            int nioBufferCnt = in.nioBufferCount();
+
+            // Always us nioBuffers() to workaround data-corruption.
+            // See https://github.com/netty/netty/issues/2761
+            switch (nioBufferCnt) {
+                case 0:
+                    // We have something else beside ByteBuffers to write so fallback to normal writes.
+                    writeSpinCount -= doWrite0(in);
+                    break;
+                case 1: {
+                    // Only one ByteBuf so use non-gathering write
+                    // Zero length buffers are not added to nioBuffers by ChannelOutboundBuffer, so there is no need
+                    // to check if the total size of all the buffers is non-zero.
+                    ByteBuffer buffer = nioBuffers[0];
+                    int attemptedBytes = buffer.remaining();
+                    //对于单个数据，直接调用了channel的write(buffer)方法，也就是JDK socketChannel
+                    final int localWrittenBytes = ch.write(buffer);
+                    if (localWrittenBytes <= 0) {
+                        incompleteWrite(true);
+                        return;
+                    }
+                    adjustMaxBytesPerGatheringWrite(attemptedBytes, localWrittenBytes, maxBytesPerGatheringWrite);
+                    //从channelOutboundBuffer中移除已经写出的数据
+                    in.removeBytes(localWrittenBytes);
+                    --writeSpinCount;
+                    break;
+                }
+                default: {
+                    // Zero length buffers are not added to nioBuffers by ChannelOutboundBuffer, so there is no need
+                    // to check if the total size of all the buffers is non-zero.
+                    // We limit the max amount to int above so cast is safe
+                    long attemptedBytes = in.nioBufferSize();
+                    final long localWrittenBytes = ch.write(nioBuffers, 0, nioBufferCnt);
+                    if (localWrittenBytes <= 0) {
+                        //缓存区数据满了，写不进去了，注册写事件,OP_WRITE 是可以写进去不是说有数据可写
+                        //注册OP_WRITE 事件监听，等能写进去的时候，通知写
+                        //也就是在NioEventLoop中执行一个写 ch.unsafe().forceFlush()
+                        incompleteWrite(true);
+                        return;
+                    }
+                    // Casting to int is safe because we limit the total amount of data in the nioBuffers to int above.
+                    adjustMaxBytesPerGatheringWrite((int) attemptedBytes, (int) localWrittenBytes,maxBytesPerGatheringWrite);
+                    //移除已经写完的数据，未写完的process 标记一下进度
+                    in.removeBytes(localWrittenBytes);
+                    --writeSpinCount;
+                    break;
+                }
+            }
+        } while (writeSpinCount > 0);
+        //写了16次数据，还是没有写完，直接schedule一个新的flush task 出来，而不是注册写事件。  
+        incompleteWrite(writeSpinCount < 0);
+    }
+````
+
+- 发送数据详情7：  adjustMaxBytesPerGatheringWrite((int) attemptedBytes, (int) localWrittenBytes,maxBytesPerGatheringWrite);
+
+````
+
+private void adjustMaxBytesPerGatheringWrite(int attempted, int written, int oldMaxBytesPerGatheringWrite) {
+        // By default we track the SO_SNDBUF when ever it is explicitly set. However some OSes may dynamically change
+        // SO_SNDBUF (and other characteristics that determine how much data can be written at once) so we should try
+        // make a best effort to adjust as OS behavior changes.
+        //一次就写完了，所以扩大一次写入的数据量
+        if (attempted == written) {
+            if (attempted << 1 > oldMaxBytesPerGatheringWrite) {
+                ((NioSocketChannelConfig) config).setMaxBytesPerGatheringWrite(attempted << 1);
+            }
+        //一次写不完,所以尝试缩小写入的量
+        } else if (attempted > MAX_BYTES_PER_GATHERING_WRITE_ATTEMPTED_LOW_THRESHOLD && written < attempted >>> 1) {
+            ((NioSocketChannelConfig) config).setMaxBytesPerGatheringWrite(attempted >>> 1);
+        }
+    }
+````
+
+
+### 断开连接, 多路复用器收到OP_READ事件，处理器：NioSocketChannel.NioSocketChannelUnsafe.read():
 
 - 接受数据
 
@@ -1030,10 +1448,280 @@ AbstractChannel.AbstractUnsafe#flush
 
 - 关闭连接，会触发OP_READ方法。读取字节数是-1代表关闭
 
-- 数据读取进行时，强行关闭，触发IO Exception,进而继续关闭
+- 数据读取进行时,强行关闭，触发IO Exception,进而继续关闭
 
 - Channel 的关闭包含了 SelectionKey的cancel
 
+#### 核心源码
+
+- 关闭连接详情1：相应读事件
+
+````
+ public final void read() {
+            final ChannelConfig config = config();
+            if (shouldBreakReadReady(config)) {
+                clearReadPending();
+                return;
+            }
+            final ChannelPipeline pipeline = pipeline();
+            final ByteBufAllocator allocator = config.getAllocator();
+            final RecvByteBufAllocator.Handle allocHandle = recvBufAllocHandle();
+            allocHandle.reset(config);
+
+            ByteBuf byteBuf = null;
+            boolean close = false;
+            try {
+                do {
+                    byteBuf = allocHandle.allocate(allocator);
+                     //doReadBytes(byteBuf) ：真正的读数据,-1代表正常关闭
+                    allocHandle.lastBytesRead(doReadBytes(byteBuf));
+                    if (allocHandle.lastBytesRead() <= 0) {
+                        // nothing was read. release the buffer.
+                        //释放缓存，byteBuf设置成null
+                        byteBuf.release();
+                        byteBuf = null;
+                        close = allocHandle.lastBytesRead() < 0;
+                        //-1 表示要关闭
+                        if (close) {
+                            // There is nothing left to read as we received an EOF.
+                            //设置readPending 为false 表示不在继续读
+                            readPending = false;
+                        }
+                        break;
+                    }
+
+                    allocHandle.incMessagesRead(1);
+                    readPending = false;
+                    pipeline.fireChannelRead(byteBuf);
+                    byteBuf = null;
+                } while (allocHandle.continueReading());
+
+                allocHandle.readComplete();
+                pipeline.fireChannelReadComplete();
+
+                if (close) {
+                    //真正关闭连接
+                    closeOnRead(pipeline);
+                }
+            } catch (Throwable t) {
+                handleReadException(pipeline, byteBuf, t, close, allocHandle);
+            } finally {
+                // Check if there is a readPending which was not processed yet.
+                // This could be for two reasons:
+                // * The user called Channel.read() or ChannelHandlerContext.read() in channelRead(...) method
+                // * The user called Channel.read() or ChannelHandlerContext.read() in channelReadComplete(...) method
+                //
+                // See https://github.com/netty/netty/issues/2254
+                if (!readPending && !config.isAutoRead()) {
+                    removeReadOp();
+                }
+            }
+        }
+    }
+
+
+````
+
+- 关闭连接详情2：closeOnRead(ChannelPipeline pipeline)
+````
+ private void closeOnRead(ChannelPipeline pipeline) {
+            //判断input是否关闭
+            if (!isInputShutdown0()) {
+                //判断是否支持半关闭：如果是，则先关闭读，触发事件
+                if (isAllowHalfClosure(config())) {
+                    shutdownInput();
+                    pipeline.fireUserEventTriggered(ChannelInputShutdownEvent.INSTANCE);
+                } else {
+                    close(voidPromise());
+                }
+            } else {
+                inputClosedSeenErrorOnRead = true;
+                pipeline.fireUserEventTriggered(ChannelInputShutdownReadComplete.INSTANCE);
+            }
+        }
+````
+
+- 关闭连接详情3：close(final ChannelPromise promise)
+
+````
+public final void close(final ChannelPromise promise) {
+            assertEventLoop();
+
+            ClosedChannelException closedChannelException = new ClosedChannelException();
+            close(promise, closedChannelException, closedChannelException, false);
+        }
+
+
+private void close(final ChannelPromise promise, final Throwable cause,
+                           final ClosedChannelException closeCause, final boolean notify) {
+            if (!promise.setUncancellable()) {
+                return;
+            }
+
+            if (closeInitiated) {
+                if (closeFuture.isDone()) {
+                    // Closed already.
+                    safeSetSuccess(promise);
+                } else if (!(promise instanceof VoidChannelPromise)) { // Only needed if no VoidChannelPromise.
+                    // This means close() was called before so we just register a listener and return
+                    closeFuture.addListener(new ChannelFutureListener() {
+                        @Override
+                        public void operationComplete(ChannelFuture future) throws Exception {
+                            promise.setSuccess();
+                        }
+                    });
+                }
+                return;
+            }
+
+            closeInitiated = true;
+
+            final boolean wasActive = isActive();
+            final ChannelOutboundBuffer outboundBuffer = this.outboundBuffer;
+            //不再接收消息
+            this.outboundBuffer = null; // Disallow adding any messages and flushes to outboundBuffer.
+            //需要逗留到数据收发完成或设置的时间，所以提交到另外的Executor 中执行
+            //提前deregister 包含 selection key 的 cancel的原因之一：cancel掉各种感兴趣的事件，不再监听各种事件
+            //单独返回一个EventExecutor 防止影响正在进行的业务
+            Executor closeExecutor = prepareToClose();
+            if (closeExecutor != null) {
+                closeExecutor.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            // Execute the close.
+                            //走到这里，说明solinger(逗留时间)
+                            doClose0(promise);
+                        } finally {
+                            // Call invokeLater so closeAndDeregister is executed in the EventLoop again!
+                            invokeLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (outboundBuffer != null) {
+                                        // Fail all the queued messages
+                                        outboundBuffer.failFlushed(cause, notify);
+                                        outboundBuffer.close(closeCause);
+                                    }
+                                    fireChannelInactiveAndDeregister(wasActive);
+                                }
+                            });
+                        }
+                    }
+                });
+            } else {
+                try {
+                    // Close the channel and fail the queued messages in all cases.
+                    doClose0(promise);
+                } finally {
+                    if (outboundBuffer != null) {
+                        // Fail all the queued messages.
+                       
+                        outboundBuffer.failFlushed(cause, notify);
+                        //outboundBuffer关闭
+                        outboundBuffer.close(closeCause);
+                    }
+                }
+                if (inFlush0) {
+                    invokeLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            fireChannelInactiveAndDeregister(wasActive);
+                        }
+                    });
+                } else {
+                    
+                    fireChannelInactiveAndDeregister(wasActive);
+                }
+            }
+        }
+````
+
+- 关闭连接详情4：NioScoketChannel()->doClose0
+
+````
+protected void doClose() throws Exception {
+        super.doClose();
+         //jdk 
+        javaChannel().close();
+    }
+
+public final void close() throws IOException {
+        synchronized (closeLock) {
+            if (!open)
+                return;
+            open = false;
+            //把SelectionKey 从 selector上cancel掉
+            implCloseChannel();
+        }
+    }
+
+````
+
+- 关闭连接详情8:fireChannelInactiveAndDeregister
+
+````
+ private void deregister(final ChannelPromise promise, final boolean fireChannelInactive) {
+            if (!promise.setUncancellable()) {
+                return;
+            }
+
+            if (!registered) {
+                safeSetSuccess(promise);
+                return;
+            }
+
+            // As a user may call deregister() from within any method while doing processing in the ChannelPipeline,
+            // we need to ensure we do the actual deregister operation later. This is needed as for example,
+            // we may be in the ByteToMessageDecoder.callDecode(...) method and so still try to do processing in
+            // the old EventLoop while the user already registered the Channel to a new EventLoop. Without delay,
+            // the deregister operation this could lead to have a handler invoked by different EventLoop and so
+            // threads.
+            //
+            // See:
+            // https://github.com/netty/netty/issues/4435
+            invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        //cancel selectionKey
+                        doDeregister();
+                    } catch (Throwable t) {
+                        logger.warn("Unexpected exception occurred while deregistering a channel.", t);
+                    } finally {
+                        if (fireChannelInactive) {
+                            //做一个 Channel Inactive的操作
+                            pipeline.fireChannelInactive();
+                        }
+                        // Some transports like local and AIO does not allow the deregistration of
+                        // an open channel.  Their doDeregister() calls close(). Consequently,
+                        // close() calls deregister() again - no need to fire channelUnregistered, so check
+                        // if it was registered.
+                        if (registered) {
+                            registered = false;
+                            //做一个 Channel unRegistered的操作
+                            pipeline.fireChannelUnregistered();
+                        }
+                        safeSetSuccess(promise);
+                    }
+                }
+            });
+        }
+````
+
+- doDeregister()
+
+````
+ void cancel(SelectionKey key) {
+        //没有特殊情况（配置so linger）,下面这个cancel :实际没有"执行"，因为在关闭channel 的时候执行过了
+        key.cancel();
+        cancelledKeys ++;
+        //下面是优化：当处理一批事件时，发现很多链接都断了（默认256），这个时候后面的事件可能都失效了，所以select again 下
+        if (cancelledKeys >= CLEANUP_INTERVAL) {
+            cancelledKeys = 0;
+            needsToSelectAgain = true;
+        }
+    }
+````
 -----
 ### 服务关闭
 
@@ -1041,8 +1729,191 @@ AbstractChannel.AbstractUnsafe#flush
 
 - workerGroup.shutdownGracefully()
 
-#### 关闭所有Group 中的NioEventLoop
+#### 关闭所有Group 中的 NioEventLoop
 
-- 修改NioEventLoop 的state标志位
+- 修改NioEventLoop的state标志位
 
-- NioEventLoop 判断State执行退出
+- NioEventLoop判断State执行退出
+
+#### 核心源码
+
+- 服务关闭详情1：shutdownGracefully()
+
+- shutdownGracefully(long quietPeriod, long timeout, TimeUnit unit)
+
+ //@param quietPeriod the quiet period as described in the documentation
+ //@param timeout     the maximum amount of time to wait until the executor is {@linkplain #shutdown()}regardless if a task was submitted during the quiet period
+````
+
+public Future<?> shutdownGracefully(long quietPeriod, long timeout, TimeUnit unit) {
+        if (quietPeriod < 0) {
+            throw new IllegalArgumentException("quietPeriod: " + quietPeriod + " (expected >= 0)");
+        }
+        if (timeout < quietPeriod) {
+            throw new IllegalArgumentException("timeout: " + timeout + " (expected >= quietPeriod (" + quietPeriod + "))");
+        }
+        if (unit == null) {
+            throw new NullPointerException("unit");
+        }
+
+        if (isShuttingDown()) {
+            return terminationFuture();
+        }
+
+        boolean inEventLoop = inEventLoop();
+        boolean wakeup;
+        int oldState;
+        for (;;) {
+            if (isShuttingDown()) {
+                return terminationFuture();
+            }
+            int newState;
+            wakeup = true;
+            oldState = state;
+            if (inEventLoop) {
+                newState = ST_SHUTTING_DOWN;
+            } else {              
+                switch (oldState) {
+                    case ST_NOT_STARTED:
+                    case ST_STARTED:  //oldState =2 表示已经启动过了
+                        newState = ST_SHUTTING_DOWN; //状态改为正在关闭状态
+                        break;
+                    default:
+                        newState = oldState;
+                        wakeup = false;
+                }
+            }
+            if (STATE_UPDATER.compareAndSet(this, oldState, newState)) {
+                break;
+            }
+        }
+        gracefulShutdownQuietPeriod = unit.toNanos(quietPeriod);
+        gracefulShutdownTimeout = unit.toNanos(timeout);
+
+        if (ensureThreadStarted(oldState)) {
+            return terminationFuture;
+        }
+
+        if (wakeup) {
+            taskQueue.offer(WAKEUP_TASK);
+            if (!addTaskWakesUp) {
+                wakeup(inEventLoop);
+            }
+        }
+
+        return terminationFuture();
+    }
+
+````
+
+- 服务关闭详情2： 在EventLoop run()方法中判断关闭状态是否是关闭
+
+````
+private void closeAll() {
+        //去除canceled的key
+        selectAgain();
+        Set<SelectionKey> keys = selector.keys();
+        Collection<AbstractNioChannel> channels = new ArrayList<AbstractNioChannel>(keys.size());
+        for (SelectionKey k: keys) {
+            Object a = k.attachment();
+            if (a instanceof AbstractNioChannel) {
+                channels.add((AbstractNioChannel) a);
+            } else {
+                k.cancel();
+                @SuppressWarnings("unchecked")
+                NioTask<SelectableChannel> task = (NioTask<SelectableChannel>) a;
+                invokeChannelUnregistered(task, k, null);
+            }
+        }
+
+        for (AbstractNioChannel ch: channels) {
+            //close 掉所有的channel
+            ch.unsafe().close(ch.unsafe().voidPromise());
+        }
+    }
+
+````
+
+- 服务关闭详情3：confirmShutdown()
+
+````
+  protected boolean confirmShutdown() {
+        if (!isShuttingDown()) {
+            return false;
+        }
+
+        if (!inEventLoop()) {
+            throw new IllegalStateException("must be invoked from an event loop");
+        }
+        //关闭到所有的Scheduled 的 task
+        cancelScheduledTasks();
+
+        if (gracefulShutdownStartTime == 0) {
+            gracefulShutdownStartTime = ScheduledFutureTask.nanoTime();
+        }
+        //有task/hook在里面，执行他们，并且不让关闭，因为静默期又有任务了
+        if (runAllTasks() || runShutdownHooks()) {
+            if (isShutdown()) {
+                // Executor shut down - no new tasks anymore.
+                return true;
+            }
+
+            // There were tasks in the queue. Wait a little bit more until no tasks are queued for the quiet period or
+            // terminate if the quiet period is 0.
+            // See https://github.com/netty/netty/issues/4241
+            if (gracefulShutdownQuietPeriod == 0) {
+                return true;
+            }
+            taskQueue.offer(WAKEUP_TASK);
+            return false;
+        }
+
+        final long nanoTime = ScheduledFutureTask.nanoTime();
+        //是否超过最大允许时间，如果是，需要关闭了，不再等待。
+        if (isShutdown() || nanoTime - gracefulShutdownStartTime > gracefulShutdownTimeout) {
+            return true;
+        }
+        //如果静默期做了任务，不关闭，sleep 100ms,再检查下
+        if (nanoTime - lastExecutionTime <= gracefulShutdownQuietPeriod) {
+            // Check if any tasks were added to the queue every 100ms.
+            // TODO: Change the behavior of takeTask() so that it returns on timeout.
+            taskQueue.offer(WAKEUP_TASK);
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                // Ignore
+            }
+
+            return false;
+        }
+
+        // No tasks were added for last quiet period - hopefully safe to shut down.
+        // (Hopefully because we really cannot make a guarantee that there will be no execute() calls by a user.)
+        return true;
+    }
+
+````
+
+- 服务关闭详情4：cancelScheduledTasks()
+
+````
+//cancel 掉所有的Scheduled的tasks
+protected void cancelScheduledTasks() {
+        assert inEventLoop();
+        PriorityQueue<ScheduledFutureTask<?>> scheduledTaskQueue = this.scheduledTaskQueue;
+        if (isNullOrEmpty(scheduledTaskQueue)) {
+            return;
+        }
+
+        final ScheduledFutureTask<?>[] scheduledTasks =
+                scheduledTaskQueue.toArray(new ScheduledFutureTask<?>[0]);
+
+        for (ScheduledFutureTask<?> task: scheduledTasks) {
+            task.cancelWithoutRemove(false);
+        }
+
+        scheduledTaskQueue.clearIgnoringIndexes();
+    }
+
+
+````
