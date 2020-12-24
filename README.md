@@ -183,6 +183,15 @@
 
 ✅【客户端&服务端】
 
+✅【EventLoop】
+
+✅【EventLoopGroup】
+
+✅【ChannelInbound】
+
+✅【ChannelOutbound】
+
+
 #### Mongo实践
 
 ✅ 【mongo实践】
