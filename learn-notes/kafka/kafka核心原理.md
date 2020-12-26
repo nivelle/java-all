@@ -4,9 +4,6 @@
 
 - 分布式流处理平台
 
-### 核心脑图(极客时间：胡夕)
-
-
 ### 版本演进
 
 - 0.7 版本：只有基础消息队列功能，无副本；不能线上使用
@@ -79,7 +76,7 @@ compression.type
 
 - 如果是多线程异步处理消费消息，Consumer 程序不要开启自动提交位移，而是要应用程序手动提交位移。
 
-### 最佳实践
+### 无消息丢失配置最佳实践
 
 1. 不要使用 producer.send(msg),而要使用 producer.send(msg,callback). 一定要使用带有回调通知的send方法
 
@@ -100,8 +97,6 @@ compression.type
 ### 拦截器
 
 拦截器可以用于包括客户端监控、端到端系统性能检测、消息审计等多种功能在内的场景。
-
-
 
 
 #### kafka 生产者拦截器
@@ -136,3 +131,4 @@ props.put(ProducerConfig.INTERCEPTOR_CLASSES_CONFIG, interceptors);
 - onConsumer: 该方法在消息返回给Consumer程序之前调用。也就是说在正式开始处理消息之前，拦截器会先拦截一道，之后再返回。
 
 - onCommit: Consumer 在提交位移之后调用该方法。通常你可以在该方法中做一些记账类的动作，比如日志
+
