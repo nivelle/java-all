@@ -39,3 +39,41 @@ $> bin/kafka-server-start.sh config/server.properties
 - KAFKA_JVM_PERFORMANCE_OPTS:指定GC参数
 
 ### 消息设计
+
+
+#### 位移主题
+
+- broker 端位移主题数目控制参数：offsets.topic.num.partitions，默认值为50
+
+- broker 端 副本数或者备份因子： offsets.topic.replication.factor,默认值是3
+
+- 位移主题如果是kafka自动创建的，那么该主题的分区数就是50，副本数是3
+
+- 位移主题在第一个consumer程序启动时，kafka自动创建位移主题
+
+
+##### 位移主题提交
+
+- 配置参数： enable.auto.commit = false
+
+- 手动提交: consumer.commitSync
+
+- 自动提交: 如果是自动提交，则会不停的写位移信息，此时需要利用compact策略来删除位移主题中的过期消息。专门的后台线程定期地巡检待compact的主题，看看是否存在满足条件的可删除数据。 这个后台线程叫：log cleaner.
+
+### coordinator
+
+- 所有broker在启动时，都会创建和开启相应的coordinator 组件，也就是说，所有的broker都有各自的coordinator组件。
+
+#### 为 consumer group 确定coordinator所在broker的方式：
+
+- 确定由位移主题的那个分区保存该group数据：
+
+````
+partitionId = Math.abs(groupId.hashCode()%offsetsTopicParitionCount); 
+````
+
+- 找出该分区leader副本所在的broker,该broker即为对应的coordinator
+
+
+
+ 

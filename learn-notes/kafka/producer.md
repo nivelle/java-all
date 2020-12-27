@@ -187,7 +187,7 @@ consumer过滤未提交消息和事务控制消息，使这些消息对用户不
 
 producer向事务协调器发送initPidRequest,申请pid;
 
-当指定了transactional.id 时，事务协调器为producer 分区 pid ，并更新epoch,把（tid,pid）的映射关系写入事务日志。同时清理tid 任何未完成的事务，丢弃未提交的消息
+- 2.1 当指定了transactional.id时，事务协调器为producer分区pid，并更新epoch，把(tid,pid)的映射关系写入事务日志。 同时清理tid任何未完成的事务，丢弃未提交的消息
 
 3. 启动事务
 
@@ -195,7 +195,7 @@ producer向事务协调器发送initPidRequest,申请pid;
 
 4. consumer-transform-produce 事务循环
 
-- 4.1 注册partition: AddPartitionsToTxnRequest
+- 4.1 注册partition: addPartitionsToTxnRequest
   
     对于每一个要在事务中写消息的topic分区，produce 应当在第一次发消息前，向事务处理器注册分区
 
@@ -205,7 +205,7 @@ producer向事务协调器发送initPidRequest,申请pid;
 
   - 4.2.1 producer 向分区leader写消息，消息中包含tid,pid,epoch,seq
 
-  - 4.3.1 提交消息偏移： addOffsetCommitsToTxnRequest
+- 4.3.1 提交消息偏移： addOffsetCommitsToTxnRequest
 
 - 4.3.2 produce 向事务协调器发送消费偏移，事务协调器在事务日志中记录偏移信息，并把组协调器返回给producer
 
@@ -219,11 +219,11 @@ producer向事务协调器发送initPidRequest,申请pid;
 
 收到提交或者终止事务请求时，事务处理器将执行下面操作
 
-(1). 在事务日志中写入PREPARE_COMMIT 或者 PREPARE_ABORT消息
+(1). 在事务日志中写入PREPARE_COMMIT 或者 PREPARE_ABORT消息(5.1a)
 
-(2). 通过WriteTxnMarkerRequest 向事务中的所有broker发事务控制消息
+(2). 通过WriteTxnMarkerRequest 向事务中的所有broker发事务控制消息(5.2)
 
-(3). 在事务之日志中写入COMMITED 或者 ABORTED消息
+(3). 在事务之日志中写入COMMITTED 或者 ABORTED消息(5.3)
 
 - 5.2 writeTxnMarkerRequest
 

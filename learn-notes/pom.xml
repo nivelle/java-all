@@ -6,6 +6,6 @@
 
     <groupId>com.nivelle.guide</groupId>
     <artifactId>notes</artifactId>
-    <packaging>rar</packaging>
+    <packaging>pom</packaging>
     <version>0.0.1-SNAPSHOT</version>
 </project>
