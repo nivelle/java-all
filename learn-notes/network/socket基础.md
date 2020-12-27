@@ -4,7 +4,7 @@
 
 建立连接后，数据的传输就不再是单向的，而是双向的，这也是TCP的一个显著特性。
 
-#### TCP三次握手
+### TCP三次握手
 
 #### 服务端准备连接过程
 
@@ -107,3 +107,24 @@ int connect(int sockfd, const struct sockaddr *servaddr, socklen_t addrlen)
 - 此时服务端，只能确认服务端的接受能力，不能确认服务端的发送能力
 
 - 所以第三次握手，服务端收到客户端握手后，确认了服务端的发送能力，以及客户端的接收能力
+
+### 套接字读写
+
+#### 发送数据
+
+````
+
+ssize_t write (int socketfd, const void *buffer, size_t size)
+ssize_t send (int socketfd, const void *buffer, size_t size, int flags)
+ssize_t sendmsg(int sockfd, const struct msghdr *msg, int flags)
+
+````
+- 第一个函数是常见的文件写函数，如果把 socketfd 换成文件描述符，就是普通的文件写入。
+
+- 如果想指定选项，发送带外数据，就需要使用第二个带 flag 的函数。所谓带外数据，是一种基于 TCP 协议的紧急数据，用于客户端 - 服务器在特定场景下的紧急处理。
+
+- 如果想指定多重缓冲区传输数据，就需要使用第三个函数，以结构体 msghdr 的方式发送数据。
+
+#### 发送缓冲区
+
+发送缓冲区的大小可以通过套接字选项来改变，当我们的应用程序调用 write 函数时，实际所做的事情是把数据从应用程序中拷贝到操作系统内核的发送缓冲区中，并不一定是把数据通过套接字写出去。
