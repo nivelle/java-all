@@ -164,7 +164,6 @@ broker处理完上一步发送的FindCoordinator请求之后，会返还对应�
 1. 使用kafka自带的命令行工具 kafka-consumer-groups
 
 ````
-
 $ bin/kafka-consumer-groups.sh --bootstrap-server <Kafka broker连接信息> --describe --group <group名称>
 //Kafka 连接信息就是 < 主机名：端口 > 对，而 group 名称就是你的消费者程序中设置的 group.id 值
 ````

@@ -131,4 +131,3 @@ props.put(ProducerConfig.INTERCEPTOR_CLASSES_CONFIG, interceptors);
 - onConsumer: 该方法在消息返回给Consumer程序之前调用。也就是说在正式开始处理消息之前，拦截器会先拦截一道，之后再返回。
 
 - onCommit: Consumer 在提交位移之后调用该方法。通常你可以在该方法中做一些记账类的动作，比如日志
-
