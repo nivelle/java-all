@@ -101,10 +101,10 @@ public class LogAppendInfo {
     // 初始化Leader Epoch Cache 
     initializeLeaderEpochCache()
     initializePartitionMetadata()
-    //重要: 加载日志段
+    //重要: 加载所有日志段对象，并返回该Log对象下一条消息的位移值
     val nextOffset = loadSegments()
-
     /* Calculate the offset of the next message */
+    // 初始化LEO元数据对象，LEO值为上一步获取的位移值，起始位移值是Active Segment的起始位移
     nextOffsetMetadata = LogOffsetMetadata(nextOffset, activeSegment.baseOffset, activeSegment.size)
 
     leaderEpochCache.foreach(_.truncateFromEnd(nextOffsetMetadata.messageOffset))
@@ -407,83 +407,6 @@ private[log] def recoverLog(): Long = {
     recoveryPoint
   }
 
-````
-
-### 高水位管理
-
-````
-
-@volatile private var highWatermarkMetadata: LogOffsetMetadata = LogOffsetMetadata(logStartOffset)
-
-````
-
-1. 高水位值是 volatile 的。 保证多个线程同时读取，保证了内存可见性。 为保证多个线程同时修改，使用Java Monitor 来保证并发修改线程的安全。 例如多个flower 同时拉取LEO 时，会同时更新分区的HW
-
-2. 高水位值的初始化值是 Log start offset
-
-#### logOffsetMetadata
-
-````
-case class LogOffsetMetadata(messageOffset: Long,segmentBaseOffset: Long = Log.UnknownOffset,relativePositionInSegment: Int = LogOffsetMetadata.UnknownFilePosition)
-
-````
-
-- messageOffset:消息位移值，高水位的变量值
-
-- segmentBaseOffset:保存该位移值所在日志段的起始位移。用于辅助计算在同一个segment 的两条消息在物理磁盘文件中的位移差值。
-
-- relativePositionInSegment:保存该位移值所在日志段的物理磁盘位置。
-
-#### 更新高水位值
-
-````
-private def updateHighWatermarkMetadata(newHighWatermark: LogOffsetMetadata): Unit = {
-    if (newHighWatermark.messageOffset < 0) //高水位值不能是负数
-      throw new IllegalArgumentException("High watermark offset should be non-negative")
-
-    lock synchronized { //保护Log 对象修改的Monitor锁
-      highWatermarkMetadata = newHighWatermark //赋值新的高水位值
-      producerStateManager.onHighWatermarkUpdated(newHighWatermark.messageOffset)//处理事务状态管理器的高水位值更新逻辑
-      maybeIncrementFirstUnstableOffset()//first unstable offset 是Kafka事务机制的一部分
-    }
-    trace(s"Setting high watermark $newHighWatermark")
-  }
-
-def updateHighWatermark(hw: Long): Long = {
-    //新高水位值介于[Log Start Offset, Log End Offset]之间
-    val newHighWatermark = if (hw < logStartOffset)
-      logStartOffset
-    else if (hw > logEndOffset)
-      logEndOffset
-    else
-      hw
-    //调用setter方法来更新高水位值
-    updateHighWatermarkMetadata(LogOffsetMetadata(newHighWatermark))
-    newHighWatermark //返回高水位值
-  }
-  
-def maybeIncrementHighWatermark(newHighWatermark: LogOffsetMetadata): Option[LogOffsetMetadata] = {
-    //新高水位值不能越过Log End Offset
-    if (newHighWatermark.messageOffset > logEndOffset)
-      throw new IllegalArgumentException(s"High watermark $newHighWatermark update exceeds current " +
-        s"log end offset $logEndOffsetMetadata")
-
-    lock.synchronized {
-      //获取老的高水位值
-      val oldHighWatermark = fetchHighWatermarkMetadata
-
-      // Ensure that the high watermark increases monotonically. We also update the high watermark when the new
-      // offset metadata is on a newer segment, which occurs whenever the log is rolled to a new segment.
-      //新高水位值要比老高水位值大以维持单调增加特性，否则就不做更新！另外，如果新高水位值在新日志段上，也可执行更新高水位操作
-      if (oldHighWatermark.messageOffset < newHighWatermark.messageOffset ||
-        (oldHighWatermark.messageOffset == newHighWatermark.messageOffset && oldHighWatermark.onOlderSegment(newHighWatermark))) {
-        updateHighWatermarkMetadata(newHighWatermark)
-        Some(oldHighWatermark)
-      } else {
-        None
-      }
-    }
-  }
 ````
 
 ### 日志段
