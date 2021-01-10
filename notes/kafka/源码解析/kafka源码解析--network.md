@@ -200,11 +200,31 @@ object RequestMetrics {
 
 [![s1cFOS.jpg](https://s3.ax1x.com/2021/01/10/s1cFOS.jpg)](https://imgchr.com/i/s1cFOS)
 
-#### SocketServer
+### SocketServer 组件
 
 实现了Reactor模式，用于处理多个Clients 的并发请求，并负责将处理结果封装进Response中，返还给Clients
 
-#### KafkaRequestHandlerPool
+#### AbstractServerThread 类： 是Acceptor线程和Processor线程的抽象即类，定义了他们的共有方法，如 shutDown(关闭线程)
+
+#### Acceptor线程类
+
+接收和创建外部TCP连接的线程。 每个SocketServer实例只会创建一个Acceptor线程。它的作用就是创建连接，并将接收到的Request传递给下游的Processor线程处理。
+
+#### Processor线程类
+
+
+
+
+
+
+
+
+
+
+
+
+
+### KafkaRequestHandlerPool组件
 
 IO线程池，定义了若干的线程，用于执行真实的请求处理逻辑。
 
