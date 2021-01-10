@@ -196,6 +196,19 @@ object RequestMetrics {
 
 ````
 
+### kafka 网络架构
+
+[![s1cFOS.jpg](https://s3.ax1x.com/2021/01/10/s1cFOS.jpg)](https://imgchr.com/i/s1cFOS)
+
+#### SocketServer
+
+实现了Reactor模式，用于处理多个Clients 的并发请求，并负责将处理结果封装进Response中，返还给Clients
+
+#### KafkaRequestHandlerPool
+
+IO线程池，定义了若干的线程，用于执行真实的请求处理逻辑。
+
+
 
 
 
