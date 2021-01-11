@@ -5,7 +5,9 @@ import org.checkerframework.checker.units.qual.C;
 import java.text.DateFormat;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalAccessor;
 import java.util.Date;
 
 /**
@@ -61,13 +63,30 @@ public class Java8DateTest {
         Thread.sleep(10);
         System.out.println("fixed clock after:" + fixedClock.instant());
 
+        System.out.println("根据毫秒生成instant:" + Instant.ofEpochMilli(new Date().getTime()));
+        Instant preInstant = Instant.ofEpochSecond(1609741558, 1);
+        System.out.println("过去时间和当前时间的相差值,可以指定单位TemporalUnit:" + preInstant.until(Instant.now(), ChronoUnit.MINUTES));
+        Instant fixInstant = instant.minus(1, ChronoUnit.MINUTES).plus(2, ChronoUnit.DAYS);
+        System.out.println("分钟数减1天数加2：" + fixInstant);
+
+        System.out.println("temporal =======================");
+        //时间类的统一接口。定义通用的方法操作
+
+
         System.out.println("localTime=========================");
+        //LocalTime是用来操作时分秒的类，外加精确到纳秒级别；无时区概念，转Instant需要先设置时区
         LocalTime localTime = LocalTime.of(23, 59, 59);
         System.out.println(localTime);
         //格式化日期时间
         DateTimeFormatter germanFormatter = DateTimeFormatter.ofPattern("HHmm");
         LocalTime localTime2 = LocalTime.parse("1237", germanFormatter);
-        System.out.println(localTime2);
+        System.out.println("字符串转时间：" + localTime2);
+        System.out.println("距离凌晨的秒数：" + LocalTime.ofSecondOfDay(123L));
+        System.out.println("距离凌晨的纳秒数：" + LocalTime.ofNanoOfDay(123L));
+
+        System.out.println("localDateTime 转 localDate:" + localTime.atDate(LocalDate.now()));
+
+
         //日期（2018-09-24，不带时区）是用来操作年月日的类：表示的时间单位是截止到日，不包括小时及后面的单位
         System.out.println("localDate====================");
         LocalDate localDate = LocalDate.now();
@@ -90,5 +109,13 @@ public class Java8DateTest {
         System.out.println(today);
         System.out.println(tomorrow);
         System.out.println(yesterday);
+
+        System.out.println("DateTImeFormatter====================");
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        dateTimeFormatter = dateTimeFormatter.withZone(ZoneId.of("America/El_Salvador"));
+        System.out.println(dateTimeFormatter.parse("2021-03-19 12:12:12"));
+        System.out.println(dateTimeFormatter.parse("2021-03-19 12:12:12").getLong(ChronoField.INSTANT_SECONDS));
+
+        System.out.println();
     }
 }
