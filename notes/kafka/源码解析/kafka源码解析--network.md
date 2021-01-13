@@ -356,8 +356,104 @@ override def run(): Unit = {
 
 ### KafkaRequestHandlerPool组件
 
-IO线程池，定义了若干的线程，用于执行真实的请求处理逻辑。
+- IO线程池，定义了若干的线程，用于执行真实的请求处理逻辑。
 
+- KafkaRequestHandler 请求处理线程类，每个请求处理线程实例，负责从SocketServer的RequestChannel 的请求队列中获取请求对象，进行处理
+
+````
+
+// 关键字段说明
+// id: 请求处理线程的序号-》I/O线程序号
+// brokerId：所在Broker序号，即broker.id值
+// totalHandlerThreads：I/O线程池大小
+// requestChannel：请求处理通道，请求保存在RequestChannel的请求队列中
+// apis：KafkaApis类，用于真正实现请求处理逻辑的类
+class KafkaRequestHandler(
+  id: Int,
+  brokerId: Int,
+  val aggregateIdleMeter: Meter,
+  val totalHandlerThreads: AtomicInteger,
+  val requestChannel: RequestChannel,
+  apis: KafkaApis,
+  time: Time) extends Runnable with Logging {
+  ......
+}
+
+````
+
+````
+
+def run(): Unit = {
+  // 只要该线程尚未关闭，循环运行处理逻辑
+  while (!stopped) {
+    val startSelectTime = time.nanoseconds
+    // 第一步：从请求队列中获取下一个待处理的请求
+    val req = requestChannel.receiveRequest(300)
+    val endTime = time.nanoseconds
+    // 第二步：统计线程空闲时间
+    val idleTime = endTime - startSelectTime
+    // 更新线程空闲百分比指标
+    aggregateIdleMeter.mark(idleTime / totalHandlerThreads.get)
+    req match {
+      // 第三步1：关闭线程请求
+      case RequestChannel.ShutdownRequest =>
+        debug(s"Kafka request handler $id on broker $brokerId received shut down command")
+        // 关闭线程
+        shutdownComplete.countDown()
+        return
+      // 第三步2：普通请求
+      case request: RequestChannel.Request =>
+        try {
+          request.requestDequeueTimeNanos = endTime
+          trace(s"Kafka request handler $id on broker $brokerId handling request $request")
+          // 由KafkaApis.handle方法执行相应处理逻辑
+          apis.handle(request)
+        } catch {
+          // 如果出现严重错误，立即关闭线程
+          case e: FatalExitError =>
+            shutdownComplete.countDown()
+            Exit.exit(e.statusCode)
+          // 如果是普通异常，记录错误日志
+          case e: Throwable => error("Exception when handling request", e)
+        } finally {
+          // 释放请求对象占用的内存缓冲区资源
+          request.releaseBuffer()
+        }
+      case null => // 继续
+    }
+  }
+  shutdownComplete.countDown()
+}
+
+````
+
+- KafkaRequestHandlerPool：请求处理线程池，负责创建、维护、管理和销毁下辖的请求处理线程。
+
+````
+
+// 关键字段说明
+// brokerId：所属Broker的序号,即broker.id值
+// requestChannel：SocketServer组件下的RequestChannel对象;SocketServer 的请求处理通道，它下辖的请求队列为所有 I/O 线程所共享
+// api：KafkaApis类，实际请求处理逻辑类
+// numThreads：I/O线程池初始大小
+class KafkaRequestHandlerPool(
+  val brokerId: Int, 
+  val requestChannel: RequestChannel,
+  val apis: KafkaApis,
+  time: Time,
+  numThreads: Int,
+  requestHandlerAvgIdleMetricName: String,
+  logAndThreadNamePrefix : String) 
+  extends Logging with KafkaMetricsGroup {
+  // I/O线程池大小
+  private val threadPoolSize: AtomicInteger = new AtomicInteger(numThreads)
+  // I/O线程池
+  val runnables = new mutable.ArrayBuffer[KafkaRequestHandler](numThreads)
+  ......
+}
+
+
+````
 
 ### socketServer 请求的优先级
 
@@ -483,30 +579,181 @@ private def createControlPlaneAcceptorAndProcessor(
   }
 }
 
+````
+
+### kafka网络请求全流程
+
+
+[![sYhTW8.jpg](https://s3.ax1x.com/2021/01/12/sYhTW8.jpg)](https://imgchr.com/i/sYhTW8)
+
+
+- 第一步： 接收clients 或者 其他 broker 发送的请求，通过accept方法，创建对应的SocketChannel,然后将该Channel实例传给assignNewConnection方法，等待Processor线程将该Socket连接请求，放入到维护的待处理队列中。
+
+后续Processor线程的run方法不断从该队列中取出这些Socket连接请求，然后创建对应的Socket连接;
+
+````
+
+// SocketServer.scala中Acceptor的run方法片段
+// 读取底层通道上准备就绪I/O操作的数量
+val ready = nioSelector.select(500)
+// 如果存在准备就绪的I/O事件
+if (ready > 0) {
+  // 获取对应的SelectionKey集合
+  val keys = nioSelector.selectedKeys()
+  val iter = keys.iterator()
+  // 遍历这些SelectionKey
+  while (iter.hasNext && isRunning) {
+    try {
+      val key = iter.next
+      iter.remove()
+      // 测试SelectionKey的底层通道是否能够接受新Socket连接
+      if (key.isAcceptable) {
+        // 接受此连接并分配对应的Processor线程
+        accept(key).foreach { socketChannel =>
+          var processor: Processor = null
+          do {
+            retriesLeft -= 1
+            processor = synchronized {
+              currentProcessorIndex = currentProcessorIndex % processors.length
+              processors(currentProcessorIndex)
+            }
+            currentProcessorIndex += 1
+          // 将新Socket连接加入到Processor线程待处理连接队列
+          // 等待Processor线程后续处理
+          } while (!assignNewConnection(socketChannel, processor, retriesLeft == 0))
+        }
+      } else {
+        ......
+      }
+  ......
+}
+
+````
+
+- 第二步：Processor 线程处理请求，并放入请求队
+
+一旦 Processor 线程成功地向 SocketChannel 注册了 Selector，Clients 端或其他 Broker 端发送的请求就能通过该 SocketChannel 被获取到，具体的方法是 Processor 的 processCompleteReceives
+
+````
+
+// SocketServer.scala
+private def processCompletedReceives(): Unit = {
+    // 从Selector中提取已接收到的所有请求数据
+    selector.completedReceives.asScala.foreach { receive =>
+      try {
+        // 打开与发送方对应的Socket Channel，如果不存在可用的Channel，抛出异常
+        openOrClosingChannel(receive.source) match {
+          case Some(channel) =>
+            ......
+            val header = RequestHeader.parse(receive.payload)
+            if (header.apiKey == ApiKeys.SASL_HANDSHAKE && channel.maybeBeginServerReauthentication(receive, nowNanosSupplier))
+              ……
+            else {
+              val nowNanos = time.nanoseconds()
+              if (channel.serverAuthenticationSessionExpired(nowNanos)) {
+                ……
+              } else {
+                val connectionId = receive.source
+                val context = new RequestContext(header, connectionId, channel.socketAddress,
+                  channel.principal, listenerName, securityProtocol,
+                  channel.channelMetadataRegistry.clientInformation)
+                // 根据Channel中获取的Receive对象，构建Request对象
+                val req = new RequestChannel.Request(processor = id, context = context,
+                  startTimeNanos = nowNanos, memoryPool, receive.payload, requestChannel.metrics)
+
+                ……
+                // 将该请求放入请求队列
+                requestChannel.sendRequest(req)
+                ......
+              }
+            }
+          ……
+        }
+      } catch {
+        ……
+      }
+    }
+  }
+
+
+````
+
+- 第三步：I/O 线程处理请求
+
+````
+
+// KafkaRequestHandler.scala
+def run(): Unit = {
+  while (!stopped) {
+    ......
+    // 从请求队列中获取Request实例
+    val req = requestChannel.receiveRequest(300)
+    ......
+    req match {
+      case RequestChannel.ShutdownRequest =>
+        ......
+      case request: RequestChannel.Request =>
+        try {
+          ......
+          apis.handle(request)
+        } {
+            ......
+        }
+      case null => // 什么也不做
+    }
+  }
+  ......
+}
 
 
 ````
 
 
+- 第四步：KafkaRequestHandler 线程将 Response 放入 Processor 线程的 Response 队列
+
+这一步的工作由 KafkaApis 类完成。当然，这依然是由 KafkaRequestHandler 线程来完成的。KafkaApis.scala 中有个 sendResponse 方法，将 Request 的处理结果 Response 发送出去。本质上，它就是调用了 RequestChannel 的 sendResponse 方法
+
+````
+
+def sendResponse(response: RequestChannel.Response): Unit = {
+  ......
+  // 找到这个Request当初是由哪个Processor线程处理的
+  val processor = processors.get(response.processor)
+  if (processor != null) {
+    // 将Response添加到该Processor线程的Response队列上
+    processor.enqueueResponse(response)
+  }
+}
 
 
+````
+
+- 第五步：Processor 线程发送 Response 给 Request 发送方
+
+````
+
+// SocketServer.scala
+private def processNewResponses(): Unit = {
+    var currentResponse: RequestChannel.Response = null
+    while ({currentResponse = dequeueResponse(); currentResponse != null}) { // 循环获取Response队列中的Response
+      val channelId = currentResponse.request.context.connectionId
+      try {
+        currentResponse match {
+          case response: NoOpResponse => // 不需要发送Response
+            updateRequestMetrics(response)
+            trace(s"Socket server received empty response to send, registering for read: $response")
+            handleChannelMuteEvent(channelId, ChannelMuteEvent.RESPONSE_SENT)
+            tryUnmuteChannel(channelId)
+
+          case response: SendResponse => // 需要发送Response
+            sendResponse(response, response.responseSend)
+          ......
+        }
+      }
+      ......
+    }
+  }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+````
 
