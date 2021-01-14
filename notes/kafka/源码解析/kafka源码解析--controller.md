@@ -59,3 +59,11 @@ class ControllerContext {
 
 controller会给集群中所有Broker(包括它自己所在的Broker)机器发送网络请求，让broker执行相应的指令
 
+
+#### ControllerChannelManger
+
+#### ControllerEventManger
+
+### Controller选举
+
+### Controller的作用
