@@ -64,6 +64,25 @@ controller会给集群中所有Broker(包括它自己所在的Broker)机器发�
 
 #### ControllerEventManger
 
+[![sdISHS.md.jpg](https://s3.ax1x.com/2021/01/14/sdISHS.md.jpg)](https://imgchr.com/i/sdISHS)
+
 ### Controller选举
 
+- Controller 依赖 ZooKeeper 实现 Controller 选举，主要是借助于 /controller 临时节点和 ZooKeeper 的监听器机制。
+  
+- Controller 触发场景有 3 种：集群启动时；/controller 节点被删除时；/controller 节点数据变更时。
+
 ### Controller的作用
+
+#### 成员管理
+
+- 成员数量管理，主要体现在新增成员和移除现有成员
+
+- 单个成员管理，单个broker的数据变更
+
+#### 主题管理
+
+- 主题创建/变更/删除
+
+
+#### 操作元数据
