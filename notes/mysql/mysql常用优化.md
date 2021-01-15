@@ -124,3 +124,5 @@ select * from `demo`.`order` where id> (select id from `demo`.`order` order by o
 1. 关键参数，默认情况下配置为off。
 
 2. 控制innodb每一个表使用独立的表空间，默认情况下，所有的表都会建立在共享表空间当中。
+
+### 设计范式
