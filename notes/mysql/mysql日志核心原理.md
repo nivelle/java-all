@@ -38,7 +38,12 @@
 1. binlog是MySQL Server层记录的日志,属于逻辑日志
 
 2. 是以二进制的形式记录的是这个**语句的原始逻辑**，依靠binlog是没有crash-safe能力的
-   
+
+- undoLog
+
+[![sBHSns.png](https://s3.ax1x.com/2021/01/16/sBHSns.png)](https://imgchr.com/i/sBHSns)
+
+回滚指针将数据行的所有快照记录都通过链表的结构串联了起来，每个快照的记录都保存了当时的 db_trx_id，也是那个时间点操作这个数据的事务 ID。这样如果我们想要找历史快照，就可以通过遍历回滚指针的方式进行查找
 
 redoLog | bingLog
 ---|---
