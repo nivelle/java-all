@@ -369,3 +369,6 @@ select id,name from students where cls_id in (select id from classes); //子查�
 
 ### 行子查询: 返回的结果是一行(一行多列)
 
+
+### sql 执行顺序
+FROM > WHERE > GROUP BY > HAVING > SELECT的字段 > DISTINCT > ORDER BY > LIMIT
