@@ -392,7 +392,7 @@ clientMetadata: Option[ClientMetadata]): Unit = {
 [![srUTns.md.jpg](https://s3.ax1x.com/2021/01/16/srUTns.md.jpg)](https://imgchr.com/i/srUTns)
 
 
-##### 读取本地日志
+#### 读取本地日志
 
 ````
 第一部分：
@@ -472,6 +472,31 @@ if (timeout <= 0 || fetchInfos.isEmpty || bytesReadable >= fetchMinBytes || erro
   // 再一次尝试完成请求，如果依然不能完成，则交由Purgatory等待后续处理
   delayedFetchPurgatory.tryCompleteElseWatch(delayedFetch, delayedFetchKeys)
 }
+
+第三部分：
+
+
+// 启动高水位检查点专属线程
+// 定期将Broker上所有非Offline分区的高水位值写入到检查点文件，默认5秒执行一次
+startHighWatermarkCheckPointThread()
+// 添加日志路径数据迁移线程
+maybeAddLogDirFetchers(partitionStates.keySet, highWatermarkCheckpoints)
+// 关闭空闲副本拉取线程
+replicaFetcherManager.shutdownIdleFetcherThreads()
+// 关闭空闲日志路径数据迁移线程
+replicaAlterLogDirsManager.shutdownIdleFetcherThreads()
+// 执行Leader变更之后的回调逻辑
+onLeadershipChange(partitionsBecomeLeader, partitionsBecomeFollower)
+// 构造LeaderAndIsrRequest请求的Response并返回
+val responsePartitions = responseMap.iterator.map { case (tp, error) =>
+  new LeaderAndIsrPartitionError()
+    .setTopicName(tp.topic)
+    .setPartitionIndex(tp.partition)
+    .setErrorCode(error.code)
+}.toBuffer
+new LeaderAndIsrResponse(new LeaderAndIsrResponseData()
+  .setErrorCode(Errors.NONE.code)
+  .setPartitionErrors(responsePartitions.asJava))
 ````
 
 ### becomeLeaderOrFollower->具体处理 LeaderAndIsrRequest 请求的地方，同时也是副本管理器添加分区的地方
@@ -561,4 +586,199 @@ leaderAndIsrRequest.partitionStates.forEach { partitionState =>
   if (localLog(topicPartition).isEmpty)
     markPartitionOffline(topicPartition)
 }
+````
+
+#### makeLeaders 方法
+
+makeLeaders 方法的作用是，让当前 Broker 成为给定一组分区的 Leader，也就是让当前 Broker 下该分区的副本成为 Leader 副本
+
+- 停掉这些分区对应的获取线程
+- 更新broker缓存中的分区元数据信息
+- 将指定分区添加到Leader分区集合
+
+[![sr5Z24.md.png](https://s3.ax1x.com/2021/01/17/sr5Z24.md.png)](https://imgchr.com/i/sr5Z24)
+
+
+1. 将给定的一组分区的状态全部初始化成 Errors.None
+2. 停止为这些分区服务的所有拉取线程。毕竟该 Broker 现在是这些分区的 Leader 副本了，不再是 Follower 副本了，所以没有必要再使用拉取线程了
+3. makeLeaders 方法调用 Partition 的 makeLeader 方法，去更新给定一组分区的 Leader 分区信息，而这些是由 Partition 类中的 makeLeader 方法完成的。该方法保存分区的 Leader 和 ISR 信息，同时创建必要的日志对象、重设远端 Follower 副本的 LEO 值。
+
+#### 远端副本
+
+是指保存在 Leader 副本本地内存中的一组 Follower 副本集合，在代码中用字段 remoteReplicas 来表征；ReplicaManager 在处理 FETCH 请求时，会更新 remoteReplicas 中副本对象的 LEO 值。同时，Leader 副本会将自己更新后的 LEO 值与 remoteReplicas 中副本的 LEO 值进行比较，来决定是否“抬高”高水位值
+
+#### makeFollowers
+
+- 更新Controller Epoch值
+- 保存副本列表（Assigned Replicas,AR）和清空ISR
+- 创建日志对象
+- 重设Leader副本的Broker ID 
+
+````
+
+// 第一部分：遍历partitionStates所有分区
+......
+partitionStates.foreach { case (partition, partitionState) =>
+  ......
+  // 将所有分区的处理结果的状态初始化为Errors.NONE
+  responseMap.put(partition.topicPartition, Errors.NONE)
+}
+val partitionsToMakeFollower: mutable.Set[Partition] = mutable.Set()
+try {
+  // 遍历partitionStates所有分区
+  partitionStates.foreach { case (partition, partitionState) =>
+    // 拿到分区的Leader Broker ID
+    val newLeaderBrokerId = partitionState.leader
+    try {
+      // 在元数据缓存中找到Leader Broke对象
+      metadataCache.getAliveBrokers.find(_.id == newLeaderBrokerId) match {
+        // 如果Leader确实存在
+        case Some(_) =>
+          // 执行makeFollower方法，将当前Broker配置成该分区的Follower副本
+          if (partition.makeFollower(partitionState, highWatermarkCheckpoints))
+            // 如果配置成功，将该分区加入到结果返回集中
+            partitionsToMakeFollower += partition
+          else // 如果失败，打印错误日志
+            ......
+        // 如果Leader不存在
+        case None =>
+          ......
+          // 依然创建出分区Follower副本的日志对象
+          partition.createLogIfNotExists(isNew = partitionState.isNew, isFutureReplica = false,
+            highWatermarkCheckpoints)
+      }
+    } catch {
+      case e: KafkaStorageException =>
+        ......
+    }
+  }
+
+第二部分：
+
+// 第二部分：执行其他动作
+// 移除现有Fetcher线程
+replicaFetcherManager.removeFetcherForPartitions(
+  partitionsToMakeFollower.map(_.topicPartition))
+......
+// 尝试完成延迟请求
+partitionsToMakeFollower.foreach { partition =>
+  completeDelayedFetchOrProduceRequests(partition.topicPartition)
+}
+if (isShuttingDown.get()) {
+  .....
+} else {
+  // 为需要将当前Broker设置为Follower副本的分区
+  // 确定Leader Broker和起始读取位移值fetchOffset
+  val partitionsToMakeFollowerWithLeaderAndOffset = partitionsToMakeFollower.map { partition =>
+  val leader = metadataCache.getAliveBrokers
+    .find(_.id == partition.leaderReplicaIdOpt.get).get
+    .brokerEndPoint(config.interBrokerListenerName)
+  val fetchOffset = partition.localLogOrException.highWatermark
+    partition.topicPartition -> InitialFetchState(leader, 
+      partition.getLeaderEpoch, fetchOffset)
+  }.toMap
+  // 使用上一步确定的Leader Broker和fetchOffset添加新的Fetcher线程
+  replicaFetcherManager.addFetcherForPartitions(
+    partitionsToMakeFollowerWithLeaderAndOffset)
+  }
+} catch {
+  case e: Throwable =>
+    ......
+    throw e
+}
+......
+// 返回需要将当前Broker设置为Follower副本的分区列表
+partitionsToMakeFollower
+````
+
+#### ISR管理
+
+- 一个是 maybeShrinkIsr 方法，作用是阶段性地查看 ISR 中的副本集合是否需要收缩
+
+- 另一个是 maybePropagateIsrChanges 方法，作用是定期向集群 Broker 传播 ISR 的变更。
+
+##### maybeShrinkIsr 方法
+
+收缩是指，把 ISR 副本集合中那些与 Leader 差距过大的副本移除的过程。所谓的差距过大，就是 ISR 中 Follower 副本滞后 Leader 副本的时间，超过了 Broker 端参数 **replica.lag.time.max.ms**值的 1.5 倍
+
+[![srINfU.md.jpg](https://s3.ax1x.com/2021/01/17/srINfU.md.jpg)](https://imgchr.com/i/srINfU)
+
+
+````
+
+def maybeShrinkIsr(): Unit = {
+  // 第一步：判断是否需要执行ISR收缩，调用 needShrinkIsr 方法来获取与 Leader 不同步的副本。如果存在这样的副本，说明需要执行 ISR 收缩
+  val needsIsrUpdate = inReadLock(leaderIsrUpdateLock) {
+    needsShrinkIsr()
+  }
+  val leaderHWIncremented = needsIsrUpdate && inWriteLock(leaderIsrUpdateLock) {
+    leaderLogIfLocal match {
+      // 如果是Leader副本
+      case Some(leaderLog) =>
+        // 第二步：获取不同步的副本Id列表，再次获取与 Leader 不同步的副本列表，并把它们从当前 ISR 中剔除出去，然后计算得出最新的 ISR 列表
+        val outOfSyncReplicaIds = getOutOfSyncReplicas(replicaLagTimeMaxMs)
+        // 如果存在不同步的副本Id列表
+        if (outOfSyncReplicaIds.nonEmpty) {
+          // 计算收缩之后的ISR列表
+          val newInSyncReplicaIds = inSyncReplicaIds -- outOfSyncReplicaIds
+          assert(newInSyncReplicaIds.nonEmpty)
+          info("Shrinking ISR from %s to %s. Leader: (highWatermark: %d, endOffset: %d). Out of sync replicas: %s."
+            .format(inSyncReplicaIds.mkString(","),
+              newInSyncReplicaIds.mkString(","),
+              leaderLog.highWatermark,
+              leaderLog.logEndOffset,
+              outOfSyncReplicaIds.map { replicaId =>
+                s"(brokerId: $replicaId, endOffset: ${getReplicaOrException(replicaId).logEndOffset})"
+              }.mkString(" ")
+            )
+          )
+          // 第三步:更新ZooKeeper中分区的ISR数据以及Broker的元数据缓存中的数据
+          shrinkIsr(newInSyncReplicaIds)
+          // 第四步: 尝试更新Leader副本的高水位值
+          maybeIncrementLeaderHW(leaderLog)
+        } else {
+          false
+        }
+      // 如果不是Leader副本，什么都不做
+      case None => false
+    }
+  }
+  // 如果Leader副本的高水位值抬升了
+  if (leaderHWIncremented)
+    // 第五步: 尝试解锁一下延迟请求
+    tryCompleteDelayedRequests()
+}
+
+````
+
+##### maybePropagateIsrChanges 方法
+
+确定 ISR 变更传播的条件。这里需要同时满足两点
+
+1. 存在尚未被传播的 ISR 变更
+
+2. 最近 5 秒没有任何 ISR 变更，或者自上次 ISR 变更已经有超过 1 分钟的时间
+
+一旦满足了这两个条件，代码会创建 ZooKeeper 相应的 Znode 节点；然后，清空 isrChangeSet 集合；最后，更新最近 ISR 变更时间戳
+````
+
+def maybePropagateIsrChanges(): Unit = {
+  val now = System.currentTimeMillis()
+  isrChangeSet synchronized {
+    // ISR变更传播的条件，需要同时满足：
+    // 1. 存在尚未被传播的ISR变更
+    // 2. 最近5秒没有任何ISR变更，或者自上次ISR变更已经有超过1分钟的时间
+    if (isrChangeSet.nonEmpty &&
+      (lastIsrChangeMs.get() + ReplicaManager.IsrChangePropagationBlackOut < now ||
+        lastIsrPropagationMs.get() + ReplicaManager.IsrChangePropagationInterval < now)) {
+      // 创建ZooKeeper相应的Znode节点
+      zkClient.propagateIsrChanges(isrChangeSet)
+      // 清空isrChangeSet集合
+      isrChangeSet.clear()
+      // 更新最近ISR变更时间戳
+      lastIsrPropagationMs.set(now)
+    }
+  }
+}
+
 ````
