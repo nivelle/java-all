@@ -12,6 +12,7 @@ private transient volatile int sizeCtl;
 
 4. > 0 初始化或者扩容完成后下一次扩容门槛
 
+--------
 
 ```
 
