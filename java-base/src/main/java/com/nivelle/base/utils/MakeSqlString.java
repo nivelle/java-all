@@ -45,27 +45,51 @@ public class MakeSqlString {
 //            System.out.println(stringBuilder1);
 //        }
 
+//        for (int i = 0; i < 64; i++) {
+//            StringBuilder stringBuilder2 = new StringBuilder("DROP TABLE IF EXISTS `/");
+//            stringBuilder2.append(i);
+//            stringBuilder2.append("`;");
+//            stringBuilder2.append("CREATE TABLE `/");
+//            stringBuilder2.append(i);
+//            stringBuilder2.append("`");
+//            stringBuilder2.append("(");
+//            stringBuilder2.append("`id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键唯一自增',");
+//            stringBuilder2.append("`user_name` varchar(16) NOT NULL default ''COMMENT 'S号',");
+//            stringBuilder2.append("`uc_user_name` varchar(16) NOT NULL default ''COMMENT '用户中心用户名',");
+//            stringBuilder2.append("`nd_phone` varchar(16) NOT NULL DEFAULT '' COMMENT '精选手机号码',");
+//            stringBuilder2.append("`uc_user_phone` varchar(16) NOT NULL DEFAULT '' COMMENT '用户中心手机号码',");
+//            stringBuilder2.append("`create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',");
+//            stringBuilder2.append("`update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',");
+//            stringBuilder2.append("`yn` tinyint(1) NOT NULL DEFAULT '1' COMMENT '数据有效性,0:无效;1:有效',");
+//            stringBuilder2.append("PRIMARY KEY (`id`),");
+//            stringBuilder2.append("UNIQUE INDEX `idx_name`(`user_name`)");
+//            stringBuilder2.append(") ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+//            System.out.println(stringBuilder2.toString());
+//        }
+
+
         for (int i = 0; i < 64; i++) {
-            StringBuilder stringBuilder2 = new StringBuilder("DROP TABLE IF EXISTS `/");
+            StringBuilder stringBuilder2 = new StringBuilder("");
+//            stringBuilder2.append(i);
+//            stringBuilder2.append("`;");
+            stringBuilder2.append("ALTER TABLE nd_sync_uc_user_");
             stringBuilder2.append(i);
-            stringBuilder2.append("`;");
-            stringBuilder2.append("CREATE TABLE `/");
-            stringBuilder2.append(i);
-            stringBuilder2.append("`");
-            stringBuilder2.append("(");
-            stringBuilder2.append("`id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键唯一自增',");
-            stringBuilder2.append("`user_name` varchar(16) NOT NULL default ''COMMENT 'S号',");
-            stringBuilder2.append("`uc_user_name` varchar(16) NOT NULL default ''COMMENT '用户中心用户名',");
-            stringBuilder2.append("`nd_phone` varchar(16) NOT NULL DEFAULT '' COMMENT '精选手机号码',");
-            stringBuilder2.append("`uc_user_phone` varchar(16) NOT NULL DEFAULT '' COMMENT '用户中心手机号码',");
-            stringBuilder2.append("`create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',");
-            stringBuilder2.append("`update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',");
-            stringBuilder2.append("`yn` tinyint(1) NOT NULL DEFAULT '1' COMMENT '数据有效性,0:无效;1:有效',");
-            stringBuilder2.append("PRIMARY KEY (`id`),");
-            stringBuilder2.append("UNIQUE INDEX `idx_name`(`user_name`)");
-            stringBuilder2.append(") ENGINE=InnoDB DEFAULT CHARSET=utf8;");
-            System.out.println(stringBuilder2.toString());
+            //stringBuilder2.append("`");
+            stringBuilder2.append(" ADD INDEX idx_name (`user_name`);");
+           System.out.println(stringBuilder2.toString());
         }
+
+//        for (int i = 0; i < 64; i++) {
+//            StringBuilder stringBuilder2 = new StringBuilder("DROP INDEX idx_name");
+////            stringBuilder2.append(i);
+////            stringBuilder2.append("`;");
+//            stringBuilder2.append(" on  nd_sync_uc_user_");
+//            stringBuilder2.append(i);
+//            stringBuilder2.append(";");
+//            //stringBuilder2.append(" ADD INDEX idx_name (`user_name`);");
+//            System.out.println(stringBuilder2.toString());
+//        }
+
 
 
     }
