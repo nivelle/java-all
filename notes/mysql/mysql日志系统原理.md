@@ -1,4 +1,5 @@
 ### mysql 逻辑架构
+[![sfBoMd.md.png](https://s3.ax1x.com/2021/01/20/sfBoMd.md.png)](https://imgchr.com/i/sfBoMd)
 
 ### 性能配置
 
