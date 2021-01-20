@@ -1,4 +1,5 @@
 
+````
 desc  students;
 +-------------+---------------------------------+------+-----+-------------------+-----------------------------------------------+
 | Field       | Type                            | Null | Key | Default           | Extra                                         |
@@ -13,10 +14,11 @@ desc  students;
 | update_time | timestamp                       | NO   |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED on update CURRENT_TIMESTAMP |
 | yn          | tinyint(1)                      | NO   |     | 1                 |                                               |
 +-------------+---------------------------------+------+-----+-------------------+-----------------------------------------------+
-
+````
 
 ## distinct 消除重复行,一种类型只取一种
 
+````
 select distinct(gender) from students; //查询性别种类
 
 +--------+
@@ -26,7 +28,6 @@ select distinct(gender) from students; //查询性别种类
 | boy    |
 | girl   |
 +--------+
-
 select count(distinct(gender)) from students; //性别种类数
 
 +-------------------------+
@@ -34,10 +35,10 @@ select count(distinct(gender)) from students; //性别种类数
 +-------------------------+
 |                       3 |
 +-------------------------+
-
-
+````
 ## order by
 
+````
 select * from students where (age between 18 and 34) and gender = 1 order by high desc,age; //年龄在18到34岁之间,性别为男 按身高降序排列 如果身高一样则按照年龄升序排列
 +----+--------+-----+--------+--------+--------+---------------------+---------------------+----+
 | id | name   | age | high   | gender | cls_id | create_time         | update_time         | yn |
@@ -51,9 +52,10 @@ select * from students where (age between 18 and 34) and gender = 1 order by hig
 |  4 | 老张   |  28 |  10.00 | boy    |    111 | 2020-06-17 18:16:53 | 2020-06-17 18:16:53 |  1 |
 +----+--------+-----+--------+--------+--------+---------------------+---------------------+----+
 
-
+````
 ## group by
 
+````
 select * from students group by gender; //默认满足分组条件的第一条数据
 +----+-----------+-----+--------+--------+--------+---------------------+---------------------+----+
 | id | name      | age | high   | gender | cls_id | create_time         | update_time         | yn |
@@ -133,12 +135,14 @@ select sum(age),gender from students group by gender limit 1,2; //对分组后�
 |      196 | boy    |
 |      183 | girl   |
 +----------+--------+
-
+````
 ## 统计group by 之后的count()
+````
 select count(*) from(SELECT count(*) FROM 表名 WHERE 条件 GROUP BY id ) a ;
-
+````
 ## 关联查询
 
+``````
 select s.id as sId,s.name sName,s.cls_id sclsId, c.id as cid ,c.name as cname from students as s inner join classes as c;// innner join s表和c表每一行数据关联 s(n)*c(n)
 +-----+-----------+--------+-----+---------------+
 | sId | sName     | sclsId | cid | cname         |
@@ -302,12 +306,13 @@ select * from students right join classes on students.cls_id=classes.id; //以�
 |   27 | 老19      |   12 | 173.04 | girl   |    111 | 2020-06-17 18:27:48 | 2020-06-17 18:27:48 |    1 | 111 | 测试班级      | 2020-06-17 23:31:02 | 2020-06-17 23:31:02 |  1 |
 | NULL | NULL      | NULL |   NULL | NULL   |   NULL | NULL                | NULL                | NULL | 112 | 测试班级2     | 2020-06-17 23:31:17 | 2020-06-17 23:31:17 |  1 |
 +------+-----------+------+--------+--------+--------+---------------------+---------------------+------+-----+---------------+---------------------+---------------------+----+
-
+``````
 
 ## 子查询
 
 ### 标量子查询: 子查询返回的结果是一个数据(一行一列)
 
+``````
 select * from students where high > (select avg(high) from students);
 +----+-----------+-----+--------+--------+--------+---------------------+---------------------+----+
 | id | name      | age | high   | gender | cls_id | create_time         | update_time         | yn |
@@ -330,9 +335,9 @@ select * from students where high > (select avg(high) from students);
 | 26 | 老18      |   7 | 186.75 | girl   |    111 | 2020-06-17 18:27:48 | 2020-06-17 18:27:48 |  1 |
 | 27 | 老19      |  12 | 173.04 | girl   |    111 | 2020-06-17 18:27:48 | 2020-06-17 18:27:48 |  1 |
 +----+-----------+-----+--------+--------+--------+---------------------+---------------------+----+
-
+``````
 ### 列子查询: 返回的结果是一列(一列多行)
-
+``````
 select id,name from students where cls_id in (select id from classes); //子查询为 id列的多行数据
 +----+-----------+
 | id | name      |
@@ -365,10 +370,177 @@ select id,name from students where cls_id in (select id from classes); //子查�
 | 26 | 老18      |
 | 27 | 老19      |
 +----+-----------+
-
-
+``````
 ### 行子查询: 返回的结果是一行(一行多列)
 
-
 ### sql 执行顺序
+
 FROM > WHERE > GROUP BY > HAVING > SELECT的字段 > DISTINCT > ORDER BY > LIMIT
+
+### 库
+
+#### 创建数据库
+
+```
+CREATE DATABASE javaguideslave;
+
+```
+
+#### 指定编码
+
+```
+drop database if EXISTS teambuild;
+create database teambuild CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
+
+#### 查看数据库版本
+
+
+```
+select version();
+
++-----------+
+| version() |
++-----------+
+| 8.0.16    |
++-----------+
+```
+
+#### 查看数据库隔离级别(默认RR重复读)
+
+```
+mysql> select @@global.tx_isolation;
++-----------------------+
+| @@global.tx_isolation |
++-----------------------+
+| REPEATABLE-READ       |
++-----------------------+
+```
+
+#### 查看当前默认的数据库引擎
+
+
+```
+show engines;  
+
++--------------------+---------+----------------------------------------------------------------+--------------+------+------------+
+| Engine             | Support | Comment                                                        | Transactions | XA   | Savepoints |
++--------------------+---------+----------------------------------------------------------------+--------------+------+------------+
+| ARCHIVE            | YES     | Archive storage engine                                         | NO           | NO   | NO         |
+| BLACKHOLE          | YES     | /dev/null storage engine (anything you write to it disappears) | NO           | NO   | NO         |
+| MRG_MYISAM         | YES     | Collection of identical MyISAM tables                          | NO           | NO   | NO         |
+| FEDERATED          | NO      | Federated MySQL storage engine                                 | NULL         | NULL | NULL       |
+| MyISAM             | YES     | MyISAM storage engine                                          | NO           | NO   | NO         |
+| PERFORMANCE_SCHEMA | YES     | Performance Schema                                             | NO           | NO   | NO         |
+| InnoDB             | DEFAULT | Supports transactions, row-level locking, and foreign keys     | YES          | YES  | YES        |
+| MEMORY             | YES     | Hash based, stored in memory, useful for temporary tables      | NO           | NO   | NO         |
+| CSV                | YES     | CSV storage engine                                             | NO           | NO   | NO         |
++--------------------+---------+----------------------------------------------------------------+--------------+------+------------+
+```
+#### 查看当前的查询状态
+
+```
+
+show processlist;
+
+```
+
+#### 创建账号
+
+```
+create user 'root'@'%' identified with mysql_native_password by 'Nivelle123';
+```
+
+#### 给当前账号授权
+
+```
+GRANT ALL PRIVILEGES ON javaguides.* TO 'root'@'localhost' IDENTIFIED BY 'Nivelle123' WITH GRANT OPTION;
+
+```
+
+#### 查看数据库
+
+```
+show databases;
+
+```
+
+#### 使用某个数据库
+
+```
+use databases;
+
+```
+#### 删除某个数据库
+
+```
+drop database databasesName;
+
+```
+
+---
+
+### 表
+
+#### 初始化表
+
+```
+DROP TABLE IF EXISTS `activity`;
+CREATE TABLE `activity` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `activity_id` varchar(32) NOT NULL default '' COMMENT '活动id',
+  `position_type` tinyint(10) NOT NULL default 0 COMMENT '广告位置 1.活动页 2.首页',
+  `ip` varchar (15) NOT NULL DEFAULT '' COMMENT 'ip地址',
+  `type` varchar(32) NOT NULL default '' COMMENT '设备类型',
+  `device_no` varchar (32) NOT NULL default '' COMMENT '设备号',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+```
+
+#### 查看所有表
+
+```
+show tables;
+```
+#### 删除表
+
+```
+drop table tableName;
+```
+
+#### 修改表名
+
+```
+alter table oldTableName rename to newTableName;
+```
+#### 修改列
+
+```
+alter table tableName change oldName newName;
+
+```
+
+#### 添加列
+
+```
+alter table tableName add column 列名 类型；
+
+```
+#### 修改列属性
+
+```
+alter table 表名 modify name varchar(22);
+
+```
+
+#### 删除整个表数据后整理表
+
+```
+alter table A engine=InnoDB;
+
+```
+
+---

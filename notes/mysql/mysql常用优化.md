@@ -6,9 +6,7 @@
 直接查询:
 
 ```
-
 select * from `demo`.`order` order by order_no limit 10000, 20;//会返回10020行数据，返回的数据太多了,导致执行的效率比较低。
-
 ```
 - 利用子查询优化分页查询
 
@@ -156,17 +154,3 @@ select * from `demo`.`order` where id> (select id from `demo`.`order` order by o
 ````
 
 - 第三范式：保证表中的非住属性与候选键不存在传递依赖，非主属性不依赖于另外一个非主属性，从而间接依赖了候选键。也就是非主属性只能依赖于主键。
-
-
-
-
-
-
-
-
-
-
-
-
-
-
