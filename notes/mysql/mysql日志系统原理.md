@@ -38,6 +38,8 @@
 
 2. 是以二进制的形式记录的是这个**语句的原始逻辑**，依靠binlog是没有crash-safe能力的
 
+3. Binlog有两种模式，statement 格式的话是记sql语句， row格式会记录行的内容，记两条，更新前和更新后都有
+
 - undoLog
 
 [![sBHSns.png](https://s3.ax1x.com/2021/01/16/sBHSns.png)](https://imgchr.com/i/sBHSns)
