@@ -67,17 +67,17 @@ public class MakeSqlString {
 //            System.out.println(stringBuilder2.toString());
 //        }
 
-
+        StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < 64; i++) {
-            StringBuilder stringBuilder2 = new StringBuilder("");
-//            stringBuilder2.append(i);
-//            stringBuilder2.append("`;");
-            stringBuilder2.append("ALTER TABLE nd_sync_uc_user_");
+            StringBuilder stringBuilder2 = new StringBuilder("select user_name,process,count(*) as total  from nd_company_reading_");
             stringBuilder2.append(i);
-            //stringBuilder2.append("`");
-            stringBuilder2.append(" ADD INDEX idx_name (`user_name`);");
-           System.out.println(stringBuilder2.toString());
+            stringBuilder2.append(" where company_id ='101209' and process>=85 group by user_name ");
+            stringBuilder2.append(" union all ");
+            stringBuilder.append(stringBuilder2);
+            stringBuilder.append("\n");
         }
+        System.out.println(stringBuilder.toString());
+
 
 //        for (int i = 0; i < 64; i++) {
 //            StringBuilder stringBuilder2 = new StringBuilder("DROP INDEX idx_name");
@@ -90,6 +90,16 @@ public class MakeSqlString {
 //            System.out.println(stringBuilder2.toString());
 //        }
 
+
+//        for (int i = 0; i < 64; i++) {
+//            StringBuilder stringBuilder2 = new StringBuilder("");
+//
+//            stringBuilder2.append("ALTER TABLE nd_sync_uc_user_");
+//            stringBuilder2.append(i);
+//            //stringBuilder2.append("`");
+//            stringBuilder2.append(" ADD INDEX idx_name (`user_name`);");
+//            System.out.println(stringBuilder2.toString());
+//        }
 
 
     }
