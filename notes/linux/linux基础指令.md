@@ -327,6 +327,9 @@ systemd─┬─AliYunDun───23*[{AliYunDun}]
 
 ```
 
+- ps aux | grep 2344
+
+
 #### top 
 
 #### top 每3秒刷新一次
@@ -339,7 +342,6 @@ systemd─┬─AliYunDun───23*[{AliYunDun}]
 #### 任务: Tasks(进程数)
 
 - 68 total,   1 running,  38 sleeping,   5 stopped,   0 zombie
-
 
 #### CPU 
 
@@ -394,6 +396,23 @@ PID USER      PR(优先级)  NI(nice值,占用资源)    VIRT    RES    SHR S %C
     2 root      20   0       0      0      0 S  0.0  0.0   0:00.10 kthreadd                                                                                                            
     3 root       0 -20       0      0      0 I  0.0  0.0   0:00.00 rcu_gp                                                                                                              
 ```
+
+- S ： 也就是 status 列，表示进程状态
+
+1. R 是 Running 或 Runnable 的缩写，表示进程在 CPU 的就绪队列中，正在运行或者正在等待运行。
+
+2. D 是 Disk sleep 也就是不可中断状态睡眠（Uninterruptible Sleep），一般表示进程正在跟硬件交互，并且交互过程不允许被其他进程或中断打断
+
+3. Z 是Zombie 表示僵尸经常，也就是实际已经结束了，但是父进程还没有回收它的资源（比如进程的描述符 、PID等）
+
+4. S Interruptible Sleep 的缩写，也就是可中断状态睡眠，表示进程因为等待某个事件而被系统挂起。当进程等待的事件发生时，它会被唤醒并进入 R 状态。
+
+5. I 是 Idle 的缩写，也就是空闲状态，用在不可中断睡眠的内核线程上。
+   前面说了，硬件交互导致的不可中断进程用 D 表示，但对某些内核线程来说，它们有可能实际上并没有任何负载，用 Idle 正是为了区分这种情况。要注意，D 状态的进程会导致平均负载升高， I 状态的进程却不会。
+   
+6. T :表示进程处于暂停或者跟踪状态
+
+7. X : 也就是Dead 的缩写，表示进程已经消亡，所以不会在top 或者 ps命令中看到它
 
 #### top -Hp pid 查看具体线程占用系统资源情况。
 
@@ -466,7 +485,7 @@ PID USER      PR(优先级)  NI(nice值,占用资源)    VIRT    RES    SHR S %C
 
 ````
 
-10:55:15 AM   UID       PID   kB_rd/s   kB_wr/s kB_ccwr/s  Command
+10:55:15 AM   UID       PID   kB_rd/s【每秒对的KB数】   kB_wr/s【每秒写的KB数】 kB_ccwr/s  Command
 10:55:15 AM     0         1      0.03      0.14      0.03  systemd
 10:55:15 AM     0       290      0.00      0.31      0.00  jbd2/vda1-8
 10:55:15 AM     0       361      0.00      0.64      0.00  systemd-journal
