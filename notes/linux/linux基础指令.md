@@ -329,26 +329,64 @@ systemd─┬─AliYunDun───23*[{AliYunDun}]
 
 #### top 
 
-```
-top - 12:00:35 up 54 days(开机54天), 13:13,  1 user(两个用户登陆),  load average: 0.00, 0.00, 0.00(平均负载,繁忙程度,1是满负载)
-```
+#### top 每3秒刷新一次
+- top - 12:00:35 up 54 days(开机54天), 13:13,
+  
+- 1 user(1个用户登陆),  
+  
+- load average: 0.00, 0.00, 0.00(平均负载,繁忙程度,1是满负载)
+
+#### 任务: Tasks(进程数)
+
+- 68 total,   1 running,  38 sleeping,   5 stopped,   0 zombie
 
 
-```
-任务: Tasks(进程数):  68 total,   1 running,  38 sleeping,   5 stopped,   0 zombie
-```
+#### CPU 
 
-```
-CPU: %Cpu(s(多cup,按1,2分别显示)):  0.7 us(参与用户状态计算),  0.3 sy(进程状态交互),  0.0 ni, 99.0 id(空闲),  0.0 wa(等待),  0.0 hi,  0.0 si,  0.0 st  //加起来等于100
-```
+%Cpu(s(多cup,按1,2分别显示)): 
 
-```
-内存:KiB Mem :  2041072 total(内存),   117932 free,   858800 used,  1064340 buff/cache(读写缓存)
-```
+- 0.7 us: user（通常缩写为 us），代表用户态 CPU 时间。注意，它不包括下面的 nice 时间，但包括了 guest 时间
+  
+- 0.3 sy: system（通常缩写为 sys），代表内核态 CPU 时间)
+  
+- 0.0 ni: (通常缩写为 ni），代表低优先级用户态 CPU 时间，也就是进程的 nice 值被调整为 1-19 之间时的 CPU 时间。 这里注意，nice 可取值范围是 -20 到 19，数值越大，优先级反而越低)
 
-```
-交换分区:KiB Swap:        0 total,        0 free,        0 used.  1007652 avail Mem
-```
+- 99.0 id: idle（通常缩写为 id），代表空闲时间。注意，它不包括等待 I/O 的时间（iowait）
+  
+- 0.0 wa : iowait（通常缩写为 wa），代表等待 I/O 的 CPU 时间
+  
+- 0.0 hi: irq（通常缩写为 hi），代表处理硬中断的 CPU 时间。
+
+- 0.0  softirq（通常缩写为 si），代表处理软中断的 CPU 时间
+  
+- 0.0 st（steal（通常缩写为 st），代表当系统运行在虚拟机中的时候，被其他虚拟机占用的 CPU 时间）
+
+- guest: guest（通常缩写为 guest），代表通过虚拟化运行其他操作系统的时间，也就是运行虚拟机的 CPU 时间
+
+- gnice: guest_nice（通常缩写为 gnice），代表以低优先级运行虚拟机的时间
+
+#### 内存 内存:KiB Mem
+
+- 2041072 total(内存),   
+  
+- 117932 free,  
+  
+- 858800 used,  
+  
+- 1064340 buff/cache(读写缓存)
+
+#### 交换分区:KiB Swap
+
+- 0 total,       
+  
+- 0 free,        
+  
+- 0 used.  
+  
+- 1007652 avail Mem
+
+#### 进程详情
+
 ```
 PID USER      PR(优先级)  NI(nice值,占用资源)    VIRT    RES    SHR S %CPU %MEM     TIME+ COMMAND (运行时间)                                                                                                            
 13478 root      10 -10  127152  18140  14168 S  0.7  0.9 228:47.08 AliYunDun                                                                                                           
@@ -416,8 +454,25 @@ PID USER      PR(优先级)  NI(nice值,占用资源)    VIRT    RES    SHR S %C
 
 -r：显示各个进程的内存使用情况；
 
+````
+10:52:22 AM   UID       PID  minflt/s  majflt/s     VSZ    RSS   %MEM  Command
+10:52:22 AM     0         1      0.11      0.00   43392   5080   0.25  systemd
+10:52:22 AM     0       361      0.80      0.00   39476   8724   0.43  systemd-journal
+10:52:22 AM     0       386      0.00      0.00   43312   3560   0.17  systemd-udevd
+
+````
+
 -d：显示各个进程的 I/O 使用情况；
 
+````
+
+10:55:15 AM   UID       PID   kB_rd/s   kB_wr/s kB_ccwr/s  Command
+10:55:15 AM     0         1      0.03      0.14      0.03  systemd
+10:55:15 AM     0       290      0.00      0.31      0.00  jbd2/vda1-8
+10:55:15 AM     0       361      0.00      0.64      0.00  systemd-journal
+
+
+````
 -w：显示每个进程的上下文切换情况；
 
 ````
@@ -440,7 +495,24 @@ PID USER      PR(优先级)  NI(nice值,占用资源)    VIRT    RES    SHR S %C
 ````
 -p：指定进程号；
 
+````
+10:56:19 AM   UID       PID    %usr %system  %guest    %CPU   CPU  Command
+10:56:19 AM    27       613    0.01    0.01    0.00    0.03     0  mysqld
+
+````
+
 -t：显示进程中线程的统计信息。
+
+````
+10:57:03 AM   UID      TGID       TID    %usr %system  %guest    %CPU   CPU  Command
+10:57:03 AM     0         1         -    0.00    0.00    0.00    0.00     0  systemd
+10:57:03 AM     0         -         1    0.00    0.00    0.00    0.00     0  |__systemd
+10:57:03 AM     0         2         -    0.00    0.00    0.00    0.00     0  kthreadd
+10:57:03 AM     0         -         2    0.00    0.00    0.00    0.00     0  |__kthreadd
+10:57:03 AM     0         9         -    0.00    0.00    0.00    0.00     0  ksoftirqd/0
+10:57:03 AM     0         -         9    0.00    0.00    0.00    0.00     0  |__ksoftirqd/0
+
+````
 
 #### jstat 
 
@@ -560,47 +632,6 @@ jstack -l 9233
 2020-07-25 23:13:06
 Full thread dump Java HotSpot(TM) 64-Bit Server VM (25.191-b12 mixed mode):
 
-"Attach Listener" #56 daemon prio=9 os_prio=31 tid=0x00007f9240b37000 nid=0x6803 waiting on condition [0x0000000000000000]
-   java.lang.Thread.State: RUNNABLE
-
-   Locked ownable synchronizers:
-        - None
-
-"DestroyJavaVM" #41 prio=5 os_prio=31 tid=0x00007f923fbc6000 nid=0xc03 waiting on condition [0x0000000000000000]
-   java.lang.Thread.State: RUNNABLE
-
-   Locked ownable synchronizers:
-        - None
-
-"http-nio-8090-Acceptor" #39 daemon prio=5 os_prio=31 tid=0x00007f9241c20000 nid=0x6203 runnable [0x000070000c158000]
-   java.lang.Thread.State: RUNNABLE
-        at sun.nio.ch.ServerSocketChannelImpl.accept0(Native Method)
-        at sun.nio.ch.ServerSocketChannelImpl.accept(ServerSocketChannelImpl.java:422)
-        at sun.nio.ch.ServerSocketChannelImpl.accept(ServerSocketChannelImpl.java:250)
-        - locked <0x000000079d6fdb28> (a java.lang.Object)
-        at org.apache.tomcat.util.net.NioEndpoint.serverSocketAccept(NioEndpoint.java:469)
-        at org.apache.tomcat.util.net.NioEndpoint.serverSocketAccept(NioEndpoint.java:71)
-        at org.apache.tomcat.util.net.Acceptor.run(Acceptor.java:95)
-        at java.lang.Thread.run(Thread.java:748)
-
-   Locked ownable synchronizers:
-        - None
-
-"http-nio-8090-ClientPoller" #38 daemon prio=5 os_prio=31 tid=0x00007f9241c1d000 nid=0x6003 runnable [0x000070000c055000]
-   java.lang.Thread.State: RUNNABLE
-        at sun.nio.ch.KQueueArrayWrapper.kevent0(Native Method)
-        at sun.nio.ch.KQueueArrayWrapper.poll(KQueueArrayWrapper.java:198)
-        at sun.nio.ch.KQueueSelectorImpl.doSelect(KQueueSelectorImpl.java:117)
-        at sun.nio.ch.SelectorImpl.lockAndDoSelect(SelectorImpl.java:86)
-        - locked <0x00000007988c2e70> (a sun.nio.ch.Util$3)
-        - locked <0x00000007988c2e60> (a java.util.Collections$UnmodifiableSet)
-        - locked <0x00000007988c2d40> (a sun.nio.ch.KQueueSelectorImpl)
-        at sun.nio.ch.SelectorImpl.select(SelectorImpl.java:97)
-        at org.apache.tomcat.util.net.NioEndpoint$Poller.run(NioEndpoint.java:709)
-        at java.lang.Thread.run(Thread.java:748)
-
-   Locked ownable synchronizers:
-        - None
 
 "http-nio-8090-exec-1" #37 daemon prio=5 os_prio=31 tid=0x00007f923fbc5800 nid=0x5f03 waiting on condition [0x000070000bf52000]
    java.lang.Thread.State: WAITING (parking)
@@ -616,273 +647,6 @@ Full thread dump Java HotSpot(TM) 64-Bit Server VM (25.191-b12 mixed mode):
         at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
         at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
         at java.lang.Thread.run(Thread.java:748)
-
-   Locked ownable synchronizers:
-        - None
-
-"http-nio-8080-Acceptor" #36 daemon prio=5 os_prio=31 tid=0x00007f9240b3e000 nid=0x5e03 runnable [0x000070000be4f000]
-   java.lang.Thread.State: RUNNABLE
-        at sun.nio.ch.ServerSocketChannelImpl.accept0(Native Method)
-        at sun.nio.ch.ServerSocketChannelImpl.accept(ServerSocketChannelImpl.java:422)
-        at sun.nio.ch.ServerSocketChannelImpl.accept(ServerSocketChannelImpl.java:250)
-        - locked <0x0000000798808ea8> (a java.lang.Object)
-        at org.apache.tomcat.util.net.NioEndpoint.serverSocketAccept(NioEndpoint.java:469)
-        at org.apache.tomcat.util.net.NioEndpoint.serverSocketAccept(NioEndpoint.java:71)
-        at org.apache.tomcat.util.net.Acceptor.run(Acceptor.java:95)
-        at java.lang.Thread.run(Thread.java:748)
-
-   Locked ownable synchronizers:
-        - None
-
-"http-nio-8080-ClientPoller" #35 daemon prio=5 os_prio=31 tid=0x00007f9240b3d000 nid=0xa003 runnable [0x000070000bd4c000]
-   java.lang.Thread.State: RUNNABLE
-        at sun.nio.ch.KQueueArrayWrapper.kevent0(Native Method)
-        at sun.nio.ch.KQueueArrayWrapper.poll(KQueueArrayWrapper.java:198)
-        at sun.nio.ch.KQueueSelectorImpl.doSelect(KQueueSelectorImpl.java:117)
-        at sun.nio.ch.SelectorImpl.lockAndDoSelect(SelectorImpl.java:86)
-        - locked <0x00000007988a2628> (a sun.nio.ch.Util$3)
-        - locked <0x00000007988a2618> (a java.util.Collections$UnmodifiableSet)
-        - locked <0x00000007988a24f8> (a sun.nio.ch.KQueueSelectorImpl)
-        at sun.nio.ch.SelectorImpl.select(SelectorImpl.java:97)
-        at org.apache.tomcat.util.net.NioEndpoint$Poller.run(NioEndpoint.java:709)
-        at java.lang.Thread.run(Thread.java:748)
-
-   Locked ownable synchronizers:
-        - None
-
-"http-nio-8080-exec-1" #34 daemon prio=5 os_prio=31 tid=0x00007f9240408000 nid=0xa203 waiting on condition [0x000070000bc49000]
-   java.lang.Thread.State: WAITING (parking)
-        at sun.misc.Unsafe.park(Native Method)
-        - parking to wait for  <0x00000007988738a0> (a java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject)
-        at java.util.concurrent.locks.LockSupport.park(LockSupport.java:175)
-        at java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(AbstractQueuedSynchronizer.java:2039)
-        at java.util.concurrent.LinkedBlockingQueue.take(LinkedBlockingQueue.java:442)
-        at org.apache.tomcat.util.threads.TaskQueue.take(TaskQueue.java:107)
-        at org.apache.tomcat.util.threads.TaskQueue.take(TaskQueue.java:33)
-        at java.util.concurrent.ThreadPoolExecutor.getTask(ThreadPoolExecutor.java:1074)
-        at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1134)
-        at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
-        at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
-        at java.lang.Thread.run(Thread.java:748)
-
-   Locked ownable synchronizers:
-        - None
-
-"http-nio-8080-BlockPoller" #33 daemon prio=5 os_prio=31 tid=0x00007f9240b3f000 nid=0xa30b runnable [0x000070000bb46000]
-   java.lang.Thread.State: RUNNABLE
-        at sun.nio.ch.KQueueArrayWrapper.kevent0(Native Method)
-        at sun.nio.ch.KQueueArrayWrapper.poll(KQueueArrayWrapper.java:198)
-        at sun.nio.ch.KQueueSelectorImpl.doSelect(KQueueSelectorImpl.java:117)
-        at sun.nio.ch.SelectorImpl.lockAndDoSelect(SelectorImpl.java:86)
-        - locked <0x0000000798809200> (a sun.nio.ch.Util$3)
-        - locked <0x00000007988091f0> (a java.util.Collections$UnmodifiableSet)
-        - locked <0x00000007988090d0> (a sun.nio.ch.KQueueSelectorImpl)
-        at sun.nio.ch.SelectorImpl.select(SelectorImpl.java:97)
-        at org.apache.tomcat.util.net.NioBlockingSelector$BlockPoller.run(NioBlockingSelector.java:313)
-
-   Locked ownable synchronizers:
-        - None
-
-"container-0" #30 prio=5 os_prio=31 tid=0x00007f9241c00000 nid=0x5b03 waiting on condition [0x000070000ba43000]
-   java.lang.Thread.State: TIMED_WAITING (sleeping)
-        at java.lang.Thread.sleep(Native Method)
-        at org.apache.catalina.core.StandardServer.await(StandardServer.java:570)
-        at org.springframework.boot.web.embedded.tomcat.TomcatWebServer$1.run(TomcatWebServer.java:179)
-
-   Locked ownable synchronizers:
-        - None
-
-"Catalina-utility-2" #29 prio=1 os_prio=31 tid=0x00007f9240401800 nid=0xa503 waiting on condition [0x000070000b940000]
-   java.lang.Thread.State: WAITING (parking)
-        at sun.misc.Unsafe.park(Native Method)
-        - parking to wait for  <0x000000079d6fcad8> (a java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject)
-        at java.util.concurrent.locks.LockSupport.park(LockSupport.java:175)
-        at java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(AbstractQueuedSynchronizer.java:2039)
-        at java.util.concurrent.ScheduledThreadPoolExecutor$DelayedWorkQueue.take(ScheduledThreadPoolExecutor.java:1088)
-        at java.util.concurrent.ScheduledThreadPoolExecutor$DelayedWorkQueue.take(ScheduledThreadPoolExecutor.java:809)
-        at java.util.concurrent.ThreadPoolExecutor.getTask(ThreadPoolExecutor.java:1074)
-        at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1134)
-        at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
-        at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
-        at java.lang.Thread.run(Thread.java:748)
-
-   Locked ownable synchronizers:
-        - None
-
-"Catalina-utility-1" #28 prio=1 os_prio=31 tid=0x00007f923fb9d000 nid=0x5a0b waiting on condition [0x000070000b83d000]
-   java.lang.Thread.State: TIMED_WAITING (parking)
-        at sun.misc.Unsafe.park(Native Method)
-        - parking to wait for  <0x000000079d6fcad8> (a java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject)
-        at java.util.concurrent.locks.LockSupport.parkNanos(LockSupport.java:215)
-        at java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.awaitNanos(AbstractQueuedSynchronizer.java:2078)
-        at java.util.concurrent.ScheduledThreadPoolExecutor$DelayedWorkQueue.take(ScheduledThreadPoolExecutor.java:1093)
-        at java.util.concurrent.ScheduledThreadPoolExecutor$DelayedWorkQueue.take(ScheduledThreadPoolExecutor.java:809)
-        at java.util.concurrent.ThreadPoolExecutor.getTask(ThreadPoolExecutor.java:1074)
-        at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1134)
-        at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
-        at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
-        at java.lang.Thread.run(Thread.java:748)
-
-   Locked ownable synchronizers:
-        - None
-
-"http-nio-8090-BlockPoller" #26 daemon prio=5 os_prio=31 tid=0x00007f9241bca800 nid=0x571b runnable [0x000070000b637000]
-   java.lang.Thread.State: RUNNABLE
-        at sun.nio.ch.KQueueArrayWrapper.kevent0(Native Method)
-        at sun.nio.ch.KQueueArrayWrapper.poll(KQueueArrayWrapper.java:198)
-        at sun.nio.ch.KQueueSelectorImpl.doSelect(KQueueSelectorImpl.java:117)
-        at sun.nio.ch.SelectorImpl.lockAndDoSelect(SelectorImpl.java:86)
-        - locked <0x000000079d6fd4f0> (a sun.nio.ch.Util$3)
-        - locked <0x000000079d6fd4e0> (a java.util.Collections$UnmodifiableSet)
-        - locked <0x000000079d6fd3a0> (a sun.nio.ch.KQueueSelectorImpl)
-        at sun.nio.ch.SelectorImpl.select(SelectorImpl.java:97)
-        at org.apache.tomcat.util.net.NioBlockingSelector$BlockPoller.run(NioBlockingSelector.java:313)
-
-   Locked ownable synchronizers:
-        - None
-
-"logback-1" #20 daemon prio=5 os_prio=31 tid=0x00007f9240303800 nid=0x5807 waiting on condition [0x000070000b73a000]
-   java.lang.Thread.State: WAITING (parking)
-        at sun.misc.Unsafe.park(Native Method)
-        - parking to wait for  <0x0000000740013e08> (a java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject)
-        at java.util.concurrent.locks.LockSupport.park(LockSupport.java:175)
-        at java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(AbstractQueuedSynchronizer.java:2039)
-        at java.util.concurrent.ScheduledThreadPoolExecutor$DelayedWorkQueue.take(ScheduledThreadPoolExecutor.java:1088)
-        at java.util.concurrent.ScheduledThreadPoolExecutor$DelayedWorkQueue.take(ScheduledThreadPoolExecutor.java:809)
-        at java.util.concurrent.ThreadPoolExecutor.getTask(ThreadPoolExecutor.java:1074)
-        at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1134)
-        at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
-        at java.lang.Thread.run(Thread.java:748)
-
-   Locked ownable synchronizers:
-        - None
-
-"RMI Scheduler(0)" #15 daemon prio=5 os_prio=31 tid=0x00007f9240920800 nid=0x5503 waiting on condition [0x000070000b431000]
-   java.lang.Thread.State: TIMED_WAITING (parking)
-        at sun.misc.Unsafe.park(Native Method)
-        - parking to wait for  <0x0000000740042de8> (a java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject)
-        at java.util.concurrent.locks.LockSupport.parkNanos(LockSupport.java:215)
-        at java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.awaitNanos(AbstractQueuedSynchronizer.java:2078)
-        at java.util.concurrent.ScheduledThreadPoolExecutor$DelayedWorkQueue.take(ScheduledThreadPoolExecutor.java:1093)
-        at java.util.concurrent.ScheduledThreadPoolExecutor$DelayedWorkQueue.take(ScheduledThreadPoolExecutor.java:809)
-        at java.util.concurrent.ThreadPoolExecutor.getTask(ThreadPoolExecutor.java:1074)
-        at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1134)
-        at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
-        at java.lang.Thread.run(Thread.java:748)
-
-   Locked ownable synchronizers:
-        - None
-
-"RMI TCP Accept-0" #13 daemon prio=5 os_prio=31 tid=0x00007f924027c800 nid=0x3b03 runnable [0x000070000b128000]
-   java.lang.Thread.State: RUNNABLE
-        at java.net.PlainSocketImpl.socketAccept(Native Method)
-        at java.net.AbstractPlainSocketImpl.accept(AbstractPlainSocketImpl.java:409)
-        at java.net.ServerSocket.implAccept(ServerSocket.java:545)
-        at java.net.ServerSocket.accept(ServerSocket.java:513)
-        at sun.management.jmxremote.LocalRMIServerSocketFactory$1.accept(LocalRMIServerSocketFactory.java:52)
-        at sun.rmi.transport.tcp.TCPTransport$AcceptLoop.executeAcceptLoop(TCPTransport.java:405)
-        at sun.rmi.transport.tcp.TCPTransport$AcceptLoop.run(TCPTransport.java:377)
-        at java.lang.Thread.run(Thread.java:748)
-
-   Locked ownable synchronizers:
-        - None
-
-"RMI TCP Accept-50084" #12 daemon prio=5 os_prio=31 tid=0x00007f9240273000 nid=0x4103 runnable [0x000070000b025000]
-   java.lang.Thread.State: RUNNABLE
-        at java.net.PlainSocketImpl.socketAccept(Native Method)
-        at java.net.AbstractPlainSocketImpl.accept(AbstractPlainSocketImpl.java:409)
-        at java.net.ServerSocket.implAccept(ServerSocket.java:545)
-        at java.net.ServerSocket.accept(ServerSocket.java:513)
-        at sun.rmi.transport.tcp.TCPTransport$AcceptLoop.executeAcceptLoop(TCPTransport.java:405)
-        at sun.rmi.transport.tcp.TCPTransport$AcceptLoop.run(TCPTransport.java:377)
-        at java.lang.Thread.run(Thread.java:748)
-
-   Locked ownable synchronizers:
-        - None
-
-"RMI TCP Accept-0" #11 daemon prio=5 os_prio=31 tid=0x00007f9241961800 nid=0x3903 runnable [0x000070000af22000]
-   java.lang.Thread.State: RUNNABLE
-        at java.net.PlainSocketImpl.socketAccept(Native Method)
-        at java.net.AbstractPlainSocketImpl.accept(AbstractPlainSocketImpl.java:409)
-        at java.net.ServerSocket.implAccept(ServerSocket.java:545)
-        at java.net.ServerSocket.accept(ServerSocket.java:513)
-        at sun.rmi.transport.tcp.TCPTransport$AcceptLoop.executeAcceptLoop(TCPTransport.java:405)
-        at sun.rmi.transport.tcp.TCPTransport$AcceptLoop.run(TCPTransport.java:377)
-        at java.lang.Thread.run(Thread.java:748)
-
-   Locked ownable synchronizers:
-        - None
-
-"Service Thread" #9 daemon prio=9 os_prio=31 tid=0x00007f9241919000 nid=0x4403 runnable [0x0000000000000000]
-   java.lang.Thread.State: RUNNABLE
-
-   Locked ownable synchronizers:
-        - None
-
-"C1 CompilerThread2" #8 daemon prio=9 os_prio=31 tid=0x00007f9240166800 nid=0x4503 waiting on condition [0x0000000000000000]
-   java.lang.Thread.State: RUNNABLE
-
-   Locked ownable synchronizers:
-        - None
-
-"C2 CompilerThread1" #7 daemon prio=9 os_prio=31 tid=0x00007f923f8ed000 nid=0x3703 waiting on condition [0x0000000000000000]
-   java.lang.Thread.State: RUNNABLE
-
-   Locked ownable synchronizers:
-        - None
-
-"C2 CompilerThread0" #6 daemon prio=9 os_prio=31 tid=0x00007f924011e000 nid=0x4703 waiting on condition [0x0000000000000000]
-   java.lang.Thread.State: RUNNABLE
-
-   Locked ownable synchronizers:
-        - None
-
-"Monitor Ctrl-Break" #5 daemon prio=5 os_prio=31 tid=0x00007f924011b000 nid=0x3403 runnable [0x000070000aa13000]
-   java.lang.Thread.State: RUNNABLE
-        at java.net.SocketInputStream.socketRead0(Native Method)
-        at java.net.SocketInputStream.socketRead(SocketInputStream.java:116)
-        at java.net.SocketInputStream.read(SocketInputStream.java:171)
-        at java.net.SocketInputStream.read(SocketInputStream.java:141)
-        at sun.nio.cs.StreamDecoder.readBytes(StreamDecoder.java:284)
-        at sun.nio.cs.StreamDecoder.implRead(StreamDecoder.java:326)
-        at sun.nio.cs.StreamDecoder.read(StreamDecoder.java:178)
-        - locked <0x00000007400cdc20> (a java.io.InputStreamReader)
-        at java.io.InputStreamReader.read(InputStreamReader.java:184)
-        at java.io.BufferedReader.fill(BufferedReader.java:161)
-        at java.io.BufferedReader.readLine(BufferedReader.java:324)
-        - locked <0x00000007400cdc20> (a java.io.InputStreamReader)
-        at java.io.BufferedReader.readLine(BufferedReader.java:389)
-        at com.intellij.rt.execution.application.AppMainV2$1.run(AppMainV2.java:64)
-
-   Locked ownable synchronizers:
-        - None
-
-"Signal Dispatcher" #4 daemon prio=9 os_prio=31 tid=0x00007f923f856000 nid=0x4903 runnable [0x0000000000000000]
-   java.lang.Thread.State: RUNNABLE
-
-   Locked ownable synchronizers:
-        - None
-
-"Finalizer" #3 daemon prio=8 os_prio=31 tid=0x00007f9240818800 nid=0x5203 in Object.wait() [0x000070000a707000]
-   java.lang.Thread.State: WAITING (on object monitor)
-        at java.lang.Object.wait(Native Method)
-        - waiting on <0x00000007400cebd8> (a java.lang.ref.ReferenceQueue$Lock)
-        at java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:144)
-        - locked <0x00000007400cebd8> (a java.lang.ref.ReferenceQueue$Lock)
-        at java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:165)
-        at java.lang.ref.Finalizer$FinalizerThread.run(Finalizer.java:216)
-
-   Locked ownable synchronizers:
-        - None
-
-"Reference Handler" #2 daemon prio=10 os_prio=31 tid=0x00007f923f827800 nid=0x2d03 in Object.wait() [0x000070000a604000]
-   java.lang.Thread.State: WAITING (on object monitor)
-        at java.lang.Object.wait(Native Method)
-        - waiting on <0x00000007400cede8> (a java.lang.ref.Reference$Lock)
-        at java.lang.Object.wait(Object.java:502)
-        at java.lang.ref.Reference.tryHandlePending(Reference.java:191)
-        - locked <0x00000007400cede8> (a java.lang.ref.Reference$Lock)
-        at java.lang.ref.Reference$ReferenceHandler.run(Reference.java:153)
 
    Locked ownable synchronizers:
         - None
