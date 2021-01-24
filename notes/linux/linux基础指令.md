@@ -359,9 +359,9 @@ systemd─┬─AliYunDun───23*[{AliYunDun}]
   
 - 0.0 hi: irq（通常缩写为 hi），代表处理硬中断的 CPU 时间。
 
-- 0.0  softirq（通常缩写为 si），代表处理软中断的 CPU 时间
+- 0.0 softirq:（通常缩写为 si），代表处理软中断的 CPU 时间
   
-- 0.0 st（steal（通常缩写为 st），代表当系统运行在虚拟机中的时候，被其他虚拟机占用的 CPU 时间）
+- 0.0 st:（steal（通常缩写为 st），代表当系统运行在虚拟机中的时候，被其他虚拟机占用的 CPU 时间）
 
 - guest: guest（通常缩写为 guest），代表通过虚拟化运行其他操作系统的时间，也就是运行虚拟机的 CPU 时间
 
@@ -421,117 +421,7 @@ PID USER      PR(优先级)  NI(nice值,占用资源)    VIRT    RES    SHR S %C
 - nice //越小优先级越高
 - renice //调整优先级
 
-### vmstat
 
-#### vmstat 是一款指定采样周期和次数的功能性监测工具，我们可以看到，它不仅可以统计内存的使用情况，还可以观测到 CPU 的使用率、swap 的使用情况。
-
-#### vmstat 1 10 命令行代表每秒收集一次性能指标，总共获取10次。
-
-
-- r(running or Runnable)：就绪队列的长度，也就是正在运行和等待CPU 的进程数
-
-- b(blocked)：处于不可种群睡眠状态的进程数
-
-- swpd：虚拟内存使用情况；
-
-- free：空闲的内存；
-
-- buff：用来作为缓冲的内存数；
-
-- si：从磁盘交换到内存的交换页数量；
-
-- so：从内存交换到磁盘的交换页数量；
-
-- bi：发送到块设备的块数；
-
-- bo：从块设备接收到的块数；
-
-- in(interrupt)：每秒中断数；
-
-- cs(context switch)：每秒上下文切换次数；
-
-- us：用户 CPU 使用时间；
-
-- sy：内核 CPU 系统使用时间；
-
-- id：空闲时间；
-
-- wa：等待 I/O 时间；
-
-- st：运行虚拟机窃取的时间。
-
-### pidstat
-
-#### 查看每个进程的详细情况
-```
- pidstat 的参数 -p 用于指定进程 ID，-r 表示监控内存的使用情况，1 表示每秒的意思，3 则表示采样次数。
-```
-
-#### pidstat 命令则是深入到线程级别
-
--u：默认的参数，显示各个进程的 cpu 使用情况；
-
--r：显示各个进程的内存使用情况；
-
-````
-10:52:22 AM   UID       PID  minflt/s  majflt/s     VSZ    RSS   %MEM  Command
-10:52:22 AM     0         1      0.11      0.00   43392   5080   0.25  systemd
-10:52:22 AM     0       361      0.80      0.00   39476   8724   0.43  systemd-journal
-10:52:22 AM     0       386      0.00      0.00   43312   3560   0.17  systemd-udevd
-
-````
-
--d：显示各个进程的 I/O 使用情况；
-
-````
-
-10:55:15 AM   UID       PID   kB_rd/s【每秒对的KB数】   kB_wr/s【每秒写的KB数】 kB_ccwr/s  Command
-10:55:15 AM     0         1      0.03      0.14      0.03  systemd
-10:55:15 AM     0       290      0.00      0.31      0.00  jbd2/vda1-8
-10:55:15 AM     0       361      0.00      0.64      0.00  systemd-journal
-
-
-````
--w：显示每个进程的上下文切换情况；
-
-````
-
-12:18:50 AM   UID       PID    %usr %system  %guest    %CPU   CPU  Command
-12:18:51 AM     0       776    1.02    0.00    0.00    1.02     0  AliYunDun
-12:18:51 AM     0     25933   21.43   80.61    0.00  100.00     0  sysbench
-12:18:51 AM     0     25948    1.02    0.00    0.00    1.02     0  pidstat
-
-12:18:50 AM   UID       PID   cswch/s nvcswch/s  Command
-12:18:51 AM     0         9      2.04      0.00  ksoftirqd/0
-12:18:51 AM     0        10     15.31      0.00  rcu_sched
-12:18:51 AM     0       454      1.02      0.00  rngd
-12:18:51 AM     0       776     10.20      0.00  AliYunDun
-
-
-1. cswch: 每秒自愿上下文切换(voluntary context switches): 指的是进程无法获取所需资源，导致的上下文切换，比如I/O、内存资源不足
-
-2. nvcswch:每秒非自愿上下文切换（non voluntary context switches）: 指的是进程由于时间片已到，被系统强制调度，进而发生上下文切换，比如大量进程在抢CPU时，就容易发生非自愿上下文切换
-````
--p：指定进程号；
-
-````
-10:56:19 AM   UID       PID    %usr %system  %guest    %CPU   CPU  Command
-10:56:19 AM    27       613    0.01    0.01    0.00    0.03     0  mysqld
-
-````
-
--t：显示进程中线程的统计信息。
-
-````
-10:57:03 AM   UID      TGID       TID    %usr %system  %guest    %CPU   CPU  Command
-10:57:03 AM     0         1         -    0.00    0.00    0.00    0.00     0  systemd
-10:57:03 AM     0         -         1    0.00    0.00    0.00    0.00     0  |__systemd
-10:57:03 AM     0         2         -    0.00    0.00    0.00    0.00     0  kthreadd
-10:57:03 AM     0         -         2    0.00    0.00    0.00    0.00     0  |__kthreadd
-10:57:03 AM     0         9         -    0.00    0.00    0.00    0.00     0  ksoftirqd/0
-10:57:03 AM     0         -         9    0.00    0.00    0.00    0.00     0  |__ksoftirqd/0
-
-````
 
 #### jstat 
 
