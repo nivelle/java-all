@@ -254,3 +254,22 @@ Linux 4.19.57-15.1.al7.x86_64 (jessy)   01/24/2021      _x86_64_        (1 CPU)
 #### 分析套路
 
 [![sHLvx1.png](https://s3.ax1x.com/2021/01/24/sHLvx1.png)](https://imgchr.com/i/sHLvx1)
+
+#### bcc 内存检测工具
+````
+git clone https://github.com/iovisor/bcc.git
+mkdir bcc/build; cd bcc/build
+cmake .. -DCMAKE_INSTALL_PREFIX=/usr
+make
+sudo make install
+````
+##### cachestat 提供了整个操作系统缓存的读写命中情况。
+
+##### cachetop 提供了每个进程的缓存命中情况
+
+##### memleak
+
+````
+memleak 可以跟踪系统或指定进程的内存分配、释放请求，然后定期输出一个未释放内存和相应调用栈的汇总情况（默认 5 秒）。
+
+````

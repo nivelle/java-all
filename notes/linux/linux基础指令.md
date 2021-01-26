@@ -534,7 +534,9 @@ jps -l
 jinfo -flag 参数名 进程ID
 ```
 #### jmap
+
 - jmap 来查看堆内存初始化配置信息以及堆内存的使用情况 及生成堆快照
+
 ```
 jmap -dump 8299
 
