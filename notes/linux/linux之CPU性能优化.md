@@ -1,9 +1,14 @@
+### 指标找工具
 
-### 优化点思维导图
+[![sHq57D.png](https://s3.ax1x.com/2021/01/24/sHq57D.png)](https://imgchr.com/i/sHq57D)
 
-[![sIjA91.jpg](https://s3.ax1x.com/2021/01/22/sIjA91.jpg)](https://imgchr.com/i/sIjA91)
+### 工具找指标
 
+[![sHLpNQ.png](https://s3.ax1x.com/2021/01/24/sHLpNQ.png)](https://imgchr.com/i/sHLpNQ)
 
+#### 分析套路
+
+[![sHLvx1.png](https://s3.ax1x.com/2021/01/24/sHLvx1.png)](https://imgchr.com/i/sHLvx1)
 
 #### uptime
 

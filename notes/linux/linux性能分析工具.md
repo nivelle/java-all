@@ -1,3 +1,9 @@
+#### 优化点思维导图
+
+[![sIjA91.jpg](https://s3.ax1x.com/2021/01/22/sIjA91.jpg)](https://imgchr.com/i/sIjA91)
+
+
+
 #### 性能分析工具
 
 ##### yum install sysbench //基准测试
@@ -243,17 +249,6 @@ Linux 4.19.57-15.1.al7.x86_64 (jessy)   01/24/2021      _x86_64_        (1 CPU)
 10:57:03 AM     0         -         9    0.00    0.00    0.00    0.00     0  |__ksoftirqd/0
 
 ````
-### 指标找工具
-
-[![sHq57D.png](https://s3.ax1x.com/2021/01/24/sHq57D.png)](https://imgchr.com/i/sHq57D)
-
-### 工具找指标
-
-[![sHLpNQ.png](https://s3.ax1x.com/2021/01/24/sHLpNQ.png)](https://imgchr.com/i/sHLpNQ)
-
-#### 分析套路
-
-[![sHLvx1.png](https://s3.ax1x.com/2021/01/24/sHLvx1.png)](https://imgchr.com/i/sHLvx1)
 
 #### bcc 内存检测工具
 ````
