@@ -12,8 +12,9 @@
 - **Maven版本:3.6.1** 
 - **ZooKeeper版本:3.4.13;**
 - **Nginx版本:1.17.1**
-- **Dubbo版本：0.2.0**
+- **dubbo版本：0.2.0**
 - **Elasticsearch版本：6.8.6**
+- **MongoDB版本：v4.0.9**
 
 #### docker整合
 
