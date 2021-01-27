@@ -201,6 +201,7 @@ dentry             19215  19215    192   21    1 : tunables    0    0    0 : sla
 
 #### 磁盘 I/O 观测
 
+#### iostat I/O 数据详情
 ````
 [root@jessy ~]# iostat -d -x 1  //-d -x表示显示所有磁盘I/O的指
 Linux 4.19.57-15.1.al7.x86_64 (jessy)   01/26/2021      _x86_64_        (1 CPU)
@@ -223,3 +224,17 @@ vda               0.00     0.00    0.99    0.00     7.92     0.00    16.00     0
 - rkB/s+wkB/s ，就是吞吐量
 
 - r_await+w_await ，就是响应时间
+
+### 指标找工具
+
+[![ySPAQs.md.png](https://s3.ax1x.com/2021/01/28/ySPAQs.md.png)](https://imgchr.com/i/ySPAQs)
+
+### 工具找指标
+
+[![ySPAQs.md.png](https://s3.ax1x.com/2021/01/28/ySPAQs.md.png)](https://imgchr.com/i/ySPAQs)
+
+### 问题排查
+
+[![ySPnoT.md.png](https://s3.ax1x.com/2021/01/28/ySPnoT.md.png)](https://imgchr.com/i/ySPnoT)
+
+

@@ -69,11 +69,26 @@ $ perf report
 
 ##### dstat //可以同时查看 CPU 和 I/O 这两种资源的使用情况
 
-##### pidstat -p pid //进程的磁盘读写情况
 
 ##### ps aux | grep 6082 //检查进程的监控状态
 
-##### strance -p pid //跟踪进程系统调用的工具
+##### strace -p pid //跟踪进程系统调用的工具
+
+- 线程 28014 正在读取大量数据，且读取文件的描述符编号为 38
+
+- 系统调用的执行情况
+
+````
+
+$ strace -f -p 27458
+[pid 28014] read(38, "934EiwT363aak7VtqF1mHGa4LL4Dhbks"..., 131072) = 131072
+[pid 28014] read(38, "hSs7KBDepBqA6m4ce6i6iUfFTeG9Ot9z"..., 20480) = 20480
+[pid 28014] read(38, "NRhRjCSsLLBjTfdqiBRLvN9K6FRfqqLm"..., 131072) = 131072
+[pid 28014] read(38, "AKgsik4BilLb7y6OkwQUjjqGeCTQTaRl"..., 24576) = 24576
+[pid 28014] read(38, "hFMHx7FzUSqfFI22fQxWCpSnDmRjamaW"..., 131072) = 131072
+[pid 28014] read(38, "ajUzLmKqivcDJSkiw7QWf2ETLgvQIpfC"..., 20480) = 20480
+
+````
 
 ##### watch -d cat /proc/softirqs //观察命令输出的变化情况
 
@@ -266,5 +281,20 @@ sudo make install
 
 ````
 memleak 可以跟踪系统或指定进程的内存分配、释放请求，然后定期输出一个未释放内存和相应调用栈的汇总情况（默认 5 秒）。
+
+````
+
+##### lsof
+
+-  mysqld 进程打开了大量文件，而根据文件描述符（FD）的编号，我们知道，描述符为 38 的是一个路径为 /var/lib/mysql/test/products.MYD 的文件
+
+- 系统调用的操作对象
+
+````
+
+$ lsof -p 27458
+COMMAND  PID USER   FD   TYPE DEVICE SIZE/OFF NODE NAME
+
+mysqld  27458      999   38u   REG    8,1 512440000 2601895 /var/lib/mysql/test/products.MYD
 
 ````
