@@ -6,7 +6,7 @@
 
 #### 性能分析工具
 
-##### yum install sysbench //基准测试
+##### sysbench //基准测试
 
 1. 模拟多线程切换
 
@@ -15,7 +15,7 @@
 $ sysbench --threads=10 --max-time=300 threads run
 
 ````
-##### yum install stress //压力测试
+##### stress //压力测试
 
 1. CPU 使用率100%
 
@@ -33,7 +33,7 @@ $ stress -i 1 --timeout 600
 
 ````
 
-##### yum install perf //指定应用层序性能问题
+##### perf //指定应用层序性能问题
 
 1. perf top //基于事件的，CPU 使用率过高分析工具
 
@@ -67,8 +67,39 @@ $ perf report
 
 ````
 
-##### dstat //可以同时查看 CPU 和 I/O 这两种资源的使用情况
+##### IO性能基准测试
 
+- fio io性能基础测试工具
+````
+
+# 随机读
+fio -name=randread -direct=1 -iodepth=64 -rw=randread -ioengine=libaio -bs=4k -size=1G -numjobs=1 -runtime=1000 -group_reporting -filename=/dev/sdb
+
+# 随机写
+fio -name=randwrite -direct=1 -iodepth=64 -rw=randwrite -ioengine=libaio -bs=4k -size=1G -numjobs=1 -runtime=1000 -group_reporting -filename=/dev/sdb
+
+# 顺序读
+fio -name=read -direct=1 -iodepth=64 -rw=read -ioengine=libaio -bs=4k -size=1G -numjobs=1 -runtime=1000 -group_reporting -filename=/dev/sdb
+
+# 顺序写
+fio -name=write -direct=1 -iodepth=64 -rw=write -ioengine=libaio -bs=4k -size=1G -numjobs=1 -runtime=1000 -group_reporting -filename=/dev/sdb 
+
+````
+
+- direct，表示是否跳过系统缓存。上面示例中，我设置的 1 ，就表示跳过系统缓存
+
+- iodepth，表示使用异步 I/O（asynchronous I/O，简称 AIO）时，同时发出的 I/O 请求上限。在上面的示例中，我设置的是 64
+
+- 表示 I/O 模式。我的示例中， read/write 分别表示顺序读 / 写，而 randread/randwrite 则分别表示随机读 / 写
+
+- ioengine，表示 I/O 引擎，它支持同步（sync）、异步（libaio）、内存映射（mmap）、网络（net）等各种 I/O 引擎。上面示例中，我设置的 libaio 表示使用异步 I/O
+
+- bs，表示 I/O 的大小。
+
+- filename，表示文件路径，当然，它可以是磁盘路径（测试磁盘性能），也可以是文件路径（测试文件系统性能）
+
+
+##### dstat //可以同时查看 CPU 和 I/O 这两种资源的使用情况
 
 ##### ps aux | grep 6082 //检查进程的监控状态
 
@@ -274,9 +305,32 @@ make
 sudo make install
 ````
 ##### cachestat 提供了整个操作系统缓存的读写命中情况。
+````
+cachestat 1 3
+HITS   MISSES  DIRTIES HITRATIO   BUFFERS_MB  CACHED_MB
+736        0        0  100.00%           97       1181
+0        0        0    0.00%           97       1181
+0        0        0    0.00%           97       1181
+````
+
+- MISSES:缓存未命中次数
+- HITS：缓存命中次数
+- DIRTIES：新增到缓存页的脏页数
+- BUFFERS_MB: buffers的大小，以MB为单位
+- CACHED_MB：表示Cache的大小，以MB为单位
+
+
 
 ##### cachetop 提供了每个进程的缓存命中情况
 
+````
+
+PID      UID      CMD HITS     MISSES   DIRTIES  READ_HIT%  WRITE_HIT%
+    6991 root     cachetop                3        0        0     100.0%       0.0%
+    1211 root     AliYunDun             586        0        0     100.0%       0.0%
+
+
+````
 ##### memleak
 
 ````
