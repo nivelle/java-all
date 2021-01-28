@@ -1,6 +1,5 @@
 package com.nivelle.bigdata;
 
-import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @ConfigurationProperties(prefix = "spring.datasource.click")
-@Data
 public class JdbcParamConfig {
     private String driverClassName ;
     private String url ;
