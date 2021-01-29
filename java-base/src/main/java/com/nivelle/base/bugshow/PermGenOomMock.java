@@ -1,4 +1,4 @@
-package com.nivelle.base.bugs;
+package com.nivelle.base.bugshow;
 
 import java.io.File;
 import java.net.URL;

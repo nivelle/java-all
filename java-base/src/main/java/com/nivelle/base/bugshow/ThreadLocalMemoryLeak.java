@@ -1,4 +1,4 @@
-package com.nivelle.base.bugs;
+package com.nivelle.base.bugshow;
 
 import java.util.HashSet;
 import java.util.Set;

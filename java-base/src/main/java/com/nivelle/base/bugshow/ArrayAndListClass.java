@@ -1,4 +1,4 @@
-package com.nivelle.base.bugs;
+package com.nivelle.base.bugshow;
 
 import com.nivelle.base.pojo.Parent;
 import com.nivelle.base.pojo.Son;
