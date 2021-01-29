@@ -1,5 +1,8 @@
 package com.nivelle.base.bugs;
 
+/**
+ * 栈益处
+ */
 public class StackErrorMock {
 
     private static int index =1;

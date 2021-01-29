@@ -6,7 +6,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * TODO:DOCUMENT ME!
+ * ThreadLocal 内存移除
  *
  * @author fuxinzhong
  * @date 2020/11/17
