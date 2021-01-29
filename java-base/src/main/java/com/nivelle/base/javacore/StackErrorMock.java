@@ -1,4 +1,4 @@
-package com.nivelle.base.bugshow;
+package com.nivelle.base.javacore;
 
 /**
  * 栈益处
@@ -13,7 +13,6 @@ public class StackErrorMock {
 
     public static void main(String []args){
         StackErrorMock stackErrorMock = new StackErrorMock();
-
         try
         {
             stackErrorMock.call();

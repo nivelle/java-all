@@ -1,4 +1,4 @@
-package com.nivelle.base.bugshow;
+package com.nivelle.base.javacore;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -6,7 +6,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * ThreadLocal 内存移除
+ * ThreadLocal 内存溢出
  *
  * @author fuxinzhong
  * @date 2020/11/17
@@ -28,7 +28,7 @@ public class ThreadLocalMemoryLeak {
                 threads.add(Thread.currentThread());
 
                 // 使用完后删除，不执行会造成内存泄漏
-//                 threadLocal.remove();
+                //threadLocal.remove();
             });
             Thread.sleep(500);
         }
