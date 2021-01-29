@@ -1,4 +1,4 @@
-package com.nivelle.base.jdk.key;
+package com.nivelle.base.javacore;
 
 import java.math.BigDecimal;
 
@@ -8,7 +8,7 @@ import java.math.BigDecimal;
  * @author nivelle
  * @date 2019/10/13
  */
-public class BigDecimalDemo {
+public class BigDecimalMock {
 
     public static void main(String[] args) {
         BigDecimal bigDecimal = BigDecimal.ZERO;

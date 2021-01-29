@@ -11,7 +11,7 @@ import java.util.concurrent.Executors;
  * @author fuxinzhong
  * @date 2020/11/17
  */
-public class ThreadLocalMemoryLeak {
+public class ThreadLocalMemoryLeakMock {
     public static final ExecutorService threadPool = Executors.newFixedThreadPool(5);
 
     public static final ThreadLocal<LocalVariable> threadLocal = new ThreadLocal<>();

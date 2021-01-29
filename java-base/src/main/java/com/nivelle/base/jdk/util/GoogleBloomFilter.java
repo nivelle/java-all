@@ -1,4 +1,4 @@
-package com.nivelle.base.jdk.key;
+package com.nivelle.base.jdk.util;
 
 import com.google.common.hash.BloomFilter;
 import com.google.common.hash.Funnels;

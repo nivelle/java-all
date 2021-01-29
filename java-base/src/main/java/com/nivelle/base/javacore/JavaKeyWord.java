@@ -1,4 +1,4 @@
-package com.nivelle.base.jdk.key;
+package com.nivelle.base.javacore;
 
 import com.nivelle.base.pojo.Parent;
 import com.nivelle.base.pojo.Son;

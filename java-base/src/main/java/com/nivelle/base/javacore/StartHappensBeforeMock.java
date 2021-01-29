@@ -6,7 +6,7 @@ package com.nivelle.base.javacore;
  * @author fuxinzhong
  * @date 2021/01/29
  */
-public class StartHappensBeforeDemo {
+public class StartHappensBeforeMock {
 
 
     public static void main(String[] args) {

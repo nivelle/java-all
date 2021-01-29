@@ -1,4 +1,4 @@
-package com.nivelle.base.jdk.key;
+package com.nivelle.base.jdk.util;
 
 import java.io.*;
 import java.util.BitSet;

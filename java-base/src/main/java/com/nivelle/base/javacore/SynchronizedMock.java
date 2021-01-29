@@ -1,4 +1,4 @@
-package com.nivelle.base.jdk.key;
+package com.nivelle.base.javacore;
 
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;

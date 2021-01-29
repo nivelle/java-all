@@ -6,20 +6,21 @@ package com.nivelle.base.javacore;
  * @author fuxinzhong
  * @date 2021/01/29
  */
-public class EscapeDemo {
+public class EscapeMock {
 
     public static final int x = 10;
+    EscapeMock escapeMock = null;
 
     public static void main(String[] args) {
-        EscapeDemo escapeDemo = new EscapeDemo();
-        escapeDemo.finalField();
+        EscapeMock escapeMock = new EscapeMock();
+        escapeMock.finalField();
     }
 
     public void finalField() {
         int x = 3;
         int y = 4;
-        EscapeDemo escapeDemo = this;
-        System.out.println(escapeDemo);
+        escapeMock = this;
+        System.out.println(escapeMock);
 
     }
 

@@ -7,7 +7,7 @@ package com.nivelle.base.javacore;
  * @date 2021/01/29
  */
 
-public class AbleSeeError {
+public class AbleSeeErrorMock {
     private long count = 0;
 
     private void add10K() {
@@ -18,7 +18,7 @@ public class AbleSeeError {
     }
 
     public static long calc() throws InterruptedException {
-        final AbleSeeError test = new AbleSeeError();
+        final AbleSeeErrorMock test = new AbleSeeErrorMock();
         // 创建两个线程，执行add()操作
         Thread th1 = new Thread(() -> {
             test.add10K();

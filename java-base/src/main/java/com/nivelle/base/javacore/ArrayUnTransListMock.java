@@ -13,7 +13,7 @@ import java.util.List;
  * @author fuxinzhong
  * @date 2020/05/11
  */
-public class ArrayAndListClass {
+public class ArrayUnTransListMock {
 
     public static void main(String[] args) {
         testArray();

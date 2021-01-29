@@ -1,4 +1,4 @@
-package com.nivelle.base.jdk.key;
+package com.nivelle.base.javacore;
 
 import java.util.concurrent.Executors;
 
@@ -8,7 +8,7 @@ import java.util.concurrent.Executors;
  * @author fuxinzhong
  * @date 2020/12/20
  */
-public class VolatileDemo implements Runnable {
+public class VolatileMock implements Runnable {
 
     private int a = 0;
     private volatile boolean flag = false;
@@ -32,6 +32,6 @@ public class VolatileDemo implements Runnable {
     }
 
     public static void main(String[] args) {
-        Executors.newFixedThreadPool(3).submit(new VolatileDemo());
+        Executors.newFixedThreadPool(3).submit(new VolatileMock());
     }
 }
