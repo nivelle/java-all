@@ -22,7 +22,6 @@ CLUSTER MEET<IP><PORT>
 
 一个节点就是一个运行在集群模式下的Redis服务器,Redis服务器在启动时会根据cluster-enabled配置选项是否为yes来决定是否开启服务器的集群模式.
 
-![image](http://7xpuj1.com1.z0.glb.clouddn.com/%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E5%BC%80%E5%90%AF%E9%9B%86%E7%BE%A4%E6%A8%A1%E5%BC%8F%E7%9A%84%E8%BF%87%E7%A8%8B.png)
 
 节点会继续使用所在单机模式中使用的服务器组件:
 

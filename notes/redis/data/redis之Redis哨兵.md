@@ -42,8 +42,6 @@ $ redis-sentinel /path/to/your/sentinel.conf --sentinel
 Sentinel本质上是一个特殊模式下的Redis服务器.
 
 
-![image](http://7xpuj1.com1.z0.glb.clouddn.com/sentinel%E6%A8%A1%E5%BC%8F%E4%B8%8B%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%BD%BF%E7%94%A8%E6%83%85%E5%86%B5.png)
-
 
 ### Sentinel结构
 

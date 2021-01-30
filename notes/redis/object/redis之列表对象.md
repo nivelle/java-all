@@ -32,29 +32,3 @@ quickList 默认的压缩深度是0，也就是不压缩，压缩的深度实际
 quickList内部默认单个ziplist长度为8k字节，超出这个字节，就会新起一个ziplist
 
 ziplist的长度由参数配置 list-max-ziplist-size 决定
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

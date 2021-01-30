@@ -185,4 +185,4 @@ AOF 重写程序可以很好地完成创建一个新 AOF 文件的任务， 但�
 默认情况下， 增长百分比为 100% ， 也即是说， 如果前面三个条件都已经满足， 并且当前 AOF 文件大小比最后一次 AOF 重写时的大小要大一倍的话， 那么触发自动 AOF 重写。
 
 
-内容来自:<<redis设计与实现>> [redis设计与实现](http://origin.redisbook.com/internal/aof.html)
+#### 内容来自:<<redis设计与实现>> [redis设计与实现](http://origin.redisbook.com/internal/aof.html)
