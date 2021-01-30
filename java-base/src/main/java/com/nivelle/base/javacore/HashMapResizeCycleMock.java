@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author fuxinzhong
  * @date 2020/11/22
  */
-public class HashMapResizeCycle {
+public class HashMapResizeCycleMock {
 
 
     public static void main(String[] args) {

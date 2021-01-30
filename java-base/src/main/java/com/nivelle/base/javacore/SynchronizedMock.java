@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
  * @author nivelle
  * @date 2019/11/02
  */
-public class SynchronizedDemo {
+public class SynchronizedMock {
     public static ThreadPoolExecutor threadPoolExecutor;
 
     static {
@@ -18,15 +18,15 @@ public class SynchronizedDemo {
     }
 
     public static void main(String[] args) {
-        SynchronizedDemo synchronizedDemo = new SynchronizedDemo();
+        SynchronizedMock synchronizedDemo = new SynchronizedMock();
         if (synchronizedDemo == null) {
             System.out.println(synchronizedDemo + "is null");
         } else {
-            System.out.println("main 方法里面corePoolSize:" + SynchronizedDemo.threadPoolExecutor.getCorePoolSize());
+            System.out.println("main 方法里面corePoolSize:" + SynchronizedMock.threadPoolExecutor.getCorePoolSize());
         }
         int count = 1;
         for (int i = 0; i < 20; i++) {
-            SynchronizedDemo.threadPoolExecutor.execute(new SynchronizedTask(count));
+            SynchronizedMock.threadPoolExecutor.execute(new SynchronizedTask(count));
         }
     }
 }

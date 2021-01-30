@@ -29,7 +29,6 @@
 
 1. AQS 
 
-![AQS 获取锁流程.jpg](https://i.loli.net/2020/04/12/LDUm87RM9dn4P1k.jpg)
 
 ### 各种锁的特点
 
