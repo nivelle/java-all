@@ -8,7 +8,7 @@ import java.lang.reflect.Array;
  * @author nivelle
  * @date 2020/04/13
  */
-public class SystemDemo {
+public class SystemMock {
 
     public static void main(String[] args) {
         System.out.println("system的默认方法");

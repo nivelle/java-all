@@ -1,6 +1,5 @@
 package com.nivelle.base.jdk.lang;
 
-import com.nivelle.base.pojo.User;
 import org.springframework.stereotype.Service;
 
 /**
@@ -10,7 +9,7 @@ import org.springframework.stereotype.Service;
  * @date 2019/06/16
  */
 @Service
-public class ThreadLocalDemo {
+public class ThreadLocalMock {
     /**
      * This class provides thread-local variables【线程局部变量】These variables differ from
      * their normal counterparts【同行】 in that each thread that accesses one (via its

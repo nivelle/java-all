@@ -10,7 +10,7 @@ import com.nivelle.base.pojo.Son;
  * @author fuxinzhong
  * @date 2020/08/02
  */
-public class ClassDemo {
+public class ClassMock {
 
     public static void main(String[] args) {
         System.err.println("son 是 father的子类或者子接口：" + Father.class.isAssignableFrom(Son.class));

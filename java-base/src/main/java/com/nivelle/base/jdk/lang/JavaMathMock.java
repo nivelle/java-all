@@ -8,7 +8,7 @@ import java.util.Random;
  * @author nivelle
  * @date 2019/07/22
  */
-public class JavaMathDemo {
+public class JavaMathMock {
 
     public static void main(String[] args) {
 

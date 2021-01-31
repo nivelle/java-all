@@ -6,7 +6,7 @@ package com.nivelle.base.jdk.lang;
  * @author nivelle
  * @date 2020/03/21
  */
-public class BooleanDemo {
+public class BooleanMock {
 
     public static void main(String[] args) {
         boolean a = true;

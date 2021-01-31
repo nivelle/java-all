@@ -8,7 +8,7 @@ import org.apache.commons.lang3.StringUtils;
  * @author nivelle
  * @date 2019/12/16
  */
-public class CharacterDemo {
+public class CharacterMock {
 
     public static void main(String[] args) {
         System.out.println("系统默认的编码格式:" + System.getProperty("sun.jnu.encoding"));

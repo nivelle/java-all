@@ -9,7 +9,7 @@ import java.lang.reflect.Parameter;
  * @author nivelle
  * @date 2019/12/12
  */
-public class ObjectDemo {
+public class ObjectMock {
 
     public static void main(String[] args) throws Exception {
 

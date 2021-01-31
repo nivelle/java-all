@@ -9,8 +9,7 @@ import java.util.concurrent.locks.StampedLock;
  * 在Java 8中引入了一种锁的新机制——StampedLock，它可以看成是读写锁的一个改进版本。
  * <p>
  * StampedLock提供了一种乐观读锁的实现，这种乐观读锁类似于无锁的操作，完全不会阻塞写线程获取写锁，从而缓解读多写少时写线程“饥饿”现象。
- * 由于StampedLock提供的乐观读锁不阻塞写线程获取读锁，当线程共享变量从主内存load到线程工作内存时，会存在数据不一致问题，所以当使用StampedLock的乐观读锁时，
- * 需要遵从如下图用例中使用的模式来确保数据的一致性。
+ * 由于StampedLock提供的乐观读锁不阻塞写线程获取读锁，当线程共享变量从主内存load到线程工作内存时，会存在数据不一致问题。
  */
 public class StampedLockMock {
 
@@ -122,7 +121,11 @@ public class StampedLockMock {
 
 
     /**
-     * StampedLock具有三种模式:写模式、读模式、乐观读模式。
+     * StampedLock具有三种模式:写模式、悲观读模式、乐观读模式。
+     *
+     * 1. 写锁、悲观读锁的语义和 ReadWriteLock 的写锁、读锁的语义非常类似，允许多个线程同时获取悲观读锁，但是只允许一个线程获取写锁，写锁和悲观读锁是互斥的
+     *
+     * 2. StampedLock 里的写锁和悲观读锁加锁成功之后，都会返回一个 stamp；然后解锁的时候，需要传入这个 stamp
      */
     public static void main(String[] args) throws Exception {
 

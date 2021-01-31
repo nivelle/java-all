@@ -6,7 +6,7 @@ package com.nivelle.base.jdk.lang;
  * @author nivelle
  * @date 2019/06/16
  */
-public class LongDemo {
+public class LongMock {
 
     public static void main(String[] args) {
         Long myLong = new Long(0L);

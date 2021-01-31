@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author nivelle
  * @date 2019/10/31
  */
-public class ByteDemo {
+public class ByteMock {
     private static final int COUNT_BITS = Integer.SIZE - 3;
     private static final int CAPACITY = (1 << COUNT_BITS) - 1;
 

@@ -6,7 +6,7 @@ package com.nivelle.base.jdk.lang;
  * @author nivelle
  * @date 2019/12/15
  */
-public class ExceptionDemo {
+public class ExceptionMock {
 
     /**
      * 运行时异常：

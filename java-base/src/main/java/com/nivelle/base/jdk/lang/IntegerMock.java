@@ -6,7 +6,7 @@ package com.nivelle.base.jdk.lang;
  * @author nivelle
  * @date 2019/06/05
  */
-public class IntegerDemo {
+public class IntegerMock {
 
     public static void main(String[] args) {
 

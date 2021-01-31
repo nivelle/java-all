@@ -11,7 +11,7 @@ import java.util.StringJoiner;
  * @author nivelle
  * @date 2019/06/16
  */
-public class StringDemo {
+public class StringMock {
 
 
     /**

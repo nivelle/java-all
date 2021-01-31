@@ -6,7 +6,7 @@ package com.nivelle.base.jdk.lang;
  * @author fuxinzhong
  * @date 2020/05/08
  */
-public class ThreadMethodDemo {
+public class ThreadMethodMock {
 
     public static void main(String[] args) throws Exception {
         System.out.println("守护线程 demo 开始:");

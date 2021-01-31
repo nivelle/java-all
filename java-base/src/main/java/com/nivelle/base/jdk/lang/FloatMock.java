@@ -6,7 +6,7 @@ package com.nivelle.base.jdk.lang;
  * @author nivelle
  * @date 2019/06/16
  */
-public class FloatDemo {
+public class FloatMock {
 
     public static void main(String[] args) {
         Float myFloat = new Float(0.6F);
