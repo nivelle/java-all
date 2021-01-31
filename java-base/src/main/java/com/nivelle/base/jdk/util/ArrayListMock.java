@@ -37,7 +37,7 @@ public class ArrayListMock {
          *
          * 底层数组扩容会导致复制原数组，然后赋值给elementData[]
          */
-        //todo 非线程安全1: size++没挂起，值被覆盖
+        //todo 非线程安全1: size++被挂起，值被覆盖
         /**
          * public boolean add(E e) {
          *         ensureCapacityInternal(size + 1);  // Increments modCount!!

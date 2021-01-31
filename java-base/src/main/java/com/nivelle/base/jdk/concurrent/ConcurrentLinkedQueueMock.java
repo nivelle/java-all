@@ -4,8 +4,7 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
- * ConcurrentLinkedQueue
- *
+ * 双端非阻塞队列: ConcurrentLinkedQueue
  *
  * @author nivelle
  * @date 2020/04/12

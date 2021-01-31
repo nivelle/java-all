@@ -3,7 +3,7 @@ package com.nivelle.base.jdk.concurrent;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
- * LinkedBlockingQueue
+ * 双端阻塞队列： LinkedBlockingQueue
  *
  * @author nivelle
  * @date 2020/04/14

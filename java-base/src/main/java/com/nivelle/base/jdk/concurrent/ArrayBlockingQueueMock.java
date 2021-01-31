@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.concurrent.ArrayBlockingQueue;
 
 /**
- * ArrayBlockingQueue
+ * 单端阻塞队列:ArrayBlockingQueue
  *
  * @author nivelle
  * @date 2020/04/16

@@ -4,7 +4,7 @@ package com.nivelle.base.jdk.concurrent;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * CopyOnWriterArrayList 是 ArrayList的线程安全版本
+ * CopyOnWriterArrayList 是 ArrayList的线程安全版本，写的时候将共享变量复制一份，这样做的好处就是读操作完全无锁
  *
  * @author nivelle
  * @date 2019/06/16
@@ -42,7 +42,7 @@ public class CopyOnWriterArrayListMock {
          *
          *  2. 底层是用volatile transient声明的数组 array
          *
-         *  3. 读写分离，写时复制出一个新的数组，完成插入、修改或者移除操作后将新数组赋值给array
+         *  3. 读写分离,写时复制出一个新的数组,完成插入、修改或者移除操作后将新数组赋值给array
          */
         /**
          * 构造函数:
@@ -234,6 +234,10 @@ public class CopyOnWriterArrayListMock {
          * （4）CopyOnWriteArrayList采用读写分离的思想，读操作不加锁，写操作加锁，且写操作占用较大内存空间，所以适用于读多写少的场合；
          *
          * （5）CopyOnWriteArrayList只保证最终一致性，不保证实时一致性；
+         *
+         *  (6) 读操作基于原理的Array ,写操作基于新的Array进行
+         *
+         *  (8) CopyOnWriteArrayList 迭代器是只读的，不支持增删改。因为迭代器遍历的仅仅是一个快照，而对快照进行增删改是没有意义的
          */
     }
 }

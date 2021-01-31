@@ -4,7 +4,7 @@ import java.util.concurrent.ConcurrentNavigableMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 
 /**
- * 跳跃表
+ * 跳跃表: key是有序的
  *
  * @author nivelle
  * @date 2020/04/12
