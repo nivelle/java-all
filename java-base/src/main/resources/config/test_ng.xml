@@ -14,7 +14,7 @@
 <suite name="Suite1" parallel="methods" verbose="1" thread-count="10">
     <test name="test_ng1">
         <classes>
-            <class name="com.nivelle.base.jdk.concurrent.atom.AtomicIntegerDemo"/>
+            <class name="com.nivelle.base.jdk.concurrent.atom.AtomicIntegerMock"/>
         </classes>
     </test> <!-- Java_Learn -->
 
