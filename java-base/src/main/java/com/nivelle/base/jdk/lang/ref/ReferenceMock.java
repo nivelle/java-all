@@ -9,7 +9,7 @@ import java.util.Objects;
  * @author nivelle
  * @date 2020/04/19
  */
-public class ReferenceDemo {
+public class ReferenceMock {
     private static int K = 1024;
 
     private static int M = 1024 * K;

@@ -2,7 +2,7 @@ package com.nivelle.base.jdk.io;
 
 import java.nio.ByteBuffer;
 
-public class ByteBufferDemo {
+public class ByteBufferMock {
 
 	/**
 	 * @param args

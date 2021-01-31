@@ -8,7 +8,7 @@ import java.nio.Buffer;
  * @author fuxinzhong
  * @date 2020/05/24
  */
-public class BufferDemo {
+public class BufferMock {
     public static void main(String[] args) {
         /**
          * 核心属性:

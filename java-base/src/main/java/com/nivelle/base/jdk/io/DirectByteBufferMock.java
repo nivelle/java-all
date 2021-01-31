@@ -10,7 +10,7 @@ import sun.nio.ch.DirectBuffer;
  * @author fuxinzhong
  * @date 2020/11/06
  */
-public class DirectByteBufferDemo implements DirectBuffer {
+public class DirectByteBufferMock implements DirectBuffer {
 
     public static void main(String[] args) {
     }

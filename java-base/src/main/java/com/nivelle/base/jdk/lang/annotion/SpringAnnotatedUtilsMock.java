@@ -13,7 +13,7 @@ import java.util.Set;
  * @author fuxinzhong
  * @date 2020/08/02
  */
-public class SpringAnnotatedUtilsDemo {
+public class SpringAnnotatedUtilsMock {
     public static void main(String[] args) {
         /**
          * 判断被注解元素是否被某个注解修饰
