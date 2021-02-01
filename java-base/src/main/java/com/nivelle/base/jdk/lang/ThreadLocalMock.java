@@ -1,5 +1,4 @@
 package com.nivelle.base.jdk.lang;
-
 import org.springframework.stereotype.Service;
 
 /**
@@ -22,6 +21,7 @@ public class ThreadLocalMock {
      */
     /**
      * 1. 线程有个 threadLocal.ThreadLocalMap threadLocals = null; 的成员变量,这个成员变量是map结构
+     * <p>
      * 2. threadLocal作为key, 要保存的线程变量为值
      */
 
@@ -54,6 +54,7 @@ public class ThreadLocalMock {
         System.out.println(Thread.currentThread().getName() + ":" + threadLocal1.get());
         System.out.println(Thread.currentThread().getName() + ":" + threadLocal2.get());
 
+
     }
 
     /**
@@ -66,7 +67,8 @@ public class ThreadLocalMock {
     /**
      * ThreadLocalMap使用ThreadLocal的弱引用作为key,如果一个ThreadLocal没有外部强引用来引用它,
      * 那么系统 GC 的时候，这个ThreadLocal势必会被回收，这样一来，ThreadLocalMap中就会出现key为null的Entry,
-     * 就没有办法访问这些key为null的Entry的value，如果当前线程再迟迟不结束的话,这些key为null的Entry的value就会一直存在一条强引用链: Thread Ref -> Thread -> ThreadLocalMap -> Entry -> value永远无法回收，
+     * 也就没有办法访问这些key为null的Entry的value，如果当前线程再迟迟不结束的话,这些key为null的Entry的value就会一直存在一条强引用链:
+     * Thread Ref -> Thread -> ThreadLocalMap -> Entry -> value永远无法回收，
      * 造成内存泄漏;
      *
      * 当把 threadLocal 实例置为null以后，没有任何强引用指向 ThreadLocal 实例，所以 ThreadLocal 将会被gc回收

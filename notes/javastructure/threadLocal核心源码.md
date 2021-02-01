@@ -21,8 +21,11 @@ static class Entry extends WeakReference<ThreadLocal<?>> {
 #### 重点: 为什么key是threadLocal的弱饮用
 
 ````
-因为如果这里使用普通的key-value形式来定义存储结构,实质上就会造成节点的生命周期与线程强绑定,只要线程没有销毁,那么节点在GC分析中一直处于可达状态,没办法被回收,而程序本身也无法判断是否可以清理节点。
-弱引用是Java中四档引用的第三档，比软引用更加弱一些，如果一个对象没有强引用链可达，那么一般活不过下一次GC。当某个ThreadLocal已经没有强引用可达，则随着它被垃圾回收，在ThreadLocalMap里对应的Entry的键值会失效，这为ThreadLocalMap本身的垃圾清理提供了便利。
+1. 如果使用普通的key-value形式来定义存储结构,实质上就会造成节点的生命周期与线程强绑定,只要线程没有销毁,那么节点在GC分析中一直处于可达状态,没办法被回收,而程序本身也无法判断是否可以清理节点。
+
+2. 弱引用是Java中四档引用的第三档，比软引用更加弱一些，如果一个对象没有强引用链可达，那么一般活不过下一次GC。
+
+3. 当某个ThreadLocal已经没有强引用可达，则随着它被垃圾回收，在ThreadLocalMap里对应的Entry的键值会失效，这为ThreadLocalMap本身的垃圾清理提供了便利。
 ````
 #### 成员变量
 
@@ -51,7 +54,8 @@ static class Entry extends WeakReference<ThreadLocal<?>> {
         
         
         /**
-         * Set the resize threshold to maintain at worst a 2/3 load factor.//设置resize阈值以维持最坏2/3的装载因子
+         * Set the resize threshold to maintain at worst a 2/3 load factor
+         * 设置resize阈值以维持最坏2/3的装载因子
          */
         private void setThreshold(int len) {
             threshold = len * 2 / 3;
