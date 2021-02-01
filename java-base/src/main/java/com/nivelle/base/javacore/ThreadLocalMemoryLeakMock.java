@@ -35,13 +35,11 @@ public class ThreadLocalMemoryLeakMock {
         System.out.println("gc之前。。。。。");
         //主动触发gc,将导致ThreadLocal被回收
         System.gc();
-        System.gc();
         System.out.println(threadLocal);
         // 由于没有调用线程池的shutdown方法，线程池中的核心线程并不会退出,进而JVM也不会退出
         // debug可以看到，threads集合中每个线程的 ThreadLocalMap 中都有key(referent)==null，value为LocalVariable大对象没被回收
-        // 此时jvm进程并不会退出，因为5个线程还存在，jconsole可以监控堆内存的使用量。
+        // 此时jvm进程并不会退出，因为5个线程还存在，jconsole 可以监控堆内存的使用量。
         System.out.println("pool executor over");
-        System.gc();
     }
 
 
