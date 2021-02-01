@@ -45,7 +45,7 @@ public class FutureTaskMock {
     }
 
     /**
-     * ## AbstractExecutorService.submit
+     * // AbstractExecutorService.submit
      * public Future<?> submit(Runnable task) {
      *         if (task == null) {
      *            throw new NullPointerException();
@@ -58,18 +58,18 @@ public class FutureTaskMock {
      *         return ftask;
      * }
      *
-     * ## AbstractExecutorService.newTaskFor
+     * // AbstractExecutorService.newTaskFor
      *
-     * ## 返回值: public interface RunnableFuture<V> extends Runnable, Future<V>
+     * // 返回值: public interface RunnableFuture<V> extends Runnable, Future<V>
      *
      * protected <T> RunnableFuture<T> newTaskFor(Runnable runnable, T value) {
      *         return new FutureTask<T>(runnable, value);
      * }
      *
-     * ## execute()方法最后调用的是task的run()方法; execute方法所在接口是Executor,Executes the given command at some time in the future.
-     * ## The command may execute in a new thread, in a pooled thread, or in the calling thread, at the discretion of the {@code Executor} implementation
+     * // execute()方法最后调用的是task的run()方法; execute方法所在接口是Executor,Executes the given command at some time in the future.
+     * // The command may execute in a new thread, in a pooled thread, or in the calling thread, at the discretion of the {@code Executor} implementation
      *
-     * ## FutureTask.run()
+     * // FutureTask.run()
      * public void run() {
      *         // 状态不为NEW，或者修改为当前线程来运行这个任务失败，则直接返回
      *         if (state != NEW || !UNSAFE.compareAndSwapObject(this, runnerOffset,null, Thread.currentThread())){
@@ -109,7 +109,7 @@ public class FutureTaskMock {
      *         }
      *     }
      *
-     * ## FutureTask.set()设置处理结果
+     * // FutureTask.set()设置处理结果
      * protected void set(V v) {
      *         //设置处理任务处理状态从New 为: COMPLETING(state = 1) 完成
      *         if (UNSAFE.compareAndSwapInt(this, stateOffset, NEW, COMPLETING)) {
@@ -122,7 +122,7 @@ public class FutureTaskMock {
      *         }
      *     }
      *
-     * ## FutureTask.setException()处理异常情况
+     * // FutureTask.setException()处理异常情况
      * protected void setException(Throwable t) {
      *         //将状态从NEW置为COMPLETING,异常也是COMPLETING(state=1状态)
      *         if (UNSAFE.compareAndSwapInt(this, stateOffset, NEW, COMPLETING)) {
@@ -135,8 +135,8 @@ public class FutureTaskMock {
      *         }
      *     }
      *
-     * ## Removes and signals all waiting threads【移除和唤醒所有等待的线程】 invokes done(), and nulls out callable.
-     * ## FutureTask.finishCompletion(),处理正常情况和异常情况
+     * // Removes and signals all waiting threads【移除和唤醒所有等待的线程】 invokes done(), and nulls out callable.
+     * // FutureTask.finishCompletion(),处理正常情况和异常情况
      * private void finishCompletion() {
      *         //如果队列不为空（这个队列实际上为调用者线程）
      *         for (WaitNode q; (q = waiters) != null;) {
@@ -176,10 +176,10 @@ public class FutureTaskMock {
      *
      * （3）调用者线程是保存在 waiters 队列中的,它是get()方法调用时,如果状态不为 COMPLETING时设置为等待
      *
-     * （4）任务执行完毕,除了设置状态state变化之外,还要唤醒调用者线程。
+     * （4)任务执行完毕,除了设置状态state变化之外,还要唤醒调用者线程。
      *
      *
-     * ## FutureTask.get() 获取执行结果
+     * // FutureTask.get() 获取执行结果
      * public V get() throws InterruptedException, ExecutionException {
      *         int s = state;
      *         // 如果状态小于等于 COMPLETING，则进入队列等待
@@ -190,14 +190,14 @@ public class FutureTaskMock {
      *         return report(s);
      * }
      *
-     * ## FutureTask.awaitDone(boolean timed,long nanos) 调用者线程阻塞等待线程池线程的执行结果
-     * ## 如果任务状态小于等于COMPLETING，则进入队列等待
+     * // FutureTask.awaitDone(boolean timed,long nanos) 调用者线程阻塞等待线程池线程的执行结果
+     * // 如果任务状态小于等于COMPLETING，则进入队列等待
      * private int awaitDone(boolean timed, long nanos) throws InterruptedException {
      *         final long deadline = timed ? System.nanoTime() + nanos : 0L;
      *         WaitNode q = null;
      *         boolean queued = false;
      *         for (;;) {
-     *             //处理中断(会清除终端状态)
+     *             //处理中断(会清除中断状态)
      *             if (Thread.interrupted()) {
      *                 removeWaiter(q);
      *                 throw new InterruptedException();
@@ -243,7 +243,7 @@ public class FutureTaskMock {
      *         }
      *     }
      *
-     *  ## awaitDone 流程：
+     *  // awaitDone 流程：
      *
      * （1）第一次循环，状态为NEW，直接到1处，初始化队列并把调用者线程封装在WaitNode中；
      *
@@ -257,7 +257,7 @@ public class FutureTaskMock {
      *
      *
      *
-     * ## FutureTask.report(int s)
+     * // FutureTask.report(int s)
      * private V report(int s) throws ExecutionException {
      *         Object x = outcome;
      *         // 任务正常结束

@@ -1,4 +1,4 @@
-package com.nivelle.base.jdk.concurrent;
+package com.nivelle.base.jdk.asyn;
 
 import java.util.Random;
 import java.util.concurrent.ForkJoinPool;
