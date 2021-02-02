@@ -53,17 +53,6 @@ Hotspot在gc时会根据两个标准来回收：
 softReferences will always be kept for at least one GC after their last access。_ 因为 只要调用一次，那么clock和timestamp的值就会一样，clock-timestamp则为0，一定小于等于free_heap * ms_per_mb
 
 
-
-
-
-
-
-
-
-
-
-
-
 #### 核心属性
 
 1. private T referent;
