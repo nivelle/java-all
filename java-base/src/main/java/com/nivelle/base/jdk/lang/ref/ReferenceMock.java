@@ -15,13 +15,12 @@ public class ReferenceMock {
     private static int M = 1024 * K;
 
     /**
-     * Referent: 被引用对象
-     * <p>
-     * RefernceQueue: 如果Reference在构造方法加入ReferenceQueue参数, Reference 在它的Referent被GC的时,会将这个Reference加入ReferenceQueue
-     * <p>
-     * ReferenceQueue对象本身保存了一个Reference类型的head节点，Reference封装了next字段，这样就是可以组成一个单向链表。同时ReferenceQueue提供了两个静态字段NULL，ENQUEUED
-     * <p>
-     * NULL是当我们构造Reference实例时queue传入null时，会默认使用NULL，这样在enqueue时判断queue是否为NULL,如果为NULL直接返回，入队失败。ENQUEUED的作用是防止重复入队，reference后会把其queue字段赋值为ENQUEUED,当再次入队时会直接返回失败
+     * 1. Referent: 被引用对象
+     * 2. RefernceQueue: 如果Reference在构造方法加入ReferenceQueue参数, Reference 在它的Referent被GC的时,会将这个Reference加入ReferenceQueue
+     * - ReferenceQueue对象本身保存了一个Reference类型的head节点，Reference封装了next字段，这样就是可以组成一个单向链表。同时ReferenceQueue提供了两个静态字段NULL，ENQUEUED
+     * - NULL是当我们构造Reference实例时queue传入null时，会默认使用NULL，这样在enqueue时判断queue是否为NULL,如果为NULL直接返回，入队失败。
+     * - ENQUEUED的作用是防止重复入队，reference后会把其queue字段赋值为ENQUEUED,当再次入队时会直接返回失败
+     * - 除了幻象引用（因为 get 永远返回 null），如果对象还没有被销毁，都可以通过 get 方法获取原有对象。这意味着，利用软引用和弱引用，我们可以将访问到的对象，重新指向强引用，也就是人为的改变了对象的可达性状态
      */
     public static void main(String[] args) {
 
@@ -40,10 +39,10 @@ public class ReferenceMock {
        System.gc();
         //gc之后，引用关联的兑现置空了
         System.out.println("after gc reference object:" + weakReference.get());
-        System.out.println("after gc reference:" + weakReference.hashCode());
+        System.out.println("after gc reference hashCode:" + weakReference.hashCode());
         Reference referenceQueueQueue = weakQueue.poll();
         long hashCode = referenceQueueQueue != null ? referenceQueueQueue.hashCode() : 0L;
-        System.out.println("after gc referenceQueue poll element:" +hashCode);
+        System.out.println("after gc referenceQueue poll element hashCode:" +hashCode);
         System.out.println("=========================");
 
 //        Object object1 = new Object();
@@ -61,6 +60,8 @@ public class ReferenceMock {
          *  1. 根据SoftReference引用实例的timestamp(每次调用softReference.get()会自动更新该字段
          *
          *  2. 当前JVM heap的内存剩余(free_heap)情况
+         *
+         *  3. 软引用通常会在最后一次引用后，还能保持一段时间，默认值是根据堆剩余空间计算的（以 M bytes 为单位）。从 Java  1.3.1 开始，提供了 -XX:SoftRefLRUPolicyMSPerMB 参数，我们可以以毫秒（milliseconds）为单位设置
          */
         byte[] b = new byte[2 * M];
         ReferenceQueue queue = new ReferenceQueue();
@@ -71,7 +72,11 @@ public class ReferenceMock {
         System.out.println("被引用对象直接置为null后:" + softReference.get());
         try {
             while (true) {
+
                 byte[] c = new byte[50 * M];
+                if (c.length>10){
+                   break;
+                }
             }
         } catch (Error error) {
             System.out.println(error);
@@ -87,7 +92,7 @@ public class ReferenceMock {
          *
          * PhantomReference 有两个好处:
          *
-         * 1. 它可以让我们准确地知道对象何时被从内存中删除， 这个特性可以被用于一些特殊的需求中(例如 Distributed GC， XWork 和 google-guice 中也使用 PhantomReference 做了一些清理性工作).
+         * 1. 它可以让我们准确地知道对象何时被从内存中删除，这个特性可以被用于一些特殊的需求中(例如 Distributed GC， XWork 和 google-guice 中也使用 PhantomReference 做了一些清理性工作).
          *
          * 2. 它可以避免 finalization 带来的一些根本性问题, 上文提到 PhantomReference 的唯一作用就是跟踪 referent 何时GC, 但是 WeakReference 也有对应的功能, 两者的区别到底在哪呢 ?
          *
@@ -96,6 +101,23 @@ public class ReferenceMock {
          */
         Reference reference1 = new PhantomReference(object, null);
 
+
+        Object counter = new Object();
+        ReferenceQueue refQueue = new ReferenceQueue<>();
+        PhantomReference<Object> p = new PhantomReference<>(counter, refQueue);
+        counter = null;
+        System.gc();
+        try {
+            // Remove是一个阻塞方法，可以指定timeout，或者选择一直阻塞
+            Reference<Object> ref = refQueue.remove(10);
+            if (ref != null) {
+                System.out.println("gc之后对象被放到引用队列里面,ref:"+ref.get());
+            }else {
+                System.out.println("队列为空");
+            }
+        } catch (InterruptedException e) {
+            // Handle it
+        }
         /**
          * ReferenceQueue.enqueue
          *

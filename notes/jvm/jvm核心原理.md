@@ -4,7 +4,8 @@
 
 #### JAVA_HOME
 
-- 方便引用，配置path时，就是通过引用JAVA_HOME路径来实现的，这样避免了写很长一串的路径（比如在我的电脑中，path原路径是”C:\Program Files\Java\jdk1.8.0_131\bin”，通过指定JAVA_HOME，现在设定的path路径变成了”%JAVA_HOME%\bin”，更加简洁）
+- 方便引用，配置path时，就是通过引用JAVA_HOME路径来实现的，这样避免了写很长一串的路径（比如在我的电脑中，path原路径是”C:\Program
+  Files\Java\jdk1.8.0_131\bin”，通过指定JAVA_HOME，现在设定的path路径变成了”%JAVA_HOME%\bin”，更加简洁）
 
 - 更加安全，当JDK改变时，仅需要改变JAVA_HOME的路径即可，path和CLASSPATH由于引用了JAVA_HOME，其所对应的路径也会更改。如果不引用JAVA_HOME，则JDK路径改变时，需要手动去设定PATH和CLASSPATH的路径，一旦路径错误，则程序会崩溃。
 
@@ -33,6 +34,7 @@
 ```
 cd /Users/nivellefu/IdeaProjects/javadaybyday/java-base/src/main/java/com/nivelle/base/pojo/javaclass;javac -d . /Users/nivellefu/IdeaProjects/javadaybyday/java-base/src/main/java/com/nivelle/base/pojo/javaclass/JvmExceptionDemo.java
 ```
+
 - java;//运行
 
 ```
@@ -41,7 +43,6 @@ java class文件指定的page路径+类名
 ```
 
 - javap -v -p //根据classs字节码文件，反解析出当前类对应的code区（汇编指令），本地变量表，异常表和代码偏移量映射表，常量池等信息。
-
 
 ```
 javap com.nivelle.base.pojo.javaclass/JvmExceptionDemo
@@ -56,6 +57,10 @@ public class com.nivelle.base.pojo.javaclass.JvmExceptionDemo {
 
  
 ```
+
+### jvm 架构图
+
+[![yug6uq.jpg](https://s3.ax1x.com/2021/02/02/yug6uq.jpg)](https://imgchr.com/i/yug6uq)
 
 ### JVM数据类型
 
@@ -75,15 +80,14 @@ public class com.nivelle.base.pojo.javaclass.JvmExceptionDemo {
 
 4. 这种情况仅存在于局部变量，而并不会出现在存储于堆中的字段或者数组元素上。对于 byte、char 以及 short 这三种类型的字段或者数组单元，它们在堆上占用的空间分别为1字节、2字节、2字节，也就是说，跟这些类型的值域相吻合
 
-
 ## 编译加载
 
 ![类加载编译过程.jpg](https://i.loli.net/2020/04/05/h3jRw2eDUY1dkB5.jpg)
 
 - 编译后的字节码文件主要包括常量池和方法表集合这两部分
 
-1. 常量池主要记录的是类文件中出现的字面量以及符号引用。字面常量包括字符串常量（例如 String str=“abc”，其中"abc"就是常量），声明为 final 的属性以及一些基本类型（例如，范围在 -127-128 之间的整型）的属性。
-符号引用包括类和接口的全限定名、类引用、方法引用以及成员变量引用（例如 String str=“abc”，其中 str 就是成员变量引用）等。
+1. 常量池主要记录的是类文件中出现的字面量以及符号引用。字面常量包括字符串常量（例如 String str=“abc”，其中"abc"就是常量），声明为 final 的属性以及一些基本类型（例如，范围在 -127-128
+   之间的整型）的属性。 符号引用包括类和接口的全限定名、类引用、方法引用以及成员变量引用（例如 String str=“abc”，其中 str 就是成员变量引用）等。
 
 2. 方法表集合中主要包含一些方法的字节码、方法访问权限（public、protect、private 等）、方法名索引（与常量池中的方法引用对应）、描述符索引、JVM 执行指令以及属性集合等。
 
@@ -96,6 +100,7 @@ public class com.nivelle.base.pojo.javaclass.JvmExceptionDemo {
 - Bootstrap 启动类加载器:JDK\jre\lib 目录下 jar包中的类或者由虚拟机参数 **-Xbootclasspath** 指定的类, 比如 rt.jar、charsets.jar;同时所有的java.开头的类
 
 启动类加载器是无法被java程序直接引用的。启动类加载器加载java运行过程中的核心类库：
+
 ````
 1. JRE\lib\rt.jar
 2. sunrsasign.jar
@@ -106,7 +111,8 @@ public class com.nivelle.base.pojo.javaclass.JvmExceptionDemo {
 7. 存放在JRE\classess里面的类，也就是JDK提供的类比如常见的：Object、String、List
 ````
 
-- extension 扩展类加载器:JDK\jre\lib\ext 目录下 jar 包中的类或者由系统变量 **java.ext.dirs**指定的类,比如 dnsns.jar、zipfs.jar;以javax.开头的类，开发这可以直接使用拓展类加载器
+- extension 扩展类加载器:JDK\jre\lib\ext 目录下 jar 包中的类或者由系统变量 **java.ext.dirs**指定的类,比如
+  dnsns.jar、zipfs.jar;以javax.开头的类，开发这可以直接使用拓展类加载器
 
 - 应用类加载器:它负责加载应用程序路径下的类 -cp或者-classpath、系统变量 java.class.path 或环境变量 CLASSPATH 所指定的路径
 
@@ -124,7 +130,7 @@ public class com.nivelle.base.pojo.javaclass.JvmExceptionDemo {
 
 - 避免类的重复加载:当父加载器已经加载了该类的时候,就没必要子ClassLoader再加载一次,保证被加载类的唯一性
 
-- 沙箱子安全机制: 自己写的java.lang.String.class 类不会被加载，这样防止核心API库被随意串改 
+- 沙箱子安全机制: 自己写的java.lang.String.class 类不会被加载，这样防止核心API库被随意串改
 
 #### 链接
 
@@ -137,10 +143,11 @@ public class com.nivelle.base.pojo.javaclass.JvmExceptionDemo {
 (1). **被加载类的静态字段分配内存**
 
 (2). 对于 final static 修饰的变量,直接赋值为用户的定义值。
- 
+
  ````
  例如:private final static int value=123,会在准备阶段分配内存,并初始化值为 123,而如果是 private static int value=123，这个阶段 value 的值仍然为 0。 
  ````
+
 - 解析：
 
 (1).符号引用->实际引用,编译器会生成一个包含目标方法所在类的名字、目标方法的名字、接收参数类型以及返回值类型的符号引用来指代所要调用的方法;
@@ -157,8 +164,9 @@ public class com.nivelle.base.pojo.javaclass.JvmExceptionDemo {
 
 - 如果要初始化一个静态字段,我们可以在声明时直接赋值,也可以在静态代码块中对其赋值
 
-- 如果直接赋值的静态字段被 final 所修饰,并且它的类型是基本类型或字符串时,那么该字段便会被 Java 编译器标记成常量值(ConstantValue)其初始化直接由 Java 虚拟机完成。除此之外的直接赋值操作,以及所有静态代码块中的代码,则会被 Java 编译器置于同一方法中,并把它命名为 <clinit>。
-  
+- 如果直接赋值的静态字段被 final 所修饰,并且它的类型是基本类型或字符串时,那么该字段便会被 Java 编译器标记成常量值(ConstantValue)其初始化直接由 Java
+  虚拟机完成。除此之外的直接赋值操作,以及所有静态代码块中的代码,则会被 Java 编译器置于同一方法中,并把它命名为 <clinit>。
+
 - Java 虚拟机会通过加锁来确保类的 <clinit> 方法仅被执行一次
 
 ##### java类的初始化触发
@@ -179,7 +187,6 @@ public class com.nivelle.base.pojo.javaclass.JvmExceptionDemo {
 
 (8). 当初次调用 MethodHandle 实例时,初始化该 MethodHandle 指向的方法所在的类。
 
-
 ### 解释器模式与编译器模式
 
 - 初始化完成后，类在调用执行过程中，执行引擎会把字节码转为机器码，然后在操作系统中才能执行。在字节码转换为机器码的过程中，虚拟机中还存在着一道编译，那就是即时编译。
@@ -187,31 +194,36 @@ public class com.nivelle.base.pojo.javaclass.JvmExceptionDemo {
 - 字节码文件通过类装载器装载，被分配被分配到JVM的运行时数据区，然后会被执行引擎执行。执行引擎以指令为单位读取Java字节码。它就像一个CPU一样，一条一条地执行机器指令。每个字节码指令都由一个1字节的操作码和附加的操作数组成。执行引擎取得一个操作码,然后根据操作数来执行任务,完成后就继续执行下一条操作码。
 将人能读懂的字节码文件转化为jvm可以读懂执行的语言，在jvm中通过三种方式经行转化: 即解释器模式,JIT编译器模式,混合模式。
 
-(1). 解释器模式(Interpreter):一条一条地读取,解释并且执行字节码指令。因为它一条一条地解释和执行指令，所以它可以很快地解释字节码，但是执行起来会比较慢，没有JIT的配合下效率不高
+#### 解释器模式(interpreter)
 
-(2). JIT(即时编译器)编译器模式: 即时编译器把整段字节码不加筛选的编译成机器码不论其执行频率是否有编译价值，在程序响应时间的限制下，没有达到最大的优化。
+- 一条一条地读取,解释并且执行字节码指令。因为它一条一条地解释和执行指令，所以它可以很快地解释字节码，但是执行起来会比较慢，没有JIT的配合下效率不高
 
-#### 即时编译
+- 指定“-Xint”，就是告诉 JVM 只进行解释执行，不对代码进行编译，这种模式抛弃了 JIT 可能带来的性能优势
+
+- “-Xcomp”参数，这是告诉 JVM 关闭解释器，不要进行解释执行，或者叫作最大优化级别
+
+#### 动态编译模式(Just-In-Time):
+
+- 即时编译器把整段字节码不加筛选的编译成机器码不论其执行频率是否有编译价值，在程序响应时间的限制下，没有达到最大的优化。
 
 - Java 8 默认开启了分层编译。
 
   (1). 第 0 层：程序解释执行,默认开启性能监控功能（Profiling）,如果不开启,可触发第二层编译;
-  
-  (2). 第 1 层: 可称为 C1 编译，将字节码编译为本地代码，进行简单、可靠的优化，不开启 Profiling；
-  
-  (3). 第 2 层： 也称为 C1 编译,开启 Profiling，仅执行带方法调用次数和循环回边执行次数 profiling 的 C1 编译；
-  
-  (4). 第 3 层：也称为 C1 编译,执行所有带 Profiling 的 C1 编译；
-  
-  (5). 第 4 层：可称为 C2 编译，也是将字节码编译为本地代码，但是会启用一些编译耗时较长的优化，甚至会根据性能监控信息进行一些不可靠的激进优化。
 
+  (2). 第 1 层: 可称为 C1 编译，将字节码编译为本地代码，进行简单、可靠的优化，不开启 Profiling；
+
+  (3). 第 2 层： 也称为 C1 编译,开启 Profiling，仅执行带方法调用次数和循环回边执行次数 profiling 的 C1 编译；
+
+  (4). 第 3 层：也称为 C1 编译,执行所有带 Profiling 的 C1 编译；
+
+  (5). 第 4 层：可称为 C2 编译，也是将字节码编译为本地代码，但是会启用一些编译耗时较长的优化，甚至会根据性能监控信息进行一些不可靠的激进优化。
 
 #### 热点探测
 
 ##### 方法调用计数器
 
-- XX:TieredStopAtLevel = 1 仅仅使用C1编译
-在不启用分层编译的情况下，当方法的调用次数和循环回边的次数的和，超过由参数 -XX:CompileThreshold 指定的阈值时（使用 C1 时，该值为 1500；使用 C2 时，该值为 10000），便会触发即时编译
+- XX:TieredStopAtLevel = 1 仅仅使用C1编译 在不启用分层编译的情况下，当方法的调用次数和循环回边的次数的和，超过由参数 -XX:CompileThreshold 指定的阈值时（使用 C1 时，该值为
+  1500；使用 C2 时，该值为 10000），便会触发即时编译
 
 ##### 启用分层编译时，Java 虚拟机将不再采用由参数 -XX:CompileThreshold 指定的阈值（该参数失效），阈值的大小是动态调整的，Java 虚拟机会将阈值与某个系数 s 相乘。该系数与当前待编译的方法数目成正相关，与编译线程的数目成负相关
 
@@ -229,8 +241,8 @@ public class com.nivelle.base.pojo.javaclass.JvmExceptionDemo {
 
 - 通过 -XX: OnStackReplacePercentage=N 来设置；
 
-而在分层编译的情况下，-XX: OnStackReplacePercentage 指定的阈值同样会失效，此时将根据当前待编译的方法数以及编译线程数来动态调整。建立回边计数器的主要目的是为了触发 OSR（On StackReplacement）编译，即栈上编译，将编译后的机器语言缓存。
-
+而在分层编译的情况下，-XX: OnStackReplacePercentage 指定的阈值同样会失效，此时将根据当前待编译的方法数以及编译线程数来动态调整。建立回边计数器的主要目的是为了触发 OSR（On
+StackReplacement）编译，即栈上编译，将编译后的机器语言缓存。
 
 ### jvm 方法调用
 
@@ -251,8 +263,7 @@ public class com.nivelle.base.pojo.javaclass.JvmExceptionDemo {
 
 ```
 
-- Java 虚拟机与 Java 语言不同，它并不限制名字与参数类型相同，但返回类型不同的方法出现在同一个类中，对于调用这些方法的字节码来说，
-由于字节码所附带的方法描述符包含了返回类型，因此 Java 虚拟机能够准确地识别目标方法。
+- Java 虚拟机与 Java 语言不同，它并不限制名字与参数类型相同，但返回类型不同的方法出现在同一个类中，对于调用这些方法的字节码来说， 由于字节码所附带的方法描述符包含了返回类型，因此 Java 虚拟机能够准确地识别目标方法。
 
 ```
 
@@ -268,7 +279,6 @@ public class com.nivelle.base.pojo.javaclass.JvmExceptionDemo {
 
 - Java 虚拟机中的即时编译器会使用内联缓存来加速动态绑定。Java 虚拟机所采用的单态内联缓存将纪录调用者的动态类型，以及它所对应的目标方法。
 
-
 ### Java方法反射调用性能慢的原因:
 
 1. 由于Method.invoke是一个变长参数方法，在字节码层面它的最后一个参数会是 Object 数组
@@ -283,9 +293,12 @@ public class com.nivelle.base.pojo.javaclass.JvmExceptionDemo {
 
 ### jvm虚拟机处理异常
 
-- 在编译生成的字节码中，每个方法都附带一个异常表。异常表中的每一个条目代表一个异常处理器，并且由 from 指针、to 指针、target 指针以及所捕获的异常类型构成。这些指针的值是字节码索引（bytecode index，bci），用以定位字节码。
+- 在编译生成的字节码中，每个方法都附带一个异常表。异常表中的每一个条目代表一个异常处理器，并且由 from 指针、to 指针、target 指针以及所捕获的异常类型构成。这些指针的值是字节码索引（bytecode
+  index，bci），用以定位字节码。
 
-- 当程序触发异常时，Java 虚拟机会从上至下遍历异常表中的所有条目。当触发异常的字节码的索引值在某个异常表条目的监控范围内，Java 虚拟机会判断所抛出的异常和该条目想要捕获的异常是否匹配。如果匹配，Java 虚拟机会将控制流转移至该条目 target 指针指向的字节码。如果遍历完所有异常表条目，Java 虚拟机仍未匹配到异常处理器，那么它会弹出当前方法对应的 Java 栈帧，并且在调用者（caller）中重复上述操作。在最坏情况下，Java 虚拟机需要遍历当前线程 Java 栈上所有方法的异常表。
+- 当程序触发异常时，Java 虚拟机会从上至下遍历异常表中的所有条目。当触发异常的字节码的索引值在某个异常表条目的监控范围内，Java 虚拟机会判断所抛出的异常和该条目想要捕获的异常是否匹配。如果匹配，Java
+  虚拟机会将控制流转移至该条目 target 指针指向的字节码。如果遍历完所有异常表条目，Java 虚拟机仍未匹配到异常处理器，那么它会弹出当前方法对应的 Java 栈帧，并且在调用者（caller）中重复上述操作。在最坏情况下，Java
+  虚拟机需要遍历当前线程 Java 栈上所有方法的异常表。
 
 - from 指针和 to 指针标示了该异常处理器所监控的范围
 
@@ -293,32 +306,32 @@ public class com.nivelle.base.pojo.javaclass.JvmExceptionDemo {
 
 - Java 字节码中，每个方法对应一个异常表。当程序触发异常时，Java 虚拟机将查找异常表，并依此决定需要将控制流转移至哪个异常处理器之中。Java 代码中的 catch 代码块和 finally 代码块都会生成异常表条目。
 
-
 ### jvm java对象
 
-- 对象头: 
- 
- 1. 标记字段: java虚拟机有关该对象运行数据：如哈希码、GC信息、锁信息
- 
+- 对象头:
+
+1. 标记字段: java虚拟机有关该对象运行数据：如哈希码、GC信息、锁信息
+
  ```
  在 64 位的 Java 虚拟机中，对象头的标记字段占 64 位，而类型指针又占了 64 位。以 Integer 类为例，它仅有一个 int 类型的私有字段，占 4 个字节。因此，每一个 Integer 对象的额外内存开销至少是 400%。这也是为什么 Java 要引入基本类型的原因之一。
  ```
- 
- 2. 类型指针 : 指向该对象的类
 
-   - 压缩指针: 为了减少类型指针的内存占用，将64位指针压缩至32位，进而节约内存。之前64位寻址，寻的是字节。现在32位寻址，寻的是变量。再加上内存对齐(补齐为8的倍数)，可以每次寻变量都以一定的规则寻找，并且一定可以找得到。
+2. 类型指针 : 指向该对象的类
 
-   - 内存对齐:
-  
-     1. 默认情况下，Java 虚拟机堆中对象的起始地址需要对齐至 8 的倍数。如果一个对象用不到 8N 个字节，那么空白的那部分空间就浪费掉了。这些浪费掉的空间我们称之为对象间的填充（padding）
+- 压缩指针: 为了减少类型指针的内存占用，将64位指针压缩至32位，进而节约内存。之前64位寻址，寻的是字节。现在32位寻址，寻的是变量。再加上内存对齐(补齐为8的倍数)，可以每次寻变量都以一定的规则寻找，并且一定可以找得到。
 
-     2. 内存对齐的另一个好处是,使得CPU缓存行可以更好的实施。保证每个变量都只出现在一条缓存行中，不会出现跨行缓存。提高程序的执行效率。
+- 内存对齐:
 
-   - 字段重排序: 其实就是更好的执行内存对齐标准,会调整字段在内存中的分布,达到方便寻址和节省空间的目的。
+    1. 默认情况下，Java 虚拟机堆中对象的起始地址需要对齐至 8 的倍数。如果一个对象用不到 8N 个字节，那么空白的那部分空间就浪费掉了。这些浪费掉的空间我们称之为对象间的填充（padding）
 
-   - 虚共享:当两个线程分别访问一个对象中的不同volatile字段，理论上是不涉及变量共享和同步要求的。但是如果两个volatile字段处于同一个CPU缓存行中，对其中一个volatile字段的写操作，会导致整个缓存行的写回和读取操作，进而影响到了另一个volatile变量，也就是实际上的共享问题
-   
-     - @Contented注解:该注解就是用来解决虚共享问题的，被该注解标识的变量，会独占一个CPU缓存行。但也因此浪费了大量的内存空间。
+    2. 内存对齐的另一个好处是,使得CPU缓存行可以更好的实施。保证每个变量都只出现在一条缓存行中，不会出现跨行缓存。提高程序的执行效率。
+
+- 字段重排序: 其实就是更好的执行内存对齐标准,会调整字段在内存中的分布,达到方便寻址和节省空间的目的。
+
+- 虚共享:
+  当两个线程分别访问一个对象中的不同volatile字段，理论上是不涉及变量共享和同步要求的。但是如果两个volatile字段处于同一个CPU缓存行中，对其中一个volatile字段的写操作，会导致整个缓存行的写回和读取操作，进而影响到了另一个volatile变量，也就是实际上的共享问题
+
+    - @Contented注解:该注解就是用来解决虚共享问题的，被该注解标识的变量，会独占一个CPU缓存行。但也因此浪费了大量的内存空间。
 
 ### jvm垃圾回收
 
@@ -328,13 +341,13 @@ public class com.nivelle.base.pojo.javaclass.JvmExceptionDemo {
 
 - 可达性分析:将GCRoots作为初始的存活对象合集，然后从该合集出发，探索所有能够被该集合引用到的兑现，并将其加入到该集合。常见GCRoot如下：
 
-  - java虚拟机栈方法栈桢中的局部变量
+    - java虚拟机栈方法栈桢中的局部变量
 
-  - 已加载类的静态变量
+    - 已加载类的静态变量
 
-  - JNI handles
+    - JNI handles
 
-  - 已启动且未停止的java线程
+    - 已启动且未停止的java线程
 
 **缺点**: 多线程环境下其他线程更新已经访问过的对象中的引用，从而造成误报(将引用设置为null)或者漏报(将引用设置为未被访问过的对象)。
 
@@ -344,12 +357,12 @@ public class com.nivelle.base.pojo.javaclass.JvmExceptionDemo {
 
 - safePoint:当收到stop-the-world请求,它会等待所有的线程达到安全点,才允许请求stop-the-world的线程进行独占工作。（安全点：找到一个稳定的执行状态，在合格状态下java虚拟机的堆栈不会发生变化）
 
-  1. JNI执行本地代码，不访问java对象、调用java方法，
-  
-  2. 解释执行字节码
-  
-  3. 执行即时编译器生成的机器码时和线程阻塞。阻塞的线程处于java虚拟机线程调度的掌握，属于安全点。
-  
+    1. JNI执行本地代码，不访问java对象、调用java方法，
+
+    2. 解释执行字节码
+
+    3. 执行即时编译器生成的机器码时和线程阻塞。阻塞的线程处于java虚拟机线程调度的掌握，属于安全点。
+
 #### 卡表技术
 
 - 将整个堆划分为一个个大小512字节的卡，并且维护一个卡表，用来存储每张卡的一个标识位。这个标识位代表对应的卡是否可能存有指向新生代对象的引用。如果存在认为是脏的。
@@ -380,7 +393,8 @@ public class com.nivelle.base.pojo.javaclass.JvmExceptionDemo {
 
 - 堆
 
-堆是 JVM 内存中最大的一块内存空间，该内存被所有线程共享，几乎所有对象和数组都被分配到了堆内存中。堆被划分为新生代和老年代，新生代又被进一步划分为 Eden 和 Survivor 区，最后 Survivor 由 From Survivor 和 To Survivor 组成。
+堆是 JVM 内存中最大的一块内存空间，该内存被所有线程共享，几乎所有对象和数组都被分配到了堆内存中。堆被划分为新生代和老年代，新生代又被进一步划分为 Eden 和 Survivor 区，最后 Survivor 由 From
+Survivor 和 To Survivor 组成。
 
 - 程序计数器（Program Counter Register）
 
@@ -390,29 +404,25 @@ public class com.nivelle.base.pojo.javaclass.JvmExceptionDemo {
 
 方法区主要是用来存放已被虚拟机加载的类相关信息，包括类信息、运行时常量池、字符串常量池。类信息又包括了类的版本、字段、方法、接口和父类等信息。
 
-
 #### 在 HotSpot 虚拟机、Java7 版本中已经将永久代的静态变量和运行时常量池转移到了堆中，其余部分则存储在 JVM 的非堆内存中,而 Java8 版本已经将方法区中实现的永久代去掉了，并用元空间（class metadata）代替了之前的永久代，并且元空间的存储位置是本地内存。
 
 - 之前永久代的类的元数据存储在了元空间，永久代的静态变量（class static variables）以及运行时常量池（runtime constant pool）则跟 Java7 一样，转移到了堆中
 
- (1) 移除永久代是为了融合 HotSpot JVM 与 JRockit VM 而做出的努力，因为 JRockit 没有永久代，所以不需要配置永久代
+(1) 移除永久代是为了融合 HotSpot JVM 与 JRockit VM 而做出的努力，因为 JRockit 没有永久代，所以不需要配置永久代
 
- (2) 永久代内存经常不够用或发生内存溢出，爆出异常 java.lang.OutOfMemoryError: PermGen. 
+(2) 永久代内存经常不够用或发生内存溢出，爆出异常 java.lang.OutOfMemoryError: PermGen.
 
     - jdk7中，指定PermGen区大小为8M,由于 PermGen 中类的元数据信息在每次 FullGC 的时候都可能被收集，回收率都偏低，成绩很难令人满意
   
     - 为 PermGen 分配多大的空间很难确定，PermSize 的大小依赖于很多因素，比如，JVM 加载的 class 总数、常量池的大小和方法的大小等
 
-
 - 虚拟机栈（VM stack）
 
 Java 虚拟机栈是线程私有的内存空间，它和 Java 线程一起创建。当创建一个线程时，会在虚拟机栈中申请一个线程栈，用来保存方法的局部变量、操作数栈、动态链接方法和返回地址等信息，并参与方法的调用和返回
 
-
 - 本地方法栈（Native Method Stack）
 
- 地方法栈跟 Java 虚拟机栈的功能类似，Java 虚拟机栈用于管理 Java 函数的调用，而本地方法栈则用于管理本地方法的调用。但本地方法并不是用 Java 实现的，而是由 C 语言实现的。
-
+地方法栈跟 Java 虚拟机栈的功能类似，Java 虚拟机栈用于管理 Java 函数的调用，而本地方法栈则用于管理本地方法的调用。但本地方法并不是用 Java 实现的，而是由 C 语言实现的。
 
 ## 编译优化
 
