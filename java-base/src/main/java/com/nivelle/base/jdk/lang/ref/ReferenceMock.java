@@ -16,6 +16,7 @@ public class ReferenceMock {
 
     /**
      * 1. Referent: 被引用对象
+     *
      * 2. RefernceQueue: 如果Reference在构造方法加入ReferenceQueue参数, Reference 在它的Referent被GC的时,会将这个Reference加入ReferenceQueue
      * - ReferenceQueue对象本身保存了一个Reference类型的head节点，Reference封装了next字段，这样就是可以组成一个单向链表。同时ReferenceQueue提供了两个静态字段NULL，ENQUEUED
      * - NULL是当我们构造Reference实例时queue传入null时，会默认使用NULL，这样在enqueue时判断queue是否为NULL,如果为NULL直接返回，入队失败。
