@@ -15,6 +15,8 @@
 - **dubbo版本：0.2.0**
 - **Elasticsearch版本：6.8.6**
 - **MongoDB版本：v4.0.9**
+- **ClickHouse版本:21.1.3**
+- **Spark版本：3.1.0**
 
 #### docker整合
 
