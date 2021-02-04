@@ -8,6 +8,22 @@ import java.util.PriorityQueue;
  * @author nivelle
  * @date 2020/04/13
  */
+
+
+/**
+ * （1）PriorityQueue是一个小顶堆；
+ * <p>
+ * （2）PriorityQueue是非线程安全的；
+ * <p>
+ * （3）PriorityQueue不是有序的，只有堆顶存储着最小的元素；
+ * <p>
+ * （4）入队就是堆的插入元素的实现；
+ * <p>
+ * （5）出队就是堆的删除元素的实现；
+ * <p>
+ * (6) 入队自下而上的堆调整；出队自上而下的堆调整；
+ */
+
 public class PriorityQueueMock {
     /**
      * （1）入队不允许null元素；
@@ -26,19 +42,6 @@ public class PriorityQueueMock {
      *
      */
 
-    /**
-     * （1）PriorityQueue是一个小顶堆；
-     * <p>
-     * （2）PriorityQueue是非线程安全的；
-     * <p>
-     * （3）PriorityQueue不是有序的，只有堆顶存储着最小的元素；
-     * <p>
-     * （4）入队就是堆的插入元素的实现；
-     * <p>
-     * （5）出队就是堆的删除元素的实现；
-     * <p>
-     * (6) 入队自下而上的堆调整；出队自上而下的堆调整；
-     */
     public static void main(String[] args) {
 
         /**

@@ -1,3 +1,4 @@
+### 常用SQL查询
 
 ````
 desc  students;
@@ -16,7 +17,7 @@ desc  students;
 +-------------+---------------------------------+------+-----+-------------------+-----------------------------------------------+
 ````
 
-## distinct 消除重复行,一种类型只取一种
+#### distinct 消除重复行,一种类型只取一种
 
 ````
 select distinct(gender) from students; //查询性别种类
@@ -36,7 +37,7 @@ select count(distinct(gender)) from students; //性别种类数
 |                       3 |
 +-------------------------+
 ````
-## order by
+#### order by
 
 ````
 select * from students where (age between 18 and 34) and gender = 1 order by high desc,age; //年龄在18到34岁之间,性别为男 按身高降序排列 如果身高一样则按照年龄升序排列
@@ -53,7 +54,7 @@ select * from students where (age between 18 and 34) and gender = 1 order by hig
 +----+--------+-----+--------+--------+--------+---------------------+---------------------+----+
 
 ````
-## group by
+#### group by
 
 ````
 select * from students group by gender; //默认满足分组条件的第一条数据
@@ -136,11 +137,11 @@ select sum(age),gender from students group by gender limit 1,2; //对分组后�
 |      183 | girl   |
 +----------+--------+
 ````
-## 统计group by 之后的count()
+#### 统计group by 之后的count()
 ````
 select count(*) from(SELECT count(*) FROM 表名 WHERE 条件 GROUP BY id ) a ;
 ````
-## 关联查询
+#### 关联查询
 
 ``````
 select s.id as sId,s.name sName,s.cls_id sclsId, c.id as cid ,c.name as cname from students as s inner join classes as c;// innner join s表和c表每一行数据关联 s(n)*c(n)
@@ -308,9 +309,9 @@ select * from students right join classes on students.cls_id=classes.id; //以�
 +------+-----------+------+--------+--------+--------+---------------------+---------------------+------+-----+---------------+---------------------+---------------------+----+
 ``````
 
-## 子查询
+#### 子查询
 
-### 标量子查询: 子查询返回的结果是一个数据(一行一列)
+##### 标量子查询: 子查询返回的结果是一个数据(一行一列)
 
 ``````
 select * from students where high > (select avg(high) from students);
@@ -336,7 +337,7 @@ select * from students where high > (select avg(high) from students);
 | 27 | 老19      |  12 | 173.04 | girl   |    111 | 2020-06-17 18:27:48 | 2020-06-17 18:27:48 |  1 |
 +----+-----------+-----+--------+--------+--------+---------------------+---------------------+----+
 ``````
-### 列子查询: 返回的结果是一列(一列多行)
+##### 列子查询: 返回的结果是一列(一列多行)
 ``````
 select id,name from students where cls_id in (select id from classes); //子查询为 id列的多行数据
 +----+-----------+
@@ -544,3 +545,112 @@ alter table A engine=InnoDB;
 ```
 
 ---
+
+### order by 的执行原理
+
+````
+
+CREATE TABLE `t` (
+  `id` int(11) NOT NULL,
+  `city` varchar(16) NOT NULL,
+  `name` varchar(16) NOT NULL,
+  `age` int(11) NOT NULL,
+  `addr` varchar(128) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `city` (`city`)
+) ENGINE=InnoDB;
+
+````
+
+````
+select city,name,age from t where city='杭州' order by name limit 1000  ;
+
+````
+#### 全字段排序
+
+- MySQL 会给每个线程分配一块内存用于排序，称为 sort_buffer。
+
+1. 初始化 sort_buffer，确定放入 name、city、age 这三个字段；
+
+2. 从索引找到第一个满足city='杭州'条件的主键id；
+
+3. 到主键id 索引取出整行，取name,city,age三个字段，存入sort_buffer中；
+
+4. 从索引city取下一个记录的主键id
+
+5. 重复3、4直到city的值不满足查询条件为止
+
+6. 对sort_buffer中的数据安装字段name做快速排序
+
+7. 按照排序结果取前1000行给客户端
+
+[![y3fkz6.md.jpg](https://s3.ax1x.com/2021/02/04/y3fkz6.md.jpg)](https://imgchr.com/i/y3fkz6)
+
+- sort_buffer_size，就是 MySQL 为排序开辟的内存（sort_buffer）的大小。如果要排序的数据量小于 sort_buffer_size，排序就在内存中完成。但如果排序数据量太大，内存放不下，则不得不利用磁盘临时文件辅助排序。
+
+- 外部排序一般使用归并排序算法。可以这么简单理解，MySQL 将需要排序的数据分成 12 份，每一份单独排序后存在这些临时文件中。然后把这 12 个有序文件再合并成一个有序的大文件
+
+#### rowid排序
+
+- 如果查询要返回的字段很多的话，那么 sort_buffer 里面要放的字段数太多，这样内存里能够同时放下的行数很少，要分成很多个临时文件，排序的性能会很差
+
+- max_length_for_sort_data，是 MySQL 中专门控制用于排序的行数据的长度的一个参数。它的意思是，如果单行的长度超过这个值，MySQL 就认为单行太大，要换一个算法
+
+- ort_buffer 的字段，只有要排序的列（即 name 字段）和主键 i
+
+1. 初始化 sort_buffer，确定放入两个字段，即 name 和 id；
+
+2. 从索引 city 找到第一个满足 city='杭州’条件的主键 id
+
+3. 到主键 id 索引取出整行，取 name、id 这两个字段，存入 sort_buffer 中
+
+4. 从索引 city 取下一个记录的主键 id
+
+5. 重复步骤 3、4 直到不满足 city='杭州’条件为止
+
+6. 对 sort_buffer 中的数据按照字段 name 进行排序；
+
+7. 遍历排序结果，取前 1000 行，并按照 id 的值回到原表中取出 city、name 和 age 三个字段返回给客户端。
+
+[![y35nwF.md.jpg](https://s3.ax1x.com/2021/02/04/y35nwF.md.jpg)](https://imgchr.com/i/y35nwF)
+
+#### 比较
+
+- 如果 MySQL 实在是担心排序内存太小，会影响排序效率，才会采用 rowid 排序算法，这样排序过程中一次可以排序更多行，但是需要再回到原表去取数据。
+  
+- 如果 MySQL 认为内存足够大，会优先选择全字段排序，把需要的字段都放到 sort_buffer 中，这样排序后就会直接从内存里面返回查询结果了，不用再回到原表去取数据。
+  
+- 这也就体现了 MySQL 的一个设计思想：如果内存够，就要多利用内存，尽量减少磁盘访问。对于 InnoDB 表来说，rowid 排序会要求回表多造成磁盘读，因此不会被优先选择。
+
+####  建立 （city,name）联合索引
+
+````
+alter table t add index city_user(city, name);
+
+````
+
+1. 从索引 (city,name) 找到第一个满足 city='杭州’条件的主键 id；
+
+2. 到主键 id 索引取出整行，取 name、city、age 三个字段的值，作为结果集的一部分直接返回；
+
+3. 从索引 (city,name) 取下一个记录主键 id；
+
+4. 重复步骤 2、3，直到查到第 1000 条记录，或者是不满足 city='杭州’条件时循环结束
+
+
+[![y3II4H.md.jpg](https://s3.ax1x.com/2021/02/05/y3II4H.md.jpg)](https://imgchr.com/i/y3II4H)
+
+#### 建立（city,name,age）覆盖索引
+
+````
+
+alter table t add index city_user_age(city, name, age);
+````
+
+1. 从索引 (city,name,age) 找到第一个满足 city='杭州’条件的记录，取出其中的 city、name 和 age 这三个字段的值，作为结果集的一部分直接返回；
+
+2. 从索引 (city,name,age) 取下一个记录，同样取出这三个字段的值，作为结果集的一部分直接返回；
+
+3. 重复执行步骤 2，直到查到第 1000 条记录，或者是不满足 city='杭州’条件时循环结束。
+
+[![y3oAbT.md.jpg](https://s3.ax1x.com/2021/02/05/y3oAbT.md.jpg)](https://imgchr.com/i/y3oAbT)

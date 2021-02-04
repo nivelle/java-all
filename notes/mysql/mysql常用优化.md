@@ -77,7 +77,7 @@ select * from `demo`.`order` where id> (select id from `demo`.`order` order by o
 
 #### innodb_log_file_size: 默认48M
 
-  当日志文件大小已经超过我们参数设置的日志文件大小时，InnoDB 会自动切换到另外一个日志文件，由于重做日志是一个循环使用的环，在切换时，就需要将新的日志文件脏页的缓存数据刷新到磁盘中（触发检查点）。
+- 当日志文件大小已经超过我们参数设置的日志文件大小时，InnoDB 会自动切换到另外一个日志文件，由于重做日志是一个循环使用的环，在切换时，就需要将新的日志文件脏页的缓存数据刷新到磁盘中（触发检查点）。
 
 #### innodb_log_buffer_size: 默认16
 
