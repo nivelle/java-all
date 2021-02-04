@@ -52,10 +52,19 @@ public class IntegerMock {
          *
          * 3. java.lang.Integer.IntegerCache.high property may be set and saved in the private system properties in the
          *    sun.misc.VM class.
+         *
+         * 4. Integer 底层是一个 private final int 的原始类型值
          */
         Integer a = Integer.valueOf(254);
+        /**
+         * public static Integer valueOf(int i) {
+         *         if (i >= IntegerCache.low && i <= IntegerCache.high)
+         *             return IntegerCache.cache[i + (-IntegerCache.low)];
+         *         return new Integer(i);
+         *     }
+         */
         Integer b = Integer.valueOf(254);
-        System.out.println(a == b);
+        System.out.println(a.equals(b));
         /**
          * 这两种hashCode 方法是兼容的
          */

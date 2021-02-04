@@ -1,5 +1,6 @@
 ### 反射方法
 
+``````
 - public Object invoke(Object obj, Object... args) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException
 
   - if (!override)
@@ -19,25 +20,26 @@
     - return ma.invoke(obj, args);
     
       - Object invoke(Object var1, Object[] var2) throws IllegalArgumentException, InvocationTargetException;
-      
-      ### 子类实现(每个Method对象包含一个root对象，root对象里持有一个MethodAccessor对象。我们获得的Method独享相当于一个root对象的镜像，所有这类Method共享root里的MethodAccessor对象,这个对象由ReflectionFactory方法生成,ReflectionFactory对象在Method类中是static final的由native方法实例化)
+``````
+
+#### 子类实现(每个Method对象包含一个root对象，root对象里持有一个MethodAccessor对象。我们获得的Method独享相当于一个root对象的镜像，所有这类Method共享root里的MethodAccessor对象,这个对象由ReflectionFactory方法生成,ReflectionFactory对象在Method类中是static final的由native方法实例化)
           
-        - 接口:MethodAccessor
+- 接口:MethodAccessor
+    
+- 抽象类:MethodAccessorImpl
+  
+##### 子类:DelegatingMethodAccessorImpl
         
-        - 抽象类:MethodAccessorImpl
-      
-        - 子类:DelegatingMethodAccessorImpl
-        
-          ```
+```
           public Object invoke(Object var1, Object[] var2) throws IllegalArgumentException, InvocationTargetException {
                   return this.delegate.invoke(var1, var2);
               }
               
-          ```
-        - 子类:NativeMethodAccessorImpl
+```
+##### 子类:NativeMethodAccessorImpl
         
-          ```
-          public Object invoke(Object var1, Object[] var2) throws IllegalArgumentException, InvocationTargetException {
+```
+  public Object invoke(Object var1, Object[] var2) throws IllegalArgumentException, InvocationTargetException {
                     
                      if (++this.numInvocations > ReflectionFactory.inflationThreshold() && !ReflectUtil.isVMAnonymousClass(this.method.getDeclaringClass())) {
                          MethodAccessorImpl var3 = (MethodAccessorImpl)(new MethodAccessorGenerator()).generateMethod(this.method.getDeclaringClass(), this.method.getName(), this.method.getParameterTypes(), this.method.getReturnType(), this.method.getExceptionTypes(), this.method.getModifiers());
@@ -51,12 +53,12 @@
                      //否则使用nativeMethodAccessorImpl的invoke方法，执行效率比动态字节码高
                      (少了C++代码和java代码的转换,但是生成动态字节码也比较耗时,所以要设置Dsun.reflect.inflationThreshold=15来设置阀值，调用超过15次再使用动态字节码技术)
                      return invoke0(this.method, var1, var2);
-                 }
+         }
           
-          ```
+```
           
 
-### 方法分派
+#### 方法分派
 
 - 静态分派：静态方法，构造方法，私有方法以及父类方法（通过super调用的方法）都无法通过继承的方式被覆盖，因为在编译期就能确定其版本。我们称这类分派为静态分派，方法的重载是这种类型的典型场景。
 

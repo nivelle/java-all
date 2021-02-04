@@ -100,7 +100,7 @@ public class Java8MethodTest {
             return 100;
         }));
         //Value不为空则返回Value，否则返回传入的Supplier生成的值；
-        System.out.println("ofNullAble:" + optional1.ofNullable(99).orElseGet(() -> {
+        System.out.println("ofNullAble:" + Optional.ofNullable(99).orElseGet(() -> {
             return 20;
         }));
         optional1.ifPresent(System.out::print);

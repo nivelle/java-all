@@ -333,10 +333,11 @@ public class Java8StreamTest {
         System.out.print("根据age分组然:" + userList.stream().collect(Collectors.groupingBy(User::getAge)));
 
         List<String> lines = Arrays.asList(new String[]{
-                "hello abc", "老马 编程"
+                "hello-abc", "老马-编程"
         });
-        List<String> words = lines.stream().flatMap(line -> Arrays.stream(line.split("\\s+"))).collect(Collectors.toList());
-        System.out.print(words);
+        System.out.println();
+        List<String> words = lines.stream().flatMap(line -> Arrays.stream(line.split("-"))).collect(Collectors.toList());
+        System.out.print("flatMap:" + words);
 
         Stream skipStream = users.stream().skip(3);
         skipStream.forEach(System.out::print);

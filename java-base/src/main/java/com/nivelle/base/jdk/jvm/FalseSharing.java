@@ -10,7 +10,7 @@ public class FalseSharing implements Runnable {
 
     public final static int NUM_THREADS = 4;
 
-    public final static long ITERATIONS = 500l * 1000L * 1000L;
+    public final static long ITERATIONS = 500L* 1000L * 1000L;
 
     private final int arrayIndex;
 
@@ -50,6 +50,7 @@ public class FalseSharing implements Runnable {
         }
     }
 
+    @Override
     public void run() {
         long i = ITERATIONS + 1;
         while (0 != --i) {
