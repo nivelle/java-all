@@ -52,6 +52,22 @@ show index from activity;
   
 ```
 
+#### 前缀索引
+
+````
+
+mysql> alter table SUser add index index1(email);
+或
+mysql> alter table SUser add index index2(email(6));
+
+````
+
+- 定义好长度，就可以做到既节省空间，又不用额外增加太多的查询成本。
+
+- 索引选取的越长，占用的磁盘空间就越大，相同的数据页能放下的索引值就越少，搜索的效率也就会越低。
+
+
+
 #### 索引优化
 
 - 尽量避免回表,也即索引覆盖:索引包含要查询的数据,就不需要通过叶子节点的主键值,再去回表查询数据了,减少了IO操作; select count(*)
@@ -76,7 +92,7 @@ show index from activity;
 
 - innodb 的 innodb_file_per_table 为on,表明每张表都会保存为一个 .idb 文件；
 
-- 页：按类型分为-》 数据页、系统页、undo页、事务数据页;innodb默认的页大小为16KB
+- 页：按类型分为：数据页、系统页、undo页、事务数据页;innodb默认的页大小为16KB
 
 #### 普通索引和唯一索引的选择
 
@@ -95,3 +111,13 @@ show index from activity;
 - 因此对于写多读少的非唯一索引，优化效果更加明显。
 
 
+
+### 索引的选择
+
+- 采样统计：InnoDB 默认会选择 N 个数据页，统计这些页面上的不同值，得到一个平均值，然后乘以这个索引的页面数，就得到了这个索引的基数。
+
+- 在 MySQL 中，有两种存储索引统计的方式，可以通过设置参数 innodb_stats_persistent 的值来选择：
+  
+1. 设置为 on 的时候，表示统计信息会持久化存储。这时，默认的 N 是 20，M 是 10。 
+   
+2. 设置为 off 的时候，表示统计信息只存储在内存中。这时，默认的 N 是 8，M 是 16

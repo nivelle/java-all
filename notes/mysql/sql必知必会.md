@@ -654,3 +654,32 @@ alter table t add index city_user_age(city, name, age);
 3. 重复执行步骤 2，直到查到第 1000 条记录，或者是不满足 city='杭州’条件时循环结束。
 
 [![y3oAbT.md.jpg](https://s3.ax1x.com/2021/02/05/y3oAbT.md.jpg)](https://imgchr.com/i/y3oAbT)
+
+#### 索引下推
+
+````
+
+CREATE TABLE `tuser` (
+  `id` int(11) NOT NULL,
+  `id_card` varchar(32) DEFAULT NULL,
+  `name` varchar(32) DEFAULT NULL,
+  `age` int(11) DEFAULT NULL,
+  `ismale` tinyint(1) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `id_card` (`id_card`),
+  KEY `name_age` (`name`,`age`)
+) ENGINE=InnoDB
+
+````
+
+- 这个语句在搜索索引树的时候，只能用 “张”，找到第一个满足条件的记录 ID3
+
+- 在 MySQL 5.6 之前，只能从 ID3 开始一个个回表。到主键索引上找出数据行，再对比字段值
+
+[![yJ8gQx.md.jpg](https://s3.ax1x.com/2021/02/05/yJ8gQx.md.jpg)](https://imgchr.com/i/yJ8gQx)
+
+- MySQL 5.6 引入的索引下推优化（index condition pushdown)， 可以在索引遍历过程中，对索引中包含的字段先做判断，直接过滤掉不满足条件的记录，减少回表次数
+
+[![yJ8oYd.jpg](https://s3.ax1x.com/2021/02/05/yJ8oYd.jpg)](https://imgchr.com/i/yJ8oYd)
+
+

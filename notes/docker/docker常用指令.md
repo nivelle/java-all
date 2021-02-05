@@ -391,7 +391,7 @@ $ docker exec -d edison touch /home/haha
 ```
 
 ### 在容器中运行交付式任务，只对正在运行的容器有效。
-
+~~~~
 - -ti 以交互式模式打开 tty，执行/bin/bash，其结果就是打开了一个 bash 终端。
 ```
 
