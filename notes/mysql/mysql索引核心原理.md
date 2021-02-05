@@ -93,3 +93,5 @@ show index from activity;
 - 对于普通索引的更新，如果目标页不在缓存中，mySQL 做了一个优化，会把更新操作暂时放在一个缓存中 change buffer，等待下次访问这个数据页或者定时任务merge这个change buffer到磁盘。
 
 - 因此对于写多读少的非唯一索引，优化效果更加明显。
+
+
