@@ -142,6 +142,7 @@
 
 - [知识点过一遍](https://juejin.im/post/5cb6c4ef51882532b70e6ff0?utm_source=gold_browser_extension#heading-36)
 - [数据库规范](https://www.biaodianfu.com/mysql-best-practices.html)
+- [死锁解决](https://www.aneasystone.com/archives/2017/11/solving-dead-locks-two.html)
 
 ## 缓存相关
 #### redis和 memcheched什么区别？为什么单线程的redis比多线程的memched效率高？

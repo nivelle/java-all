@@ -325,7 +325,27 @@ select * from innodb_locks;
 
 #### 死锁解决
 
-比较条件： 互斥，占有且等待，不可强占，循环等待
+- 执行一下 show processlist 命令，看看当前语句处于什么状态
+
+````
+show processlist;
++----+-----------------+-----------+---------+------------+-------+-------------------------+-----------------------------+
+| Id | User            | Host      | db      | Command    | Time  | State                   | Info                        |
++----+-----------------+-----------+---------+------------+-------+-------------------------+-----------------------------+
+|  5 | event_scheduler | localhost | NULL    | Daemon     | 66675 | Waiting on empty queue  | NULL                        |
+| 17 | root            | localhost | test_db | Query      |   240 | User sleep              | select sleep(1) from t      |
+| 18 | root            | localhost | test_db | Query      |   230 | Waiting for table flush | flush tables t              |
+| 19 | root            | localhost | test_db | Query      |   221 | Waiting for table flush | select * from t where id =1 |
+| 20 | root            | localhost | test_db | Field List |    98 | Waiting for table flush |                             |
+| 21 | root            | localhost | NULL    | Query      |     0 | init                    | show processlist            |
++----+-----------------+-----------+---------+------------+-------+-------------------------+-----------------------------+
+
+````
+
+- 通过查询 sys.schema_table_lock_waits 这张表，我们就可以直接找出造成阻塞的 process id
+
+
+##### 比较条件： 互斥，占有且等待，不可强占，循环等待
 
 - 直接进入等待，直到超时。这个超时时间可以通过参数 **innodb_lock_wait_timeout** 来设置，默认超时时间是50s
 
