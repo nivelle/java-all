@@ -64,8 +64,13 @@ redoLog | undoLog
 
 ### 一条更新语句的执行过程(二阶段提交)
 
-update T set c=c+1 where ID=2;
+1. binlog（归档日志）和 redo log（重做日志）配合崩溃恢复的时候，使用两阶段提交，防止数据完整性。
 
+[![yYr2fP.jpg](https://s3.ax1x.com/2021/02/06/yYr2fP.jpg)](https://imgchr.com/i/yYr2fP)
+
+````
+update T set c=c+1 where ID=2;
+````
 - 执行器先找引擎取 ID=2 这一行。ID 是主键，引擎直接用树搜索找到这一行。如果 ID=2 这一行所在的数据页本来就在内存中，就直接返回给执行器；否则，需要先从磁盘读入内存，然后再返回。
 
 - 执行器拿到引擎给的行数据，把这个值加上 1，比如原来是 N，现在就是 N+1，得到新的一行数据，再调用引擎接口写入这行新数据
@@ -77,6 +82,26 @@ update T set c=c+1 where ID=2;
 - 执行器调用引擎的提交事务接口，引擎把刚刚写入的 redo log 改成提交（commit）状态，更新完成。
 
 ---
+
+2. 崩溃恢复判断：
+
+#### 时刻 A 的地方，也就是写入 redo log 处于 prepare 阶段之后、写 binlog 之前，发生了崩溃（crash），由于此时 binlog 还没写，redo log 也还没提交，所以崩溃恢复的时候，这个事务会回滚。这时候，binlog 还没写，所以也不会传到备库
+
+#### 时刻B
+
+- 如果 redo log 里面的事务是完整的，也就是已经有了 commit 标识，则直接提交；
+
+- 如果 redo log 里面的事务只有完整的 prepare，则判断对应的事务 binlog 是否存在并完整：
+
+  1. 如果是，则提交事务
+    
+  2. 否则，回滚事务
+    
+#### binlog事务完整性判断：
+
+- statement 格式的 binlog，最后会有 COMMIT；
+
+- row 格式的 binlog，最后会有一个 XID event。
 
 #### 慢日志
 
