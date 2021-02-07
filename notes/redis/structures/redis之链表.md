@@ -43,8 +43,6 @@ typedef struct list{
 
 ```
 
-[![list](https://s3.ax1x.com/2020/11/12/DSAi4K.png)](https://imgchr.com/i/DSAi4K)
-
 #### redis链表结构特性如下:
 
 - 双端:链表节点带有prev和next指针,获取某个节点的前置和后置节点复杂度都是O(1)

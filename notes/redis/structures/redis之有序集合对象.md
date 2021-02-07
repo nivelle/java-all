@@ -17,11 +17,8 @@ redis > ZDD price 8.5 apple 5.0 banana 6.0 cherry
 如果price 键的值对象使用的是ziplist编码,那么这个值对象将会如下图所示的样子:
 
 
-![image](http://7xpuj1.com1.z0.glb.clouddn.com/ziplist%E6%9C%89%E5%BA%8F%E9%9B%86%E5%90%88.png)
-
 而对象所使用的压缩列表则如下:
 
-![image](http://7xpuj1.com1.z0.glb.clouddn.com/%E5%8E%8B%E7%BC%A9%E5%88%97%E8%A1%A8%E4%B8%AD%E7%9A%84%E5%AF%B9%E8%B1%A1.png)
 
 **skiplist编码的有序集合对象使用zset结构作为底层实现,一个zset结构同时也包含一个字典和一个跳跃表"**
 
@@ -41,7 +38,6 @@ zset结构中的dict字典未有序集合创建了一个从成员到分值的映
 
 有序集合的每个元素的成员都是一个字符串对象,而每个元素的分值都是一个double类型的浮点数.虽然zset结构同时使用跳跃表和字典来保存有序集合元素,但是这两种数据结构都会通过指针来共享元素的成员和分值,所以同时使用跳跃表和字典来保存集合元素不会产生任何重复成员或者分值,也不会因此浪费额外的内存.
 
-![image](http://7xpuj1.com1.z0.glb.clouddn.com/%E6%9C%89%E5%BA%8F%E9%9B%86%E5%90%88%E5%85%83%E7%B4%A0%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84.png)
 
 ### 编码的转换
 
@@ -50,7 +46,6 @@ zset结构中的dict字典未有序集合创建了一个从成员到分值的映
 - 有序集合保存的元素数量小于128个
 - 有序集合保存的所有元素成员的长度都小于64字节
 
-![image](http://7xpuj1.com1.z0.glb.clouddn.com/%E6%9C%89%E5%BA%8F%E9%9B%86%E5%90%88%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E7%8E%B0.png)
 
 
 

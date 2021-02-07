@@ -1,5 +1,3 @@
-
-
 ### 哈希对象
 
 哈希对象的编码可以是ziplist或者hashtable.
@@ -10,18 +8,13 @@ ziplist编码的哈希对象使用压缩列表作为底层实现,每当有新的
 - 先添加到哈希对象中的键值对会被方在压缩列表的表头方向,而后添加到哈希对象总的键值对会被放在压缩列表的表尾方向
 
 
-1. 如果profile键的值对象使用的是ziplust编码,那么这个值对象将会是如下所示:
-
-![image](http://7xpuj1.com1.z0.glb.clouddn.com/zip%E7%BC%96%E7%A0%81%E7%9A%84%E5%93%88%E5%B8%8C%E5%AF%B9%E8%B1%A1.png)
-
-![image](http://7xpuj1.com1.z0.glb.clouddn.com/hash%E5%AF%B9%E8%B1%A1%E5%8E%8B%E7%BC%A9%E5%88%97%E8%A1%A8%E7%9A%84%E5%BA%95%E5%B1%82%E5%AE%9E%E7%8E%B0.png)
+1. 如果profile键的值对象使用的是 ziplist 编码,那么这个值对象将会是如下所示:
 
 2. hashtable编码的哈希对象使用字典作为底层实现,哈希对象中的每个键值对都使用一个字典键值对来保存:
 
 - 字典的每个键都是一个字符串对象,对象中保存了键值对的键;
 - 字典的每个值都是一个字符串对象,对象中保存了键值对的值.
 
-![image](http://7xpuj1.com1.z0.glb.clouddn.com/hash%E5%AF%B9%E8%B1%A1%E5%BA%95%E5%B1%82%E7%BB%93%E6%9E%84.png)
 
 #### 编码转换
 
@@ -37,4 +30,3 @@ ziplist编码的哈希对象使用压缩列表作为底层实现,每当有新的
 
 **若包含的键值对数量过多也会引起的编码转换**
 
-![image](http://7xpuj1.com1.z0.glb.clouddn.com/hash%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E7%8E%B0.png)
