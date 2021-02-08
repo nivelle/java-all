@@ -34,3 +34,11 @@ CLUSTER MEET<IP><PORT>
 - 节点会继续使用lua脚本环境来执行向客户端输入的lua脚本.
 
 节点会继续使用redisServer结构来保存服务器的状态,使用redisClient结构来保存客户端的状态,至于那些只有在集群模式下才会用到的数据,节点将他们保存到了cluster.h/clusterNode结构,cluster.h/clusterLink结构,以及cluster.h/clusterState结构里面.
+
+#### 集群复制
+
+redis中,用户可以通过执行SLAVEOF命令或设置slaveof选项,让一个服务去复制(replicate)另一个服务器,我们称呼被复制的服务器为主服务器(master),而对主服务器进行复制的服务器被称为从服务器(slave)
+
+
+
+
