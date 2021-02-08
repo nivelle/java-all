@@ -80,6 +80,7 @@ public class FloatMock {
          * 可以看到其本地实现也是通过union来实现的，完成int转成float，最后再转成java的浮点型float。
          */
         System.out.println("intBitsToFloat:" + Float.intBitsToFloat(01));
+        System.out.println("-0.0F:" + Float.intBitsToFloat(0x8000000));
 
         /**
          * 主要看第二个hashCode方法即可，它是通过调用floatToIntBits来实现的
@@ -92,6 +93,14 @@ public class FloatMock {
          */
         System.out.println(Float.toHexString(new Float("0.1")));
 
+
+        System.out.println("0.0F==-0.0F is true?:" + (0.0F == -0.0F));
+
+        System.out.println("正无穷：" + 1.0F / 0.0F);
+
+        System.out.println("负无穷：" + -1.0F / 0.0F);
+
+        System.out.println("正无穷：" + ((1.0F / 0.0F) == (0x7F800000)));
 
 
     }
