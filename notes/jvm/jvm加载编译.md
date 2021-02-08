@@ -11,11 +11,11 @@
 
 - 第三方软件（如tomcat，eclipse）都是引用约定好的JAVA_HOME变量，如果不指定JAVA_HOME，则将无法使用第三方软件。
 
-#### Path
+#### path
 
 - 配置Path是为了在任意目录下都能使用java、javac命令。
 
-#### ClassPath
+#### classPath
 
 - 配置CLASSPATH是为了引入一些已经写好的类。
 
@@ -58,7 +58,7 @@ public class com.nivelle.base.pojo.javaclass.JvmExceptionDemo {
 
  
 ```
-
+----------------------
 
 ### 编译加载
 
@@ -73,7 +73,11 @@ public class com.nivelle.base.pojo.javaclass.JvmExceptionDemo {
 
 ### 类的加载
 
-##### 类加载,是指查找字节流,并且据此创建类的过程；查找并加载类的二进制数据到java虚拟机中
+- 除了启动类加载器之外，其他的类加载器都是 java.lang.ClassLoader 的子类，因此有对应的 Java 对象。这些类加载器需要先由另一个类加载器，比如说启动类加载器，加载至 Java 虚拟机中，方能执行类加载
+
+- 拓展类加载器，引用类加载器、自定义类加载器是java.lang.ClassLoader的子类实例，自定义类加载器直接继承java.lang.classLoader
+
+#### 类加载,是指查找字节流,并且据此创建类的过程；查找并加载类的二进制数据到java虚拟机中
 
 - Bootstrap 启动类加载器:JDK\jre\lib 目录下 jar包中的类或者由虚拟机参数 **-Xbootclasspath** 指定的类, 比如 rt.jar、charsets.jar;同时所有的java.开头的类
 
@@ -86,15 +90,18 @@ public class com.nivelle.base.pojo.javaclass.JvmExceptionDemo {
 4. jce.jar
 5. jsse.jar
 6. plugin.jar
-7. 存放在JRE\classess里面的类，也就是JDK提供的类比如常见的：Object、String、List
+7. 存放在JRE\classess里面的类，也就是JDK提供的类比如常见的: Object、String、List
 ````
 
-- extension 扩展类加载器:JDK\jre\lib\ext 目录下 jar 包中的类或者由系统变量 **java.ext.dirs**指定的类,比如
-  dnsns.jar、zipfs.jar;以javax.开头的类，开发这可以直接使用拓展类加载器
+- Extension扩展类加载器:JDK\jre\lib\ext 目录下 jar 包中的类或者由系统变量 **java.ext.dirs**指定的类,比如 dnsns.jar、zipfs.jar;以javax.开头的类，开发者可以直接使用拓展类加载器
 
-- 应用类加载器:它负责加载应用程序路径下的类 -cp或者-classpath、系统变量 java.class.path 或环境变量 CLASSPATH 所指定的路径
+````
+Java 9 引入了模块系统，并且略微更改了上述的类加载器1。扩展类加载器被改名为平台类加载器（platform class loader）。Java SE 中除了少数几个关键模块，比如说 java.base 是由启动类加载器加载之外，其他的模块均由平台类加载器所加载。
+````
 
-- JVM 会先加载 class 文件，而在 class 文件中除了有类的版本、字段、方法和接口等描述信息外,还有一项信息是常量池 (Constant Pool Table)，用于存放编译期间生成的各种字面量和符号引用
+- Application应用类加载器:它负责加载应用程序路径下的类 -cp也就是-classpath、系统变量 java.class.path 或环境变量 CLASSPATH 所指定的路径
+
+##### JVM 会先加载 class 文件，而在 class 文件中除了有类的版本、字段、方法和接口等描述信息外,还有一项信息是常量池 (Constant Pool Table)，用于存放编译期间生成的各种字面量和符号引用
 
 **(类加载进内存后，JVM就会将class文件常量池中的内容存放到运行时常量池中也就是方法区中)**
 
@@ -102,7 +109,6 @@ public class com.nivelle.base.pojo.javaclass.JvmExceptionDemo {
 
 2. 符号引用: 类和方法的全限定名
 
-拓展类加载器，引用类加载器、自定义类加载器是java.lang.ClassLoader的子类实例，自定义类加载器直接继承java.lang.classLoader
 
 #### 双亲委派机制
 
@@ -110,33 +116,54 @@ public class com.nivelle.base.pojo.javaclass.JvmExceptionDemo {
 
 - 沙箱子安全机制: 自己写的java.lang.String.class 类不会被加载，这样防止核心API库被随意串改
 
-#### 链接
+#### 类加载器的名字空间作用
+````
+在 Java 虚拟机中，类的唯一性是由类加载器实例以及类的全名一同确定的。即便是同一串字节流，经由不同的类加载器加载，也会得到两个不同的类。在大型应用中，我们往往借助这一特性，来运行同一个类的不同版本。
+````
+
+-----------------
+### 类的链接
 
 **是指将创建成的类合并至 Java 虚拟机中,使之能够执行的过程**
 
-- 验证:文件合法性检查
+- 第一步验证:文件合法性检查
 
-- 准备:
+- 第二步准备:
 
 (1). **被加载类的静态字段分配内存**
 
-(2). 对于 final static 修饰的变量,直接赋值为用户的定义值。
+(2). 对于 **final static** 修饰的变量,直接赋值为用户的定义值。
+
+(3). 构造其他跟类层次相关的数据结构，比如用来实现虚方法的动态绑定的方法表
 
  ````
- 例如:private final static int value=123,会在准备阶段分配内存,并初始化值为 123,而如果是 private static int value=123，这个阶段 value 的值仍然为 0。 
+ 例如:private final static int value=123,会在准备阶段分配内存,并初始化值为 123,
+ 
+ 而如果是 private static int value=123，这个准备阶段 value 的值仍然为 0。 
  ````
 
-- 解析：
+- 第三步解析：
 
-(1).符号引用->实际引用,编译器会生成一个包含目标方法所在类的名字、目标方法的名字、接收参数类型以及返回值类型的符号引用来指代所要调用的方法;
+````
+Java 虚拟机规范并没有要求在链接过程中完成解析。它仅规定了：如果某些字节码使用了符号引用，那么在执行这些字节码之前，需要完成对这些符号引用的解析。
+
+````
+
+(1).符号引用->实际引用; 
+
+````
+在 class 文件被加载至 Java 虚拟机之前，这个类无法知道其他类及其方法、字段所对应的具体地址，甚至不知道自己方法、字段的地址。因此，每当需要引用这些成员时，Java 编译器会生成一个符号引用。在运行阶段，这个符号引用一般都能够无歧义地定位到具体目标上。
+
+符号引用:编译器会生成一个包含目标方法所在类的名字、目标方法的名字、接收参数类型以及返回值类型的符号引用来指代所要调用的方法;
+````
 
 (2).形成对常量池字符串的索引值;
 
 (3).如果符号引用指向一个未被加载的类，或者未被加载类的字段或方法，那么解析将触发这个类的加载（但未必触发这个类的链接以及初始化）
 
-#### 初始化
+### 类的初始化
 
-- **为类的静态变量赋予正确的初始值**
+- **为类的静态变量赋予正确的初始值**，在准备阶段仅仅是分配了内存，提供的是默认值
 
 ##### 为标记为常量值的字段赋值,以及执行 <clinit> 方法的过程。类的初始化仅会被执行一次,这个特性被用来实现单例的延迟初始化。
 
