@@ -86,7 +86,7 @@ class SystemArrayCopy1 {
 
     public static void main(String[] args) {
         //System.out.println(Object.class == Integer.class);
-        System.out.println(Object.class == (Object)Integer.class);
+        System.out.println(Object.class == (Object) Integer.class);
     }
 
 }

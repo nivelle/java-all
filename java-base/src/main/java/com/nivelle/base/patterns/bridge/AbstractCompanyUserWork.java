@@ -1,4 +1,4 @@
- package com.nivelle.base.patterns.bridge;
+package com.nivelle.base.patterns.bridge;
 
 public abstract class AbstractCompanyUserWork {
 

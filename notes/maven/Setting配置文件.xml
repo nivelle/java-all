@@ -160,7 +160,9 @@
                     </releases>
                     <!--如何处理远程仓库里快照版本的下载。有了releases和snapshots这两组配置，POM就可以在每个单独的仓库中，为每种类型的构件采取不同的策略。例如，可能有人会决定只为开发目的开启对快照版本下载的支持。参见repositories/repository/releases元素-->
                     <snapshots>
-                        <enabled/><updatePolicy/><checksumPolicy/>
+                        <enabled/>
+                        <updatePolicy/>
+                        <checksumPolicy/>
                     </snapshots>
                     <!--远程仓库URL，按protocol://hostname/path形式 -->
                     <url>http://snapshots.maven.codehaus.org/maven2</url>
@@ -173,12 +175,19 @@
                 <!--包含需要连接到远程插件仓库的信息.参见profiles/profile/repositories/repository元素的说明-->
                 <pluginRepository>
                     <releases>
-                        <enabled/><updatePolicy/><checksumPolicy/>
+                        <enabled/>
+                        <updatePolicy/>
+                        <checksumPolicy/>
                     </releases>
                     <snapshots>
-                        <enabled/><updatePolicy/><checksumPolicy/>
+                        <enabled/>
+                        <updatePolicy/>
+                        <checksumPolicy/>
                     </snapshots>
-                    <id/><name/><url/><layout/>
+                    <id/>
+                    <name/>
+                    <url/>
+                    <layout/>
                 </pluginRepository>
             </pluginRepositories>
 
@@ -201,7 +210,7 @@
         profile都会被激活。如果没有匹配的profile，则什么都不会发生。例如，env-test是一个activeProfile，则在pom.xml（或者profile.xml）中对应id的profile会被激活。如果运行过程中找不到这样一个profile，Maven则会像往常一样运行。
      -->
     <activeProfiles>
-      <activeProfile>alwaysActiveProfile</activeProfile>
-      <activeProfile>anotherAlwaysActiveProfile</activeProfile>
+        <activeProfile>alwaysActiveProfile</activeProfile>
+        <activeProfile>anotherAlwaysActiveProfile</activeProfile>
     </activeProfiles>
 </settings>

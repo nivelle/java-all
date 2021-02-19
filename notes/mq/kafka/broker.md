@@ -4,9 +4,11 @@
 
 - 存储信息相关： log.dirs:指定了broker 需要使用的若干个文件目录路径。必须使用者指定(例如：/home/kafka1,/home/kafka2,/home/kafka3)
 
-- 与ZooKeeper相关： zookeeper.connect：zookeeper存储了kafka的元数据信息,让多个 Kafka 集群使用同一套 ZooKeeper 集群（zk1:2181,zk2:2181,zk3:2181/kafka1和zk1:2181,zk2:2181,zk3:2181/kafka2）
+- 与ZooKeeper相关： zookeeper.connect：zookeeper存储了kafka的元数据信息,让多个 Kafka 集群使用同一套 ZooKeeper 集群（zk1:2181,zk2:2181,zk3:
+  2181/kafka1和zk1:2181,zk2:2181,zk3:2181/kafka2）
 
-- 与Broker相关： listeners: 监听器，告诉外部连接者通过什么协议和端口开放kafka服务,构成<协议名称，主机名，端口号>，协议名称可能是标志名称，也可以是自定义名称，如果使用自定义协议名称，需要指定安全协议，listener.security.protocol.map
+- 与Broker相关： listeners: 监听器，告诉外部连接者通过什么协议和端口开放kafka服务,构成<协议名称，主机名，端口号>
+  ，协议名称可能是标志名称，也可以是自定义名称，如果使用自定义协议名称，需要指定安全协议，listener.security.protocol.map
 
 - Top 管理相关： auto.create.topics.enable:是否允许自动创建topic，建议设置成false
 
@@ -25,7 +27,7 @@
 - retention.ms:规定了该Topic消息被保存的时长。默认是7天，即该Topic只保存最近7天的消息。一旦设置了这个值，它会覆盖掉Broker端的全局参数值
 
 - retention.bytes:规定了要为该Topic预留多大的磁盘空间。
-  
+
  ```` 
 $> export KAFKA_HEAP_OPTS=--Xms6g  --Xmx6g
 $> export KAFKA_JVM_PERFORMANCE_OPTS= -server -XX:+UseG1GC -XX:MaxGCPauseMillis=20 -XX:InitiatingHeapOccupancyPercent=35 -XX:+ExplicitGCInvokesConcurrent -Djava.awt.headless=true
@@ -40,7 +42,6 @@ $> bin/kafka-server-start.sh config/server.properties
 
 ### 消息设计
 
-
 #### 位移主题
 
 - broker 端位移主题数目控制参数：offsets.topic.num.partitions，默认值为50
@@ -50,7 +51,6 @@ $> bin/kafka-server-start.sh config/server.properties
 - 位移主题如果是kafka自动创建的，那么该主题的分区数就是50，副本数是3
 
 - 位移主题在第一个consumer程序启动时，kafka自动创建位移主题
-
 
 ##### 位移主题提交
 

@@ -11,7 +11,6 @@ import com.nivelle.base.pojo.MyEnum;
 public class EnumMock {
 
 
-
     public static void main(String[] args) {
 
         /**
@@ -50,7 +49,6 @@ public class EnumMock {
         MyEnum twoEnum = MyEnum.TWO;
 
         MyEnum threenEnum = MyEnum.THIRD;
-
 
 
         System.out.println("枚举类名称:" + oneEnum.getClass());

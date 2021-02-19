@@ -15,6 +15,7 @@
 ````
 case class LogOffsetMetadata(messageOffset: Long,segmentBaseOffset: Long = Log.UnknownOffset, relativePositionInSegment: Int = LogOffsetMetadata.UnknownFilePosition)
 ````
+
 ````
 case class LogOffsetMetadata(messageOffset: Long,segmentBaseOffset: Long = Log.UnknownOffset,relativePositionInSegment: Int = LogOffsetMetadata.UnknownFilePosition)
 
@@ -107,17 +108,19 @@ private def fetchHighWatermarkMetadata: LogOffsetMetadata = {
 ````
 
 ### 日志段管理
+
 ````
 private val segments: ConcurrentNavigableMap[java.lang.Long, LogSegment] = new ConcurrentSkipListMap[java.lang.Long, LogSegment]
 
 ````
+
 - 使用java 的 concurrentSkipListMap 类来保存所有日志段对象。【1. 线程安全 2. 它是键值（key）可排序的Map】
 
 #### 基于留存策略决定哪些日志可以删除
 
 - deleteOldSegments : 使用传入的函数计算哪些日志段对象能够删除，使用deleteSegments方法删除日志段
 
-- deletableSegments: 
+- deletableSegments:
 
 ````
 
@@ -156,6 +159,7 @@ private def deletableSegments(predicate: (LogSegment, Option[LogSegment]) => Boo
     }
   }
 ````
+
 - deleteSegments: 真正的日志段删除操作
 
 ````
@@ -187,7 +191,7 @@ private def deleteSegments(deletable: Iterable[LogSegment]): Int = {
 
 #### LEO : 下一条待插入消息，也就是 LEO是空位，还没有消息，对应的对象是-> nextOffsetMetadata
 
-#####  LEO 更新时机
+##### LEO 更新时机
 
 - Log对象初始化时
 - 写入消息时
@@ -208,7 +212,6 @@ private def deleteSegments(deletable: Iterable[LogSegment]): Int = {
 
 - 删除消息时：删除消息就是通过抬高Log Start Offset值实现的，删除消息时必须更新该值
 
-
 ### 读写操作
 
 #### 写操作
@@ -218,7 +221,7 @@ private def deleteSegments(deletable: Iterable[LogSegment]): Int = {
 - appendAsFollower
 
 - append
-  
+
 [![sQ4uHU.jpg](https://s3.ax1x.com/2021/01/09/sQ4uHU.jpg)](https://imgchr.com/i/sQ4uHU)
 
 ````

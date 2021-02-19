@@ -1,4 +1,5 @@
 package com.nivelle.base.jdk.lang;
+
 import org.springframework.stereotype.Service;
 
 /**

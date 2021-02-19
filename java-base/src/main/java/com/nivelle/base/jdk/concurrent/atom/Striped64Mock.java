@@ -67,28 +67,28 @@ public class Striped64Mock {
      **/
 
 /**
-    @sun.misc.Contended static final class Cell { //被Contended修饰，目的是为了防止变量的伪共享
-        volatile long value; //保存要累加的值
-        Cell(long x) { value = x; }
-        final boolean cas(long cmp, long val) {//使用Unsafe类的cas来更新value的值
-            return UNSAFE.compareAndSwapLong(this, valueOffset, cmp, val);
-        }
+ @sun.misc.Contended static final class Cell { //被Contended修饰，目的是为了防止变量的伪共享
+ volatile long value; //保存要累加的值
+ Cell(long x) { value = x; }
+ final boolean cas(long cmp, long val) {//使用Unsafe类的cas来更新value的值
+ return UNSAFE.compareAndSwapLong(this, valueOffset, cmp, val);
+ }
 
-        // Unsafe mechanics
-        private static final sun.misc.Unsafe UNSAFE;
-        private static final long valueOffset;
-        static {
-            try {
-                UNSAFE = sun.misc.Unsafe.getUnsafe();
-                Class<?> ak = Striped64.Cell.class;
-                 //获取value值在Cell对象中的偏移量，以便迅速定位
-                valueOffset = UNSAFE.objectFieldOffset(ak.getDeclaredField("value"));
-            } catch (Exception e) {
-                throw new Error(e);
-            }
-        }
-    }
-  **/
+ // Unsafe mechanics
+ private static final sun.misc.Unsafe UNSAFE;
+ private static final long valueOffset;
+ static {
+ try {
+ UNSAFE = sun.misc.Unsafe.getUnsafe();
+ Class<?> ak = Striped64.Cell.class;
+ //获取value值在Cell对象中的偏移量，以便迅速定位
+ valueOffset = UNSAFE.objectFieldOffset(ak.getDeclaredField("value"));
+ } catch (Exception e) {
+ throw new Error(e);
+ }
+ }
+ }
+ **/
 
 /**
  * final void longAccumulate(long x, LongBinaryOperator fn,boolean wasUncontended) {

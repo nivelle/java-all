@@ -1,6 +1,6 @@
 ### HandlerAdapter
 
-####  SimpleControllerHandlerAdapter //直接处理 HttpServletRequest , HttpServletResponse 
+#### SimpleControllerHandlerAdapter //直接处理 HttpServletRequest , HttpServletResponse
 
 ```
 public class SimpleControllerHandlerAdapter implements HandlerAdapter {
@@ -30,8 +30,7 @@ public class SimpleControllerHandlerAdapter implements HandlerAdapter {
 
 ```
 
-
-####  HttpRequestHandlerAdapter(适配org.springframework.web.HttpRequestHandler这种Handler)
+#### HttpRequestHandlerAdapter(适配org.springframework.web.HttpRequestHandler这种Handler)
 
 ````
 public class HttpRequestHandlerAdapter implements HandlerAdapter {
@@ -90,10 +89,10 @@ public class SimpleServletHandlerAdapter implements HandlerAdapter {
 
 ```
 
-#####  public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter implements BeanFactoryAware, InitializingBean 
+##### public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter implements BeanFactoryAware, InitializingBean
 
 ###### RequestMappingHandlerAdapter 是Spring MVC用来执行控制器方法的HandlerAdapter
- 
+
 ```
 1. RequestMappingHandlerAdapter继承自抽象基类AbstractHandlerMethodAdapter,AbstractHandlerMethodAdapter主要是定义了一些抽象方法和禁止了一些方法的继承。AbstractHandlerMethodAdapter又继承自WebContentGenerator,WebContentGenerator主要提供了对HTTP缓存机制方面的支持。
 
@@ -153,7 +152,7 @@ private List<HandlerMethodArgumentResolver> getDefaultArgumentResolvers() {
 
 ```
 
-- private List<HandlerMethodReturnValueHandler> getDefaultReturnValueHandlers() 
+- private List<HandlerMethodReturnValueHandler> getDefaultReturnValueHandlers()
 
 ```
 	private List<HandlerMethodReturnValueHandler> getDefaultReturnValueHandlers() {

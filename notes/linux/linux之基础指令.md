@@ -65,7 +65,6 @@ bin  boot  data  dev  etc  home  lib  lib64  lost+found  media  mnt  opt  proc  
 
 --------------------
 
-
 ### 文件操作
 
 #### (1) pwd 所在目录
@@ -74,15 +73,15 @@ bin  boot  data  dev  etc  home  lib  lib64  lost+found  media  mnt  opt  proc  
 
 这是一个非常基本，也是大家经常需要使用的命令，它用于切换当前目录，它的参数是要切换到的目录的路径，可以是绝对路径，也可以是相对路径。
 
--  (/) 代表根目录 
- 
+- (/) 代表根目录
+
 - (./ )代表当前目录 同时 (../) 代表上级目录
 
-- cd /root/Docements # 切换到目录/root/Docements,绝对路径 
+- cd /root/Docements # 切换到目录/root/Docements,绝对路径
 
-- cd ./path          # 切换到当前目录下的path目录中，“.”表示当前目录
+- cd ./path # 切换到当前目录下的path目录中，“.”表示当前目录
 
-- cd ../path         # 切换到上层目录中的path目录中，“..”表示上一层目录 
+- cd ../path # 切换到上层目录中的path目录中，“..”表示上一层目录
 
 - cd ~：回到用户家目录。 ## root用户，cd ~ 相当于 cd /root ; 普通用户，cd ~ 相当于cd /home/当前用户名
 
@@ -94,33 +93,30 @@ bin  boot  data  dev  etc  home  lib  lib64  lost+found  media  mnt  opt  proc  
 
 这得看你是用什么用户登录了，如果是以root身份登录，执行此命令后，回到/root/目录下，如果是以其他用户等录得话，则是回到/home/目录下
 
-
 #### (3) ls命令
 
 这是一个非常有用的查看文件与目录的命令,list之意，它的参数非常多，下面就列出一些我常用的参数吧，如下：
 
+- l : 列出长数据串，包含文件的属性与权限数据等(子文件数量,权限)
 
-- l : 列出长数据串，包含文件的属性与权限数据等(子文件数量,权限)  
-     
-     demo: drwxr-xr-x 3 root root 4096 1月  13 23:32 tomcat //文件类型,文件权限,文件个数,创建者,所属用户组,文件大小,文件时间,文件名称
+  demo: drwxr-xr-x 3 root root 4096 1月 13 23:32 tomcat //文件类型,文件权限,文件个数,创建者,所属用户组,文件大小,文件时间,文件名称
 
 - r : 和-l搭配使用,逆向展示 和 -t 搭配使用 时间逆向展示
 
 
 - a ：列出全部的文件，连同隐藏文件（开头为.的文件）一起列出来（常用）
 
-- d ：仅列出目录本身，而不是列出目录的文件数据  
+- d ：仅列出目录本身，而不是列出目录的文件数据
 
-- h ：将文件容量以较易读的方式（GB，kB等）列出来 
+- h ：将文件容量以较易读的方式（GB，kB等）列出来
 
-- R ：连同子目录的内容一起列出（递归列出），等于该目录下的所有文件都会显示出来 
-
+- R ：连同子目录的内容一起列出（递归列出），等于该目录下的所有文件都会显示出来
 
 #### (4) mkdir 创建空目录
 
 - mkdir a b c : 创建多个目录(a,b,c),如果已经存在则报错
 
-- mkdir -p  /a/b: 创建多级目录 a/b
+- mkdir -p /a/b: 创建多级目录 a/b
 
 - rmdir /a: 删除空目录
 
@@ -136,19 +132,17 @@ bin  boot  data  dev  etc  home  lib  lib64  lost+found  media  mnt  opt  proc  
 
 - cp -a ：将文件的特性一起复制
 
-- cp -p ：连同文件的属性一起复制，而非使用默认方式，与-a相似，常用于备份  
+- cp -p ：连同文件的属性一起复制，而非使用默认方式，与-a相似，常用于备份
 
-- cp -i ：若目标文件已经存在时，在覆盖时会先询问操作的进行  
+- cp -i ：若目标文件已经存在时，在覆盖时会先询问操作的进行
 
-- cp -r ：递归持续复制，用于目录的复制行为  
+- cp -r ：递归持续复制，用于目录的复制行为
 
-- cp -u ：目标文件与源文件有差异时才会复制  
-
+- cp -u ：目标文件与源文件有差异时才会复制
 
 #### (6) 移动重命名
 
 - mv 源目录 目标目录(新名字)
-
 
 #### (7) 文件查看命令
 
@@ -161,12 +155,11 @@ bin  boot  data  dev  etc  home  lib  lib64  lost+found  media  mnt  opt  proc  
 
 **tar (1) c 打包 (2) x 解包 (3) f 指定操作类型为文件 (4) c 表示压缩**
 
--  打包压缩: tar czf(cjf) /压缩后文件名路径 源文件目录 (z:表示压缩zgip压缩格式,j:表示bzip2压缩格式)
+- 打包压缩: tar czf(cjf) /压缩后文件名路径 源文件目录 (z:表示压缩zgip压缩格式,j:表示bzip2压缩格式)
 
--  解压: tar xf 指定要解压文件 -C 目标路径
+- 解压: tar xf 指定要解压文件 -C 目标路径
 
--  压缩命令: gzip 和 bzip2
-
+- 压缩命令: gzip 和 bzip2
 
 #### (9) vim命令
 
@@ -185,20 +178,21 @@ chmod u+x shellfile.sh
 
 #### (11) 返回上一个目录
 
-- cd - 
+- cd -
 
 ------------------
 
 ### 用户管理和组管理
 
 #### 用户
+
 - useradd userName //创建用户
 
 - userdel userName //删除用户
 
 - id + 用户名 //查看存在的用户; id+回车 显示当前的用户
 
-- root 用户的家目录 /root  其他用户的家目录 /home/用户名 //用户的家目录
+- root 用户的家目录 /root 其他用户的家目录 /home/用户名 //用户的家目录
 
 - passwd 用户名;//设置新的用户密码
 
@@ -226,21 +220,21 @@ useradd -g group1 user2;//将user2加入到group1组
 //netstat命令用于显示与IP、TCP、UDP和ICMP协议相关的统计数据，一般用于检验本机各端口的网络连接情况
 
   ```
-  
-  - netstat –i//网卡
-  - netstat -s //网路统计
-  - netstat -lntup  
-  - netstat –e //以太网
-  - netstat –r //路由
-  - netstat -an | awk '/^tcp/ {++S[$NF]}  END {for (a in S) print a,S[a]} ' //网路链接个数
-  - netstat -ap | grep 程序 //程序运行的端口
-  - netstat -pt //在 netstat 输出中显示 TCP连接信息
 
-####  套接口类型:
- 
- -t ：TCP
+- netstat –i//网卡
+- netstat -s //网路统计
+- netstat -lntup
+- netstat –e //以太网
+- netstat –r //路由
+- netstat -an | awk '/^tcp/ {++S[$NF]} END {for (a in S) print a,S[a]} ' //网路链接个数
+- netstat -ap | grep 程序 //程序运行的端口
+- netstat -pt //在 netstat 输出中显示 TCP连接信息
 
- -u ：UDP
+#### 套接口类型:
+
+-t ：TCP
+
+-u ：UDP
 
 -raw ：RAW类型
 
@@ -253,7 +247,6 @@ useradd -g group1 user2;//将user2加入到group1组
 --netrom ：netrom类型
 
 #### 状态说明：
-
 
 LISTEN：侦听来自远方的TCP端口的连接请求
 
@@ -279,7 +272,7 @@ CLOSED：没有任何连接状态
   
 -----------
 
-###  进程
+### 进程
 
 #### ps
 
@@ -290,17 +283,17 @@ PID (进程唯一id,名字收可以重复) TTY (终端,当前为虚拟终端) TI
 
 - ps -e | more //分也输出
 
-- ps -ef | grep "关键词   //显示有效用户信息
+- ps -ef | grep "关键词 //显示有效用户信息
 
 
 - ps -eLf //LWP :轻量级进程-线程
+
 ```
  uid:有效用户
  ppid:父进程
  cmd:启动命令
  lwp:线程id 
 ```
-
 
 - pstree //进程树
 
@@ -329,38 +322,38 @@ systemd─┬─AliYunDun───23*[{AliYunDun}]
 
 - ps aux | grep 2344
 
-
-#### top 
+#### top
 
 #### top 每3秒刷新一次
+
 - top - 12:00:35 up 54 days(开机54天), 13:13,
-  
-- 1 user(1个用户登陆),  
-  
+
+- 1 user(1个用户登陆),
+
 - load average: 0.00, 0.00, 0.00(平均负载,繁忙程度,1是满负载)
 
 #### 任务: Tasks(进程数)
 
-- 68 total,   1 running,  38 sleeping,   5 stopped,   0 zombie
+- 68 total, 1 running, 38 sleeping, 5 stopped, 0 zombie
 
-#### CPU 
+#### CPU
 
-%Cpu(s(多cup,按1,2分别显示)): 
+%Cpu(s(多cup,按1,2分别显示)):
 
 - 0.7 us: user（通常缩写为 us），代表用户态 CPU 时间。注意，它不包括下面的 nice 时间，但包括了 guest 时间
-  
+
 - 0.3 sy: system（通常缩写为 sys），代表内核态 CPU 时间)
-  
+
 - 0.0 ni: (通常缩写为 ni），代表低优先级用户态 CPU 时间，也就是进程的 nice 值被调整为 1-19 之间时的 CPU 时间。 这里注意，nice 可取值范围是 -20 到 19，数值越大，优先级反而越低)
 
 - 99.0 id: idle（通常缩写为 id），代表空闲时间。注意，它不包括等待 I/O 的时间（iowait）
-  
+
 - 0.0 wa : iowait（通常缩写为 wa），代表等待 I/O 的 CPU 时间
-  
+
 - 0.0 hi: irq（通常缩写为 hi），代表处理硬中断的 CPU 时间。
 
 - 0.0 softirq:（通常缩写为 si），代表处理软中断的 CPU 时间
-  
+
 - 0.0 st:（steal（通常缩写为 st），代表当系统运行在虚拟机中的时候，被其他虚拟机占用的 CPU 时间）
 
 - guest: guest（通常缩写为 guest），代表通过虚拟化运行其他操作系统的时间，也就是运行虚拟机的 CPU 时间
@@ -369,22 +362,22 @@ systemd─┬─AliYunDun───23*[{AliYunDun}]
 
 #### 内存 内存:KiB Mem
 
-- 2041072 total(内存),   
-  
-- 117932 free,  
-  
-- 858800 used,  
-  
+- 2041072 total(内存),
+
+- 117932 free,
+
+- 858800 used,
+
 - 1064340 buff/cache(读写缓存)
 
 #### 交换分区:KiB Swap
 
-- 0 total,       
-  
-- 0 free,        
-  
-- 0 used.  
-  
+- 0 total,
+
+- 0 free,
+
+- 0 used.
+
 - 1007652 avail Mem
 
 #### 进程详情
@@ -407,14 +400,14 @@ PID USER      PR(优先级)  NI(nice值,占用资源)    VIRT    RES    SHR S %C
 
 4. S Interruptible Sleep 的缩写，也就是可中断状态睡眠，表示进程因为等待某个事件而被系统挂起。当进程等待的事件发生时，它会被唤醒并进入 R 状态。
 
-5. I 是 Idle 的缩写，也就是空闲状态，用在不可中断睡眠的内核线程上。
-   前面说了，硬件交互导致的不可中断进程用 D 表示，但对某些内核线程来说，它们有可能实际上并没有任何负载，用 Idle 正是为了区分这种情况。要注意，D 状态的进程会导致平均负载升高， I 状态的进程却不会。
-   
+5. I 是 Idle 的缩写，也就是空闲状态，用在不可中断睡眠的内核线程上。 前面说了，硬件交互导致的不可中断进程用 D 表示，但对某些内核线程来说，它们有可能实际上并没有任何负载，用 Idle 正是为了区分这种情况。要注意，D
+   状态的进程会导致平均负载升高， I 状态的进程却不会。
+
 6. T :表示进程处于暂停或者跟踪状态
 
 7. X : 也就是Dead 的缩写，表示进程已经消亡，所以不会在top 或者 ps命令中看到它
 
-##### VIRT 
+##### VIRT
 
 VIRT 是进程虚拟内存的大小，只要是进程申请过的内存，即便还没有真正分配物理内存，也会计算在内。
 
@@ -426,7 +419,7 @@ RES 是常驻内存的大小，也就是进程实际使用的物理内存大小�
 
 共享内存大小，比如与其他进程共同使用的共享内存、加载的动态连接库以及程序的代码段等。
 
-##### %MEM 
+##### %MEM
 
 进程使用物理内存占系统总内存的百分比
 
@@ -435,12 +428,10 @@ RES 是常驻内存的大小，也就是进程实际使用的物理内存大小�
 #### nice
 
 - nice //越小优先级越高
-  
+
 - renice //调整优先级
 
-
-
-#### jstat 
+#### jstat
 
 ```
 jstat - option pid
@@ -469,8 +460,8 @@ jstat - option pid
 
 - gcutil：显示垃圾收集信息;
 
-- gccause：显示垃圾回收的相关信息（通 -gcutil），同时显示最后一次或当前正在发生的垃圾回收的诱因; 
- 
+- gccause：显示垃圾回收的相关信息（通 -gcutil），同时显示最后一次或当前正在发生的垃圾回收的诱因;
+
 ```
 S0C：年轻代中 To Survivor 的容量（单位 KB）；
 
@@ -504,11 +495,7 @@ GCT：从应用程序启动到采样时 gc 用的总时间 (s)。
 
 ```
 
-
-
 -------
-
-
 
 #### netstat
 
@@ -519,12 +506,12 @@ GCT：从应用程序启动到采样时 gc 用的总时间 (s)。
 - prio : 表示线程优先级，就是Thread中定义的这个。
 
 - os_prio : 表示操作系统级别的优先级
-  
+
 - tid : 表示Java内的线程ID,同样在Thread类中
 
 - nid：表示操作系统级别的线程ID的16进制形()
 
-####  grep和wc来统计行数
+#### grep和wc来统计行数
 
 ````
 cat logs* | grep 查找内容 |wc -l
@@ -532,6 +519,7 @@ cat logs* | grep 查找内容 |wc -l
 cat logs* | grep -c 查找内容 
 
 ````
+
 #### ls -a //展示所有文件,包括隐藏文件
 
 -------------------
@@ -598,6 +586,7 @@ tcpdump -i eth0
 ````
 
 - 指定来源
+
 ````
 tcpdump src host hosetname
 ````

@@ -4,7 +4,7 @@ public class OneHandler extends HandlerUser {
 
 
     public OneHandler(int level) {
-       super(level);
+        super(level);
     }
 
     @Override

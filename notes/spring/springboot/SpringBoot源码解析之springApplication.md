@@ -1,6 +1,7 @@
 ### SpringApplication
 
 #### 属性
+
 ````
 
 //springboot中，allowBeanDefinitionOverriding 默认为false；spring默认为true。需要在application.properties中新增spring.main.allow-bean-definition-overriding=true
@@ -8,6 +9,7 @@
 private boolean allowBeanDefinitionOverriding;
 
 ````
+
 #### 构造函数
 
 ````

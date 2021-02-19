@@ -14,9 +14,9 @@ import java.util.ListIterator;
 public class LinkedListMock {
     /**
      * 1. LinkedList是一个以双向链表实现的List，它除了作为List使用，还可以作为队列或者栈来使用。
-     *
+     * <p>
      * 2. 在队列首尾添加元素很高效，时间复杂度为O(1)。在中间添加元素比较低效，首先要先找到插入位置的节点，再修改前后节点的指针，时间复杂度为O(n)。
-     *
+     * <p>
      * 3. public class LinkedList<E> extends AbstractSequentialList<E> implements List<E>, Deque<E>, Cloneable, java.io.Serializable
      */
     public static void main(String[] args) {
@@ -134,7 +134,7 @@ public class LinkedListMock {
          *
          *
          */
-        linkedList1.add(2,2);
+        linkedList1.add(2, 2);
         /**
          * 构造函数初始化集合，默认先调用无参数构造函数,
          * 然后调用addAll()方法添加初始数据,默认在队尾依次添加元素
@@ -266,7 +266,7 @@ public class LinkedListMock {
          *     }
          */
         Object removedIndexElement = linkedList3.remove(2);
-        System.out.println("删除指定位置的元素,removedIndexElement:"+removedIndexElement);
+        System.out.println("删除指定位置的元素,removedIndexElement:" + removedIndexElement);
 
 
         linkedList3.addFirst(0);

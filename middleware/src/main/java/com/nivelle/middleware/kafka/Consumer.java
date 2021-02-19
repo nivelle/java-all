@@ -85,13 +85,14 @@ public class Consumer {
 
     /**
      * 获取指定分区消息
+     *
      * @param data
      */
     @KafkaListener(id = "batchWithPartition", clientIdPrefix = "bwp",
             containerFactory = "batchListenContainerFactory",
             topicPartitions = {
                     @TopicPartition(topic = "topic.quick.batch.partition", partitions = {"1", "3"}),
-                    @TopicPartition(topic = "topic.quick.batch.partition", partitions = {"0", "4"},partitionOffsets = @PartitionOffset(partition = "2", initialOffset = "100"))
+                    @TopicPartition(topic = "topic.quick.batch.partition", partitions = {"0", "4"}, partitionOffsets = @PartitionOffset(partition = "2", initialOffset = "100"))
             }
     )
     public void batchListenerWithPartition(List<String> data) {
@@ -102,6 +103,7 @@ public class Consumer {
 
     /**
      * 注解获取消息头以及消息体
+     *
      * @param data
      * @param key
      * @param partition

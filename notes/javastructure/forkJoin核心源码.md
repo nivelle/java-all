@@ -1,4 +1,3 @@
-
 ### ForkJoinTask
 
 ```
@@ -44,6 +43,7 @@ private int setCompletion(int completion) {
 }
 
 ```
+
 ### 运行ForkJoinTask的核心方法
 
 ```
@@ -84,7 +84,7 @@ private int setCompletion(int completion) {
  
 ```
 
-###  记录异常完成
+### 记录异常完成
 
 ```
 final int recordExceptionalCompletion(Throwable ex) {
@@ -125,6 +125,7 @@ final int recordExceptionalCompletion(Throwable ex) {
 ```
 
 ### 内部等待任务完成,直到完成或超时
+
 ```
 final void internalWait(long timeout) {
         int s;
@@ -147,7 +148,7 @@ final void internalWait(long timeout) {
 
 ```
 
-### externalAwaitDone 
+### externalAwaitDone
 
 ```
 //外部线程等待一个common池中的任务完成.

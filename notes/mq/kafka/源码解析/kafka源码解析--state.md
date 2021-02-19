@@ -1,25 +1,30 @@
-### TopiDeletionManager  主题删除管理器
+### TopiDeletionManager 主题删除管理器
 
-在主题删除过程中，Kafka 会调整集群中三个地方的数据：ZooKeeper、元数据缓存和磁盘日志文件。删除主题时，ZooKeeper 上与该主题相关的所有 ZNode 节点必须被清除；Controller 端元数据缓存中的相关项，也必须要被处理，并且要被同步到集群的其他 Broker 上；而磁盘日志文件，更是要清理的首要目标。这三个地方必须要统一处理，就好似我们常说的原子性操作一样。现在回想下开篇提到的那个“秘籍”，你就会发现它缺少了非常重要的一环，那就是：无法清除 Controller 端的元数据缓存项。因此，你要尽力避免使用这个“大招”。
+在主题删除过程中，Kafka 会调整集群中三个地方的数据：ZooKeeper、元数据缓存和磁盘日志文件。删除主题时，ZooKeeper 上与该主题相关的所有 ZNode 节点必须被清除；Controller
+端元数据缓存中的相关项，也必须要被处理，并且要被同步到集群的其他 Broker
+上；而磁盘日志文件，更是要清理的首要目标。这三个地方必须要统一处理，就好似我们常说的原子性操作一样。现在回想下开篇提到的那个“秘籍”，你就会发现它缺少了非常重要的一环，那就是：无法清除 Controller
+端的元数据缓存项。因此，你要尽力避免使用这个“大招”。
 
 ### ReplicaStateMachine 副本状态机
 
-副本状态机：ReplicaStateMachine 是 Kafka Broker 端源码中控制副本状态流转的实现类。每个 Broker 启动时都会创建 ReplicaStateMachine 实例，但只有 Controller 组件所在的 Broker 才会启动它。
+副本状态机：ReplicaStateMachine 是 Kafka Broker 端源码中控制副本状态流转的实现类。每个 Broker 启动时都会创建 ReplicaStateMachine 实例，但只有 Controller 组件所在的
+Broker 才会启动它。
 
 #### 副本状态及状态管理流程
 
 - NewReplica：副本被创建之后所处的状态。
 
-- OnlineReplica：副本正常提供服务时所处的状态。 
-  
+- OnlineReplica：副本正常提供服务时所处的状态。
+
 -OfflineReplica：副本服务下线时所处的状态。
+
 - ReplicaDeletionStarted：副本被删除时所处的状态。
 - ReplicaDeletionSuccessful：副本被成功删除后所处的状态。
 - ReplicaDeletionIneligible：开启副本删除，但副本暂时无法被删除时所处的状态。
 - NonExistentReplica：副本从副本状态机被移除前所处的状态
 
 [![sdhLUH.md.jpg](https://s3.ax1x.com/2021/01/14/sdhLUH.md.jpg)](https://imgchr.com/i/sdhLUH)
-  
+
 ### PartitionStateMachine 分区状态转换
 
 #### 分区状态
@@ -86,9 +91,10 @@ def offlinePartitionLeaderElection(assignment: Seq[Int],
 
 - liveReplicas: 保存了该分区下所有处于存活状态的副本。根据 Controller 元数据缓存中的数据来判定。简单来说，所有在运行中的 Broker 上的副本，都被认为是存活的
 
-- uncleanLeaderElectionEnabled 
-  
-  所谓的 Unclean Leader 选举，是指在 ISR 列表为空的情况下，Kafka 选择一个非 ISR 副本作为新的 Leader。由于存在丢失数据的风险，目前，社区已经通过把 Broker 端参数 unclean.leader.election.enable 的默认值设置为 false 的方式，禁止 Unclean Leader 选举了
+- uncleanLeaderElectionEnabled
+
+  所谓的 Unclean Leader 选举，是指在 ISR 列表为空的情况下，Kafka 选择一个非 ISR 副本作为新的 Leader。由于存在丢失数据的风险，目前，社区已经通过把 Broker 端参数
+  unclean.leader.election.enable 的默认值设置为 false 的方式，禁止 Unclean Leader 选举了
 
 ##### 选举过程
 
@@ -188,10 +194,9 @@ case OnlinePartition =>
 
 ````
 
-- 第一步： 为 NewPartition 状态的分区做初始化操作，也就是在 ZooKeeper 中，创建并写入分区节点数据。
-节点的位置是/brokers/topics/<topic>/partitions/<partition>，每个节点都要包含分区的 Leader 和 ISR 等数据。
-而 Leader 和 ISR 的确定规则是：选择存活副本列表的第一个副本作为 Leader；选择存活副本列表作为 ISR。
-  
+- 第一步： 为 NewPartition 状态的分区做初始化操作，也就是在 ZooKeeper 中，创建并写入分区节点数据。 节点的位置是/brokers/topics/<topic>/partitions/<partition>
+  ，每个节点都要包含分区的 Leader 和 ISR 等数据。 而 Leader 和 ISR 的确定规则是：选择存活副本列表的第一个副本作为 Leader；选择存活副本列表作为 ISR。
+
 ````
 
 private def initializeLeaderAndIsrForPartitions(partitions: Seq[TopicPartition]): Seq[TopicPartition] = {

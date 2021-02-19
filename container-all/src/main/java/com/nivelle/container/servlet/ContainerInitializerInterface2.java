@@ -11,7 +11,7 @@ import javax.servlet.ServletContext;
 public class ContainerInitializerInterface2 implements ContainerInitializerInterface {
     @Override
     public void onStartup(ServletContext context) {
-        context.setAttribute("ContainerInitializerInterface2",this);
+        context.setAttribute("ContainerInitializerInterface2", this);
         System.out.println("ContainerInitializerInterface2 Init ...");
     }
 }

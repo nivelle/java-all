@@ -54,7 +54,7 @@ public class ValidTest {
     }
 
     @Test
-    public void testSysUser(){
+    public void testSysUser() {
 
         String userName = "admin";
 

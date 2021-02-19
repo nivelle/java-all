@@ -27,7 +27,7 @@ public class MyResponseBodyAdvice implements ResponseBodyAdvice<Properties> {
     public Properties beforeBodyWrite(Properties body, MethodParameter returnType, MediaType selectedContentType, Class selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
         System.out.println("MyResponseBodyAdvice ==>body:" + body + "\n returnType:" + returnType + "\n selectedContentType:" +
                 selectedContentType + "\n request:" + request + "\n response:" + response);
-        body.put("adviceValue","fuck");
+        body.put("adviceValue", "fuck");
         return body;
     }
 }

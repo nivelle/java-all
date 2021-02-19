@@ -8,7 +8,7 @@ package com.nivelle.base.jdk.jvm;
  * @date 2021/02/08
  */
 public class JvmDataType {
-   static boolean boolValue ;
+    static boolean boolValue;
 
     public static void main(String[] args) {
         //boolean 吃过饭没 = 2; // 直接编译的话javac会报错
@@ -23,11 +23,11 @@ public class JvmDataType {
         int intType = new Byte("1");
         System.out.println(intType);
 
-        boolValue= true;
-        if (boolValue){
+        boolValue = true;
+        if (boolValue) {
             System.out.println("hello java");
         }
-        if (boolValue==true){
+        if (boolValue == true) {
             System.out.println("hello java true");
         }
 

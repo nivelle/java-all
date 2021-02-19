@@ -11,6 +11,7 @@ yellow open   item  Rmn1v6R1QxCLvM_Emvl1Bw   5   1          0            0      
 ### 创建索引
 
 ##### 索引名字为product
+
 ```
 method: put
 
@@ -18,6 +19,7 @@ localhost:9200/product?pretty
 ```
 
 ##### 返回值
+
 ```
 {
     "acknowledged": true,
@@ -54,7 +56,6 @@ localhost:9200/shoes/product/1
 shoes 指索引名，product 指索引的类型，id是这条数据的id
 
 ```
-
 
 ##### 入参：
 
@@ -220,7 +221,6 @@ localhost:9200/shoes/product/_search
 
 ### 条件查询
 
-
 ##### 入参
 
 ```
@@ -232,6 +232,7 @@ localhost:9200/shoes/product/_search
 ```
 
 ##### 返回值
+
 ```
 {
     "took": 46,

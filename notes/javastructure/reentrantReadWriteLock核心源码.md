@@ -1,7 +1,7 @@
-
 ## 读锁
 
 ### ReadLock.lock
+
 ```
 ## ReentrantReadWriteLock.ReadLock.lock()
 public void lock() {
@@ -206,6 +206,7 @@ private void doReleaseShared() {
 }
 
 ```
+
 ### ReadLock.unlock()
 
 ```
@@ -293,7 +294,6 @@ private void doReleaseShared() {
 
 ### WriteLock.lock()
 
-
 ```
 ## java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock.unlock()
 public void lock() {
@@ -310,20 +310,22 @@ public final void acquire(int arg) {
 }   
 
 ```     
+
 1）tryAcquire()尝试获取资源。
 
 2）如果获取失败，则通过addWaiter(Node.EXCLUSIVE), arg)方法把当前线程添加到等待队列队尾，并标记为独占模式。
 
 3）插入等待队列后，并没有放弃获取资源，acquireQueued()自旋尝试获取资源。根据前置节点状态状态判断是否应该继续获取资源。如果前驱是头结点，继续尝试获取资源；
 
-4）在每一次自旋获取资源过程中，失败后调用shouldParkAfterFailedAcquire(Node, Node)检测当前节点是否应该park()。若返回true，则调用parkAndCheckInterrupt()中断当前节点中的线程。若返回false，则接着自旋获取资源。当acquireQueued(Node,int)返回true，则将当前线程中断；false则说明拿到资源了。
+4）在每一次自旋获取资源过程中，失败后调用shouldParkAfterFailedAcquire(Node, Node)检测当前节点是否应该park()。若返回true，则调用parkAndCheckInterrupt()
+中断当前节点中的线程。若返回false，则接着自旋获取资源。当acquireQueued(Node,int)返回true，则将当前线程中断；false则说明拿到资源了。
 
-5）在进行是否需要挂起的判断中，如果前置节点是SIGNAL状态，就挂起，返回true。如果前置节点状态为CANCELLED，就一直往前找，直到找到最近的一个处于正常等待状态的节点，并排在它后面，返回false，acquireQueed()接着自旋尝试，回到3）。
+5）在进行是否需要挂起的判断中，如果前置节点是SIGNAL状态，就挂起，返回true。如果前置节点状态为CANCELLED，就一直往前找，直到找到最近的一个处于正常等待状态的节点，并排在它后面，返回false，acquireQueed()
+接着自旋尝试，回到3）。
 
 6）前置节点处于其他状态，利用CAS将前置节点状态置为SIGNAL。当前置节点刚释放资源，状态就不是SIGNAL了，导致失败，返回false。但凡返回false，就导致acquireQueed()接着自旋尝试。
 
 7）最终当tryAcquire(int)返回false，acquireQueued(Node,int)返回true，调用selfInterrupt()，中断当前线程。
-
 
 ```
 ## java.util.concurrent.locks.ReentrantReadWriteLock.Sync.tryAcquire()
@@ -359,8 +361,6 @@ protected final boolean tryAcquire(int acquires) {
         }    
 
 ```
-
-
 
 ### WriteLock.unlock()
 

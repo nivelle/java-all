@@ -11,17 +11,17 @@ import io.netty.handler.codec.serialization.ObjectEncoder;
  * 说明：序列化服务器初始化
  **/
 public class SerializationServerHandlerInitializer extends
-		ChannelInitializer<Channel> {
+        ChannelInitializer<Channel> {
 
-	private final static int MAX_OBJECT_SIZE = 1024 * 1024;
+    private final static int MAX_OBJECT_SIZE = 1024 * 1024;
 
-	@Override
-	protected void initChannel(Channel ch) throws Exception {
-		ChannelPipeline pipeline = ch.pipeline();
-		pipeline.addLast(new ObjectDecoder(MAX_OBJECT_SIZE,
-				ClassResolvers.weakCachingConcurrentResolver(this.getClass()
-						.getClassLoader())));
-		pipeline.addLast(new ObjectEncoder());
-		pipeline.addLast(new SerializationServerHandler());
-	}
+    @Override
+    protected void initChannel(Channel ch) throws Exception {
+        ChannelPipeline pipeline = ch.pipeline();
+        pipeline.addLast(new ObjectDecoder(MAX_OBJECT_SIZE,
+                ClassResolvers.weakCachingConcurrentResolver(this.getClass()
+                        .getClassLoader())));
+        pipeline.addLast(new ObjectEncoder());
+        pipeline.addLast(new SerializationServerHandler());
+    }
 }

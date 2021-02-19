@@ -1,6 +1,5 @@
 ### expire
 
-
 #### 1. expire key seconds
 
 ````
@@ -31,7 +30,7 @@
    
 ````
 
-####  3. ttl key
+#### 3. ttl key
 
 ````
 返回值： 当 key 不存在时，返回 -2 。 
@@ -51,7 +50,7 @@
   
 ````
 
-#### 5. pexpire key milliseconds 
+#### 5. pexpire key milliseconds
 
 ````
 返回值:设置成功，返回 1 key 不存在或设置失败，返回 0
@@ -60,7 +59,7 @@
 
 ````
 
-#### 6. pexpireat key milliseconds-timestamp 
+#### 6. pexpireat key milliseconds-timestamp
 
 ````
 //这个命令和 expireat 命令类似，但它以毫秒为单位设置 key 的过期 unix 时间戳，而不是像 expireat 那样，以秒为单位。

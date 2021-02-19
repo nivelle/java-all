@@ -13,19 +13,18 @@ import java.util.Objects;
 
 /**
  * 自定义AOP
- *
+ * <p>
  * 自动配置AopAutoConfiguration类的主要任务是根据配置参数使用注解@EnableAspectJAutoProxy。
- *
+ * <p>
  * 该自动配置类通过注解声明了自己生效的条件是 :
- *
+ * <p>
  * 1. 以下类必须存在于classpath :
- *
- *    1. EnableAspectJAutoProxy
- *    2. Aspect
- *    3. Advice
- *    4. AnnotatedElement
+ * <p>
+ * 1. EnableAspectJAutoProxy
+ * 2. Aspect
+ * 3. Advice
+ * 4. AnnotatedElement
  * 2. 配置参数spring.aop.auto值不为false. 默认为true
- *
  */
 @Aspect
 @Component

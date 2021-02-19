@@ -25,7 +25,7 @@ public class AdministrationUserFactory implements CompanyUserFactory {
         return true;
     }
 
-    public void oneDay(String userName){
+    public void oneDay(String userName) {
         clickDick(userName);
         doWork(userName);
         afterWork(userName);

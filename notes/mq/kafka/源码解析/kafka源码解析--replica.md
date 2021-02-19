@@ -22,6 +22,7 @@ abstract class AbstractFetcherThread(
 }
 
 ````
+
 #### 同步获取的返回值
 
 ````
@@ -78,6 +79,7 @@ private def maybeTruncate(): Unit = {
   }
 }
 ````
+
 - maybeFetch
 
 ````
@@ -108,8 +110,7 @@ private def maybeFetch(): Unit = {
 
 [![sDIW24.png](https://s3.ax1x.com/2021/01/16/sDIW24.png)](https://imgchr.com/i/sDIW24)
 
-
-#### 子类： ReplicaFetcherThread 
+#### 子类： ReplicaFetcherThread
 
 ````
 
@@ -154,7 +155,8 @@ class ReplicaFetcherThread(name: String,
 
 ````
 
-- fetcherId: Follower拉取线程ID，线程的编号。单台broker上允许存在多个ReplicaFetcherThread 线程。 broker端参数 **num.replica.fetchers**决定了kafka到底创建多少个Follower拉取线程
+- fetcherId: Follower拉取线程ID，线程的编号。单台broker上允许存在多个ReplicaFetcherThread 线程。 broker端参数 **num.replica.fetchers**
+  决定了kafka到底创建多少个Follower拉取线程
 
 - brokerConfig:它封装了 Broker 端所有的参数信息。同样地，ReplicaFetcherThread 类也是通过它来获取 Broker 端指定参数的值
 
@@ -165,6 +167,7 @@ class ReplicaFetcherThread(name: String,
 - leaderEndpointBlockingSend:这是用于实现同步发送请求的类。所谓的同步发送，是指该线程使用它给指定 Broker 发送请求，然后线程处于阻塞状态，直到接收到 Broker 返回的 Response。
 
 #### 核心参数
+
 - maxWait: Follower 发送的 FETCH 请求被处理返回前的最长等待时间。它是 Broker 端参数 **replica.fetch.wait.max.ms**的值。
 
 - minBytes: 每个 FETCH Response 返回前必须要累积的最少字节数。它是 Broker 端参数 **replica.fetch.min.bytes**的值
@@ -172,7 +175,6 @@ class ReplicaFetcherThread(name: String,
 - maxBytes：每个合法 FETCH Response 的最大字节数。它是 Broker 端参数 **replica.fetch.response.max.bytes**的值。
 
 - fetchSize: 单个分区能够获取到的最大字节数。它是 Broker 端参数 **replica.fetch.max.bytes**的值
-
 
 ##### processPartitionData 处理返回的同步消息
 
@@ -358,7 +360,8 @@ if (isValidRequiredAcks(requiredAcks)) {
 
 #### 副本读取： fetchMessages
 
-在 ReplicaManager 类中，负责读取副本数据的方法是 fetchMessages。不论是 Java 消费者 API，还是 Follower 副本，它们拉取消息的主要途径都是向 Broker 发送 FETCH 请求，Broker 端接收到该请求后，调用 fetchMessages 方法从底层的 Leader 副本取出消息。
+在 ReplicaManager 类中，负责读取副本数据的方法是 fetchMessages。不论是 Java 消费者 API，还是 Follower 副本，它们拉取消息的主要途径都是向 Broker 发送 FETCH 请求，Broker
+端接收到该请求后，调用 fetchMessages 方法从底层的 Leader 副本取出消息。
 
 ````
 def fetchMessages(timeout: Long,
@@ -374,11 +377,14 @@ clientMetadata: Option[ClientMetadata]): Unit = {
 ......
 }
 ``````
-- timeout：请求处理超时时间。对于消费者而言，该值就是 **request.timeout.ms** 参数值；对于 Follower 副本而言，该值是 Broker 端参数 **replica.fetch.wait.max.ms**的值
+
+- timeout：请求处理超时时间。对于消费者而言，该值就是 **request.timeout.ms** 参数值；对于 Follower 副本而言，该值是 Broker 端参数 **replica.fetch.wait.max.ms**
+  的值
 
 - replicaId: 副本 ID。对于消费者而言，该参数值是 -1；对于 Follower 副本而言，该值就是 Follower 副本所在的 Broker ID
 
-- fetchMinBytes & fetchMaxBytes:能够获取的最小字节数和最大字节数。对于消费者而言，它们分别对应于 Consumer 端参数 **fetch.min.bytes 和 fetch.max.bytes** 值；对于 Follower 副本而言，它们分别对应于 Broker 端参数 **replica.fetch.min.bytes 和 replica.fetch.max.bytes**值。
+- fetchMinBytes & fetchMaxBytes:能够获取的最小字节数和最大字节数。对于消费者而言，它们分别对应于 Consumer 端参数 **fetch.min.bytes 和 fetch.max.bytes** 值；对于
+  Follower 副本而言，它们分别对应于 Broker 端参数 **replica.fetch.min.bytes 和 replica.fetch.max.bytes**值。
 
 - hardMaxBytesLimit:对能否超过最大字节数做硬限制。如果 hardMaxBytesLimit=True，就表示，读取请求返回的数据字节数绝不允许超过最大字节数。
 
@@ -388,9 +394,7 @@ clientMetadata: Option[ClientMetadata]): Unit = {
 
 - responseCallback:Response 回调逻辑函数。当请求被处理完成后，调用该方法执行收尾逻辑。
 
-
 [![srUTns.md.jpg](https://s3.ax1x.com/2021/01/16/srUTns.md.jpg)](https://imgchr.com/i/srUTns)
-
 
 #### 读取本地日志
 
@@ -598,21 +602,22 @@ makeLeaders 方法的作用是，让当前 Broker 成为给定一组分区的 Le
 
 [![sr5Z24.md.png](https://s3.ax1x.com/2021/01/17/sr5Z24.md.png)](https://imgchr.com/i/sr5Z24)
 
-
 1. 将给定的一组分区的状态全部初始化成 Errors.None
 2. 停止为这些分区服务的所有拉取线程。毕竟该 Broker 现在是这些分区的 Leader 副本了，不再是 Follower 副本了，所以没有必要再使用拉取线程了
-3. makeLeaders 方法调用 Partition 的 makeLeader 方法，去更新给定一组分区的 Leader 分区信息，而这些是由 Partition 类中的 makeLeader 方法完成的。该方法保存分区的 Leader 和 ISR 信息，同时创建必要的日志对象、重设远端 Follower 副本的 LEO 值。
+3. makeLeaders 方法调用 Partition 的 makeLeader 方法，去更新给定一组分区的 Leader 分区信息，而这些是由 Partition 类中的 makeLeader 方法完成的。该方法保存分区的
+   Leader 和 ISR 信息，同时创建必要的日志对象、重设远端 Follower 副本的 LEO 值。
 
 #### 远端副本
 
-是指保存在 Leader 副本本地内存中的一组 Follower 副本集合，在代码中用字段 remoteReplicas 来表征；ReplicaManager 在处理 FETCH 请求时，会更新 remoteReplicas 中副本对象的 LEO 值。同时，Leader 副本会将自己更新后的 LEO 值与 remoteReplicas 中副本的 LEO 值进行比较，来决定是否“抬高”高水位值
+是指保存在 Leader 副本本地内存中的一组 Follower 副本集合，在代码中用字段 remoteReplicas 来表征；ReplicaManager 在处理 FETCH 请求时，会更新 remoteReplicas 中副本对象的
+LEO 值。同时，Leader 副本会将自己更新后的 LEO 值与 remoteReplicas 中副本的 LEO 值进行比较，来决定是否“抬高”高水位值
 
 #### makeFollowers
 
 - 更新Controller Epoch值
 - 保存副本列表（Assigned Replicas,AR）和清空ISR
 - 创建日志对象
-- 重设Leader副本的Broker ID 
+- 重设Leader副本的Broker ID
 
 ````
 
@@ -699,10 +704,10 @@ partitionsToMakeFollower
 
 ##### maybeShrinkIsr 方法
 
-收缩是指，把 ISR 副本集合中那些与 Leader 差距过大的副本移除的过程。所谓的差距过大，就是 ISR 中 Follower 副本滞后 Leader 副本的时间，超过了 Broker 端参数 **replica.lag.time.max.ms**值的 1.5 倍
+收缩是指，把 ISR 副本集合中那些与 Leader 差距过大的副本移除的过程。所谓的差距过大，就是 ISR 中 Follower 副本滞后 Leader 副本的时间，超过了 Broker 端参数 **
+replica.lag.time.max.ms**值的 1.5 倍
 
 [![srINfU.md.jpg](https://s3.ax1x.com/2021/01/17/srINfU.md.jpg)](https://imgchr.com/i/srINfU)
-
 
 ````
 
@@ -760,6 +765,7 @@ def maybeShrinkIsr(): Unit = {
 2. 最近 5 秒没有任何 ISR 变更，或者自上次 ISR 变更已经有超过 1 分钟的时间
 
 一旦满足了这两个条件，代码会创建 ZooKeeper 相应的 Znode 节点；然后，清空 isrChangeSet 集合；最后，更新最近 ISR 变更时间戳
+
 ````
 
 def maybePropagateIsrChanges(): Unit = {

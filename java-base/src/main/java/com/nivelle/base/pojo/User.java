@@ -8,9 +8,9 @@ public class User implements Serializable {
 
     public String name;
 
-     static public int flag;
+    static public int flag;
 
-     public Integer number;
+    public Integer number;
 
     public void setAge(int age) {
         this.age = age;

@@ -6,17 +6,16 @@ import io.netty.channel.ChannelPipeline;
 
 /**
  * 说明：处理器初始化
- *
  */
 public class JacksonClientHandlerInitializer extends
-		ChannelInitializer<Channel> {
- 
+        ChannelInitializer<Channel> {
 
-	@Override
-	protected void initChannel(Channel ch) throws Exception {
-		ChannelPipeline pipeline = ch.pipeline();
-		pipeline.addLast(new JacksonDecoder<JacksonBean>(JacksonBean.class));
-		pipeline.addLast(new JacksonEncoder());
-		pipeline.addLast(new JacksonClientHandler());
-	}
+
+    @Override
+    protected void initChannel(Channel ch) throws Exception {
+        ChannelPipeline pipeline = ch.pipeline();
+        pipeline.addLast(new JacksonDecoder<JacksonBean>(JacksonBean.class));
+        pipeline.addLast(new JacksonEncoder());
+        pipeline.addLast(new JacksonClientHandler());
+    }
 }

@@ -40,7 +40,7 @@ public class SynchronizedQueueDemo {
             int i = 0;
             while (true) {
                 i++;
-                System.out.println("i:" + i + " "+"value:" + synchronizedQueue.poll());
+                System.out.println("i:" + i + " " + "value:" + synchronizedQueue.poll());
                 if (i > 20) {
                     break;
                 }

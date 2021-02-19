@@ -15,16 +15,16 @@ public class HashSetMock {
 
     /**
      * （1）HashSet内部使用HashMap的key存储元素，以此来保证元素不重复；
-     *
+     * <p>
      * （2）HashSet是无序的，因为HashMap的key是无序的；
-     *
+     * <p>
      * （3）HashSet中允许有一个null元素，因为HashMap允许key为null；
-     *
+     * <p>
      * （4）HashSet是非线程安全的；
-     *
+     * <p>
      * （5）HashSet是没有get()方法的；
-     *
-     *  (6) 自定义了序列化方法 writeObject 和 readObject; 底层map 是 transient的
+     * <p>
+     * (6) 自定义了序列化方法 writeObject 和 readObject; 底层map 是 transient的
      */
     public static void main(String[] args) {
         HashSet hashSet = new HashSet();

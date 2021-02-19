@@ -1,7 +1,10 @@
 package com.nivelle.agent;
+
 import javassist.*;
+
 import java.lang.instrument.ClassFileTransformer;
 import java.security.ProtectionDomain;
+
 /**
  * 使用javassist来动态替换类
  *
@@ -10,7 +13,7 @@ import java.security.ProtectionDomain;
  */
 public class MyClassTransformer implements ClassFileTransformer {
     @Override
-    public byte[] transform(final ClassLoader loader, final String className, final Class<?> classBeingRedefined,final ProtectionDomain protectionDomain, final byte[] classfileBuffer) {
+    public byte[] transform(final ClassLoader loader, final String className, final Class<?> classBeingRedefined, final ProtectionDomain protectionDomain, final byte[] classfileBuffer) {
         // 操作Date类
         if ("java/util/Date".equals(className)) {
             try {

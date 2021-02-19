@@ -1,24 +1,28 @@
-
 ### nginx 基础指令
 
 #### 启动
+
 ```
  nginx -s start;
 
 ```
+
 #### 重新启动，热启动，修改配置重启不影响线上
 
 ```
 nginx -s reload;
 
 ```
+
 #### 关闭
 
 ```
 nginx -s stop;
 
 ```
+
 #### 修改配置后，可以通过下面的命令测试是否有语法错误
+
 ```
 nginx -t;
 
@@ -27,6 +31,7 @@ nginx -t;
 ### web服务器的 nginx.conf 配置文件解读
 
 #### 指定执行 nginx的 worker process的用户
+
 ```
 user  nobody;
 
@@ -68,15 +73,17 @@ events {
 }
 
 ```
+
 ##### worker_connections,connections不是随便设置的，而是与两个指标有重要关联，一是内存，二是操作系统级别的“进程最大可打开文件数”
 
-- 内存:每个连接数分别对应一个read_event、一个write_event事件，一个连接数大概占用232字节，2个事件总占用96字节，那么一个连接总共占用328字节，通过数学公式可以算出100000个连接数大概会占用 31M = 100000 * 328 / 1024 / 1024，当然这只是nginx启动时，connections连接数所占用的nginx。
-    
-- 进程最大可打开文件数：进程最大可打开文件数受限于操作系统，可通过 ulimit -n 命令查询，以前是1024，现在是65535,nginx提供了worker_rlimit_nofile指令，这是除了ulimit的一种设置可用的描述符的方式。 该指令与使用ulimit对用户的设置是同样的效果。此指令的值将覆盖ulimit的值，如：worker_rlimit_nofile 20960;
- 
-  设置ulimits：ulimit -SHn 65535
-           
+- 内存:每个连接数分别对应一个read_event、一个write_event事件，一个连接数大概占用232字节，2个事件总占用96字节，那么一个连接总共占用328字节，通过数学公式可以算出100000个连接数大概会占用 31M =
+  100000 * 328 / 1024 / 1024，当然这只是nginx启动时，connections连接数所占用的nginx。
 
+- 进程最大可打开文件数：进程最大可打开文件数受限于操作系统，可通过 ulimit -n
+  命令查询，以前是1024，现在是65535,nginx提供了worker_rlimit_nofile指令，这是除了ulimit的一种设置可用的描述符的方式。
+  该指令与使用ulimit对用户的设置是同样的效果。此指令的值将覆盖ulimit的值，如：worker_rlimit_nofile 20960;
+
+  设置ulimits：ulimit -SHn 65535
 
 ```
 http {
@@ -164,11 +171,9 @@ http {
 
 ```
 
-
 #### 主要关键词
 
-- location 
-
+- location
 
 ```
 
@@ -193,6 +198,7 @@ location /users/ {
 }
 
 ```
+
 重写类型：
 
 last ：相当于Apache里德(L)标记，表示完成rewrite，浏览器地址栏URL地址不变
@@ -204,7 +210,6 @@ redirect：返回302临时重定向，浏览器地址会显示跳转后的URL地
 permanent：返回301永久重定向，浏览器地址栏会显示跳转后的URL地址
 
 ---
-
 
 #### 反向代理服务器配置
 
@@ -245,6 +250,7 @@ upstream mysvr {
     }
 
 ```
+
 - 轮询
 
 ```
@@ -254,7 +260,6 @@ upstream mysvr {
      
     }
 ```
-
 
 - 加权轮询
 
@@ -303,12 +308,12 @@ upstream mysvr{
 ##### upstream还可以为每个设备设置状态值，这些状态值的含义分别如下：
 
 - down 表示单前的server暂时不参与负载.
-  
+
 - weight 默认为1.weight越大，负载的权重就越大。
-  
+
 - max_fails ：允许请求失败的次数默认为1.当超过最大次数时，返回proxy_next_upstream 模块定义的错误.
-  
+
 - fail_timeout : max_fails次失败后，暂停的时间。
-  
+
 - backup： 其它所有的非backup机器down或者忙的时候，请求backup机器。所以这台机器压力会最轻。
   

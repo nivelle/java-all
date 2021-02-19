@@ -27,7 +27,7 @@ public class PhaserMock {
         }
         Thread[] threads = new Thread[studentTask.length];
         for (int i = 0; i < studentTask.length; i++) {
-            threads[i] = new Thread(studentTask[i], "Student "+i);
+            threads[i] = new Thread(studentTask[i], "Student " + i);
             threads[i].start();
         }
 
@@ -38,6 +38,6 @@ public class PhaserMock {
                 e.printStackTrace();
             }
         }
-        System.out.println("Phaser has finished:"+phaser.isTerminated());
+        System.out.println("Phaser has finished:" + phaser.isTerminated());
     }
 }

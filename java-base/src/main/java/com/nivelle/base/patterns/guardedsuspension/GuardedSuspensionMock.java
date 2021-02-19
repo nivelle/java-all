@@ -6,7 +6,7 @@ package com.nivelle.base.patterns.guardedsuspension;
  * @author fuxinzhong
  * @date 2021/02/01
  */
-public class GuardedSuspensionMock <T>{
+public class GuardedSuspensionMock<T> {
 
     public static void main(String[] args) {
         RequestQueue requestQueue = new RequestQueue();

@@ -1,4 +1,3 @@
-
 ```
 protected void initStrategies(ApplicationContext context) {
 		initMultipartResolver(context);
@@ -13,7 +12,7 @@ protected void initStrategies(ApplicationContext context) {
 	}
 
 ```
-	
+
 #### springBoot 默认配置的组件（文件DispatcherServlet.properties）
 
 文件DispatcherServlet.properties是一个属性文件。每个属性的key是一个策略接口的长名称，而value是key指定的策略接口的多个实现类的长名称，每个类名称之间使用,分割。
@@ -50,8 +49,6 @@ org.springframework.web.servlet.support.SessionFlashMapManager
 
 ```
 
-	
-		
 ### initMultipartResolver
 
 ```
@@ -63,14 +60,16 @@ public interface MultipartResolver {
 
 ```
 
-MultipartResolver 用于处理文件上传，当收到请求时 DispatcherServlet#checkMultipart() 方法会调用 MultipartResolver#isMultipart() 方法判断请求中是否包含文件。如果请求数据中包含文件，则调用 MultipartResolver#resolveMultipart() 方法对请求的数据进行解析。
-然后将文件数据解析成 MultipartFile 并封装在 MultipartHttpServletRequest(继承了 HttpServletRequest) 对象中，最后传递给 Controller
+MultipartResolver 用于处理文件上传，当收到请求时 DispatcherServlet#checkMultipart() 方法会调用 MultipartResolver#isMultipart()
+方法判断请求中是否包含文件。如果请求数据中包含文件，则调用 MultipartResolver#resolveMultipart() 方法对请求的数据进行解析。 然后将文件数据解析成 MultipartFile 并封装在
+MultipartHttpServletRequest(继承了 HttpServletRequest) 对象中，最后传递给 Controller
 
 #### 子类实现
 
 - public class StandardServletMultipartResolver implements MultipartResolver
 
-- public class CommonsMultipartResolver extends CommonsFileUploadSupport implements MultipartResolver, ServletContextAware 
+- public class CommonsMultipartResolver extends CommonsFileUploadSupport implements MultipartResolver,
+  ServletContextAware
 
 ### initLocaleResolver
 
@@ -87,20 +86,20 @@ public interface LocaleResolver {
 ```
 
 #### 子类实现
-  
-  //其会将Locale信息存储在session中，如果用户想要修改Locale信息，可以通过修改session中对应属性的值即可；
+
+//其会将Locale信息存储在session中，如果用户想要修改Locale信息，可以通过修改session中对应属性的值即可；
+
 - public class SessionLocaleResolver extends AbstractLocaleContextResolver
-   
+
   //其会通过用户请求中名称为Accept-Language的header来获取Locale信息，如果想要修改展示的视图，只需要修改该header信息即可
-- public class AcceptHeaderLocaleResolver implements LocaleResolver 
-  
-  //其读取Locale的方式是在session中通过Cookie来获取其指定的Locale的，如果修改了Cookie的值，页面视图也会同步切换； 
-- public class CookieLocaleResolver extends CookieGenerator implements LocaleContextResolver 
-  // 在声明该resolver时，需要指定一个默认的Locale，在进行Locale获取时，始终返回该Locale，并且调用其setLocale()方法也无法改变其Locale
+- public class AcceptHeaderLocaleResolver implements LocaleResolver
+
+  //其读取Locale的方式是在session中通过Cookie来获取其指定的Locale的，如果修改了Cookie的值，页面视图也会同步切换；
+- public class CookieLocaleResolver extends CookieGenerator implements LocaleContextResolver //
+  在声明该resolver时，需要指定一个默认的Locale，在进行Locale获取时，始终返回该Locale，并且调用其setLocale()方法也无法改变其Locale
 - public class FixedLocaleResolver extends AbstractLocaleContextResolver
 
 对于Locale的切换，Spring是通过拦截器来实现的，其提供了一个LocaleChangeInterceptor，若要生效，这个Bean需要自己配置
-
 
 ### initThemeResolver
 
@@ -110,7 +109,7 @@ public interface LocaleResolver {
 
 - FixedThemeResolver
 
-### initHandlerMappings 
+### initHandlerMappings
 
 作用是根据当前请求的找到对应的 Handler，并将 Handler（执行程序）与一堆 HandlerInterceptor（拦截器,也是他来处理的）封装到 HandlerExecutionChain 对象中。返回给中央调度器
 
@@ -249,6 +248,7 @@ public interface RequestToViewNameTranslator {
 }
 
 ```
+
 - 子类：DefaultRequestToViewNameTranslator
 
 ```
@@ -299,17 +299,23 @@ public interface ViewResolver {
 }
 
 ```
-- public abstract class AbstractCachingViewResolver extends WebApplicationObjectSupport implements ViewResolver //基于缓存的抽象视图解析器
 
-- public class UrlBasedViewResolver extends AbstractCachingViewResolver implements Ordered//实现了缓存,提供了prefix suffix拼接的url视图解析器
+- public abstract class AbstractCachingViewResolver extends WebApplicationObjectSupport implements ViewResolver
+  //基于缓存的抽象视图解析器
+
+- public class UrlBasedViewResolver extends AbstractCachingViewResolver implements Ordered//实现了缓存,提供了prefix
+  suffix拼接的url视图解析器
 
 - public class InternalResourceViewResolver extends UrlBasedViewResolver//基于url的内部资源视图解析器
 
-- public class XmlViewResolver extends AbstractCachingViewResolver implements Ordered, InitializingBean, DisposableBean //基于xml的缓存视图解析器
+- public class XmlViewResolver extends AbstractCachingViewResolver implements Ordered, InitializingBean, DisposableBean
+  //基于xml的缓存视图解析器
 
-- public class BeanNameViewResolver extends WebApplicationObjectSupport implements ViewResolver, Ordered // beanName来自容器,并且不支持缓存
+- public class BeanNameViewResolver extends WebApplicationObjectSupport implements ViewResolver, Ordered //
+  beanName来自容器,并且不支持缓存
 
-- public class ResourceBundleViewResolver extends AbstractCachingViewResolver implements Ordered, InitializingBean, DisposableBean // 资源配置文件
+- public class ResourceBundleViewResolver extends AbstractCachingViewResolver implements Ordered, InitializingBean,
+  DisposableBean // 资源配置文件
 
 - public class FreeMarkerViewResolver extends AbstractTemplateViewResolver //freeMarkerView
 
@@ -352,6 +358,7 @@ public interface FlashMapManager {
 ```
 
 ##### 获取默认的组件(handlerMapping,handlerAdapter,handlerExceptionResolvers,viewResolvers,themResolver,localResolver,FlashMapManager,RequestToViewNameTranslator)
+
 ```
 //该方法使用指定的策略接口 strategyInterface 创建一组策略对象。上面的方法initHandlerMappings就是使用该方法创建了一组缺省的HandlerMapping策略对象	
 protected <T> List<T> getDefaultStrategies(ApplicationContext context, Class<T> strategyInterface) {

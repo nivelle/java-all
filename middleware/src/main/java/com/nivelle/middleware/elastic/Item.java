@@ -15,12 +15,10 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 /**
  * @Document 作用在类，标记实体类为文档对象: indexName：对应索引库名称;type：对应在索引库中的类型;shards：分片数量，默认5;replicas：副本数量，默认1
  */
-@Document(indexName = "item",type = "docs", shards = 5, replicas = 1)
+@Document(indexName = "item", type = "docs", shards = 5, replicas = 1)
 public class Item {
     /**
-     * @Id注解必须是springframework包下的org.springframework.data.annotation.Id
-     *
-     * 作用在成员变量，标记一个字段作为id主键
+     * @Id注解必须是springframework包下的org.springframework.data.annotation.Id 作用在成员变量，标记一个字段作为id主键
      */
     @Id
     private Long id;
@@ -28,7 +26,7 @@ public class Item {
      * 标题
      *
      * @Field 作用在成员变量，标记为文档的字段，并指定字段映射属性; type：字段类型，是枚举：FieldType，可以是text、long、short、date、integer、object等
-     *
+     * <p>
      * text:存储数据时候，会自动分词，并生成索引;
      * keyword:存储数据时候，不会分词建立索引;
      * Numerical：数值类型，分两类
@@ -48,12 +46,12 @@ public class Item {
     @Field(type = FieldType.Keyword)
     private String category;
     /**
-     *品牌
+     * 品牌
      */
     @Field(type = FieldType.Keyword)
     private String brand;
     /**
-     *价格
+     * 价格
      */
     @Field(type = FieldType.Double)
     private Double price;

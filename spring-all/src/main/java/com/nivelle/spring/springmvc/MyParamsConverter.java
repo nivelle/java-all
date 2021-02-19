@@ -10,11 +10,11 @@ import java.text.SimpleDateFormat;
 
 /**
  * 自定义类型转换
- *
+ * <p>
  * Spring3引入了较Spring2的PropertyEditor更加强大、通用的Convert/Format SPI，
- *
+ * <p>
  * Convert SPI可以实现任意类型的转换；Format SPI支持国际化，并在前者的基础上实现了String与任意类型的转换。
- *
+ * <p>
  * 这两类SPI属于spring-core，被整个spring-framework共享，是一种通用的类型转换器。
  *
  * @author fuxinzhong
@@ -34,7 +34,7 @@ public class MyParamsConverter implements Converter<String, Date> {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        System.err.println("MyParamsConverter result is parse:"+parse);
+        System.err.println("MyParamsConverter result is parse:" + parse);
 
         return parse;
     }

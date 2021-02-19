@@ -11,12 +11,14 @@ public class Table {
     private int tail;
     private int head;
     private int count;
+
     public Table(int count) {
         this.buffer = new String[count];
         this.head = 0;
         this.tail = 0;
         this.count = 0;
     }
+
     public synchronized void put(String cake) throws InterruptedException {
         System.out.println(Thread.currentThread().getName() + " puts " + cake);
         while (count >= buffer.length) {
@@ -27,6 +29,7 @@ public class Table {
         count++;
         notifyAll();
     }
+
     public synchronized String take() throws InterruptedException {
         while (count <= 0) {
             wait();

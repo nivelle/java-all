@@ -1,4 +1,3 @@
-
 #### public class DispatcherServlet extends FrameworkServlet
 
 ##### public abstract class FrameworkServlet extends HttpServletBean implements ApplicationContextAware
@@ -94,6 +93,7 @@ protected WebApplicationContext initWebApplicationContext() {
 ```
 
 ##### 根上下文是web.xml中配置的ContextLoaderListener监听器中根据contextConfigLocation路径生成的上下文
+
 ```
 <context-param>
   <param-name>contextConfigLocation</param-name>  
@@ -138,8 +138,7 @@ public final void init() throws ServletException {
 
 ##### public abstract class HttpServlet extends GenericServlet
 
-##### public abstract class GenericServlet implements Servlet, ServletConfig,java.io.Serializable 
-
+##### public abstract class GenericServlet implements Servlet, ServletConfig,java.io.Serializable
 
 - protected void onRefresh(ApplicationContext context)//DispatcherServlet覆写了FrameworkServlet中的onRefresh方法
 
@@ -150,7 +149,8 @@ protected void onRefresh(ApplicationContext context) {
 
 ```
 
--  initStrategies(ApplicationContext context)//springBoot context是 AnnotationConfigServletWebServerApplicationContext
+- initStrategies(ApplicationContext context)//springBoot context是 AnnotationConfigServletWebServerApplicationContext
+
 ```
 protected void initStrategies(ApplicationContext context) {
         // MultipartResolver 文件上传相关:从bean容器中中获取名字为 MULTIPART_RESOLVER_BEAN_NAME(multipartResolver)的bean，记录到属性multipartResolver，没有响应bean的话设置为null
@@ -213,6 +213,7 @@ protected void noHandlerFound(HttpServletRequest request, HttpServletResponse re
 	}
 
 ```
+
 #### getHandlerAdapter(Object handler)
 
 - DispatcherServlet请求处理过程中,执行Handler处理请求是通过HandlerAdapter完成的,而并非是DispatcherServlet直接调用Handler提供的处理方法
@@ -233,6 +234,7 @@ protected HandlerAdapter getHandlerAdapter(Object handler) throws ServletExcepti
 	}
 
 ```
+
 ##### handle()方法子类实现： public abstract class AbstractHandlerMethodAdapter extends WebContentGenerator implements HandlerAdapter, Ordered
 
 ```
@@ -275,7 +277,7 @@ protected ModelAndView handleInternal(HttpServletRequest request,
 ```
 
 ##### handleInternal()方法 子类实现：public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter implements BeanFactoryAware, InitializingBean
- 
+
  ```
  protected ModelAndView handleInternal(HttpServletRequest request,HttpServletResponse response, HandlerMethod handlerMethod) throws Exception {
        
@@ -374,7 +376,7 @@ protected ModelAndView invokeHandlerMethod(HttpServletRequest request,HttpServle
 
 ```
 
-##### invokeAndHandle 方法子类实现 : public class ServletInvocableHandlerMethod extends InvocableHandlerMethod 
+##### invokeAndHandle 方法子类实现 : public class ServletInvocableHandlerMethod extends InvocableHandlerMethod
 
 ```
 public void invokeAndHandle(ServletWebRequest webRequest, ModelAndViewContainer mavContainer,Object... providedArgs) throws Exception {
@@ -408,7 +410,8 @@ public void invokeAndHandle(ServletWebRequest webRequest, ModelAndViewContainer 
 	}
 
 ```
-##### invokeForRequest子类实现：public class InvocableHandlerMethod extends HandlerMethod 
+
+##### invokeForRequest子类实现：public class InvocableHandlerMethod extends HandlerMethod
 
 ```
 public Object invokeForRequest(NativeWebRequest request, @Nullable ModelAndViewContainer mavContainer,
@@ -422,6 +425,7 @@ public Object invokeForRequest(NativeWebRequest request, @Nullable ModelAndViewC
 }
 
 ```
+
 ##### 执行反射方法之前执行 methodArgumentResolvers.resolveArgument
 
 ```
@@ -462,7 +466,7 @@ protected Object[] getMethodArgumentValues(NativeWebRequest request, @Nullable M
 
 ```
 
-#### 子类实现: public class RequestResponseBodyMethodProcessor extends AbstractMessageConverterMethodProcessor 
+#### 子类实现: public class RequestResponseBodyMethodProcessor extends AbstractMessageConverterMethodProcessor
 
 ```
 public Object resolveArgument(MethodParameter parameter, @Nullable ModelAndViewContainer mavContainer,NativeWebRequest webRequest, @Nullable WebDataBinderFactory binderFactory) throws Exception {
@@ -485,8 +489,8 @@ public Object resolveArgument(MethodParameter parameter, @Nullable ModelAndViewC
 		return adaptArgumentIfNecessary(arg, parameter);
 	}
 ```
-##### 执行类型转换 [SpringMVC源码解析只类型转换](./SpringMVC源码解析之类型转换.md)
 
+##### 执行类型转换 [SpringMVC源码解析只类型转换](./SpringMVC源码解析之类型转换.md)
 
 ```	
 protected <T> Object readWithMessageConverters(NativeWebRequest webRequest, MethodParameter parameter,Type paramType) throws IOException, HttpMediaTypeNotSupportedException, HttpMessageNotReadableException {
@@ -622,7 +626,7 @@ protected void doDispatch(HttpServletRequest request, HttpServletResponse respon
 
 ```
 
-#### private void processDispatchResult(HttpServletRequest request, HttpServletResponse response,@Nullable HandlerExecutionChain mappedHandler, @Nullable ModelAndView mv,@Nullable Exception exception) throws Exception 
+#### private void processDispatchResult(HttpServletRequest request, HttpServletResponse response,@Nullable HandlerExecutionChain mappedHandler, @Nullable ModelAndView mv,@Nullable Exception exception) throws Exception
 
 ```
 private void processDispatchResult(HttpServletRequest request, HttpServletResponse response,

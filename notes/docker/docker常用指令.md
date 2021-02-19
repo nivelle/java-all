@@ -1,4 +1,3 @@
-
 ## docker hub
 
 ```
@@ -8,6 +7,7 @@ https://hub.docker.com/
 密码:nivell2
 
 ```
+
 ---
 
 ## Docker版本
@@ -17,10 +17,11 @@ https://hub.docker.com/
 $ docker --version
 
 ```
+
 ---
 
 ## 避免输出sudo
-   
+
 ```
    
 这里把当前用户加入到docker组就可以直接使用命令，而不用每次都加sudo
@@ -32,7 +33,9 @@ $ sudo groupadd docker
 $ sudo gpasswd -a ${USER} docker
    
 ```
+
 ---
+
 ## 当前Docker宿主机的信息
 
 ```
@@ -47,7 +50,6 @@ $ docker info
 
 ### 查看本地镜像
 
-
 ```
 
 $ docker images
@@ -56,6 +58,7 @@ REPOSITORY          TAG                 IMAGE ID            CREATED             
 ubuntu              15.10               9b9cb95443b5        3 years ago         137MB
 
 ```
+
 - REPOSITORY : 表示镜像的仓库源
 
 - TAG:镜像的标签(同一仓库源可以有多个 TAG，代表这个仓库源的不同个版本)
@@ -63,10 +66,10 @@ ubuntu              15.10               9b9cb95443b5        3 years ago         
 - IMAGE ID：镜像ID
 
 - CREATED：镜像创建时间
-  
+
 - SIZE：镜像大小
 
-定义仓库源: REPOSITORY:TAG 
+定义仓库源: REPOSITORY:TAG
 
 ### 删除镜像
 
@@ -77,13 +80,11 @@ docker rmi <image id>
 
 ### 删除未打标签的镜像
 
-
 ```
 
 docker rmi $(docker images | grep "^<none>" | awk "{print $3}")
 
 ```
-
 
 ### 搜索 docker Image
 
@@ -131,18 +132,17 @@ eg: docker commit -m="has update" -a="runoob" e218edb10161 runoob/ubuntu:v2
 - -a: 指定镜像作者
 
 - e218edb10161：容器 ID
-  
-- runoob/ubuntu:v2: 指定要创建的目标镜像名
-  
 
+- runoob/ubuntu:v2: 指定要创建的目标镜像名
 
 ### 更新镜像
 
 更新镜像前，使用镜像创建容器。在容器中使用 **apt-get update**命令进行更新，在完成操作之后，输入 exit 命令来退出这个容器。
-                                               
+
 ```
 docker commit -m="has update" -a="runoob" e218edb10161 runoob/ubuntu:v2
 ```
+
 - m "描述信息"
 
 - a "镜像作者"
@@ -169,15 +169,12 @@ hello nivelle
 ```
 
 - docker: Docker 的二进制执行文件。
-  
+
 - run: 与前面的 docker 组合来运行一个容器。
-  
+
 - ubuntu:15.10 指定要运行的镜像，Docker 首先从本地主机上查找镜像是否存在，如果不存在，Docker 就会从镜像仓库 Docker Hub 下载公共镜像
 
 - /bin/echo "Hello world": 在启动的容器里执行的命令
-  
-
-
 
 ### 将image上传到仓库
 
@@ -186,7 +183,6 @@ $ docker push [image_name]
 ```
 
 ### 删除images
-
 
 ```
 
@@ -220,7 +216,6 @@ $ docker ps
 
 - NAMES （names）:镜像自动为容器创建的名字，也唯一代表一个容器
 
-
 ### 删除容器
 
 ```
@@ -228,7 +223,6 @@ $ docker ps
 docker rm <docker id>
 
 ```
-
 
 ### 在container里运行交互式命令，比如shell
 
@@ -243,12 +237,13 @@ eg:
 - root@93c84c575fd7:/# 
 
 ```
+
 - -t: 在新容器内指定一个伪终端或终端。
-  
+
 - -i: 允许你对容器内的标准输入 (STDIN) 进行交互。
-  
-- root@93c84c575fd7:/#  此时我们已进入一个 ubuntu15.10 系统的容器
-  
+
+- root@93c84c575fd7:/# 此时我们已进入一个 ubuntu15.10 系统的容器
+
 - exit : 退出容器,返回当前主机
 
 - d: 启动模式（后台启动)
@@ -258,8 +253,6 @@ eg:
 - -P :是容器内部端口随机映射到主机的高端口。
 
 - -- name:对容器进行命名
-
-
 
 ### 在container里运行后台任务
 
@@ -285,7 +278,6 @@ $ docker ps -a
 
 ```
 
-
 ### 运行某个container
 
 ```
@@ -294,13 +286,13 @@ $ docker start [container]
 
 ```
 
-
 ### 查看容器的端口映射情况
 
 ```
 docker top zealous_darwin
 
 ```
+
 ### 重启容器
 
 ```
@@ -323,7 +315,6 @@ $ docker run -itd --name ubuntu-test ubuntu /bin/bash
 
 - /bin/bash：放在镜像名后的是命令，这里我们希望有个交互式 Shell，因此用的是 /bin/bash。
 
-
 ### 在使用 -d 参数时，容器启动后会进入后台。此时想要进入容器
 
 ```
@@ -335,7 +326,6 @@ $ docker attach [container]
 eg: docker exec -it 93c84c575fd7 /bin/bash
 
 ```
-
 
 ### 中止后台任务container
 
@@ -353,7 +343,6 @@ $ docker stop [container_id]
 
 $ docker ps -l
 ```
-
 
 ### 查看container详情
 
@@ -374,6 +363,7 @@ $ docker rm [container]
 
 $ docker rm `docker ps -a -q` 删除所有容器，-q表示只返回容器的ID
 ```
+
 ### 查看容器内部的进程信息
 
 ```
@@ -391,6 +381,7 @@ $ docker exec -d edison touch /home/haha
 ```
 
 ### 在容器中运行交付式任务，只对正在运行的容器有效。
+
 ~~~~
 - -ti 以交互式模式打开 tty，执行/bin/bash，其结果就是打开了一个 bash 终端。
 ```

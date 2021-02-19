@@ -14,6 +14,7 @@ public class MyHandler implements InvocationHandler {
 
     /**
      * 为object参数创建代理
+     *
      * @return
      */
     public DynamicService getProxy() {

@@ -7,10 +7,9 @@
 2. 所包含的NIO selector关注的NIO事件中，某些事件发生时交给相应的处理器处理
 
    (1). 注册到 Poller （所包含的 NIO selector）的事件被 Poller 线程消费;
-   
+
    (2). Poller 线程消费事件，处理 NIO SelectionKey, 交给 worker 线程进行相应的请求处理。
-   
-   
+
 ```
 public class Poller implements Runnable {
 
@@ -567,8 +566,6 @@ public class Poller implements Runnable {
     }
     
 ```
-
-
 
 ### PollerEvent //往Poller对象的事件队列插入的待处理的事件的抽象，可以被Poller缓存循环回收利用以避免GC成本
 

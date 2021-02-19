@@ -79,7 +79,7 @@
 //返回当前数据库的 key 的数量。
   
 ````
-        
+
 #### 9. KEYS pattern
 
 ````
@@ -88,12 +88,13 @@
 // 查找所有符合给定模式 pattern 的 key 
 
 ````
+
 - KEYS * 匹配数据库中所有 key
 
 - KEYS h?llo 匹配 hello ， hallo 和 hxllo 等。
-  
+
 - KEYS h*llo 匹配 hllo 和 heeeeello 等。
-  
+
 - KEYS h[ae]llo 匹配 hello 和 hallo ，但不匹配 hillo 。
 
 #### 10. flushdb
@@ -104,7 +105,7 @@
 // 清空当前数据库中的所有 key。
 
 ````
-  
+
 #### 11. flushall
 
 ````
@@ -114,7 +115,7 @@
 
 ````
 
-#### 12. select 
+#### 12. select
 
 ````
 //切换到指定的数据库，数据库索引号 index 用数字值指定，以 0 作为起始索引值。

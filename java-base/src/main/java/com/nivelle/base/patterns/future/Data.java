@@ -7,5 +7,5 @@ package com.nivelle.base.patterns.future;
  * @date 2021/02/01
  */
 public interface Data {
-     String getContent();
+    String getContent();
 }

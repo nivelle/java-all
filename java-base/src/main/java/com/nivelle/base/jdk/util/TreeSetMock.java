@@ -50,8 +50,8 @@ public class TreeSetMock {
             System.out.println("倒序:" + iterator.next());
         }
         Iterator iterator1 = treeSet.iterator();
-        while (iterator1.hasNext()){
-            System.out.println("顺序:"+iterator1.next());
+        while (iterator1.hasNext()) {
+            System.out.println("顺序:" + iterator1.next());
         }
         /**
          * 返回大于等于2 的子map

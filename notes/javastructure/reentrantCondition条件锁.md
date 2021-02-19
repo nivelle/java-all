@@ -9,7 +9,7 @@ Condition的队列头节点是存储着实实在在的元素值的,是真实节�
 
 ```
 
--  各种等待状态(waitStatus)的变化
+- 各种等待状态(waitStatus)的变化
 
 ```
 1. 在条件队列中，新建节点的初始等待状态是CONDITION（-2）
@@ -27,6 +27,7 @@ Condition的队列头节点是存储着实实在在的元素值的,是真实节�
 ### 构造条件锁
 
 #### ReentrantLock.newCondition()
+
 ```
 public Condition newCondition() {
         return sync.newCondition();
@@ -34,12 +35,15 @@ public Condition newCondition() {
 ```
 
 #### ReentrantLock.Sync.newCondition()
+
 ````
 final ConditionObject newCondition() {
      return new ConditionObject();
 }
 ````
+
 #### AbstractQueuedSynchronizer.ConditionObject.ConditionObject()
+
 ````
 public ConditionObject() {}
 
@@ -69,7 +73,7 @@ private static final int THROW_IE    = -1;
 
 ### condition.await()方法
 
--  AbstractQueuedSynchronizer.ConditionObject.await()
+- AbstractQueuedSynchronizer.ConditionObject.await()
 
 ```
 public final void await() throws InterruptedException {
@@ -109,9 +113,11 @@ public final void await() throws InterruptedException {
 }
 
 ```
-#####  添加新节点到 Condition 队列中
+
+##### 添加新节点到 Condition 队列中
 
 - AbstractQueuedSynchronizer.ConditionObject.addConditionWaiter
+
 ````
 private Node addConditionWaiter() {
             Node t = lastWaiter;     
@@ -141,7 +147,7 @@ private Node addConditionWaiter() {
 
 #### 从头节点开始清除所有已取消的节点(不是等待某个条件的队列)
 
--  AbstractQueuedSynchronizer.ConditionObject.unlinkCancelledWaiters
+- AbstractQueuedSynchronizer.ConditionObject.unlinkCancelledWaiters
 
 ````
 private void unlinkCancelledWaiters() {
@@ -177,7 +183,8 @@ private void unlinkCancelledWaiters() {
             }
         }
 ````
-####  释放新添加节点所持有的锁
+
+#### 释放新添加节点所持有的锁
 
 - AbstractQueuedSynchronizer.fullyRelease
 
@@ -204,7 +211,7 @@ final int fullyRelease(Node node) {
 
 ````
 
-####  释放锁操作
+#### 释放锁操作
 
 - AbstractQueuedLongSynchronizer.release
 
@@ -246,9 +253,11 @@ protected final boolean tryRelease(int releases) {
              return free;
 }
 ````
+
 #### 判断是否在同步队列
 
 - AbstractQueuedLongSynchronizer.isOnSyncQueue
+
 ````
 final boolean isOnSyncQueue(Node node) {
         //如果节点的状态等于条件状态或者前继节点为空也就是头节点，则不在同步队列中
@@ -270,9 +279,11 @@ final boolean isOnSyncQueue(Node node) {
         return findNodeFromTail(node);
     }
 ````
-#### 从尾到头遍历    
+
+#### 从尾到头遍历
 
 - AbstractQueuedLongSynchronizer.findNodeFromTail
+
 ````
 private boolean findNodeFromTail(Node node) {
         Node t = tail;
@@ -285,7 +296,9 @@ private boolean findNodeFromTail(Node node) {
         }
     }
 ````
+
 #### 检查中断状态
+
 ````
 private int checkInterruptWhileWaiting(Node node) {
     // checkInterruptWhileWaiting()：判断在阻塞过程中是否被中断。如果返回THROW_IE，则表示线程在调用signal()之前中断的；
@@ -295,6 +308,7 @@ private int checkInterruptWhileWaiting(Node node) {
 ````
 
 #### 设置等待条件状态
+
 ````
 final boolean transferAfterCancelledWait(Node node) {
         if (compareAndSetWaitStatus(node, Node.CONDITION, 0)) {
@@ -304,7 +318,9 @@ final boolean transferAfterCancelledWait(Node node) {
         }
 }       
 ```` 
-#### 是否抛出中断异常 
+
+#### 是否抛出中断异常
+
 ````
 private void reportInterruptAfterWait(int interruptMode)
             throws InterruptedException {
@@ -315,7 +331,7 @@ private void reportInterruptAfterWait(int interruptMode)
 }                
 ````
 
-#### condition.signal() 方法 
+#### condition.signal() 方法
 
 - AbstractQueuedSynchronizer.ConditionObject.signal
 

@@ -27,22 +27,19 @@
 - @Inject 或者 @Autowired注入一个 Environment对象
 
 **绝大多数情况下，bean都不需要直接访问Environment对象，而是通过类似@Value注解的方式把属性值注入进来。**
- 
 
 [![D6ct74.jpg](https://s3.ax1x.com/2020/11/29/D6ct74.jpg)](https://imgchr.com/i/D6ct74)
 
-
-接口/类	 | 介绍
+接口/类     | 介绍
 ---|---
 PropertyResolver | 接口，抽象对属性源的访问，比如是否包含某个属性，读取属性，解析占位符，将读取到的属性转换成指定类型
 Environment |接口，继承自PropertyResolver,对环境属性访问和default/active profile访问的抽象因为继承自PropertyResolver，所以它自然具备PropertyResolver提供的所有能力，对环境属性的访问也正是通过PropertyResolver定义的这些能力
 ConfigurablePropertyResolver | 接口，为PropertyResolver接口抽象的属性源访问做了配置方面的增强。比如设置将属性值转换工具，指定占位符前缀后缀，遇到不可解析的嵌套的占位符怎么办等等
-ConfigurableEnvironment	| 接口，在所继承的接口之上增加了设置defaut/active profile的能力，增加/删除环境对象中属性源的能力
+ConfigurableEnvironment    | 接口，在所继承的接口之上增加了设置defaut/active profile的能力，增加/删除环境对象中属性源的能力
 ConfigurableWebEnvironment | 接口，向接口ConfigurableEnvironment增强了根据Servlet上下文/配置初始化属性源的能力
 AbstractEnvironment | Environment抽象基类，实现了ConfigurableEnvironment
 StandardEnvironment | 实现类,针对标准Spring应用(非Web应用)环境,在AbstractEnvironment基础上提供了属性源systemEnvironment(来自System.getenv())和systemProperties(来自System.getProperties())
 StandardServletEnvironment | 实现类,针对标准SpringServletWeb应用的环境，在StandardEnvironment的基础上增加了servletContextInitParams/servletConfigInitParams/jndiProperties三个属性源
-
 
 #### StandardEnvironment 属性源 //针对Spring 非Web 应用
 
@@ -52,23 +49,23 @@ spring.application.json | 系统环境变量spring.application.json/SPRING_APPLI
 systemProperties | 来自 system.getProperties()
 systemEnvironment | 来自 system.getenv()
 random | 来自一个Random对象,用来生成随机int/long/uuid
-applicationConfig: [classpath:/application-dev1.yml | 属性spring.profiles.active指定的配置文件 1.可以不指定，也可以指定多个 2.后读进来的优先级较高3.可以是yml/yaml/properties/xml等文件类型 
-applicationConfig: [classpath:/application-common1.yml] | 属性spring.profiles.active指定的配置文件 1.可以不指定，也可以指定多个 2.后读进来的优先级较高3.可以是yml/yaml/properties/xml等文件类型 
-applicationConfig: [classpath:/application.yml]	 | 缺省配置文件可以是yml/yaml/properties/xml等文件类型
+applicationConfig: [classpath:/application-dev1.yml | 属性spring.profiles.active指定的配置文件 1.可以不指定，也可以指定多个 2.后读进来的优先级较高3.可以是yml/yaml/properties/xml等文件类型
+applicationConfig: [classpath:/application-common1.yml] | 属性spring.profiles.active指定的配置文件 1.可以不指定，也可以指定多个 2.后读进来的优先级较高3.可以是yml/yaml/properties/xml等文件类型
+applicationConfig: [classpath:/application.yml]     | 缺省配置文件可以是yml/yaml/properties/xml等文件类型
 
 **注意: 上表中，各个属性源行号越小优先级越高**
 
-
 #### StandardServletEnvironment
 
-StandardServletEnvironment继承自StandardEnvironment,它往环境中增加了来自Servlet Web环境的属性源，并将这些属性源放在了StandardEnvironment中那些属性源之前，也就是使之有了更高优先级
+StandardServletEnvironment继承自StandardEnvironment,它往环境中增加了来自Servlet
+Web环境的属性源，并将这些属性源放在了StandardEnvironment中那些属性源之前，也就是使之有了更高优先级
 
 名称  | 介绍
 ---|---
-server.ports	 | 启动过程中获取嵌入式Servlet Web容器所监听的端口动态生成的一个属性源:properties={local.server.port=8080}1.针对Springboot Servlet Web应用的情况
-servletConfigInitParams	 | 来自 ServletConfig的属性源ServletConfigPropertySource
-servletContextInitParams	 | 来自 ServletContext的属性源ServletContextPropertySource
-jndiProperties	 | 如果使用了jndi环境的话会添加该属性源JndiPropertySource
+server.ports     | 启动过程中获取嵌入式Servlet Web容器所监听的端口动态生成的一个属性源:properties={local.server.port=8080}1.针对Springboot Servlet Web应用的情况
+servletConfigInitParams     | 来自 ServletConfig的属性源ServletConfigPropertySource
+servletContextInitParams     | 来自 ServletContext的属性源ServletContextPropertySource
+jndiProperties     | 如果使用了jndi环境的话会添加该属性源JndiPropertySource
 
 ### PropertySource
 
@@ -84,13 +81,13 @@ jndiProperties	 | 如果使用了jndi环境的话会添加该属性源JndiProper
 
 名称  | 介绍
 ---|---
-RandomValuePropertySource	 | 封装一个random对象为属性源，用于获取int,long,uuid随机数
-MapPropertySource	 | 封装一个Map<String,Object>对象为属性源
-ServletConfigPropertySource	 | 封装一个ServletConfig对象为属性源
-ServletContextPropertySource	 | 封装一个ServletContext对象为属性源
+RandomValuePropertySource     | 封装一个random对象为属性源，用于获取int,long,uuid随机数
+MapPropertySource     | 封装一个Map<String,Object>对象为属性源
+ServletConfigPropertySource     | 封装一个ServletConfig对象为属性源
+ServletContextPropertySource     | 封装一个ServletContext对象为属性源
 SystemEnvironmentPropertySource | 继承自MapPropertySource，被StandardEnvironment用于将System.getenv()封装成一个属性源在获取属性的属性名上针对不同环境做了处理，比如getProperty("foo.bar")会匹配"foo.bar",“foo_bar”,“FOO.BAR"或者"FOO_BAR”,如果想获取的属性名称中含有-，会被当作_处理
-SimpleCommandLinePropertySource | 将命令行参数字符串数组转换成一个 CommandLineArgs对象，然后封装成一个属性源比如一个springboot应用SpringApplication启动时，如果提供了命令行参数，他们就会被封装成一个SimpleCommandLinePropertySource对象放到上下文环境中去。 
-PropertiesPropertySource	| 继承自MapPropertySource,将一个java.util.Properties对象封装为属性源
+SimpleCommandLinePropertySource | 将命令行参数字符串数组转换成一个 CommandLineArgs对象，然后封装成一个属性源比如一个springboot应用SpringApplication启动时，如果提供了命令行参数，他们就会被封装成一个SimpleCommandLinePropertySource对象放到上下文环境中去。
+PropertiesPropertySource    | 继承自MapPropertySource,将一个java.util.Properties对象封装为属性源
 
 [![D6Wzi4.png](https://s3.ax1x.com/2020/11/29/D6Wzi4.png)](https://imgchr.com/i/D6Wzi4)
 
@@ -243,7 +240,8 @@ Spring 使用接口PropertyResolver抽象了从底层来源获取属性的基本
 
 - Spring框架将某个属性源抽象成了类PropertySource，又将多个属性源PropertySource组合抽象为接口PropertySources。
 
-- 对某个PropertySource对象中属性的解析，抽象成了接口PropertyResolver,而类PropertySourcesPropertyResolver则是Spring用于解析一个PropertySources对象中属性的工具类。
+-
+对某个PropertySource对象中属性的解析，抽象成了接口PropertyResolver,而类PropertySourcesPropertyResolver则是Spring用于解析一个PropertySources对象中属性的工具类。
 
 - Spring应用Environment对象中对其PropertySources对象的属性解析，就是通过这样一个对象。
 
@@ -251,7 +249,6 @@ Spring 使用接口PropertyResolver抽象了从底层来源获取属性的基本
 // Spring Environment 实现类的抽象基类 AbstractEnvironment代码片段
 private final ConfigurablePropertyResolver propertyResolver = new PropertySourcesPropertyResolver(this.propertySources);
 ````
-
 
 ````
 package org.springframework.core.env;

@@ -66,6 +66,7 @@ public Object getSingleton(String beanName, ObjectFactory<?> singletonFactory) {
     }
 }
 ````
+
 #### 第一步：尝试获取实例,给后置处理器一次机会创建
 
 `````
@@ -133,8 +134,8 @@ protected Object createBean(String beanName, RootBeanDefinition mbd, @Nullable O
 
 ##### 1.1 处理Override属性
 
-Spring 中并不存在 override-method 的标签，这里的 override 指的是 <lookup-method/> 和 <replaced-method/> 两个标签,
-之前解析这两个标签时是将这两个标签配置以 MethodOverride 对象的形式记录在 beanDefinition 实例的 methodOverrides 属性中,
+Spring 中并不存在 override-method 的标签，这里的 override 指的是 <lookup-method/> 和 <replaced-method/> 两个标签, 之前解析这两个标签时是将这两个标签配置以
+MethodOverride 对象的形式记录在 beanDefinition 实例的 methodOverrides 属性中,
 而这里的处理主要是逐一检查所覆盖的方法是否存在，如果不存在则覆盖无效，如果存在唯一的方法，则覆盖是明确的，标记后期无需依据参数类型以及个数进行推测
 
 ````
@@ -153,6 +154,7 @@ public void prepareMethodOverrides() throws BeanDefinitionValidationException {
 }
 
 ````
+
 ##### 1.1.1 方法复写默认为true,如果仅仅一个方法，则设置 MethodOverride为false
 
 ````
@@ -393,6 +395,7 @@ protected BeanWrapper createBeanInstance(String beanName, RootBeanDefinition mbd
 }
 
 ````
+
 ##### 2.1.1 instantiateUsingFactoryMethod 工厂方法执行实例化过程
 
 ````
@@ -822,6 +825,6 @@ public BeanWrapper autowireConstructor(
 
 ```
 
-#### 核心1:实例化bean实例(属性注入) [属性注入](./Spring源码解析之populateBean().md)   
+#### 核心1:实例化bean实例(属性注入) [属性注入](./Spring源码解析之populateBean().md)
 
 #### 核心2:实例化bean实例(执行初始化方法) [初始化](./Spring源码解析之initializeBean()方法.md)     

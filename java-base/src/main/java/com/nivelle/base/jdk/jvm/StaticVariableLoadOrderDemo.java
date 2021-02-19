@@ -22,7 +22,7 @@ public class StaticVariableLoadOrderDemo {
          *
          * 1.直接访问静态常量不触发类的初始化
          */
-       System.out.println(FinalFieldClass.CONSRANR);
+        System.out.println(FinalFieldClass.CONSRANR);
 
         /**
          * 打印结果：

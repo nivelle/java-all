@@ -20,7 +20,7 @@ public class MyFilter3 implements Filter {
         String characterEncoding = servletRequest.getCharacterEncoding();
         int serverPort = servletRequest.getServerPort();
 
-        System.out.println("characterEncoding is "+ characterEncoding +"\n"+ "serverPort is "+ serverPort);
+        System.out.println("characterEncoding is " + characterEncoding + "\n" + "serverPort is " + serverPort);
         filterChain.doFilter(servletRequest, servletResponse);
         System.out.println("结束执行过滤器3");
     }

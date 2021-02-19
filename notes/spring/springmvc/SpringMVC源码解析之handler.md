@@ -1,4 +1,3 @@
-
 ### HandlerMethod
 
 #### 一个HandlerMethod对象,包装了以下信息：
@@ -97,8 +96,8 @@ protected Object[] getMethodArgumentValues(NativeWebRequest request, @Nullable M
 
 ````
 
-##### public class ServletInvocableHandlerMethod extends InvocableHandlerMethod 
- 
+##### public class ServletInvocableHandlerMethod extends InvocableHandlerMethod
+
 ````
 ServletInvocableHandlerMethod 这个类在HandlerAdapter对每个请求处理过程中，都会实例化一个出来(上面提到的属性由HandlerAdapter进行设置)，分别对请求和返回进行处理
 
@@ -167,10 +166,10 @@ public void invokeAndHandle(ServletWebRequest webRequest, ModelAndViewContainer 
 
 ````
 
-
 ### HandlerExecutionChain
 
 #### boolean applyPreHandle(HttpServletRequest request, HttpServletResponse response)
+
 ```
 boolean applyPreHandle(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		HandlerInterceptor[] interceptors = getInterceptors();

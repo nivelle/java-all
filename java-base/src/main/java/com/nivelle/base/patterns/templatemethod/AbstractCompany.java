@@ -15,6 +15,7 @@ public abstract class AbstractCompany {
         System.out.println(userName + "打卡了！");
         return true;
     }
+
     //2.工作
     public abstract boolean doWork(String userName);
 
@@ -24,7 +25,7 @@ public abstract class AbstractCompany {
         return true;
     }
 
-    public boolean oneDay(String userName){
+    public boolean oneDay(String userName) {
         showCard(userName);
         doWork(userName);
         endDay(userName);

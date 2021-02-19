@@ -8,7 +8,7 @@ public class FormulaServiceImpl implements FormulaService {
 
 
     @Override
-   public double calculate(int a){
-       return Math.sqrt(a*100);
-   }
+    public double calculate(int a) {
+        return Math.sqrt(a * 100);
+    }
 }

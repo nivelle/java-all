@@ -13,11 +13,13 @@ public class MenuFactory extends AbstractFactory {
     public Menu createMenu(Long id, String name) {
         return new Menu(id, name);
     }
+
     public boolean registerMenu(Compont compont) {
-        System.out.println("组件注册上了"+compont.toString());
+        System.out.println("组件注册上了" + compont.toString());
         list.add((Menu) compont);
         return true;
     }
+
     public List<Menu> getList() {
         return list;
     }

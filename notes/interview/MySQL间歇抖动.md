@@ -12,6 +12,7 @@
 所以，无论是你的查询语句在需要内存的时候可能要求淘汰一个脏页，还是由于刷脏页的逻辑会占用 IO 资源并可能影响到了你的更新语句，都可能是造成你从业务端感知MySQL“抖”了一下的原因。
 
 ````
+
 3. MySQL抖一下有啥问题？
 
 ````
@@ -73,9 +74,8 @@
 
 ````
 
-
 ### 如果redo log 设置得太小,redo log写满.那么会涉及到以下几点:
-1.把相对应的数据页中的脏页持久化到磁盘,checkpoint往前推
-2.由于redo log还记录了undo的变化,undo log buffer也要持久化进undo log
-3.当innodb_flush_log_at_trx_commit设置为非1,还要把内存里的redo log持久化到磁盘上
-4.redo log还记录了change buffer的改变,那么还要把change buffer purge到idb
+
+1.把相对应的数据页中的脏页持久化到磁盘,checkpoint往前推 2.由于redo log还记录了undo的变化,undo log buffer也要持久化进undo log
+3.当innodb_flush_log_at_trx_commit设置为非1,还要把内存里的redo log持久化到磁盘上 4.redo log还记录了change buffer的改变,那么还要把change buffer
+purge到idb

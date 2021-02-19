@@ -38,8 +38,7 @@ public class MySpringServletContainerInitializer extends SpringServletContainerI
                     try {
                         //SpringServletContainerInitializer将传入的 webAppInitializerClasses 通过反射实例化
                         initializers.add((WebApplicationInitializer) ReflectionUtils.accessibleConstructor(waiClass).newInstance());
-                    }
-                    catch (Throwable ex) {
+                    } catch (Throwable ex) {
                         throw new ServletException("Failed to instantiate WebApplicationInitializer class", ex);
                     }
                 }

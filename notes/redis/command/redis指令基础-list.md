@@ -21,6 +21,7 @@
 // 和 LPUSH key value [value …] 命令相反，当 key 不存在时， LPUSHX 命令什么也不做。
    
 ```
+
 #### 3. RPUSH key value [value …]
 
 ```
@@ -33,6 +34,7 @@
 
 
 ```
+
 #### 4. RPUSHX key value
 
 ````
@@ -42,6 +44,7 @@
 //将值 value 插入到列表 key 的表尾，当且仅当 key 存在并且是一个列表。
   
 ````
+
 #### 5. LPOP key
 
 ````
@@ -170,8 +173,9 @@
 
 - 非阻塞行为: 当 BLPOP 被调用时，如果给定 key 内至少有一个非空列表，那么弹出遇到的第一个非空列表的头元素，并和被弹出元素所属的列表的名字一起，组成结果返回给调用者。
 
-- 阻塞行为: 如果所有给定 key 都不存在或包含空列表，那么 BLPOP 命令将阻塞连接，直到等待超时，或有另一个客户端对给定 key 的任意一个执行 LPUSH key value [value …] 或 RPUSH key value [value …] 命令为止。
-        
+- 阻塞行为: 如果所有给定 key 都不存在或包含空列表，那么 BLPOP 命令将阻塞连接，直到等待超时，或有另一个客户端对给定 key 的任意一个执行 LPUSH key value [value …] 或 RPUSH key
+  value [value …] 命令为止。
+
 #### 16. BRPOP key [key …] timeout
 
 ````

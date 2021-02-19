@@ -90,7 +90,7 @@ public Connector(String protocol) {
     }
     
   ```
-  
+
 #### initInternal 初始化函数
 
 ```
@@ -134,6 +134,7 @@ protected void initInternal() throws LifecycleException {
     }
 
 ```
+
 #### startInternal 开始化函数
 
 ```
@@ -153,7 +154,6 @@ protected void initInternal() throws LifecycleException {
         }
     }
 ```
-
 
 ### 子类: public abstract class AbstractProtocol<S> implements ProtocolHandler,MBeanRegistration
 
@@ -209,7 +209,7 @@ public void init() throws Exception {
 
 ```
 
-### public abstract class AbstractEndpoint<S,U> 
+### public abstract class AbstractEndpoint<S,U>
 
 - init()方法
 
@@ -245,7 +245,6 @@ public final void init() throws Exception {
 2) Nio2Endpoint
 
 3) NioEndpoint
-
 
 ```
 public final void start() throws Exception {

@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.InitBinder;
 public class MyBaseConfig {
 
 
-
     /**
      * 自定义servle有三种注入方式
      * <p>
@@ -102,8 +101,8 @@ public class MyBaseConfig {
 //    }
 
     @InitBinder
-    public void initBinder(WebDataBinder binder){
-        binder.registerCustomEditor(User.class,new MyPropertyEditorSupport());
+    public void initBinder(WebDataBinder binder) {
+        binder.registerCustomEditor(User.class, new MyPropertyEditorSupport());
     }
-    
+
 }

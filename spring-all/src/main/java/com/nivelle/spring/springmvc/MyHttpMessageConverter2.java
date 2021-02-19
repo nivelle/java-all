@@ -18,13 +18,13 @@ import java.nio.charset.Charset;
 public class MyHttpMessageConverter2 extends AbstractGenericHttpMessageConverter<User> {
 
     public MyHttpMessageConverter2() {
-        super(new MediaType("application", "myContentType",Charset.forName("UTF-8")));
+        super(new MediaType("application", "myContentType", Charset.forName("UTF-8")));
         System.out.println("MyHttpMessageConverter2 constroct");
     }
 
     @Override
     public boolean supports(Class<?> clazz) {
-        System.out.println("MyHttpMessageConverter2 supports class name:" + clazz.getName()+";supports:"+User.class.isAssignableFrom(clazz));
+        System.out.println("MyHttpMessageConverter2 supports class name:" + clazz.getName() + ";supports:" + User.class.isAssignableFrom(clazz));
         return User.class.isAssignableFrom(clazz);
     }
 
@@ -33,7 +33,7 @@ public class MyHttpMessageConverter2 extends AbstractGenericHttpMessageConverter
         System.out.println("MyHttpMessageConverter2 canRead:" + (type instanceof Class ? canRead((Class<?>) type, mediaType) : canRead(mediaType))
                 + "type:" + type + " " + "contextClass:" + contextClass + " " + "mediaType:" + " " + mediaType);
 
-        System.out.println("MyHttpMessageConverter2 can read:"+((type instanceof Class ? canRead((Class<?>) type, mediaType) : canRead(mediaType))));
+        System.out.println("MyHttpMessageConverter2 can read:" + ((type instanceof Class ? canRead((Class<?>) type, mediaType) : canRead(mediaType))));
         return (type instanceof Class ? canRead((Class<?>) type, mediaType) : canRead(mediaType));
     }
 
@@ -42,7 +42,7 @@ public class MyHttpMessageConverter2 extends AbstractGenericHttpMessageConverter
         System.out.println("MyHttpMessageConverter2 canWrite:" + (type instanceof Class ? canRead((Class<?>) type, mediaType) : canRead(mediaType))
                 + "  type:" + type + " " + "clazz:" + clazz + " " + "mediaType:" + mediaType);
 
-        System.out.println("MyHttpMessageConverter2 can write:"+canWrite(clazz, mediaType));
+        System.out.println("MyHttpMessageConverter2 can write:" + canWrite(clazz, mediaType));
         return canWrite(clazz, mediaType);
     }
 
@@ -64,10 +64,10 @@ public class MyHttpMessageConverter2 extends AbstractGenericHttpMessageConverter
         // 获取 content-type
         MediaType contentType = headers.getContentType();
         System.out.println("MyHttpMessageConverter2 contentType: " + contentType);
-        outputMessage.getHeaders().set(HttpHeaders.CONTENT_TYPE,"application/myContentType");
+        outputMessage.getHeaders().set(HttpHeaders.CONTENT_TYPE, "application/myContentType");
         Integer age = user.getAge();
         String name = user.getName();
-        String response =  "fuck:"+"name:"+name+"age is:"+age;
+        String response = "fuck:" + "name:" + name + "age is:" + age;
         outputMessage.getBody().write(response.getBytes());
     }
 

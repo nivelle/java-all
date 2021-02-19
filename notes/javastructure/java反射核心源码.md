@@ -23,21 +23,22 @@
 ``````
 
 #### 子类实现(每个Method对象包含一个root对象，root对象里持有一个MethodAccessor对象。我们获得的Method独享相当于一个root对象的镜像，所有这类Method共享root里的MethodAccessor对象,这个对象由ReflectionFactory方法生成,ReflectionFactory对象在Method类中是static final的由native方法实例化)
-          
+
 - 接口:MethodAccessor
-    
+
 - 抽象类:MethodAccessorImpl
-  
+
 ##### 子类:DelegatingMethodAccessorImpl
-        
+
 ```
           public Object invoke(Object var1, Object[] var2) throws IllegalArgumentException, InvocationTargetException {
                   return this.delegate.invoke(var1, var2);
               }
               
 ```
+
 ##### 子类:NativeMethodAccessorImpl
-        
+
 ```
   public Object invoke(Object var1, Object[] var2) throws IllegalArgumentException, InvocationTargetException {
                     
@@ -56,7 +57,6 @@
          }
           
 ```
-          
 
 #### 方法分派
 
@@ -72,6 +72,7 @@ JSR-292是JVM为动态类型支持而出现的规范,在JAVA7中实现了这个�
 这有点类似于C++中的函数指针。从功能上讲,方法句柄类似于反射中的Method类,但两者之间有区别,方法句柄是轻量级的,我们从Method和MethodHandler的实现上可以看出来,Method的invoke方法会涉及到JAVA的安全访问检查,而方法句柄的所有invoke方法都是native方法,其性能优于反射.
 
 ```
+
 - invokeVirtual:根据虚方法表调用虚方法（动态分派）
 
 - invokeInterface:调用接口方法（动态分派）

@@ -21,13 +21,14 @@
 - 随机策略（randomness）：随机策略是老版本生产者使用的分区策略，在新版本中已经改为轮询
 
 ##### kafka默认分区策略：
+
 - 如果指定了partition就直接发送到该分区；
-  
+
 - 如果没有指定分区但是指定了key，就按照key的hash值选择分区；
-  
+
 - 如果partition和key都没有指定就使用轮询策略：
-  - 而且如果key不为null，那么计算得到的分区号会是所有分区中的任意一个；
-  - 如果key为null并且有可用分区时，那么计算得到的分区号仅为可用分区中的任意一个
+    - 而且如果key不为null，那么计算得到的分区号会是所有分区中的任意一个；
+    - 如果key为null并且有可用分区时，那么计算得到的分区号仅为可用分区中的任意一个
 
 ````
 
@@ -45,8 +46,8 @@ return ThreadLocalRandom.current().nextInt(partitions.size());
 
 #### 创建TCP连接的时机
 
-- 创建KafkaProducer 实例时，生产者应用会在后台创建并启动一个名为Sender 线程，该Sender线程开始运行时首先会创建与Broker的连接；
-  bootstrap.servers 仅需配置部分broker机器即刻，producer 会自动向某一台Broker发送METADATA 请求，获取集群所有信息
+- 创建KafkaProducer 实例时，生产者应用会在后台创建并启动一个名为Sender 线程，该Sender线程开始运行时首先会创建与Broker的连接； bootstrap.servers
+  仅需配置部分broker机器即刻，producer 会自动向某一台Broker发送METADATA 请求，获取集群所有信息
 
 - 更新元数据时
 
@@ -69,6 +70,7 @@ return ThreadLocalRandom.current().nextInt(partitions.size());
 2. producer.clouse()
 
 ````
+
 - 自动关闭
 
 ````
@@ -99,8 +101,7 @@ props.put("enable.idempotence",true)
 
 - 区分produce 会话: produce 每次启动后，首先向broker申请一个全局唯一的 PID ,用来标识本次会话。
 
-- 消息检测：message v2 版本增加了 sequence number 字段，producer 每发一批消息，seq 就加1.
-  broker 在内存维护(pid,seq)映射，收到消息后检测seq.如果：
+- 消息检测：message v2 版本增加了 sequence number 字段，producer 每发一批消息，seq 就加1. broker 在内存维护(pid,seq)映射，收到消息后检测seq.如果：
 
 ````
 new_seq = old_seq + 1 ;正常消息
@@ -110,7 +111,6 @@ new_seq > old_seq + 1 ;//消息丢失
 ````
 
 - producer 重试： producer 在收到明确的消息的丢失或者ack,或者超时后未收到ack,要进行重试
-
 
 ### 事务(0.11版本引入)
 
@@ -129,7 +129,8 @@ props.put("enable.idempotence",true)
 
 2. 保证多条消息原子性的写入到目标分区，同时也能保证Consumer 只能看到事务成功提交的消息
 
-3. 事务型producer 的显著特征是调用了一些事务型API ,如 initTransaction 、beginTransaction、committedTransaction和 abortTransaction 分别对应事务初始化、事务开始、事务提交、事务终止
+3. 事务型producer 的显著特征是调用了一些事务型API ,如 initTransaction 、beginTransaction、committedTransaction和 abortTransaction
+   分别对应事务初始化、事务开始、事务提交、事务终止
 
 4. producer 事务即使写入失败，kafka 也会把它们写入到底层日志中，consumer还是会看到这些消息，因此consumer端，读取事务型producer发送的消息需要设置 isolation.level 参数即可：
 
@@ -145,9 +146,9 @@ props.put("enable.idempotence",true)
 ##### producer
 
 1. 为producer指定固定的 transactionalId，可以穿越producer的多次会话(producer 重启/断线重连)，持续标识 producer的身份；
-   
+
 2. 使用epoch标识producer的每一次"重生”，防止同一producer存在多个；
-   
+
 3. producer遵从幂等消息的行为，并在发送的recordBatch中增加事务 transactionalId 和epoch
 
 ##### 事务协调器(transaction coordinator)
@@ -207,22 +208,22 @@ producer向事务协调器发送initPidRequest,申请pid;
 4. consumer-transform-produce 事务循环
 
 - 4.1 注册partition: addPartitionsToTxnRequest
-  
-    对于每一个要在事务中写消息的topic分区，produce 应当在第一次发消息前，向事务处理器注册分区
 
-  - 4.1.1 事务处理器把事务关联的分区写入事务日志：在提交或者终止事务时，事务协调器需要这些信息，控制事务涉及的所有分区leader完成事务提交或者终止
+  对于每一个要在事务中写消息的topic分区，produce 应当在第一次发消息前，向事务处理器注册分区
+
+    - 4.1.1 事务处理器把事务关联的分区写入事务日志：在提交或者终止事务时，事务协调器需要这些信息，控制事务涉及的所有分区leader完成事务提交或者终止
 
 - 4.2 写消息 produceRequest
 
-  - 4.2.1 producer 向分区leader写消息，消息中包含tid,pid,epoch,seq
+    - 4.2.1 producer 向分区leader写消息，消息中包含tid,pid,epoch,seq
 
 - 4.3.1 提交消息偏移： addOffsetCommitsToTxnRequest
 
 - 4.3.2 produce 向事务协调器发送消费偏移，事务协调器在事务日志中记录偏移信息，并把组协调器返回给producer
 
 - 4.4 提交消费偏移： txnOffsetCommitRequest
-  
-  - 4.4.1 producer 向组协调器发送TxnOffsetCommitRequest,组协调器把偏移信息写入偏移日志。但是，要一直等到事务提交后，这个偏移才生效，对外部可见。
+
+    - 4.4.1 producer 向组协调器发送TxnOffsetCommitRequest,组协调器把偏移信息写入偏移日志。但是，要一直等到事务提交后，这个偏移才生效，对外部可见。
 
 5. 提交或者终止事务
 
@@ -247,7 +248,6 @@ producer向事务协调器发送initPidRequest,申请pid;
 - 5.3 写最终的commit或abort消息
 
 当所有的commit或abort消息写入数据日志，事务协调器在事务日志中写入事务日志，标志这事务结束。至此，本事务的所有状态信息都可以被删除，可以开始一个新的事务。
-
 
 #### 我们要认识到，虽然kafka事务消息提供了多个消息原子写的保证，但它不保证原子读。
 

@@ -16,10 +16,10 @@ public class SecureChatClientHandler extends SimpleChannelInboundHandler<String>
         ctx.close();
     }
 
-	@Override
-	protected void channelRead0(ChannelHandlerContext ctx, String msg)
-			throws Exception {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    protected void channelRead0(ChannelHandlerContext ctx, String msg)
+            throws Exception {
+        // TODO Auto-generated method stub
+
+    }
 }

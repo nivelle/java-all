@@ -145,7 +145,7 @@ public class MyWebConfig implements WebMvcConfigurer {
     }
 
     @Override
-    public  void  addFormatters(FormatterRegistry registry){
+    public void addFormatters(FormatterRegistry registry) {
         registry.addConverter(new MyParamsConverter());
     }
 

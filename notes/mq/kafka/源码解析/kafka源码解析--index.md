@@ -21,10 +21,10 @@ abstract class AbstractIndex(@volatile var file: File, val baseOffset: Long, val
 
 4. 索引文件打开方式(writeable): "true"表示以"读写"方式打开，"false"表示以"只读"方式打开。
 
-- OffSetIndex 索引项是<位移值,物理磁盘位置>；位移值用4个字节，物理磁盘用4个字节，共8个字节；其中位移值是是真实位移值相对于baseOffSet的相对位移值；日志段 最大字节数**log.segment.bytes** 是整型，所以相对位移肯定也是整型
+- OffSetIndex 索引项是<位移值,物理磁盘位置>；位移值用4个字节，物理磁盘用4个字节，共8个字节；其中位移值是是真实位移值相对于baseOffSet的相对位移值；日志段 最大字节数**log.segment.bytes**
+  是整型，所以相对位移肯定也是整型
 
 - TimeIndex 索引项是<时间戳，位移值>；时间戳用8个字节，位移值用4个字节，共12个字节。
-
 
 #### MappedByteBuffer
 

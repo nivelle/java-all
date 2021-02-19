@@ -2,18 +2,18 @@
 
 ##### Tomcat监听端口生成HttpServletRequest
 
-####### 请求处理 : socket => coyote.Request
+###### # 请求处理 : socket => coyote.Request
 
 - public abstract class AbstractProtocol<S> implements ProtocolHandler,MBeanRegistration
 
-  - protected static class ConnectionHandler<S> implements AbstractEndpoint.Handler<S>
-  
-    - public SocketState process(SocketWrapperBase<S> wrapper, SocketEvent status)
-    
-      - S socket = wrapper.getSocket();
-    
-      - Processor processor = connections.get(socket);
-      
+    - protected static class ConnectionHandler<S> implements AbstractEndpoint.Handler<S>
+
+        - public SocketState process(SocketWrapperBase<S> wrapper, SocketEvent status)
+
+            - S socket = wrapper.getSocket();
+
+            - Processor processor = connections.get(socket);
+
   ```
    1. 创建一个Processor Http11Processor ： processor = getProtocol().createProcessor() Http11Processor 对象创建 :
 
@@ -24,11 +24,11 @@
    2. processor.service(SocketWrapperBase<?> socketWrapper)
    
   ```
-  
-####### 请求处理 : coyote.Request => HttpServletRequest
+
+###### # 请求处理 : coyote.Request => HttpServletRequest
 
 - Http11Processor#service(SocketWrapperBase<?> socketWrapper);//处理某个指定的请求socket socketWrapper，还没有任何请求数据读取;
-                                                                
+
   ```
   1. 使用一个Http11InputBuffer inputBuffer 绑定到 socketWrapper，用于处理请求数据;
   
@@ -40,7 +40,7 @@
 
   ```
 - CoyoteAdapter#service(coyote.Request req,coyote.Response res)
-  
+
   ```
   1. 创建 connector.Request 对象，这是一个 HttpServletRequest,包装请求参数 req;
   
@@ -53,9 +53,9 @@
   5. connector.getService().getContainer().getPipeline().getFirst().invoke(request, response)
   
   ```
-  
+
 - connector.getService().getContainer().getPipeline().getFirst().invoke(request, response)
-  
+
   ```
   1. 这里的参数 request,response 是 HttpServletRequest/HttpServletResponse ; 这里的参数 request,response 已经包装携带了原始的 coyote request,response 对象 ;
 
@@ -66,23 +66,23 @@
   4. 该调用其实继续传递 ： host.getPipeline().getFirst().invoke(request, response);这里的host来自 request.getHost(), 它在 Adapter 中 postParseRequest 过程中完成
                                                                         
   ```
-  
+
 - host.getPipeline().getFirst().invoke(request, response)
-  
-  - 这里 host 的 pipeline 中有两个 Valve : ErrorReportValve 和basic valve StandardHostValve
-  
-  - 这里的 getFirst() 对应的是 ErrorReportValve
-  
+
+    - 这里 host 的 pipeline 中有两个 Valve : ErrorReportValve 和basic valve StandardHostValve
+
+    - 这里的 getFirst() 对应的是 ErrorReportValve
+
 - ErrorReportValve#invoke(Request request, Response response)
 
-  - getNext().invoke(request, response) : 其实是调用 StandardHostValve#invoke;这里是先调用下一个valve，也就是真正的servlet处理，后report错误的做法
+    - getNext().invoke(request, response) : 其实是调用 StandardHostValve#invoke;这里是先调用下一个valve，也就是真正的servlet处理，后report错误的做法
 
-  - report(Request request, Response response, Throwable throwable);
-  
-    ```
-    此方法在响应状态1xx,2xx,3xx时不执行 根据异常throwable和响应状态码response.getStatus()尝试跳转到错误处理页面如果找不到匹配的错误处理页面，展示一个缺省的错误处理页面（HTML内容在此拼装生成）
-                                                                              
-    ```
+    - report(Request request, Response response, Throwable throwable);
+
+      ```
+      此方法在响应状态1xx,2xx,3xx时不执行 根据异常throwable和响应状态码response.getStatus()尝试跳转到错误处理页面如果找不到匹配的错误处理页面，展示一个缺省的错误处理页面（HTML内容在此拼装生成）
+                                                                                
+      ```
 - StandardHostValve#invoke(Request request, Response response)
 
   ```
@@ -92,9 +92,9 @@
                                                         
 
   ```
-  
+
 - StandardContextValve#invoke(Request request, Response response)
-  
+
   ```
   拒绝访问/META-INF,/WEB-INF 等目录：response.sendError(404);如果找不到合适的 Wrapper, 也就是最终处理者 Servlet , 报告错误 : response.sendError(404)
   
@@ -103,7 +103,7 @@
   ```
 
 - wrapper.getPipeline().getFirst().invoke(request, response)
-  
+
   ```
   1. 这里 wrapper 的 pipeline 其实只有一个 basic valve : StandardWrapperValve 获取 servlet 实例: wrapper.allocate()，这里会对应 Spring Web 的 DispatcherServlet
 

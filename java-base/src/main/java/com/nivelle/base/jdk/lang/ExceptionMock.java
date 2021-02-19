@@ -32,7 +32,6 @@ public class ExceptionMock {
 
     /**
      * 受检异常:
-     *
      */
     public static void main(String[] args) {
         Throwable id = new Throwable();

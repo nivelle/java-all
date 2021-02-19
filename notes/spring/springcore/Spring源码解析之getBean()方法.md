@@ -1,4 +1,5 @@
 ### Spring 的 getBean()
+
 1. 获取参数 name 对应的真正的 beanName
 2. 检查缓存或者实例工厂中是否有对应的单例，若存在则进行实例化并返回对象，否则继续往下执行
 3. 执行 prototype 类型依赖检查，防止循环依赖
@@ -10,7 +11,7 @@
 9. 返回 bean 实例
 
 #### getBean(String name) -》doGetBean(final String name, final Class<T> requiredType, final Object[] args, boolean typeCheckOnly);
-  
+
 ##### 第1步: final String beanName = transformedBeanName(name); //传入的参数可以是alias,也可能是FactoryBean的name,所以需要进行解析：
 
 - 如果是FactoryBean，则去掉修饰符"&"
@@ -18,7 +19,7 @@
 - 沿着引用链获取alias对应的最终name
 
 ##### 第2.1步: Object sharedInstance = getSingleton(beanName);//尝试从单例集合中获取目标bean
-     
+
 ##### (早期对象解决循环引用)在创建单例bean的时候会存在依赖注入的情况，而在创建依赖的时候为了避免循环依赖Spring创建bean的原则是不等bean创建完成就会将创建bean的ObjectFactory提前曝光（将对应的ObjectFactory加入到缓存）一旦下一个bean创建需要依赖上一个bean，则直接使用ObjectFactory对象
 
 ````
@@ -63,20 +64,25 @@ protected Object getSingleton(String beanName, boolean allowEarlyReference) {
         return singletonObject;
 }   
 ````  
+
 ##### 重点
+
 1. singletonObjects：用于保存 beanName 和 bean 实例之间的关系
 
 2. singletonFactories：用于保存 beanName 和创建 bean 的工厂之间的关系
 
-3. earlySingletonObjects：也是保存 beanName 和 bean 实例之间的关系，不同于 singletonObjects，当一个bean的实例放置于其中后，当bean还在创建过程中就可以通过 getBean 方法获取到
+3. earlySingletonObjects：也是保存 beanName 和 bean 实例之间的关系，不同于 singletonObjects，当一个bean的实例放置于其中后，当bean还在创建过程中就可以通过 getBean
+   方法获取到
 
 4. registeredSingletons：用来保存当前所有已注册的 bean
-      
+
 ##### 第2.2步: bean = getObjectForBeanInstance(sharedInstance, name, beanName, null);//从 bean 实例中获取目标对象
 
 - 如果getSingleton不为空，实例已经存在，返回对应的实例；返回beanName对应的实例对象（主要用于FactoryBean的特殊处理，普通Bean会直接返回sharedInstance本身）
-  
-- 该方法的主要目的是判断当前 bean 实例是否是 FactoryBean，如果是 FactoryBean 实例，同时用户希望获取的是真正的 bean 实例（即 name 不是以 “&” 开头），此时就需要由 FactoryBean 实例创建目标 bean 实例    
+
+- 该方法的主要目的是判断当前 bean 实例是否是 FactoryBean，如果是 FactoryBean 实例，同时用户希望获取的是真正的 bean 实例（即 name 不是以 “&” 开头），此时就需要由 FactoryBean
+  实例创建目标 bean 实例
+
 ````
 rotected Object getObjectForBeanInstance(Object beanInstance, String name, String beanName, @Nullable RootBeanDefinition mbd) {
      // Don't let calling code try to dereference the factory if the bean isn't a factory.
@@ -127,7 +133,9 @@ rotected Object getObjectForBeanInstance(Object beanInstance, String name, Strin
 
 
 ````
+
 ##### 第2.2.1步: object = getObjectFromFactoryBean(factory, beanName, !synthetic);//从FactoryBean获取对象实例
+
 ````
  protected Object getObjectFromFactoryBean(FactoryBean<?> factory, String beanName, boolean shouldPostProcess) {
      		if (factory.isSingleton() && containsSingleton(beanName)) {
@@ -194,7 +202,9 @@ rotected Object getObjectForBeanInstance(Object beanInstance, String name, Strin
 
 ##### 第2.2.3步: private Object doGetObjectFromFactoryBean(final FactoryBean<?> factory, final String beanName) //工厂方法创建bean实例
 
-- 当我们在调用 BeanFactory 的 getBean 方法不加 “&” 获取 bean 实例时，这个时候 getBean 可以看做是 getObject 方法的代理方法，而具体调用就在 doGetObjectFromFactoryBean 方法中
+- 当我们在调用 BeanFactory 的 getBean 方法不加 “&” 获取 bean 实例时，这个时候 getBean 可以看做是 getObject 方法的代理方法，而具体调用就在
+  doGetObjectFromFactoryBean 方法中
+
 ````
 private Object doGetObjectFromFactoryBean(final FactoryBean<?> factory, final String beanName) throws BeanCreationException {
     Object object;
@@ -229,7 +239,7 @@ private Object doGetObjectFromFactoryBean(final FactoryBean<?> factory, final St
 }
 
 ````
-           
+
 ##### 第3步: 单例实例不存在,需要创建 [创建bean实例](./Spring源码解析之createBean()方法.md)
 
 ````
@@ -367,7 +377,7 @@ private Object doGetObjectFromFactoryBean(final FactoryBean<?> factory, final St
   		}
 
 ````
-  
+
 #### 第四步: 检查类型&类型转换
 
 ````

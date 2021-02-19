@@ -13,6 +13,6 @@ import org.springframework.web.bind.support.WebBindingInitializer;
 public class MyWebBindingInitializer implements WebBindingInitializer {
     @Override
     public void initBinder(WebDataBinder binder) {
-        binder.registerCustomEditor(User.class,new MyPropertyEditorSupport());
+        binder.registerCustomEditor(User.class, new MyPropertyEditorSupport());
     }
 }

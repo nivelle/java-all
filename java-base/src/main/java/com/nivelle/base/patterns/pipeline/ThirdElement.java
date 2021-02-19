@@ -8,6 +8,7 @@ package com.nivelle.base.patterns.pipeline;
  */
 public class ThirdElement implements Element {
     private Element nextElement;
+
     @Override
     public Element getNext() {
         return this.nextElement;

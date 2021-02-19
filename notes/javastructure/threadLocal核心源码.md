@@ -27,6 +27,7 @@ static class Entry extends WeakReference<ThreadLocal<?>> {
 
 3. 当某个ThreadLocal已经没有强引用可达，则随着它被垃圾回收，在ThreadLocalMap里对应的Entry的键值会失效，这为ThreadLocalMap本身的垃圾清理提供了便利。
 ````
+
 #### 成员变量
 
 ````
@@ -100,6 +101,7 @@ static class Entry extends WeakReference<ThreadLocal<?>> {
 [![DVRtVe.png](https://s3.ax1x.com/2020/11/17/DVRtVe.png)](https://imgchr.com/i/DVRtVe)
 
 - threadLocal hash运算
+
 ````
 
  /**
@@ -363,6 +365,7 @@ private boolean cleanSomeSlots(int i, int n) {
 ````
 
 #### rehash()
+
 ````
 private void rehash() {
             // 做一次全量清理

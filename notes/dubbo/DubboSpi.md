@@ -1,4 +1,3 @@
-
 ## 拓展类对象获取
 
 ```
@@ -27,7 +26,6 @@ public T getExtension(String name) {
     }
 
 ```
-
 
 ## 创建拓展类对象
 

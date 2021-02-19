@@ -38,7 +38,7 @@ public interface MatchableHandlerMapping extends HandlerMapping {
 }
 ```
 
-#### 实现(二) public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport implements HandlerMapping, Ordered, BeanNameAware 
+#### 实现(二) public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport implements HandlerMapping, Ordered, BeanNameAware
 
 ````
 public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport implements HandlerMapping, Ordered, BeanNameAware {
@@ -157,7 +157,8 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
 
 ````
 
--  子类: public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping implements MatchableHandlerMapping //将url对应的Handler保存在一个Map中，在getHandlerInternal方法中使用url从Map中获取Handler
+- 子类: public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping implements MatchableHandlerMapping
+  //将url对应的Handler保存在一个Map中，在getHandlerInternal方法中使用url从Map中获取Handler
 
 ```
 public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping implements MatchableHandlerMapping {
@@ -263,7 +264,8 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping i
 
 ```
 
-- public class BeanNameUrlHandlerMapping extends AbstractDetectingUrlHandlerMapping  //是 AbstractDetectingUrlHandlerMapping extends AbstractUrlHandlerMapping 的唯一实现类
+- public class BeanNameUrlHandlerMapping extends AbstractDetectingUrlHandlerMapping //是
+  AbstractDetectingUrlHandlerMapping extends AbstractUrlHandlerMapping 的唯一实现类
 
 ```
 public class BeanNameUrlHandlerMapping extends AbstractDetectingUrlHandlerMapping {
@@ -327,6 +329,7 @@ public class SimpleUrlHandlerMapping extends AbstractUrlHandlerMapping {
 
 
 ```
+
 ##### public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMapping implements InitializingBean
 
 ````
@@ -504,7 +507,7 @@ protected HandlerMethod lookupHandlerMethod(String lookupPath, HttpServletReques
 	
 ```
 
-####  RequestMappingHandlerMapping
+#### RequestMappingHandlerMapping
 
 ```
 // @since 3.1  Spring3.1才提供的这种注解扫描的方式的支持~~~  它也实现了MatchableHandlerMapping分支的接口

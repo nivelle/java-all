@@ -8,7 +8,6 @@ public class ByteBufDemo {
 
 
     /**
-     *
      * 1. 它可以被用户自定义的缓冲区类型扩展；
      * 2. 通过内置的复合缓冲区类型实现了透明的零拷贝；
      * 3. 容量可以按需增长（类似于JDK的StringBuilder）；
@@ -17,7 +16,6 @@ public class ByteBufDemo {
      * 6. 支持方法的链式调用；
      * 7. 支持引用计数；
      * 8. 支持池化。
-     *
      */
     public static void main(String[] args) {
         // 创建一个缓冲区

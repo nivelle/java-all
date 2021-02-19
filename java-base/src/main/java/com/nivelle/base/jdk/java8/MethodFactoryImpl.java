@@ -17,7 +17,7 @@ public class MethodFactoryImpl {
         return String.valueOf(s.charAt(0));
     }
 
-    public Integer testOptional(){
+    public Integer testOptional() {
         return null;
     }
 

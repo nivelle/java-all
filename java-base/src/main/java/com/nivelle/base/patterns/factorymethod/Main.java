@@ -7,6 +7,7 @@ public class Main {
 
     /**
      * 用模板方法模式生成实例的模式就是工厂模式
+     *
      * @param args
      */
 

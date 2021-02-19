@@ -13,45 +13,45 @@ import com.fasterxml.jackson.core.JsonGenerator;
  **/
 public class JsonGeneratorDemo {
 
-	private static final String FILE_PATH = "d:\\user.json";
+    private static final String FILE_PATH = "d:\\user.json";
 
-	/**
-	 * 
-	 */
-	public JsonGeneratorDemo() {
-		// TODO Auto-generated constructor stub
-	}
+    /**
+     *
+     */
+    public JsonGeneratorDemo() {
+        // TODO Auto-generated constructor stub
+    }
 
-	/**
-	 * @param args
-	 * @throws IOException
-	 */
-	public static void main(String[] args) throws IOException {
-		try {
+    /**
+     * @param args
+     * @throws IOException
+     */
+    public static void main(String[] args) throws IOException {
+        try {
 
-			JsonFactory jfactory = new JsonFactory();
- 
-			JsonGenerator jGenerator = jfactory.createGenerator(new File(FILE_PATH), JsonEncoding.UTF8);
-			jGenerator.writeStartObject(); // {
+            JsonFactory jfactory = new JsonFactory();
 
-			jGenerator.writeStringField("name", "mkyong"); // "name" : "mkyong"
-			jGenerator.writeNumberField("age", 29); // "age" : 29
+            JsonGenerator jGenerator = jfactory.createGenerator(new File(FILE_PATH), JsonEncoding.UTF8);
+            jGenerator.writeStartObject(); // {
 
-			jGenerator.writeFieldName("messages"); // "messages" :
-			jGenerator.writeStartArray(); // [
+            jGenerator.writeStringField("name", "mkyong"); // "name" : "mkyong"
+            jGenerator.writeNumberField("age", 29); // "age" : 29
 
-			jGenerator.writeString("msg 1"); // "msg 1"
-			jGenerator.writeString("msg 2"); // "msg 2"
-			jGenerator.writeString("msg 3"); // "msg 3"
+            jGenerator.writeFieldName("messages"); // "messages" :
+            jGenerator.writeStartArray(); // [
 
-			jGenerator.writeEndArray(); // ]
+            jGenerator.writeString("msg 1"); // "msg 1"
+            jGenerator.writeString("msg 2"); // "msg 2"
+            jGenerator.writeString("msg 3"); // "msg 3"
 
-			jGenerator.writeEndObject(); // }
+            jGenerator.writeEndArray(); // ]
 
-			jGenerator.close();
+            jGenerator.writeEndObject(); // }
 
-		} catch (JsonGenerationException e) {
-			e.printStackTrace();
-		}
-	}
+            jGenerator.close();
+
+        } catch (JsonGenerationException e) {
+            e.printStackTrace();
+        }
+    }
 }

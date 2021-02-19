@@ -228,7 +228,6 @@ public class ByteMock {
         System.out.println("-3的反数:" + ((~-3)));
 
 
-
         /**
          * 输入2的n次方
          */

@@ -1,4 +1,3 @@
-
 ### Kafka副本机制详解
 
 副本机制(replication),备份机制，指的是分布式系统在多台网络互联的机器上保存有相同的数据拷贝。
@@ -13,15 +12,14 @@
 
 本质是一个只能追加写消息的提交日志。同一个分区下的所有副本保存相同的消息序列，这些副本分散保存在不同的broker上，从而能对抗部分broker宕机带来的数据不可用。
 
-
 #### 副本角色
 
 - 副本分成两类： 领导者副本（leader replica）和 追随者副本（follower replica）. 每个分区在创建时都要选举一个副本，成为领导者副本，其余的副本成为追随者副本
 
-- kafka 副本对外不提供服务。 任何一个追随者副本都不能相应消费者和生产者的读写请求。所有的读写请求都必须发往领导者副本所在broker，由该broker负责处理。追随者不处理客户端请求，它唯一的任务就是从领导者副本异步拉取消息，并写入到自己的提交日志中，从而实现与领导者的同步。
+- kafka 副本对外不提供服务。
+  任何一个追随者副本都不能相应消费者和生产者的读写请求。所有的读写请求都必须发往领导者副本所在broker，由该broker负责处理。追随者不处理客户端请求，它唯一的任务就是从领导者副本异步拉取消息，并写入到自己的提交日志中，从而实现与领导者的同步。
 
 - 领导者副本挂掉或者领导者副本所在broker宕机时，kafka依托于zk提供的监控功能实时感知到，并立即开始新的一轮领导者选举，从追随者中选一个作为新的领导者。老leader副本重启后，只能作为追随者副本假如到集群中。
-
 
 #### 副本机制的优点
 
@@ -33,12 +31,13 @@
 
 - In-sync Replicas(ISR)
 
-    1. ISR副本集合，ISR中的副本都是与Leader同步的副本，相反不在ISR中的追随者就被认为是与Leader不同步的。Leader副本天然在ISR,ISR不只是追随者副本集合，它必然包括Leader副本。甚至某些情况下，ISR只有Leader一个副本。
+    1.
+    ISR副本集合，ISR中的副本都是与Leader同步的副本，相反不在ISR中的追随者就被认为是与Leader不同步的。Leader副本天然在ISR,ISR不只是追随者副本集合，它必然包括Leader副本。甚至某些情况下，ISR只有Leader一个副本。
 
     2. broker参数->同步的标准是：**replica.lag.time.max.ms** 参数。 参数含义是Follower副本能够落后Leader副本的最长事件间隔，默认是10秒。
 
     3. 如果ISR在规定时间内追不上Leader 则踢出ISR集合，若追上了则重新加回去
-    
+
     4. 0.9x版本之前，kafka由另外一个参数 replica.lag.max.messages,通过消息数来判定是否失效
 
 #### Unclean 领导者选举（unclean Leader Election）
@@ -49,11 +48,12 @@
 
 #### 内部实现
 
-1. kafka在启动的时候会开启两个任务，一个任务用来定期检测是否需要缩减或者扩大ISR集合，这个周期是replica.lag.time.max.ms的一半，默认是5000ms.当检测到ISR集合中有失效副本时，就会收缩ISR集合，当检测到有Follower的HighWatermark 追赶上leader 时，就会扩充ISR
+1.
+kafka在启动的时候会开启两个任务，一个任务用来定期检测是否需要缩减或者扩大ISR集合，这个周期是replica.lag.time.max.ms的一半，默认是5000ms.当检测到ISR集合中有失效副本时，就会收缩ISR集合，当检测到有Follower的HighWatermark
+追赶上leader 时，就会扩充ISR
 
-2. 当ISR集合发生变更的时候会将变更后的记录缓存isrChangeSet中，另外一个任务会周期性地检查这个set,如果发现这个Set中有ISR集合的变更记录，那么它会在zk中持久化一个节点。然后因为 controller 在这个节点的路径上注册了一个Watcher,所以能够感知到ISR的变化
-   并向它所管理的broker 发送更新元数据的请求。最后删除该路径下已经处理过的节点。
-   
+2. 当ISR集合发生变更的时候会将变更后的记录缓存isrChangeSet中，另外一个任务会周期性地检查这个set,如果发现这个Set中有ISR集合的变更记录，那么它会在zk中持久化一个节点。然后因为 controller
+   在这个节点的路径上注册了一个Watcher,所以能够感知到ISR的变化 并向它所管理的broker 发送更新元数据的请求。最后删除该路径下已经处理过的节点。
 
 ### kafka请求处理过程
 
@@ -76,13 +76,12 @@ kafka定义了一组请求协议，用于实现各种交互操作;所有的请�
 ![kafka网络线程池模型.jpg](https://i.loli.net/2020/12/30/NWHsQKM8iUmDw16.jpg)
 
 3. 当网络线程池拿到请求后，将请求放入到一个共享请求队列中。 broker端的IO线程池，负责从该队列中取出请求，执行真正的处理。如果是PRODUCE生产请求，则将消息写入到
-底层的磁盘日志中；如果是FETCH请求，则从磁盘或者缓存页中读取消息
-   
+   底层的磁盘日志中；如果是FETCH请求，则从磁盘或者缓存页中读取消息
+
 4. io线程池中的线程才是执行请求逻辑的线程。broker端参数**num.io.threads**控制了这个线程池的线程数。目前该参数默认值是8，表示每台broker启动后自动创建8个IO线程处理请求。
 
-5. 请求队列是所有网络线程共享的，而相应队列则是每个线程网络专属的。因为Dispatcher只是用于请求分发而不负责相应回传，因此只能让每个网络线程发送Response给客户端，所以
-Response也就没有放在一个公共地方
-   
+5. 请求队列是所有网络线程共享的，而相应队列则是每个线程网络专属的。因为Dispatcher只是用于请求分发而不负责相应回传，因此只能让每个网络线程发送Response给客户端，所以 Response也就没有放在一个公共地方
+
 6. purgatory[炼狱]组件：用来缓存延时请求（delayed request）,所谓延时请求，就是哪些一时未满足条件不能立刻处理的请求。
 
 ````
@@ -117,7 +116,6 @@ Response也就没有放在一个公共地方
 
 #### 消费者组状态机
 
-
 状态 | 含义
 ---|---
 Empty | 组内没有任何成员，但消费者组可能存在已提交的位移数据，而且这些位移尚未过期
@@ -126,22 +124,20 @@ PreparingRebalance | 消费者组准备开启重平衡，此时所有的成员�
 CompletingReabalance| 消费者组下所有成员已经加入，各个成员正再等待分配方案。该状态再老一点的版本中被称为AwatitingSync,它和CompletingReblance是等价的
 Stable| 消费者组的稳定状态。该状态表明重平衡已经完成，组内成员能够正常消费数据
 
-
 [![s9Yi5R.jpg](https://s3.ax1x.com/2021/01/03/s9Yi5R.jpg)](https://imgchr.com/i/s9Yi5R)
-
 
 #### 重平衡过程
 
 - joinGroup
-  
-1. 当组内成员加入时，会向协调者发送JoinGroup请求。在该请求中，每个成员都要将自己订阅的主题上报，这样的协调者就能收集到所有成员的订阅信息。一旦收集了全部成员的joinGroup请求后，协调者会从这些成员中选择一个担任这个消费者组的领导者
-  
+
+1.
+当组内成员加入时，会向协调者发送JoinGroup请求。在该请求中，每个成员都要将自己订阅的主题上报，这样的协调者就能收集到所有成员的订阅信息。一旦收集了全部成员的joinGroup请求后，协调者会从这些成员中选择一个担任这个消费者组的领导者
+
 2. 第一个发送JoinGroup请求的成员自动成为领导者
 
 3.领导者消费者的任务是收集所有成员的订阅信息，然后根据这些信息，制定具体的分区消费分配方案
 
 4.选出领导者之后，协调者会把消费者组订阅信息封装进joinGroup请求的响应中，然后发送给领导者，由领导者统一做出分配方案，进入到下一步:发送SyncGroup请求
-
 
 - SyncGroup
 
@@ -195,8 +191,8 @@ kafka-reassign-partitions 脚本提供的对已有主题分区进行细粒度的
 
 #### 控制器故障转移
 
-当broker0 宕机后，zk通过watch机制感知到并删除了/controller临时节点。之后所存活的broker开始竞选新的控制器身份。broker3赢得选举，成功在zk 上重建/controller 节点。之后
-broker 3 会从zk中读取集群元数据信息，并初始化到自己的缓存中。
+当broker0 宕机后，zk通过watch机制感知到并删除了/controller临时节点。之后所存活的broker开始竞选新的控制器身份。broker3赢得选举，成功在zk 上重建/controller 节点。之后 broker 3
+会从zk中读取集群元数据信息，并初始化到自己的缓存中。
 
 #### 控制器设计原理
 
@@ -205,7 +201,6 @@ broker 3 会从zk中读取集群元数据信息，并初始化到自己的缓存
 - 事件处理线程，统一处理各种控制器事件，然后控制器将原来执行的操作全部建模成一个个独立的事件，发送到专属的事件队列中，供此线程消费
 
 [![s97UIg.jpg](https://s3.ax1x.com/2021/01/03/s97UIg.jpg)](https://imgchr.com/i/s97UIg)
-
 
 ### 高水位和leader epoch
 
@@ -227,9 +222,7 @@ broker 3 会从zk中读取集群元数据信息，并初始化到自己的缓存
 
 2. 介于高水位和LEO之间的消息属于未提交消息，同一个副本对象，其高水位值不会大于LEO值
 
-3. kafka所有副本都有对应的高水位和LEO值，而不仅仅是Leader副本。只不过Leader副本比较特殊，kafka使用Leader副本高水位来定义所在分区的高水位。 
-   也就是，分区的高水位就是其leader副本的高水位
-   
+3. kafka所有副本都有对应的高水位和LEO值，而不仅仅是Leader副本。只不过Leader副本比较特殊，kafka使用Leader副本高水位来定义所在分区的高水位。 也就是，分区的高水位就是其leader副本的高水位
 
 [![s9jKmR.jpg](https://s3.ax1x.com/2021/01/03/s9jKmR.jpg)](https://imgchr.com/i/s9jKmR)
 
@@ -237,10 +230,10 @@ broker 3 会从zk中读取集群元数据信息，并初始化到自己的缓存
 
 ![高水位更新机制.jpg](https://i.loli.net/2021/01/03/XqRxDlOnJmpMdK1.jpg)
 
-- 每个副本对象都保存了一组高水位值和LEO值，但实际上，在Leader副本所在的Broker上，还保存了其他Follower副本的LEO值，其他的Follower副本又成为远程副本，这些远程副本的作用是帮助Leader副本确定其高水位，也就是区分高水位。
+-
+每个副本对象都保存了一组高水位值和LEO值，但实际上，在Leader副本所在的Broker上，还保存了其他Follower副本的LEO值，其他的Follower副本又成为远程副本，这些远程副本的作用是帮助Leader副本确定其高水位，也就是区分高水位。
 
-- kafka副本机制在运行过程中，会更新broker1上的Follower副本的高水位和LEO值，同时也会更新Broker0上Leader副本的高水位和LEO 以及所有远程副本的LEO，
-但它不会更新远程副本的高水位
+- kafka副本机制在运行过程中，会更新broker1上的Follower副本的高水位和LEO值，同时也会更新Broker0上Leader副本的高水位和LEO 以及所有远程副本的LEO， 但它不会更新远程副本的高水位
 
 更新对象 | 更新时机
 ---|---
@@ -256,14 +249,17 @@ Broker 0 上Leader副本高水位 | 主要有两个更新时机：一个是Leade
 
 1. 写入消息到本地磁盘
 2. 更新分区高水位值
+
 - 获取Leader副本所在broker端保存的所有远程副本LEO
 - 获取Leader副本高水位值：currentHW
 - 更新currentHW = max{currentHW,min(远程副本LEO)}
 
 ##### 处理Follower副本拉取逻辑
+
 1. 读取磁盘中的消息数据
 2. 使用Follower副本发送请求中的位移值更新远程副本LEO值
 3. 更新分区高水位值
+
 - 获取Leader副本所在broker端保存的所有远程副本LEO
 - 获取Leader副本高水位值：currentHW
 - 更新currentHW = max{currentHW,min(远程副本LEO)}
@@ -275,11 +271,12 @@ Broker 0 上Leader副本高水位 | 主要有两个更新时机：一个是Leade
 1. 写入消息到本地磁盘
 2. 更新LEO值
 3. 更新高水位值
+
 - 获取Leader发送的高水位值：currentHW
 - 获取步骤2中更新过的LEO值：currentLEO
 - 更新高水位为min(currentHW,currentLEO)
 
-### Leader Epoch 
+### Leader Epoch
 
 - Epoch :单调递增的版本号，每当副本领导权发生变更的时候，增加版本好。小版本号的Leader被认为是过期的Leader，不再行驶Leader权利
 
@@ -290,4 +287,4 @@ kafka broker会在内存中为每个分区都缓存 Leader epoch 数据，同时
 数据丢失和不一致情况。
 
 - 单纯依赖高水位 在broker参数**min.insync.replicas设置为1**时，一旦消息被写入到Leader副本磁盘，但因为时间错配问题，导致Follower端的高水位更新有滞后。如果
-在这个时间范围内，接连发生broker宕机，因为重启后日志截断，会导致数据的丢失。
+  在这个时间范围内，接连发生broker宕机，因为重启后日志截断，会导致数据的丢失。

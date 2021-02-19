@@ -6,7 +6,8 @@ private transient volatile int sizeCtl;
 
 1. -1,表示有线程正在进行初始化操作
 
-2. - (1+ nThreads),表示有n个线程正在一起扩容
+2.
+    - (1+ nThreads),表示有n个线程正在一起扩容
 
 3. 0 , 默认值,后续在真正初始化的时候使用默认容量
 
@@ -145,7 +146,7 @@ final V putVal(K key, V value, boolean onlyIfAbsent) {
 （4）扩容时sizeCtl高位存储扩容邮戳(resizeStamp)，低位存储扩容线程数加1（1+nThreads）；
 
 （5）其它线程添加元素后如果发现存在扩容，也会加入的扩容行列中来；
-                                         
+
 ```
 @param check if <0, don't check resize, if <= 1 only check if uncontended
 private final void addCount(long x, int check) {
@@ -206,13 +207,11 @@ private final void addCount(long x, int check) {
 
 ## 初始化桶数组
 
-
 （1）使用CAS锁控制只有**一个线程**初始化桶数组；
 
 （2）sizeCtl 在初始化后存储的是扩容门槛；
 
 （3）扩容门槛写死的是桶数组大小的0.75倍，桶数组大小即map的容量，也就是最多存储多少个元素。
-
 
 ```
 
@@ -446,7 +445,6 @@ private final void transfer(Node<K,V>[] tab, Node<K,V>[] nextTab) {
 
 ## 删除元素
 
-
 ```
 final V replaceNode(Object key, V value, Object cv) {
         int hash = spread(key.hashCode());
@@ -544,6 +542,5 @@ public V get(Object key) {
     }
 
 ```
-
 
 来自: [彤哥读源码](https://mp.weixin.qq.com/s?__biz=Mzg2ODA0ODM0Nw==&mid=2247483746&idx=1&sn=a6b5bea0cb52f23e93dd223970b2f6f9&scene=21#wechat_redirect)

@@ -87,7 +87,6 @@ final float loadFactor;
 
 （10）如果插入了元素，则数量加1并判断是否需要扩容;
 
-
 ```
     /*
      *
@@ -192,17 +191,16 @@ final float loadFactor;
 
 （4）创建一个新容量的桶；
 
-（5）搬移元素，原链表分化成两个链表，低位链表存储在原来桶的位置，高位链表搬移到原来桶的位置加旧容量的位置； 
+（5）搬移元素，原链表分化成两个链表，低位链表存储在原来桶的位置，高位链表搬移到原来桶的位置加旧容量的位置；
 
+#### 优化点:
 
-#### 优化点: 
+#### 容量变为原来的二倍后,二进制位就多了一位,这一位可能是0可能是1(0就是原位置,1就是原来的位置+原来的数组长度[oldCap])
 
-#### 容量变为原来的二倍后,二进制位就多了一位,这一位可能是0可能是1(0就是原位置,1就是原来的位置+原来的数组长度[oldCap])  
-       
 #### JDK1.7 扩容采取的是头插法，数据会倒置，会产生环形链表或者丢失值;但是1.8采用了尾插法，避免了环形链表，但是还是可能丢失值
-     
+
 [![D1uz24.png](https://s3.ax1x.com/2020/11/21/D1uz24.png)](https://imgchr.com/i/D1uz24)
-    
+
 ```
    final HashMap.Node<K,V>[] resize() {
         // 旧数组
@@ -314,6 +312,7 @@ final float loadFactor;
 ```
 
 #### 红黑树节点扩容 // 把一颗树打成两颗树插入到新桶
+
 ```
 //split(this, newTab, j, oldCap)
 final void split(HashMap<K,V> map, Node<K,V>[] tab, int index, int bit) {
@@ -464,7 +463,7 @@ final TreeNode<K,V> putTreeVal(HashMap<K,V> map, Node<K,V>[] tab,int h, K k, V v
 
 ```
 
-### 链表变树方法 treeifyBin() 
+### 链表变树方法 treeifyBin()
 
 ```
 final void treeifyBin(Node<K,V>[] tab, int hash) {
@@ -502,6 +501,7 @@ final void treeifyBin(Node<K,V>[] tab, int hash) {
     }
     
 ```
+
 ### TreeNode.treeify() 方法
 
 ```
@@ -562,6 +562,7 @@ final void treeify(Node<K,V>[] tab) {
         }
         
 ```        
+
 ### get(Object key) 方法
 
 （1）计算key的hash值；
@@ -580,6 +581,7 @@ public V get(Object key) {
 ```
 
 #### 真正的查找方法
+
 ```
 
 final Node<K,V> getNode(int hash, Object key) {
@@ -612,7 +614,6 @@ final Node<K,V> getNode(int hash, Object key) {
     
 ```
 
-
 ##### getTreeNode - > find // 树类型的hashMap 查找
 
 ```
@@ -621,7 +622,9 @@ final TreeNode<K,V> getTreeNode(int h, Object k) {
             return ((parent != null) ? root() : this).find(h, k, null);
         }
 ```
+
 ##### 树节点查找
+
 ````                
 final TreeNode<K,V> find(int h, Object k, Class<?> kc) {
             TreeNode<K,V> p = this; // 桶的首节点｜parent节点
@@ -654,7 +657,8 @@ final TreeNode<K,V> find(int h, Object k, Class<?> kc) {
             return null;
         }
 ````
-####  remove(Object key)方法
+
+#### remove(Object key)方法
 
 （1）先查找元素所在的节点；
 
@@ -674,7 +678,7 @@ public V remove(Object key) {
     }
   
 ```  
-  
+
 #### 真正删除操作
 
 ````
@@ -851,6 +855,7 @@ final Node<K,V> removeNode(int hash, Object key, Object value,boolean matchValue
         }
 
 ```
+
 ## 总结
 
 （1）HashMap是一种散列表，采用（数组 + 链表 + 红黑树）的存储结构；
@@ -868,6 +873,5 @@ final Node<K,V> removeNode(int hash, Object key, Object value,boolean matchValue
 （7）HashMap是非线程安全的容器；
 
 （8）HashMap查找添加元素的时间复杂度都为O(1)；
-
 
 来自: [彤哥读源码](https://mp.weixin.qq.com/s?__biz=Mzg2ODA0ODM0Nw==&mid=2247483711&idx=3&sn=f0743c914e26695eb9c0d4cb0cab5e99&scene=21#wechat_redirect)

@@ -52,13 +52,13 @@
 
     <!-- 日志级别若没显示定义，则继承最近的父logger（该logger需显示定义level,直到rootLogger）的日志级别-->
     <!-- logger的appender默认具有累加性（默认日志输出到当前logger的appender和所有祖先logger的appender中），可通过配置 “additivity”属性修改默认行为-->
-    <logger name="com.nivelle.container"  level="debug" additivity="false" >
+    <logger name="com.nivelle.container" level="debug" additivity="false">
         <appender-ref ref="FILE"/>
     </logger>
 
     <!-- 至多只能配置一个root -->
     <root level="debug">
-        <appender-ref ref="STDOUT" />
-        <appender-ref ref="FILE" />
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="FILE"/>
     </root>
 </configuration>

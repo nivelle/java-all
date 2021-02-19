@@ -17,6 +17,6 @@ public class AtomicMarkableReferenceMock {
         String string1 = "aaa";
         String string2 = "bbb";
 
-        AtomicMarkableReference atomicMarkableReference = new AtomicMarkableReference(string1,true);
+        AtomicMarkableReference atomicMarkableReference = new AtomicMarkableReference(string1, true);
     }
 }

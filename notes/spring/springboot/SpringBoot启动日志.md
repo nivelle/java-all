@@ -48,16 +48,26 @@
  :: Spring Boot ::       (v2.1.14.RELEASE)
 ```
 
-第一步：BootstrapApplication开始启动(启动类,进程号):2020-07-08 18:05:56.965  INFO 40430 --- [           main] c.n.container.BootstrapApplication       : Starting BootstrapApplication on nivelleMac with PID 40430 (/Users/nivellefu/IdeaProjects/programdayandnight/container-all/target/classes started by nivellefu in /Users/nivellefu/IdeaProjects/programdayandnight/parent)
-第二步: 配置文件激活:2020-07-08 18:05:56.968  INFO 40430 --- [           main] c.n.container.BootstrapApplication       : No active profile set, falling back to default profiles: default
-第三步: tomcat初始化:2020-07-08 18:05:58.170  INFO 40430 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
-第四步: tomcat启动开始:2020-07-08 18:05:58.187  INFO 40430 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
-第五步: 启动容器 engin:2020-07-08 18:05:58.187  INFO 40430 --- [           main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.34]
-第六步: 初始化 WebApplicationContext: 2020-07-08 18:05:58.265  INFO 40430 --- [           main] o.a.c.c.C.[.[localhost].[/container]     : Initializing Spring embedded WebApplicationContext
-第七步: WebApplicationContext 初始化完毕: 2020-07-08 18:05:58.266  INFO 40430 --- [           main] o.s.web.context.ContextLoader            : Root WebApplicationContext: initialization completed in 1263 ms
-第七步: 初始化 applicationTaskExecutor: 2020-07-08 18:05:58.499  INFO 40430 --- [           main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
-第八步: 初始化 tomcat启动完毕: 2020-07-08 18:05:58.697  INFO 40430 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path '/container'
-第九步: BootstrapApplication启动完毕: 2020-07-08 18:05:58.699  INFO 40430 --- [           main] c.n.container.BootstrapApplication       : Started BootstrapApplication in 2.034 seconds (JVM running for 2.61)
+第一步：BootstrapApplication开始启动(启动类,进程号):2020-07-08 18:05:56.965 INFO 40430 --- [           main]
+c.n.container.BootstrapApplication       : Starting BootstrapApplication on nivelleMac with PID 40430 (
+/Users/nivellefu/IdeaProjects/programdayandnight/container-all/target/classes started by nivellefu in
+/Users/nivellefu/IdeaProjects/programdayandnight/parent)
+第二步: 配置文件激活:2020-07-08 18:05:56.968 INFO 40430 --- [           main] c.n.container.BootstrapApplication       : No
+active profile set, falling back to default profiles: default 第三步: tomcat初始化:2020-07-08 18:05:58.170 INFO 40430
+--- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
+第四步: tomcat启动开始:2020-07-08 18:05:58.187 INFO 40430 --- [           main] o.apache.catalina.core.StandardService   :
+Starting service [Tomcat]
+第五步: 启动容器 engin:2020-07-08 18:05:58.187 INFO 40430 --- [           main] org.apache.catalina.core.StandardEngine  :
+Starting Servlet engine: [Apache Tomcat/9.0.34]
+第六步: 初始化 WebApplicationContext: 2020-07-08 18:05:58.265 INFO 40430 --- [           main] o.a.c.c.C.[.[localhost]
+.[/container]     : Initializing Spring embedded WebApplicationContext 第七步: WebApplicationContext 初始化完毕: 2020-07-08 18:
+05:58.266 INFO 40430 --- [           main] o.s.web.context.ContextLoader            : Root WebApplicationContext:
+initialization completed in 1263 ms 第七步: 初始化 applicationTaskExecutor: 2020-07-08 18:05:58.499 INFO 40430
+--- [           main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
+第八步: 初始化 tomcat启动完毕: 2020-07-08 18:05:58.697 INFO 40430 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  :
+Tomcat started on port(s): 8080 (http) with context path '/container' 第九步: BootstrapApplication启动完毕: 2020-07-08 18:05:
+58.699 INFO 40430 --- [           main] c.n.container.BootstrapApplication       : Started BootstrapApplication in 2.034
+seconds (JVM running for 2.61)
 
 ### springBoot 详细启动
 

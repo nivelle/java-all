@@ -1,4 +1,5 @@
 package com.nivelle.spring.utils;
+
 import org.springframework.util.StringUtils;
 
 /**
@@ -25,9 +26,9 @@ public class SpringUtilsTest {
         /**
          * 删除字符串内的某个字符
          */
-        System.out.println(StringUtils.deleteAny(string,"11"));
+        System.out.println(StringUtils.deleteAny(string, "11"));
 
-        int countOccurrencesOf = StringUtils.countOccurrencesOf(string,"1");
+        int countOccurrencesOf = StringUtils.countOccurrencesOf(string, "1");
         System.out.println(countOccurrencesOf);
 
     }

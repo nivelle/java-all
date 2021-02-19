@@ -58,9 +58,9 @@ public class TomcatController {
         result.put("serverInfo", servletContext.getServerInfo());
         result.put("contextPath", servletContext.getContextPath());
         //result.put("classLoader", servletContext.getClassLoader());
-        System.out.println("classLoader:"+servletContext.getClassLoader());
+        System.out.println("classLoader:" + servletContext.getClassLoader());
 
-        result.put("接口处的收到的host",httpServlet.getRemoteHost());
+        result.put("接口处的收到的host", httpServlet.getRemoteHost());
         return GsonUtils.toJson(result);
     }
 
@@ -118,7 +118,7 @@ public class TomcatController {
         System.out.println("connector executor name:" + connector.getExecutorName());
         System.out.println();
         org.apache.catalina.connector.Request request = connector.createRequest();
-        System.out.println("connector state:"+connector.getState());
+        System.out.println("connector state:" + connector.getState());
 
 
         ProtocolHandler protocolHandler = connector.getProtocolHandler();

@@ -1,4 +1,3 @@
-
 ### Bootstrap、ServerBootstrap
 
 ```
@@ -23,7 +22,8 @@
 
 - 网络连接的配置参数
 
-- 提供异步的网络I/O操作(如建立连接，读写，绑定端口)，异步调用意味着任何I / O调用都将立即返回，并且不保证在调用结束时所请求的I / O操作已完成。调用立即返回一个ChannelFuture实例,通过注册监听器到ChannelFuture上,可以I / O操作成功、失败或取消时回调通知调用方。
+- 提供异步的网络I/O操作(如建立连接，读写，绑定端口)，异步调用意味着任何I / O调用都将立即返回，并且不保证在调用结束时所请求的I /
+  O操作已完成。调用立即返回一个ChannelFuture实例,通过注册监听器到ChannelFuture上,可以I / O操作成功、失败或取消时回调通知调用方。
 
 - 支持关联I/O操作与对应的处理程序
 
@@ -53,7 +53,6 @@ NioEventLoop中维护了一个线程和任务队列,支持异步提交执行任�
 
 - 非IO任务 添加到taskQueue中的任务，如register0、bind0等任务，由runAllTasks方法触发
 
-
 ### NioEventLoopGroup
 
 NioEventLoopGroup，主要管理eventLoop的生命周期，可以理解为一个线程池，内部维护了一组线程，每个线程(NioEventLoop)负责处理多个Channel上的事件，而一个Channel只对应于一个线程。
@@ -82,7 +81,8 @@ ChannelHandler本身并没有提供很多方法,因为这个接口有许多的�
 
 ### ChannelPipline
 
-保存ChannelHandler的List，用于处理或拦截Channel的入站事件和出站操作。 ChannelPipeline实现了一种高级形式的拦截过滤器模式，使用户可以完全控制事件的处理方式，以及Channel中各个的ChannelHandler如何相互交互。
+保存ChannelHandler的List，用于处理或拦截Channel的入站事件和出站操作。
+ChannelPipeline实现了一种高级形式的拦截过滤器模式，使用户可以完全控制事件的处理方式，以及Channel中各个的ChannelHandler如何相互交互。
 
 
 

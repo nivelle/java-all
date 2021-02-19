@@ -1,4 +1,3 @@
-
 ### HandlerMethodArgumentResolver
 
 #### 基于Name
@@ -297,6 +296,7 @@ protected Object resolveName(String cookieName, MethodParameter parameter,
 
 
 ```
+
 - ExpressionValueMethodArgumentResolver
 
 ```
@@ -335,7 +335,6 @@ public class ExpressionValueMethodArgumentResolver extends AbstractNamedValueMet
 
 ```
 
-
 #### 数据类型是Map的
 
 数据来源同上，只是参数类型是Map
@@ -345,6 +344,7 @@ public class ExpressionValueMethodArgumentResolver extends AbstractNamedValueMet
 - ServletRequestMethodArgumentResolver
 
 //支持的
+
 ```
 public boolean supportsParameter(MethodParameter parameter) {
 		Class<?> paramType = parameter.getParameterType();
@@ -590,7 +590,7 @@ public class RequestResponseBodyMethodProcessor extends AbstractMessageConverter
 
 ```
 
-##### public class HttpEntityMethodProcessor extends AbstractMessageConverterMethodProcessor 
+##### public class HttpEntityMethodProcessor extends AbstractMessageConverterMethodProcessor
 
 ```
 public class HttpEntityMethodProcessor extends AbstractMessageConverterMethodProcessor {

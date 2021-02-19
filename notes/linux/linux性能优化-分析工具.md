@@ -2,8 +2,6 @@
 
 [![sIjA91.jpg](https://s3.ax1x.com/2021/01/22/sIjA91.jpg)](https://imgchr.com/i/sIjA91)
 
-
-
 #### 性能分析工具
 
 ##### sysbench //基准测试
@@ -15,6 +13,7 @@
 $ sysbench --threads=10 --max-time=300 threads run
 
 ````
+
 ##### stress //压力测试
 
 1. CPU 使用率100%
@@ -46,6 +45,7 @@ Overhead  Shared      Object            Symbol
 
 
 ````
+
 - Overhead： 是该符号的性能事件在所有采样中的比例，用百分比来表示
 
 - Shared： 是该函数或指令所在的动态共享对象（Dynamic Shared Object），如内核、进程名、动态链接库名、内核模块名等
@@ -70,6 +70,7 @@ $ perf report
 ##### IO性能基准测试
 
 - fio io性能基础测试工具
+
 ````
 
 # 随机读
@@ -97,7 +98,6 @@ fio -name=write -direct=1 -iodepth=64 -rw=write -ioengine=libaio -bs=4k -size=1G
 - bs，表示 I/O 的大小。
 
 - filename，表示文件路径，当然，它可以是磁盘路径（测试磁盘性能），也可以是文件路径（测试文件系统性能）
-
 
 ##### dstat //可以同时查看 CPU 和 I/O 这两种资源的使用情况
 
@@ -188,7 +188,7 @@ Linux 4.19.57-15.1.al7.x86_64 (jessy)   01/24/2021      _x86_64_        (1 CPU)
 `````
 
 ##### vmstat 是一款指定采样周期和次数的功能性监测工具，我们可以看到，它不仅可以统计内存的使用情况，还可以观测到 CPU 的使用率、swap 的使用情况。
- 
+
 **vmstat 1 10 命令行代表每秒收集一次性能指标，总共获取10次。**
 
 - r(running or Runnable)：就绪队列的长度，也就是正在运行和等待CPU 的进程数
@@ -226,6 +226,7 @@ Linux 4.19.57-15.1.al7.x86_64 (jessy)   01/24/2021      _x86_64_        (1 CPU)
 ##### pidstat
 
 ###### 查看每个进程的详细情况
+
 ```
  pidstat 的参数 -p 用于指定进程 ID，-r 表示监控内存的使用情况，1 表示每秒的意思，3 则表示采样次数。
 ```
@@ -255,6 +256,7 @@ Linux 4.19.57-15.1.al7.x86_64 (jessy)   01/24/2021      _x86_64_        (1 CPU)
 
 
 ````
+
 -w：显示每个进程的上下文切换情况；
 
 ````
@@ -275,6 +277,7 @@ Linux 4.19.57-15.1.al7.x86_64 (jessy)   01/24/2021      _x86_64_        (1 CPU)
 
 2. nvcswch:每秒非自愿上下文切换（non voluntary context switches）: 指的是进程由于时间片已到，被系统强制调度，进而发生上下文切换，比如大量进程在抢CPU时，就容易发生非自愿上下文切换
 ````
+
 -p：指定进程号；
 
 ````
@@ -297,6 +300,7 @@ Linux 4.19.57-15.1.al7.x86_64 (jessy)   01/24/2021      _x86_64_        (1 CPU)
 ````
 
 #### bcc 内存检测工具
+
 ````
 git clone https://github.com/iovisor/bcc.git
 mkdir bcc/build; cd bcc/build
@@ -304,7 +308,9 @@ cmake .. -DCMAKE_INSTALL_PREFIX=/usr
 make
 sudo make install
 ````
+
 ##### cachestat 提供了整个操作系统缓存的读写命中情况。
+
 ````
 cachestat 1 3
 HITS   MISSES  DIRTIES HITRATIO   BUFFERS_MB  CACHED_MB
@@ -319,8 +325,6 @@ HITS   MISSES  DIRTIES HITRATIO   BUFFERS_MB  CACHED_MB
 - BUFFERS_MB: buffers的大小，以MB为单位
 - CACHED_MB：表示Cache的大小，以MB为单位
 
-
-
 ##### cachetop 提供了每个进程的缓存命中情况
 
 ````
@@ -331,6 +335,7 @@ PID      UID      CMD HITS     MISSES   DIRTIES  READ_HIT%  WRITE_HIT%
 
 
 ````
+
 ##### memleak
 
 ````
@@ -340,7 +345,7 @@ memleak 可以跟踪系统或指定进程的内存分配、释放请求，然后
 
 ##### lsof
 
--  mysqld 进程打开了大量文件，而根据文件描述符（FD）的编号，我们知道，描述符为 38 的是一个路径为 /var/lib/mysql/test/products.MYD 的文件
+- mysqld 进程打开了大量文件，而根据文件描述符（FD）的编号，我们知道，描述符为 38 的是一个路径为 /var/lib/mysql/test/products.MYD 的文件
 
 - 系统调用的操作对象
 

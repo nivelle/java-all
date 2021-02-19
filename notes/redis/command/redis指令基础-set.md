@@ -1,4 +1,4 @@
-### set 
+### set
 
 #### 1. SADD key member [member …]
 
@@ -23,7 +23,6 @@
    
 ````
 
-
 #### 3. SPOP key
 
 ````
@@ -47,9 +46,8 @@
 ````
 
 - 如果 count 为正数，且小于集合基数，那么命令返回一个包含 count 个元素的数组，数组中的元素各不相同。如果 count 大于等于集合基数，那么返回整个集合。
-  
-- 如果 count 为负数，那么命令返回一个数组，数组中的元素可能会重复出现多次，而数组的长度为 count 的绝对值。
 
+- 如果 count 为负数，那么命令返回一个数组，数组中的元素可能会重复出现多次，而数组的长度为 count 的绝对值。
 
 #### 5. SREM key member [member …]
 
@@ -78,7 +76,7 @@
 // 当 destination 集合已经包含 member 元素时， SMOVE 命令只是简单地将 source 集合中的 member 元素删除。
    
 ````
- 
+
 #### 7. SCARD key
 
 ````
@@ -120,6 +118,7 @@
 //destination 可以是 key 本身。
   
 ````
+
 #### 11. SUNION key [key …]
 
 ````

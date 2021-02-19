@@ -40,7 +40,7 @@ public class ActivityTransactionServiceImpl implements ActivityTransactionServic
      */
     /**
      * 事物隔离级别
-     *
+     * <p>
      * 隔离级别在于处理多事务的并发问题。隔离级别在于处理多事务的并发问题。
      */
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, isolation = Isolation.READ_COMMITTED, timeout = 100, rollbackFor = Exception.class)

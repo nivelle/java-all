@@ -6,7 +6,7 @@ public class MyEvent extends ApplicationEvent {
 
     public MyEvent(Object source) {
         super(source);
-        System.err.println("自定义事件触发了！！！"+source);
+        System.err.println("自定义事件触发了！！！" + source);
     }
 
     public void printEventContent(String message) {

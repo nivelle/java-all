@@ -6,8 +6,9 @@ package com.nivelle.base.patterns.workerthread;
  * @author fuxinzhong
  * @date 2021/02/01
  */
+
 /**
- *Channel类可用来接受、传送工作请求，并保存工人线程。
+ * Channel类可用来接受、传送工作请求，并保存工人线程。
  */
 public class Channel {
     private static final int MAX_REQUEST = 100; // 最大请求数
@@ -16,6 +17,7 @@ public class Channel {
     private int head;
     private int count;
     private final WorkerThread[] threadPool;
+
     public Channel(int threads) {
         this.requestQueue = new Request[MAX_REQUEST];
         this.head = 0;
@@ -26,11 +28,13 @@ public class Channel {
             threadPool[i] = new WorkerThread("Worker-" + i, this);
         }
     }
+
     public void startWorkers() {
         for (int i = 0; i < threadPool.length; i++) {
             threadPool[i].start();
         }
     }
+
     public synchronized void putRequest(Request request) {
         while (count >= requestQueue.length) {
             try {
@@ -43,6 +47,7 @@ public class Channel {
         count++;
         notifyAll();
     }
+
     public synchronized Request takeRequest() {
         while (count <= 0) {
             try {

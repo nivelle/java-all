@@ -1,4 +1,3 @@
-
 ### springBoot aop自动注解
 
 ````
@@ -55,8 +54,6 @@ public class AopAutoConfiguration {
 - 属性 order：HIGHEST_PRECEDENCE
 
 - bean角色：ROLE_INFRASTRUCTURE (基础设施)
-
-
 
 ````
 class AspectJAutoProxyRegistrar implements ImportBeanDefinitionRegistrar {

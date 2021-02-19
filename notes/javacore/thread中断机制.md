@@ -2,7 +2,8 @@
 
 - Java中断机制是一种协作机制，也就是说通过中断并不能直接终止另一个线程，而需要被中断的线程自己处理中断。
 
-- Java中断模型也是这么简单，每个线程对象里都有一个boolean类型的标识代表着是否有中断请求（该请求可以来自所有线程，包括被中断的线程本身）。例如，当线程t1想中断线程t2，只需要在线程t1中将线程t2对象的中断标识置为true，然后线程2可以选择在合适的时候处理该中断请求，甚至可以不理会该请求，就像这个线程没有被中断一样。
+-
+Java中断模型也是这么简单，每个线程对象里都有一个boolean类型的标识代表着是否有中断请求（该请求可以来自所有线程，包括被中断的线程本身）。例如，当线程t1想中断线程t2，只需要在线程t1中将线程t2对象的中断标识置为true，然后线程2可以选择在合适的时候处理该中断请求，甚至可以不理会该请求，就像这个线程没有被中断一样。
 
 #### java.lang.Thread类提供了几个方法来操作这个中断状态，这些方法包括：
 
@@ -18,7 +19,6 @@ public void interrupt() | 中断线程。
 
 - “合适的时候”与线程正在处理的业务逻辑紧密相关，例如，每次迭代的时候，进入一个可能阻塞且无法中断的方法之前等，但多半不会出现在某个临界区更新另一个对象状态的时候，因为这可能会导致对象处于不一致状态。
 
-
 #### 处理方式
 
 ##### 中断状态的管理
@@ -26,7 +26,8 @@ public void interrupt() | 中断线程。
 一般说来，当可能阻塞的方法声明中有抛出InterruptedException则暗示该方法是可中断的，如BlockingQueue#put、BlockingQueue#take、Object#wait、Thread#sleep等，如果程序捕获到这些可中断的阻塞方法抛出的InterruptedException或检测到中断后，这些中断信息该如何处理？一般有以下两个通用原则：
 
 - 如果遇到的是可中断的阻塞方法抛出InterruptedException，可以继续向方法调用栈的上层抛出该异常，如果是检测到中断，则可清除中断状态并抛出InterruptedException，使当前方法也成为一个可中断的方法。
-- 若有时候不太方便在方法上抛出InterruptedException，比如要实现的某个接口中的方法签名上没有throws InterruptedException，这时就可以捕获可中断方法的InterruptedException并通过Thread.currentThread.interrupt()来重新设置中断状态。如果是检测并清除了中断状态，亦是如此。
+- 若有时候不太方便在方法上抛出InterruptedException，比如要实现的某个接口中的方法签名上没有throws
+  InterruptedException，这时就可以捕获可中断方法的InterruptedException并通过Thread.currentThread.interrupt()来重新设置中断状态。如果是检测并清除了中断状态，亦是如此。
 
 ##### 中断的响应
 
@@ -42,7 +43,6 @@ public void interrupt() | 中断线程。
 - 多个线程做相同的事情，只要一个线程成功其它线程都可以取消时；
 - 一组线程中的一个或多个出现错误导致整组都无法继续时；
 - 当一个应用或服务需要停止时。
-
 
 ### 中断的应用
 
@@ -64,7 +64,6 @@ public void interrupt() | 中断线程。
 
 因为需要花时间的操作会降低程序的响应性，所以可能会取消/中途放弃执行这个方法。主要是通过interrupt方法来取消。
 
-
 1. sleep方法与interrupt方法
 
 - interrupt方法是Thread类的静态方法，在执行的时候并不需要获取Thread实例的锁定，任何线程在任何时刻，都可以通过线程实例来调用其他线程的interrupt方法。
@@ -83,12 +82,10 @@ public void interrupt() | 中断线程。
 
 当线程以join方法等待其他线程结束时，一样可以使用interrupt方法取消。因为join方法不需要获取锁定，故而与sleep一样，会马上跳到catch程序块
 
-
-interrupt方法其实只是改变了中断状态而已。
-而sleep、wait和join这些方法的内部会不断的检查中断状态的值，从而自己抛出InterruptEdException。
-所以，如果在线程进行其他处理时，调用了它的interrupt方法，线程也不会抛出InterruptedException的，只有当线程走到了sleep, wait, join这些方法的时候，才会抛出InterruptedException。若是没有调用sleep, wait, join这些方法，或者没有在线程里自己检查中断状态，自己抛出InterruptedException，那InterruptedException是不会抛出来的。
-
-
+interrupt方法其实只是改变了中断状态而已。 而sleep、wait和join这些方法的内部会不断的检查中断状态的值，从而自己抛出InterruptEdException。
+所以，如果在线程进行其他处理时，调用了它的interrupt方法，线程也不会抛出InterruptedException的，只有当线程走到了sleep, wait,
+join这些方法的时候，才会抛出InterruptedException。若是没有调用sleep, wait,
+join这些方法，或者没有在线程里自己检查中断状态，自己抛出InterruptedException，那InterruptedException是不会抛出来的。
 
 [转载至http://ifeve.com/java-interrupt-mechanism/](http://ifeve.com/java-interrupt-mechanism/)
 

@@ -11,11 +11,11 @@ BeanFactory
 --------> ConfigurableListableBeanFactory
 -----------> DefaultListableBeanFactory
 ````
+
 [![rucby8.png](https://s3.ax1x.com/2020/12/14/rucby8.png)](https://imgchr.com/i/rucby8)
 
-
-
 #### beanFactory容器
+
 ````
 public interface BeanFactory {
     /**
@@ -71,17 +71,20 @@ HierarchicalBeanFactory 译为中文是分层的 BeanFactory，它相对于 Bean
 
 ````
 
-层次容器的一个特点就是子容器对于父容器来说是透明的，而子容器则能感知到父容器的存在。典型的应用场景就是 Spring MVC，控制层的 bean 位于子容器中，而业务层和持久层的 bean 则位于父容器中，这样的设计可以让控制层的 bean 访问业务层和持久层的 bean，反之则不行，从而在容器层面对三层软件结构设计提供约束。
+层次容器的一个特点就是子容器对于父容器来说是透明的，而子容器则能感知到父容器的存在。典型的应用场景就是 Spring MVC，控制层的 bean 位于子容器中，而业务层和持久层的 bean 则位于父容器中，这样的设计可以让控制层的 bean
+访问业务层和持久层的 bean，反之则不行，从而在容器层面对三层软件结构设计提供约束。
 
 ##### ListableBeanFactory
 
 ListableBeanFactory 中文译为可列举的 BeanFactory，对于 IoC 容器而言，bean 的定义和属性是可以列举的对象。
 
-ListableBeanFactory 相对于 BeanFactory 增加了获取容器中 bean 的配置信息的若干方法，比如获取容器中 bean 的个数、获取容器中所有 bean 的名称列表、按照目标类型获取 bean 名称，以及检查容器中是否包含指定名称的 bean 等等。
+ListableBeanFactory 相对于 BeanFactory 增加了获取容器中 bean 的配置信息的若干方法，比如获取容器中 bean 的个数、获取容器中所有 bean 的名称列表、按照目标类型获取 bean
+名称，以及检查容器中是否包含指定名称的 bean 等等。
 
 ##### AutowireCapableBeanFactory
 
-AutowireCapableBeanFactory 提供了创建 bean 实例、自动注入、初始化，以及应用 bean 的后置处理器等功能。自动注入让配置变得更加简单，也让注解配置成为可能，Spring 目前提供了四种自动注入类型：byName,byType,constructor,autodetect
+AutowireCapableBeanFactory 提供了创建 bean 实例、自动注入、初始化，以及应用 bean 的后置处理器等功能。自动注入让配置变得更加简单，也让注解配置成为可能，Spring
+目前提供了四种自动注入类型：byName,byType,constructor,autodetect
 
 ##### ConfigurableBeanFactory
 
@@ -89,7 +92,8 @@ ConfigurableBeanFactory 定义了配置 BeanFactory 的各种方法，增强了 
 
 ##### DefaultListableBeanFactory
 
-DefaultListableBeanFactory 是一个非常重要的类，定义了 IoC 容器所应该具备的重要功能，是容器完整功能的基本实现。XmlBeanFactory 是一个典型的由该类派生出来的 BeanFactory，并且只是增加了加载 XML 配置资源的逻辑，而容器相关的特性则全部由 DefaultListableBeanFactory 来实现。XmlBeanFactory 类的实现如下：
+DefaultListableBeanFactory 是一个非常重要的类，定义了 IoC 容器所应该具备的重要功能，是容器完整功能的基本实现。XmlBeanFactory 是一个典型的由该类派生出来的
+BeanFactory，并且只是增加了加载 XML 配置资源的逻辑，而容器相关的特性则全部由 DefaultListableBeanFactory 来实现。XmlBeanFactory 类的实现如下：
 
 ````
 public class XmlBeanFactory extends DefaultListableBeanFactory {
@@ -123,13 +127,17 @@ BeanFactory
 
 #### ConfigurableApplicationContext
 
-ConfigurableApplicationContext 中主要增加了 ConfigurableApplicationContext#refresh 和 ConfigurableApplicationContext#close 两个方法，从而为应用上下文提供了启动、刷新和关闭的能力。其中 ConfigurableApplicationContext#refresh 方法是高级容器的核心方法，该方法概括了高级容器初始化的主要流程（包含简单容器的全部功能，以及高级容器扩展的功能）
+ConfigurableApplicationContext 中主要增加了 ConfigurableApplicationContext#refresh 和 ConfigurableApplicationContext#close
+两个方法，从而为应用上下文提供了启动、刷新和关闭的能力。其中 ConfigurableApplicationContext#refresh
+方法是高级容器的核心方法，该方法概括了高级容器初始化的主要流程（包含简单容器的全部功能，以及高级容器扩展的功能）
 
 #### WebApplicationContext
 
-- WebApplicationContext 是为 WEB 应用定制的上下文类，基于 servlet 实现配置文件的加载和初始化工作。对于非 WEB 应用而言，bean 只有 singleton 和 prototype 两种作用域，而在 WebApplicationContext 中则新增了 request、session、globalSession，以及 application 四种作用域。
+- WebApplicationContext 是为 WEB 应用定制的上下文类，基于 servlet 实现配置文件的加载和初始化工作。对于非 WEB 应用而言，bean 只有 singleton 和 prototype 两种作用域，而在
+  WebApplicationContext 中则新增了 request、session、globalSession，以及 application 四种作用域。
 
-- WebApplicationContext 将整个应用上下文对象以属性的形式记录到 ServletContext 中，我们可以通过 WebApplicationContextUtils#getWebApplicationContext 工具方法从 ServletContext 对象中获取 WebApplicationContext 实例。
+- WebApplicationContext 将整个应用上下文对象以属性的形式记录到 ServletContext 中，我们可以通过 WebApplicationContextUtils#getWebApplicationContext
+  工具方法从 ServletContext 对象中获取 WebApplicationContext 实例。
 
 ##### 为了支持这一特性，WebApplicationContext 类定义了一个常量：
 
@@ -137,5 +145,7 @@ ConfigurableApplicationContext 中主要增加了 ConfigurableApplicationContext
 ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE = WebApplicationContext.class.getName() + ".ROOT"
 ````
 
-在初始化应用上下文时会以该常量为 key，将 WebApplicationContext 实例存放到 ServletContext 的属性列表中。当我们调用 WebApplicationContextUtils#getWebApplicationContext 工具方法时，本质上是在调用 ServletContext#getAttribute 方法，不过 Spring 会对获取的结果做一些校验工作。
+在初始化应用上下文时会以该常量为 key，将 WebApplicationContext 实例存放到 ServletContext 的属性列表中。当我们调用
+WebApplicationContextUtils#getWebApplicationContext 工具方法时，本质上是在调用 ServletContext#getAttribute 方法，不过 Spring
+会对获取的结果做一些校验工作。
 

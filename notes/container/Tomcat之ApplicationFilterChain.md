@@ -1,4 +1,3 @@
-
 ### public class StandardWrapper extends ContainerBase implements ServletConfig, Wrapper, NotificationEmitter
 
 - allocate() //获取Servlet 实例，这里会对应 Spring Web 的 DispatcherServlet

@@ -5,24 +5,29 @@
 #### Reference 生命周期状态
 
 - Active:每个引用的创建之初都是活动状态,直到下次 GC 的时候引用的强弱关系发生变化,同时不同的引用根据不同的策略改变状态;
- 
+
  ````
   queue = ReferenceQueue with which instance is registered, or ReferenceQueue.NULL if it was not registered with a queue; next =null
  ````
+
 - Pending:正准备加入引用链表;
 
 ````
   queue = ReferenceQueue with which instance is registered; next = this
 ````
+
 - Enqueued:已经加入引用链表,相当于已经注册成功等待处理;
+
 ````
   queue = ReferenceQueue.ENQUEUED; next = Following instance in queue, or this if at end of list.
 ````
+
 - Inactive:所有的引用对象的终点,可回收状态;
 
 ````
   queue = ReferenceQueue.NULL; next = this
 ````
+
 #### 工作原理
 
 1. Reference里有个静态字段pending，同时还通过静态代码块启动了Reference-handler thread。
@@ -49,9 +54,8 @@ Hotspot在gc时会根据两个标准来回收：
 
 那么判断依据就是: interval <= freeheap * ms_per_mb,如果为true,则保留，false则进行对象清除
 
-
-softReferences will always be kept for at least one GC after their last access。_ 因为 只要调用一次，那么clock和timestamp的值就会一样，clock-timestamp则为0，一定小于等于free_heap * ms_per_mb
-
+softReferences will always be kept for at least one GC after their last access。_ 因为
+只要调用一次，那么clock和timestamp的值就会一样，clock-timestamp则为0，一定小于等于free_heap * ms_per_mb
 
 #### 核心属性
 
@@ -60,7 +64,7 @@ softReferences will always be kept for at least one GC after their last access�
 ````
 1. 引用指向的对象，即需要Reference包装的对象;
 ````
-  
+
 2. volatile ReferenceQueue<? super T> queue;
 
 ````
@@ -78,10 +82,10 @@ softReferences will always be kept for at least one GC after their last access�
 2. 但是 Reference 类声明的时候却没有实现 Serializable 接口，这是因为 Reference 子类的子类可能实现 Serializable 接口，另外一般情况下也不建议实现 Serializable 接口；
    
 ````
-4. transient private Reference<T> discovered; 
+
+4. transient private Reference<T> discovered;
 
 5. private static Reference<Object> pending = null;//表示正在排队等待入队的引用
-
 
 #### 核心方法
 
@@ -116,6 +120,7 @@ softReferences will always be kept for at least one GC after their last access�
     }
 
 ```
+
 #### SharedSecrets 相当于holder保存了一些对象引用,并提供了set/get方法
 
 #### 启动后的Reference Handler线程的任务
@@ -152,6 +157,7 @@ private static class ReferenceHandler extends Thread {
         }
     }
 ```
+
 #### tryHandlePending,清理无效的reference
 
 1. Reference里有个静态字段 pending,同时还通过静态代码块启动了Reference-handler thread。
@@ -272,6 +278,7 @@ public Reference<? extends T> remove(long timeout)throws IllegalArgumentExceptio
     }
 
 ```
+
 ##### reallyPoll 出队相关操作
 
 ```

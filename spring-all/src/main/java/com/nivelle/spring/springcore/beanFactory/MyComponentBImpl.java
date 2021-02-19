@@ -12,8 +12,9 @@ import org.springframework.stereotype.Component;
 public class MyComponentBImpl implements MyComponent {
 
     public String mark = "b";
+
     @Override
-    public void print(){
+    public void print() {
         System.out.println(mark);
     }
 }

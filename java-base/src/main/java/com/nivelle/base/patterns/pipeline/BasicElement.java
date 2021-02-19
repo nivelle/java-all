@@ -17,12 +17,12 @@ public class BasicElement implements Element {
 
     @Override
     public void setNext(Element element) {
-        this.nextElement =element;
+        this.nextElement = element;
     }
 
     @Override
     public void invoke(String handling) {
-        handling=handling.replaceAll("aa", "bb");
+        handling = handling.replaceAll("aa", "bb");
         System.out.println("最后阀门处理完后：" + handling);
     }
 }

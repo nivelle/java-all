@@ -32,7 +32,7 @@ public class JavaInputAndOutput {
         File file3 = new File("/Users/nivellefu/IdeaProjects/programdayandnight/java-base/src/main/resources/text.txt");
         InputStreamReader InputStreamReader = new InputStreamReader(new FileInputStream(file3));
         char[] chars = new char[1024];
-        while (InputStreamReader.read(chars)!=-1){
+        while (InputStreamReader.read(chars) != -1) {
 
         }
         System.out.println(new String(chars));

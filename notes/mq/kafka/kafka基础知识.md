@@ -28,7 +28,6 @@
 
 #### 消息
 
-
 ### 消息压缩
 
 **消息压缩可能发生的地方：生产者和Broker端**
@@ -51,7 +50,7 @@ compression.type
 
 - broker 端发生消息转换，为了兼容旧版本消息。会丧失 ZERO_COPY 能力
 
-- broker 端为了对消息进行校验，每个压缩过的消息集合在broker端写入的时都要发生解压缩操作 
+- broker 端为了对消息进行校验，每个压缩过的消息集合在broker端写入的时都要发生解压缩操作
 
 #### consumer 开启解压
 
@@ -68,6 +67,7 @@ compression.type
 - 有限度的持久化保证：Kafka不丢消息有一定的前提条件，若N个broker 则消息至少保存在一个broker上。
 
 #### 生产者丢失数据：
+
 - Producer 永远要使用带有回调通知的发送API,也就是说不要使用producer.send(msg),而使用producer.send(msg,callback). 从callback(回调)里获取消息提交结果，或者失败原因
 
 #### 消费者丢失数据：
@@ -82,22 +82,24 @@ compression.type
 
 2. 设置 acks = all : acks 是Producer 的一个参数，代表了你对"已提交"消息的定义。如果设置成 all,则表明所有副本broker 都要接收到消息，该消息才算是"已提交" 。这是最高等级的已提交
 
-3. 设置 reties 为一个较大的只:这里的reties同样是producer的参数，对应前面提到的producr自动重试。当出现网络的瞬时抖动时，消息发送可能会失败，此时配置了retiescl>0 的producer能够自动重试发送，避免消息丢失。
+3. 设置 reties 为一个较大的只:这里的reties同样是producer的参数，对应前面提到的producr自动重试。当出现网络的瞬时抖动时，消息发送可能会失败，此时配置了retiescl>0
+   的producer能够自动重试发送，避免消息丢失。
 
-4. 设置 unclean.leader.election.enable=false: 这是broker端的参数，它控制的是哪些Broker有资格竞选分区的Leader。 如果一个broker落后原先的Leader太多，那么一旦成为新的leader，必然会造成消息的丢失。故一般都将该参数设置成false,即不允许这种情况发送。
+4. 设置 unclean.leader.election.enable=false: 这是broker端的参数，它控制的是哪些Broker有资格竞选分区的Leader。
+   如果一个broker落后原先的Leader太多，那么一旦成为新的leader，必然会造成消息的丢失。故一般都将该参数设置成false,即不允许这种情况发送。
 
 5. 设置 replication.factor>=3 :broker 端的参数，这里的意思是将消息多保存几份，毕竟目前防止消息丢失的主要机制就是冗余。
 
 6. 设置 min.insync.replicas>1 : 依然是broker端参数，控制的是消息至少要被写入到多少个副本才算是"已提交"。 设置成大于1可以提升消息持久性。在实际环境不要使用默认值1
 
-7. 确保 replication.factor > min.insync.replication 如果两者相等，那么只要有一个副本挂机，整个分区就无法工作了，我们不仅要改善消息的持久性，防止消息丢失，还要在不降低可用性的基础上完成。推荐设置replication.factor=min.sync.replicas+1.
+7. 确保 replication.factor > min.insync.replication
+   如果两者相等，那么只要有一个副本挂机，整个分区就无法工作了，我们不仅要改善消息的持久性，防止消息丢失，还要在不降低可用性的基础上完成。推荐设置replication.factor=min.sync.replicas+1.
 
 8. 确保消息消费完成再提交. consumer 端 有个参数 enable.auto.commit ,最好把它设置成false,并采用手动提交位移的方式。这对于单Consumer 多线程处理的场景而言是至关重要的。
 
 ### 拦截器
 
 拦截器可以用于包括客户端监控、端到端系统性能检测、消息审计等多种功能在内的场景。
-
 
 #### kafka 生产者拦截器
 
@@ -119,8 +121,8 @@ props.put(ProducerConfig.INTERCEPTOR_CLASSES_CONFIG, interceptors);
 
 - onSend() : 该方法会在消息发送之前被调用，如果你想在发送之前对消息做出修改，这个方法是唯一机会
 
-- onAcknowledgement():该方法会在消息成功提交或者发送失败后被调用。onAcknowledgement 的调用要早于 callback 的调用。 这个方法和onSend 不是在同一个线程中被调用的，因此如果你在这两个方法中调用了某个共享可变对象，一定要保证线程安全。这个方法处在Producer 发送的
-  主路径中，所以最好不要放一些太重的逻辑，否则会造成Producer TPS直线下降。
+- onAcknowledgement():该方法会在消息成功提交或者发送失败后被调用。onAcknowledgement 的调用要早于 callback 的调用。 这个方法和onSend
+  不是在同一个线程中被调用的，因此如果你在这两个方法中调用了某个共享可变对象，一定要保证线程安全。这个方法处在Producer 发送的 主路径中，所以最好不要放一些太重的逻辑，否则会造成Producer TPS直线下降。
 
 #### kafka 消费者拦截器
 

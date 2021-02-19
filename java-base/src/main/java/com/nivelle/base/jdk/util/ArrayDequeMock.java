@@ -136,7 +136,7 @@ public class ArrayDequeMock {
          *         return result;
          *     }
          */
-        System.out.println("get first:"+arrayDeque1.getFirst());
+        System.out.println("get first:" + arrayDeque1.getFirst());
         /**
          * public E getLast() {
          *         @SuppressWarnings("unchecked")
@@ -146,7 +146,7 @@ public class ArrayDequeMock {
          *         return result;
          *     }
          */
-        System.out.println("get last:"+arrayDeque1.getLast());
+        System.out.println("get last:" + arrayDeque1.getLast());
 
         /**
          * public E pollFirst() {
@@ -161,7 +161,7 @@ public class ArrayDequeMock {
          *         return result;
          *     }
          */
-        System.out.println("出队操作:"+arrayDeque1.pollFirst());
+        System.out.println("出队操作:" + arrayDeque1.pollFirst());
 
         /**
          * public E pollLast() {
@@ -176,10 +176,10 @@ public class ArrayDequeMock {
          *         return result;
          *     }
          */
-        System.out.println("出队操作:"+arrayDeque1.pollLast());
+        System.out.println("出队操作:" + arrayDeque1.pollLast());
 
         arrayDeque1.push(10);
-        System.out.println("作为栈来使用:"+arrayDeque1.poll());
+        System.out.println("作为栈来使用:" + arrayDeque1.poll());
 
     }
 }

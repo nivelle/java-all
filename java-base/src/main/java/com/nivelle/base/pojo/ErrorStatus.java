@@ -3,11 +3,10 @@ package com.nivelle.base.pojo;
 public enum ErrorStatus {
 
 
-    BADREQUEST(400,"非法请求"),
+    BADREQUEST(400, "非法请求"),
 
 
-
-    PARAMSMISS(10000,"参数缺失");
+    PARAMSMISS(10000, "参数缺失");
 
     private Integer errorCode;
 

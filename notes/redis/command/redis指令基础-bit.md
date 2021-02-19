@@ -43,6 +43,7 @@
 ````
 
 #### 4. BITPOS key bit [start] [end]
+
 ````
 // 返回位图中第一个值为 bit 的二进制位的位置。
 
@@ -60,13 +61,14 @@
 // 除了 NOT 操作之外，其他操作都可以接受一个或多个 key 作为输入。
    
 ````
-#####  operation 可以是 AND 、 OR 、 NOT 、 XOR 这四种操作中的任意一种：
+
+##### operation 可以是 AND 、 OR 、 NOT 、 XOR 这四种操作中的任意一种：
 
 - BITOP AND destkey key [key ...] ，对一个或多个 key 求逻辑并，并将结果保存到 destkey 。
-  
+
 - BITOP OR destkey key [key ...] ，对一个或多个 key 求逻辑或，并将结果保存到 destkey 。
-  
+
 - BITOP XOR destkey key [key ...] ，对一个或多个 key 求逻辑异或，并将结果保存到 destkey 。
-  
+
 - BITOP NOT destkey key ，对给定 key 求逻辑非，并将结果保存到 destkey 。
   

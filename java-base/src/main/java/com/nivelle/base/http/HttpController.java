@@ -25,7 +25,7 @@ import java.util.Map;
 @RestController
 public class HttpController {
 
-    HashMap cache= Maps.newHashMap();
+    HashMap cache = Maps.newHashMap();
 
     /**
      * 1、RequestMapping接口的源码如下，里面定义了七个属性

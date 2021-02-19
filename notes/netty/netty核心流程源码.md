@@ -10,7 +10,8 @@
 4. 给server socket channel 从boss group 中选择一个NioEventLoop
 
 #### 2. boss thread 线程
-1. 将server socket channel 注册到选择的 NioEventLoop 的 selector 
+
+1. 将server socket channel 注册到选择的 NioEventLoop 的 selector
 2. 绑定地址启动
 3. 注册接受连接事件(OP_ACCEPT)到selector上
 
@@ -147,7 +148,6 @@ void init(Channel channel) {
     }
 ````
 
-
 - 初始化和注册操作->注册详情1
 
 ```
@@ -189,7 +189,7 @@ void init(Channel channel) {
 
 ```
 
--  初始化和注册操作->注册详情2：eventLoop.execute
+- 初始化和注册操作->注册详情2：eventLoop.execute
 
 ``````
 private void execute(Runnable task, boolean immediate) {
@@ -222,6 +222,7 @@ private void execute(Runnable task, boolean immediate) {
     }
 
 ``````
+
 - 初始化和注册操作->注册详情3
 
 ````
@@ -255,6 +256,7 @@ private void execute(Runnable task, boolean immediate) {
 #### 绑定详情
 
 - 绑定详情1：AbstractBootstrap -> doBind0
+
 ````
  private static void doBind0(final ChannelFuture regFuture, final Channel channel,final SocketAddress localAddress, final ChannelPromise promise) {
 
@@ -334,7 +336,9 @@ public final void bind(final SocketAddress localAddress, final ChannelPromise pr
     }
 
 ````
+
 - 绑定详情4：channelActive(ChannelHandlerContext ctx)
+
 ````
  public void channelActive(ChannelHandlerContext ctx) {
             //继续传播
@@ -365,6 +369,7 @@ protected void doBeginRead() throws Exception {
         }
     }
 ````
+
 -----
 
 ### 构建连接(也就是对OP_ACCEPT事件的处理，然后在workerEventLoop创建OP_READ事件监听)
@@ -376,6 +381,7 @@ protected void doBeginRead() throws Exception {
 3. 初始化 socket channel 并从 worker group 中选择一个 NioEventLoop
 
 #### 2. worker thread 线程
+
 1. 将socket channel 注册到选择的NioEventLoop 的 selector
 2. 注册读事件（OP_READ）到selector上
 
@@ -560,6 +566,7 @@ private void processSelectedKey(SelectionKey k, AbstractNioChannel ch) {
     }
 
 ````
+
 - 处理创建连接事件4：AbstractNioMessageChannel->read()
 
 ````
@@ -642,8 +649,6 @@ private void processSelectedKey(SelectionKey k, AbstractNioChannel ch) {
 
 ````
 
-
-
 - 处理创建连接事件5 -> doReadMessages
 
 ````
@@ -670,6 +675,7 @@ protected int doReadMessages(List<Object> buf) throws Exception {
     }
 
 ````
+
 - 处理创建连接事件6： accept(final ServerSocketChannel serverSocketChannel)
 
 ````
@@ -827,7 +833,7 @@ public static SocketChannel accept(final ServerSocketChannel serverSocketChannel
     }
 ````
 
--  创建连接的初始化和注册是通过 pipeline.fireChannelRead 在 ServerBootstrapAcceptor中完成的
+- 创建连接的初始化和注册是通过 pipeline.fireChannelRead 在 ServerBootstrapAcceptor中完成的
 
 - 第一次 Register 并不是监听OP_READ ,而是0：
 
@@ -914,6 +920,7 @@ public static SocketChannel accept(final ServerSocketChannel serverSocketChannel
         }
     }
 ````
+
 - 接收数据详情2：NioSocketChannel->read()
 
 ````
@@ -923,6 +930,7 @@ public static SocketChannel accept(final ServerSocketChannel serverSocketChannel
         return byteBuf.writeBytes(javaChannel(), allocHandle.attemptedBytesRead());
     }
 ````
+
 - 接收数据详情3：AbstractByteBuf ->writeBytes()
 
 ````
@@ -936,6 +944,7 @@ public static SocketChannel accept(final ServerSocketChannel serverSocketChannel
         return writtenBytes;
     }
 ````
+
 - 接收数据详情4：UnPooledDirectByteBuf ->setBytes()
 
 ````
@@ -965,7 +974,6 @@ public static SocketChannel accept(final ServerSocketChannel serverSocketChannel
 
 - 判断接受 byte buffer 是否满载而归：是，尝试继续读取直到没有数据或满16次；否，结束本轮读取，等待下次OP_READ事件
 
-
 -----------
 
 ### 业务处理(在worker线程里对OP_READ事件的处理)
@@ -981,6 +989,7 @@ public static SocketChannel accept(final ServerSocketChannel serverSocketChannel
 #### 核心源码
 
 - 业务处理详情1： AbstractNioMessageChannel->pipeline.fireChannelRead
+
 ````
 public final ChannelPipeline fireChannelRead(Object msg) {
         //从Head开始
@@ -988,7 +997,9 @@ public final ChannelPipeline fireChannelRead(Object msg) {
         return this;
     }
 ````
+
 - 业务处理详情2：
+
 ````
 static void invokeChannelRead(final AbstractChannelHandlerContext next, Object msg) {
         final Object m = next.pipeline.touch(ObjectUtil.checkNotNull(msg, "msg"), next);
@@ -1009,7 +1020,9 @@ static void invokeChannelRead(final AbstractChannelHandlerContext next, Object m
         }
     }
 ````
+
 - 业务处理详情3：
+
 ````
 public void channelRead(ChannelHandlerContext ctx, Object msg) {
             //继续在pipleline上传播
@@ -1018,6 +1031,7 @@ public void channelRead(ChannelHandlerContext ctx, Object msg) {
 ````
 
 - 业务处理详情4：传播处理
+
 ````
 public ChannelHandlerContext fireChannelRead(final Object msg) {
         invokeChannelRead(findContextInbound(MASK_CHANNEL_READ), msg);
@@ -1037,7 +1051,7 @@ public ChannelHandlerContext fireChannelRead(final Object msg) {
 
 ### Write : 写数据到buffer然后flush发送buffer里面的数据,Write和Flush之间有个ChannelOutboundBuffer用作数据缓存
 
-#### write 
+#### write
 
 - 写数据到buffer : ChannelOutboundBuffer#addMessage
 
@@ -1067,7 +1081,7 @@ public ChannelHandlerContext fireChannelRead(final Object msg) {
 
 #### 核心源码
 
-- 写数据详情1：write 
+- 写数据详情1：write
 
 ````
  private void write(Object msg, boolean flush, ChannelPromise promise) {
@@ -1196,6 +1210,7 @@ private void incrementPendingOutboundBytes(long size, boolean invokeLater) {
     }
 
 ````
+
 - 发送数据详情1：flush
 
 ````
@@ -1218,6 +1233,7 @@ public ChannelHandlerContext flush() {
     }
 
 ```` 
+
 - 发送数据详情2： invokeFlush0
 
 ````
@@ -1280,6 +1296,7 @@ public void addFlush() {
     }
 
 ````
+
 - 发送数据详情5： flush0()
 
 ````
@@ -1415,7 +1432,7 @@ public void addFlush() {
     }
 ````
 
-- 发送数据详情7：  adjustMaxBytesPerGatheringWrite((int) attemptedBytes, (int) localWrittenBytes,maxBytesPerGatheringWrite);
+- 发送数据详情7： adjustMaxBytesPerGatheringWrite((int) attemptedBytes, (int) localWrittenBytes,maxBytesPerGatheringWrite);
 
 ````
 
@@ -1435,16 +1452,15 @@ private void adjustMaxBytesPerGatheringWrite(int attempted, int written, int old
     }
 ````
 
-
 ### 断开连接, 多路复用器收到OP_READ事件，处理器：NioSocketChannel.NioSocketChannelUnsafe.read():
 
 - 接受数据
 
 - 判断接受的数据大小是否< 0.如果是，说明是关闭，开始执行关闭
 
-  - 关闭channel(包含cancel多路复用器的key)
-  - 清理消息：不接受新消息，fail掉所有queue中的消息
-  - 触发fireChannelInactive和fireChannelUnregistered
+    - 关闭channel(包含cancel多路复用器的key)
+    - 清理消息：不接受新消息，fail掉所有queue中的消息
+    - 触发fireChannelInactive和fireChannelUnregistered
 
 - 关闭连接，会触发OP_READ方法。读取字节数是-1代表关闭
 
@@ -1523,6 +1539,7 @@ private void adjustMaxBytesPerGatheringWrite(int attempted, int written, int old
 ````
 
 - 关闭连接详情2：closeOnRead(ChannelPipeline pipeline)
+
 ````
  private void closeOnRead(ChannelPipeline pipeline) {
             //判断input是否关闭
@@ -1722,7 +1739,9 @@ public final void close() throws IOException {
         }
     }
 ````
+
 -----
+
 ### 服务关闭
 
 - boosGroup.shutdownGracefully()
@@ -1741,8 +1760,9 @@ public final void close() throws IOException {
 
 - shutdownGracefully(long quietPeriod, long timeout, TimeUnit unit)
 
- //@param quietPeriod the quiet period as described in the documentation
- //@param timeout     the maximum amount of time to wait until the executor is {@linkplain #shutdown()}regardless if a task was submitted during the quiet period
+//@param quietPeriod the quiet period as described in the documentation //@param timeout the maximum amount of time to
+wait until the executor is {@linkplain #shutdown()}regardless if a task was submitted during the quiet period
+
 ````
 
 public Future<?> shutdownGracefully(long quietPeriod, long timeout, TimeUnit unit) {

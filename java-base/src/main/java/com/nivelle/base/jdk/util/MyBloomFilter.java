@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author fuxinzhong
  * @date 2020/10/20
  */
-public class MyBloomFilter implements Serializable{
+public class MyBloomFilter implements Serializable {
 
     private final int[] seeds;
     private final int size;
@@ -20,29 +20,29 @@ public class MyBloomFilter implements Serializable{
     private final Double autoClearRate;
 
     //dataCount逾预期处理的数据规模
-    public MyBloomFilter(int dataCount){
+    public MyBloomFilter(int dataCount) {
         this(MisjudgmentRate.MIDDLE, dataCount, null);
     }
 
     //自动清空过滤器内部信息的使用比率，传null则表示不会自动清理;
     //当过滤器使用率达到100%时，则无论传入什么数据，都会认为在数据已经存在了;
     //当希望过滤器使用率达到80%时自动清空重新使用，则传入0.8
-    public MyBloomFilter(MisjudgmentRate rate, int dataCount, Double autoClearRate){
+    public MyBloomFilter(MisjudgmentRate rate, int dataCount, Double autoClearRate) {
         //每个字符串需要的bit位数*总数据量
         long bitSize = rate.seeds.length * dataCount;
-        if(bitSize<0 || bitSize>Integer.MAX_VALUE){
+        if (bitSize < 0 || bitSize > Integer.MAX_VALUE) {
             throw new RuntimeException("位数太大溢出了，请降低误判率或者降低数据大小");
         }
         this.rate = rate;
         seeds = rate.seeds;
-        size = (int)bitSize;
+        size = (int) bitSize;
         //创建一个BitSet位集合
         notebook = new BitSet(size);
         this.autoClearRate = autoClearRate;
     }
 
     //如果存在返回true,不存在返回false
-    public boolean addIfNotExist(String data){
+    public boolean addIfNotExist(String data) {
         //是否需要清理
         checkNeedClear();
         //seeds.length决定每一个string对应多少个bit位，每一位都有一个索引值
@@ -53,19 +53,19 @@ public class MyBloomFilter implements Serializable{
         //假定data已经存在
         boolean exist = true;
         int index;
-        for(int i=0; i<seeds.length; i++){
+        for (int i = 0; i < seeds.length; i++) {
             //计算位hash值
             indexs[i] = index = hash(data, seeds[i]);
-            if(exist){
+            if (exist) {
                 //如果某一位bit不存在，则说明该data不存在
-                if(!notebook.get(index)){
+                if (!notebook.get(index)) {
                     exist = false;
                     //将之前的bit位置为true
-                    for(int j=0; j<=i; j++){
+                    for (int j = 0; j <= i; j++) {
                         setTrue(indexs[j]);
                     }
                 }
-            }else{
+            } else {
                 //如果不存在则直接置为true
                 setTrue(index);
             }
@@ -77,8 +77,8 @@ public class MyBloomFilter implements Serializable{
     private int hash(String data, int seeds) {
         char[] value = data.toCharArray();
         int hash = 0;
-        if(value.length>0){
-            for(int i=0; i<value.length; i++){
+        if (value.length > 0) {
+            for (int i = 0; i < value.length; i++) {
                 hash = i * hash + value[i];
             }
         }
@@ -93,10 +93,10 @@ public class MyBloomFilter implements Serializable{
 
     //如果BitSet使用比率超过阈值，则将BitSet清零
     private void checkNeedClear() {
-        if(autoClearRate != null){
-            if(getUseRate() >= autoClearRate){
+        if (autoClearRate != null) {
+            if (getUseRate() >= autoClearRate) {
                 synchronized (this) {
-                    if(getUseRate() >= autoClearRate){
+                    if (getUseRate() >= autoClearRate) {
                         notebook.clear();
                         useCount.set(0);
                     }
@@ -106,7 +106,7 @@ public class MyBloomFilter implements Serializable{
     }
 
     private Double getUseRate() {
-        return (double)useCount.intValue()/(double)size;
+        return (double) useCount.intValue() / (double) size;
     }
 
     public void saveFilterToFile(String path) {
@@ -139,35 +139,34 @@ public class MyBloomFilter implements Serializable{
 
     /**
      * 分配的位数越多，误判率越低但是越占内存
-     *
+     * <p>
      * 4个位误判率大概是0.14689159766308
-     *
+     * <p>
      * 8个位误判率大概是0.02157714146322
-     *
+     * <p>
      * 16个位误判率大概是0.00046557303372
-     *
+     * <p>
      * 32个位误判率大概是0.00000021167340
-     *
      */
     public enum MisjudgmentRate {
         // 这里要选取质数，能很好的降低错误率
         /**
          * 每个字符串分配4个位
          */
-        VERY_SMALL(new int[] { 2, 3, 5, 7 }),
+        VERY_SMALL(new int[]{2, 3, 5, 7}),
         /**
          * 每个字符串分配8个位
          */
-        SMALL(new int[] { 2, 3, 5, 7, 11, 13, 17, 19 }), //
+        SMALL(new int[]{2, 3, 5, 7, 11, 13, 17, 19}), //
         /**
          * 每个字符串分配16个位
          */
-        MIDDLE(new int[] { 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53 }), //
+        MIDDLE(new int[]{2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53}), //
         /**
          * 每个字符串分配32个位
          */
-        HIGH(new int[] { 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97,
-                101, 103, 107, 109, 113, 127, 131 });
+        HIGH(new int[]{2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97,
+                101, 103, 107, 109, 113, 127, 131});
 
         private int[] seeds;
 

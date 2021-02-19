@@ -31,6 +31,7 @@ public class LeaderController {
 
     /**
      * LeaderSelectorListener可以对领导权进行控制， 在适当的时候释放领导权，这样每个节点都有可能获得领导权
+     *
      * @return
      */
     @RequestMapping("leaderSelector")
@@ -44,6 +45,7 @@ public class LeaderController {
 
     /**
      * LeaderLatch一直持有leadership， 除非调用close方法，否则它不会释放领导权。
+     *
      * @return
      */
     @RequestMapping("leaderLatch")

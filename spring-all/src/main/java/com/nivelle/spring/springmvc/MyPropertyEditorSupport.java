@@ -13,13 +13,13 @@ import java.beans.PropertyEditorSupport;
 public class MyPropertyEditorSupport extends PropertyEditorSupport {
     @Override
     public void setAsText(String text) throws IllegalArgumentException {
-        if (text.indexOf(",")>0){
+        if (text.indexOf(",") > 0) {
             User user = new User();
             String[] arr = text.split(",");
             user.setName(arr[0]);
             user.setAge(Integer.parseInt(arr[1]));
             setValue(user);
-        }else {
+        } else {
             throw new IllegalArgumentException("user param is error");
         }
     }

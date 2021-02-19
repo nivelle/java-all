@@ -22,7 +22,6 @@
 
 #### 应用层keepalive
 
-
 ### idle检测
 
 - 配合发送keepalive:减少keepalive消息，在没有其他数据传输一定时间判定为idle时，发送keepalive

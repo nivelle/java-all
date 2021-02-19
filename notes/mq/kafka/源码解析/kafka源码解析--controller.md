@@ -37,7 +37,8 @@ class ControllerContext {
 
 - ControllerStats: UncleanLeaderElectionsPerSec 和所有 Controller 事件状态的执行速率与时间;
 
-前者是计算 Controller 每秒执行的 Unclean Leader 选举数量，通常情况下，执行 Unclean Leader 选举可能造成数据丢失，一般不建议开启它;后者是统计所有 Controller 状态的速率和时间信息，单位是毫秒
+前者是计算 Controller 每秒执行的 Unclean Leader 选举数量，通常情况下，执行 Unclean Leader 选举可能造成数据丢失，一般不建议开启它;后者是统计所有 Controller
+状态的速率和时间信息，单位是毫秒
 
 - offlinePartitionCount: 该字段统计集群中所有离线活处于不可用状态的主题分区数量。也就是leader=-1;
 
@@ -47,7 +48,8 @@ class ControllerContext {
 
 - liveBrokerEpochs：该字段保存所有运行中 Broker 的 Epoch 信息。Kafka 使用 Epoch 数据防止 Zombie Broker，即一个非常老的 Broker 被选举成为 Controller
 
-- epoch & epochZkVersion： epoch 实际上就是 ZooKeeper 中 /controller_epoch 节点的值，你可以认为它就是 Controller 在整个 Kafka 集群的版本号，而 epochZkVersion 实际上是 /controller_epoch 节点的 dataVersion 值
+- epoch & epochZkVersion： epoch 实际上就是 ZooKeeper 中 /controller_epoch 节点的值，你可以认为它就是 Controller 在整个 Kafka 集群的版本号，而
+  epochZkVersion 实际上是 /controller_epoch 节点的 dataVersion 值
 
 - allTopics：该字段保存集群上所有的主题名称。每当有主题的增减，Controller 就要更新该字段的值
 
@@ -59,7 +61,6 @@ class ControllerContext {
 
 controller会给集群中所有Broker(包括它自己所在的Broker)机器发送网络请求，让broker执行相应的指令
 
-
 #### ControllerChannelManger
 
 #### ControllerEventManger
@@ -69,7 +70,7 @@ controller会给集群中所有Broker(包括它自己所在的Broker)机器发�
 ### Controller选举
 
 - Controller 依赖 ZooKeeper 实现 Controller 选举，主要是借助于 /controller 临时节点和 ZooKeeper 的监听器机制。
-  
+
 - Controller 触发场景有 3 种：集群启动时；/controller 节点被删除时；/controller 节点数据变更时。
 
 ### Controller的作用
@@ -83,6 +84,5 @@ controller会给集群中所有Broker(包括它自己所在的Broker)机器发�
 #### 主题管理
 
 - 主题创建/变更/删除
-
 
 #### 操作元数据

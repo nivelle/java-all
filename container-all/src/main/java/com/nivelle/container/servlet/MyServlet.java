@@ -17,7 +17,7 @@ public class MyServlet implements Servlet {
 
     @Override
     public void init(ServletConfig servletConfig) throws ServletException {
-        this.servletConfig=servletConfig;
+        this.servletConfig = servletConfig;
         System.out.println("Servlet的初始化方法...");
     }
 
@@ -30,10 +30,10 @@ public class MyServlet implements Servlet {
 
     @Override
     public void service(ServletRequest servletRequest, ServletResponse servletResponse) throws ServletException, IOException {
-        this.servletRequest=servletRequest;
+        this.servletRequest = servletRequest;
         System.out.println("service....运行时方法");
-        System.out.println("获得Servlet的配置对象:"+this.getServletConfig());
-        System.out.println("变量tom的值："+servletConfig.getInitParameter("tom"));
+        System.out.println("获得Servlet的配置对象:" + this.getServletConfig());
+        System.out.println("变量tom的值：" + servletConfig.getInitParameter("tom"));
 
         // 解决页面乱码，同时指定页面类型为HTML
         servletRequest.setCharacterEncoding("utf-8");

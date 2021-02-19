@@ -1,4 +1,5 @@
 package com.nivelle.base.patterns.produceconsumer;
+
 import java.util.Random;
 
 /**
@@ -11,11 +12,13 @@ public class MakerThread extends Thread {
     private final Random random;
     private final Table table;
     private static int id = 0;     //蛋糕的流水号(所有厨师共通)
+
     public MakerThread(String name, Table table, long seed) {
         super(name);
         this.table = table;
         this.random = new Random(seed);
     }
+
     @Override
     public void run() {
         try {
@@ -27,6 +30,7 @@ public class MakerThread extends Thread {
         } catch (InterruptedException e) {
         }
     }
+
     private static synchronized int nextId() {
         return id++;
     }

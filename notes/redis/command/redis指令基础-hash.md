@@ -34,15 +34,16 @@
 // 如果哈希表 hash 不存在， 那么一个新的哈希表将被创建并执行 HSETNX 命令。
    
 ```
+
 #### 4. HDEL hash field [field …]
-        
+
 ````
 // 删除哈希表 key 中的一个或多个指定域，不存在的域将被忽略。
 
 ````
 
 #### 5. HLEN hash
-        
+
 ```
 返回值: 哈希表中域的数量。当 key 不存在时，返回 0 
 
@@ -51,7 +52,7 @@
 ```
 
 #### 6. HSTRLEN hash field
-        
+
 ```
 返回值: 返回哈希表 key 中， 与给定域 field 相关联的值的字符串长度（string length）。
      
@@ -70,7 +71,7 @@
 ```
 
 #### 8. HINCRBY hash field increment
-        
+
 ````
 // 为哈希表 hash 中的域 field 的值加上增量 increment 。
 
@@ -85,7 +86,7 @@
 ````
 
 #### 9. HINCRBYFLOAT hash field increment
-        
+
 ````
 返回值: 执行加法操作之后 field 域的值。
      
@@ -98,7 +99,7 @@
 ````
 
 #### 10. HMSET hash field value [field value …]
-   
+
 ```
 返回值: 如果命令执行成功，返回 OK 。
 
@@ -111,7 +112,7 @@
 ```      
 
 #### 11. HMGET hash field [field …]
-         
+
 ````
 返回值: 一个包含多个给定域的关联值的表，表值的排列顺序和给定域参数的请求顺序一样。
      
@@ -123,7 +124,6 @@
 ````
 
 #### 12. HKEYS hash
-        
 
 ```
 返回哈希表 hash 中的所有域 fileds
@@ -131,14 +131,14 @@
 ```
 
 #### 13. HVALS hash
-         
+
 ```
 返回哈希表 key 中所有域的值。
 
 ```
 
 #### 14. HGETALL hash
-         
+
 ````
 返回值: 返回哈希表 key 中，所有的域和值。
      

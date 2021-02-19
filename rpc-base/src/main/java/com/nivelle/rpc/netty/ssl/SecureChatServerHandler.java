@@ -33,12 +33,12 @@ public class SecureChatServerHandler extends SimpleChannelInboundHandler<String>
 
                         channels.add(ctx.channel());
                     }
-        });
+                });
     }
 
     public void messageReceived(ChannelHandlerContext ctx, String msg) throws Exception {
         // Send the received message to all channels but the current one.
-        for (Channel c: channels) {
+        for (Channel c : channels) {
             if (c != ctx.channel()) {
                 c.writeAndFlush("[" + ctx.channel().remoteAddress() + "] " + msg + '\n');
             } else {
@@ -58,10 +58,10 @@ public class SecureChatServerHandler extends SimpleChannelInboundHandler<String>
         ctx.close();
     }
 
-	@Override
-	protected void channelRead0(ChannelHandlerContext ctx, String msg)
-			throws Exception {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    protected void channelRead0(ChannelHandlerContext ctx, String msg)
+            throws Exception {
+        // TODO Auto-generated method stub
+
+    }
 }

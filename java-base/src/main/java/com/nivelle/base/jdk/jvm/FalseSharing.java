@@ -10,7 +10,7 @@ public class FalseSharing implements Runnable {
 
     public final static int NUM_THREADS = 4;
 
-    public final static long ITERATIONS = 500L* 1000L * 1000L;
+    public final static long ITERATIONS = 500L * 1000L * 1000L;
 
     private final int arrayIndex;
 
@@ -71,7 +71,7 @@ public class FalseSharing implements Runnable {
 
     /**
      * Unlock: -XX:-RestrictContended
-     *
+     * <p>
      * //@sun.misc.Contended注解会在变量前后各加128字节
      */
     @sun.misc.Contended

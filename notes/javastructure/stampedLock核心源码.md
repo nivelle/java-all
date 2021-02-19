@@ -70,6 +70,7 @@ public long writeLock() {
 state的高24位存储的是版本号，低8位存储的是是否有加锁，第8位存储的是写锁，低7位存储的是读锁被获取的次数，而且如果只有第8位存储写锁的话，那么写锁只能被获取一次，也就不可能重入了
 
 #### acquireRead(boolean interruptible, long deadline)
+
 ````
   private long acquireWrite(boolean interruptible, long deadline) {
         // node为新增节点,p为尾节点
@@ -268,9 +269,8 @@ private void release(WNode h) {
 
 (3)唤醒下一个等待着的节点
 
-
 #### readLock() 获取读锁
- 
+
 ````
 public long readLock() {
         long s = state, next;  // bypass acquireRead on common uncontended case
@@ -512,7 +512,7 @@ public long readLock() {
 
 (7). 首个读节点其实是连续的读线程中的首个，如果是两个读线程中夹了一个写线程，还继续排队
 
-####  unlockRead(long stamp) //释放读锁
+#### unlockRead(long stamp) //释放读锁
 
 ````
 public void unlockRead(long stamp) {
@@ -538,6 +538,7 @@ public void unlockRead(long stamp) {
         }
     }
 ````
+
 #### release(WNode h)
 
 ````
@@ -573,8 +574,9 @@ public long tryOptimisticRead() {
     }
 
 ````
+
 ##### 结论：如果没有写锁，就返回state的高25位，这里把写所在位置一起返回了，是为了后面检测数据有没有被写过。
-         
+
 #### validate()方法
 
 ````
@@ -596,7 +598,8 @@ public boolean validate(long stamp) {
 
 (2) ReentrantReadWriteLock 的state分成两段，高16位存储读锁被获取的次数，低16位存储写锁被获取的次数
 
-(3) StampedLock 的CLH队列可以看成是变异的CLH队列，连续的读线程只有首个节点存储在队列中，其它的节点存储的首个节点的cowait栈中;ReentrantReadWriteLock的CLH队列是正常的CLH队列，所有的节点都在这个队列中
+(3) StampedLock
+的CLH队列可以看成是变异的CLH队列，连续的读线程只有首个节点存储在队列中，其它的节点存储的首个节点的cowait栈中;ReentrantReadWriteLock的CLH队列是正常的CLH队列，所有的节点都在这个队列中
 
 (4) StampedLock 获取锁的过程中有判断首尾节点是否相同，也就是是不是快轮到自己了，如果是则不断自旋，所以适合执行短任务;ReentrantReadWriteLock 获取锁的过程中非公平模式下会做有限次尝试
 

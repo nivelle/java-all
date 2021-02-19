@@ -2,7 +2,6 @@
 
 ![生命周期结构图](https://s1.ax1x.com/2020/07/16/UrDI1g.jpg)
 
-
 - Lifecycle: 定义了容器生命周期、容器状态转换及容器状态迁移事件的监听器注册和移除等主要接口
 
 - LifecycleBase: 作为Lifecycle接口的抽象实现类，运用抽象模板模式将所有容器的生命周期及状态转换衔接起来，此外还提供了生成LifecycleEvent事件的接口;
@@ -15,16 +14,14 @@
 
 ContainerBase、StandardServer、StandardService、WebappLoader、Connector、StandardContext、StandardEngine、StandardHost、StandardWrapper等容器都继承了LifecycleMBeanBase，因此这些容器都具有了同样的生命周期并可以通过JMX进行管理
 
-
 ![容器初始化](https://s1.ax1x.com/2020/07/18/UgcQHO.jpg)
 
-
 ![Tomcat结构图](https://s1.ax1x.com/2020/07/18/Ug0DpV.jpg)
-
 
 ### 容器初始化
 
 #### standardServer -> initInternal
+
 ```
 public final synchronized void init() throws LifecycleException {
         if (!state.equals(LifecycleState.NEW)) {
@@ -80,7 +77,7 @@ protected void initInternal() throws LifecycleException {
 
 ```
 
-#### 注册项目：registerContext 
+#### 注册项目：registerContext
 
 ```
 private void registerContext(Context context) {

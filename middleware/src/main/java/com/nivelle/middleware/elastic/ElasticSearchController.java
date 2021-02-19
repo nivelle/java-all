@@ -1,4 +1,5 @@
 package com.nivelle.middleware.elastic;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.web.bind.annotation.RequestMapping;

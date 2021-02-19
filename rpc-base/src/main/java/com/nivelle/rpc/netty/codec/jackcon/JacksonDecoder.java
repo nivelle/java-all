@@ -19,26 +19,27 @@ import org.springframework.util.StreamUtils;
 public class JacksonDecoder<T> extends ByteToMessageDecoder {
 
     private final Class<T> clazz;
-	/**
-	 * 
-	 */
+
+    /**
+     *
+     */
     public JacksonDecoder(Class<T> clazz) {
         this.clazz = clazz;
-	}
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see io.netty.handler.codec.ByteToMessageDecoder#decode(io.netty.channel.
-	 * ChannelHandlerContext, io.netty.buffer.ByteBuf, java.util.List)
-	 */
-	@Override
-	protected void decode(ChannelHandlerContext ctx, ByteBuf in,
-			List<Object> out) throws Exception {
+    /*
+     * (non-Javadoc)
+     *
+     * @see io.netty.handler.codec.ByteToMessageDecoder#decode(io.netty.channel.
+     * ChannelHandlerContext, io.netty.buffer.ByteBuf, java.util.List)
+     */
+    @Override
+    protected void decode(ChannelHandlerContext ctx, ByteBuf in,
+                          List<Object> out) throws Exception {
         ByteBufInputStream byteBufInputStream = new ByteBufInputStream(in);
-		InputStream inputStream = byteBufInputStream;
+        InputStream inputStream = byteBufInputStream;
         out.add(JacksonMapper.getInstance().readValue(inputStream, clazz));
 
-	}
+    }
 
 }

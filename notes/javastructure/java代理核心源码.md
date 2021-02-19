@@ -1,4 +1,5 @@
-## public class Proxy implements java.io.Serializable 
+## public class Proxy implements java.io.Serializable
+
 ## 静态方法创建代理对象
 
 ```
@@ -58,6 +59,7 @@ public static Object newProxyInstance(ClassLoader loader,Class<?>[] interfaces,I
     }
     
 ```
+
 ### 查找或则生成代理类
 
 ```
@@ -228,7 +230,9 @@ public static byte[] generateProxyClass(final String var0, Class<?>[] var1, int 
 ```
 
 ### ProxyGenerator.generateClassFile
+
 ### 生成代理类字节码文件,并返回字节码数组
+
 ```
 private byte[] generateClassFile() {
         //1、将所有的方法组装成ProxyMethod对象
@@ -364,7 +368,7 @@ generateClassFile
 
 ```
 
-### 代理类字节码文件分析 
+### 代理类字节码文件分析
 
 ```
 package com.sun.proxy;

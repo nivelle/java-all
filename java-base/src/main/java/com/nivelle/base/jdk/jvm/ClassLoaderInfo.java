@@ -38,7 +38,7 @@ public class ClassLoaderInfo {
         //调用加载当前类的类加载器（这里即为系统类加载器）加载TestBean
         //  jar cvf ./ClassLoaderBean.jar ClassLoaderBean.class 打包指令
         // /Library/Java/JavaVirtualMachines/jdk1.8.0_191.jdk/Contents/Home/jre/lib/ext
-       // Class typeLoaded = loader.loadClass("com.nivelle.base.jdk.jvm.ClassLoaderBean");
+        // Class typeLoaded = loader.loadClass("com.nivelle.base.jdk.jvm.ClassLoaderBean");
         //classPath:sun.misc.Launcher$AppClassLoader@18b4aac2
         //classPath:sun.misc.Launcher$ExtClassloader@15db9742
         //System.out.println("classPath:" + typeLoaded.getClassLoader());

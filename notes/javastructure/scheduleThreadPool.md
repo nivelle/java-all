@@ -1,4 +1,3 @@
-
 ### 核心接口
 
 #### Executor
@@ -9,7 +8,9 @@ public interface Executor {
     void execute(Runnable command);
 }
 ```
+
 #### ExecutorService 是Executor的次级接口,扩展了一些功能; AbstractExecutorService 实现了 ExecutorService 接口,通过模版方法的方式提供了一些基础实现
+
 ```
 public interface ExecutorService extends Executor {
     // 关闭线程池,不再接受新任务,但已经提交的任务会执行完成
@@ -183,7 +184,6 @@ private final class Worker extends AbstractQueuedSynchronizer implements Runnabl
 
 ```
 
-
 ### 核心方法
 
 #### ThreadPoolExecutor.execute(Runnable command) 任务提交
@@ -227,7 +227,9 @@ public void execute(Runnable command) {
     }
  
 ```   
-#### 这个方法主要用来创建一个工作线程,并启动之,其中会做线程池状态、工作线程数量等各种检测。 
+
+#### 这个方法主要用来创建一个工作线程,并启动之,其中会做线程池状态、工作线程数量等各种检测。
+
 #### 第二个参数为true表示创建核心线程,false表示创建非核心线程
 
 ```  
@@ -333,7 +335,7 @@ private boolean addWorker(Runnable firstTask, boolean core) {
 
 ```
 
-#### ThreadPoolExecutor.runWorker(Worker w) 
+#### ThreadPoolExecutor.runWorker(Worker w)
 
 - worker里面的线程重复使用。真正执行任务, 也就是在addWorker里面 t.start()运行的任务，这个线程的run()方法里面的任务worker
 
@@ -459,7 +461,8 @@ private void processWorkerExit(Worker w, boolean completedAbruptly) {
         }
     }  
 ```
-## 在回收Worker的时候线程池会尝试结束自己的运行，tryTerminate方法  
+
+## 在回收Worker的时候线程池会尝试结束自己的运行，tryTerminate方法
 
 ```
 final void tryTerminate() {
@@ -499,20 +502,24 @@ final void tryTerminate() {
     }  
 ``` 
 
-
-####  一个worker里面可以在执行完一个任务后置为空(task=null),然后再添加一个未执行的任
+#### 一个worker里面可以在执行完一个任务后置为空(task=null),然后再添加一个未执行的任
 
 ** 如果发生了以下四件事中的任意一件，那么Worker需要被回收:**
 
-- 1. Worker个数比线程池最大大小要大
+-
+    1. Worker个数比线程池最大大小要大
 
-- 2. 线程池处于STOP状态
+-
+    2. 线程池处于STOP状态
 
-- 3. 线程池处于SHUTDOWN状态并且阻塞队列为空
+-
+    3. 线程池处于SHUTDOWN状态并且阻塞队列为空
 
-- 4. 使用超时时间从阻塞队列里拿数据,并且超时之后没有拿到数据(allowCoreThreadTimeOut || workerCount > corePoolSize)
+-
+    4. 使用超时时间从阻塞队列里拿数据,并且超时之后没有拿到数据(allowCoreThreadTimeOut || workerCount > corePoolSize)
 
 #### getTask() 获取未执行的任务
+
 ```
 private Runnable getTask() {
         // 如果使用超时时间并且也没有拿到任务的标识
@@ -565,9 +572,9 @@ private Runnable getTask() {
         }
     }
  ```
+
 - 如果getTask返回的是null,那说明阻塞队列已经没有任务并且当前调用getTask的Worker需要被回收，那么会调用 processWorkerExit 方法进行回收 不用的worker,；
 
 - 在getTask里 decrementWorkerCount（）和 compareAndDecrementWorkerCount（）里是正常处理的回收操作
-
 
 来自: [彤哥读源码](https://mp.weixin.qq.com/s?__biz=Mzg2ODA0ODM0Nw==&mid=2247483746&idx=1&sn=a6b5bea0cb52f23e93dd223970b2f6f9&scene=21#wechat_redirect)

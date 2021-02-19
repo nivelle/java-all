@@ -1,5 +1,4 @@
-
-### RequestCondition 
+### RequestCondition
 
 ````
 package org.springframework.web.servlet.mvc.condition;
@@ -28,9 +27,10 @@ public interface RequestCondition<T> {
 
 ````
 
-### public abstract class AbstractRequestCondition<T extends AbstractRequestCondition<T>> implements RequestCondition<T> 
+### public abstract class AbstractRequestCondition<T extends AbstractRequestCondition<T>> implements RequestCondition<T>
 
-//RequestCondition 接口的实现 
+//RequestCondition 接口的实现
+
 ```
 package org.springframework.web.servlet.mvc.condition;
 

@@ -6,10 +6,10 @@
 
 3. 否则方法会检测当前的注入类型,是 byName 还是 byType,并调用相应的注入逻辑获取依赖的 bean,加入属性集合中。
 
-4. 然后方法会调用 InstantiationAwareBeanPostProcessor 后置处理器的 postProcessPropertyValues 方法,实现在将属性值应用到 bean 实例之前的最后一次对属性值的更改,同时会依据配置执行依赖检查,以确保所有的属性都被赋值（这里的赋值是指 beanDefinition 中的属性都有对应的值，而不是指最终 bean 实例的属性是否注入了对应的值）；
+4. 然后方法会调用 InstantiationAwareBeanPostProcessor 后置处理器的 postProcessPropertyValues 方法,实现在将属性值应用到 bean
+   实例之前的最后一次对属性值的更改,同时会依据配置执行依赖检查,以确保所有的属性都被赋值（这里的赋值是指 beanDefinition 中的属性都有对应的值，而不是指最终 bean 实例的属性是否注入了对应的值）；
 
 5. 最后将输入值应用到 bean 实例对应的属性上。
-
 
 ````
 protected void populateBean(String beanName, RootBeanDefinition mbd, BeanWrapper bw) {
@@ -96,6 +96,7 @@ protected void populateBean(String beanName, RootBeanDefinition mbd, BeanWrapper
 }
 
 ````
+
 ##### 第一步: getResolvedAutowireMode //检查注入注入类型
 
 ````
@@ -128,7 +129,6 @@ protected void populateBean(String beanName, RootBeanDefinition mbd, BeanWrapper
 
 ````
 
-
 ##### 第二步：1. autowireByName //根据名称注入
 
 ````
@@ -159,6 +159,7 @@ protected void autowireByName(String beanName, AbstractBeanDefinition mbd, BeanW
 	}
 
 ````
+
 ##### 第二步: 2. autowireByType//根据类型注入
 
 ````
@@ -208,7 +209,8 @@ protected void autowireByType(String beanName, AbstractBeanDefinition mbd, BeanW
 }
 
 ````
-#####  第二步: 2.1 resolveDependency //解析依赖的属性
+
+##### 第二步: 2.1 resolveDependency //解析依赖的属性
 
 ````
 public Object resolveDependency(DependencyDescriptor descriptor, @Nullable String requestingBeanName,
@@ -245,8 +247,6 @@ public Object resolveDependency(DependencyDescriptor descriptor, @Nullable Strin
 - 如果不是这些类型，则获取匹配类型的 bean 实例集合，如果存在多个匹配，则尝试以优先级配置（比如 Primary 或 Priority）来确定首选的 bean 实例，如果仅存在唯一的匹配，则无需做推断逻辑；
 
 - 最后会检测当前解析得到的 bean 是不是目标 bean 实例，如果是工厂一类的 bean，则还要继续获取工厂所指代的 bean 实例
-
-
 
 ````
 public Object doResolveDependency(DependencyDescriptor descriptor, String beanName, Set<String> autowiredBeanNames, TypeConverter typeConverter) throws BeansException {
@@ -324,7 +324,8 @@ public Object doResolveDependency(DependencyDescriptor descriptor, String beanNa
 
 ##### 第三步: applyPropertyValues
 
-在这一步才真正将 bean 的所有属性全部注入到 bean 实例中，之前虽然已经创建了实例，但是属性仍然存在于 beanDefinition 实例中，applyPropertyValues 会将相应属性转换成 bean 中对应属性的真实类型注入到对应属性上
+在这一步才真正将 bean 的所有属性全部注入到 bean 实例中，之前虽然已经创建了实例，但是属性仍然存在于 beanDefinition 实例中，applyPropertyValues 会将相应属性转换成 bean
+中对应属性的真实类型注入到对应属性上
 
 ````
 protected void applyPropertyValues(String beanName, BeanDefinition mbd, BeanWrapper bw, PropertyValues pvs) {

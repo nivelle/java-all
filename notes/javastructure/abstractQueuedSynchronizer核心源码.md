@@ -139,10 +139,9 @@ private volatile int state;
     }
 ````
 
-
 ### ReentrantLock 源码解读
 
-#### 静态抽象内部类 
+#### 静态抽象内部类
 
 ```
 //同步锁实现,静态抽象内部类,实现了公平锁和非公平锁的共有逻辑
@@ -162,6 +161,7 @@ public void lock() {
      sync.lock();//调用静态抽象内部类的lock方法，抽象方法
 }
 ```
+
 - FairSync.lock()//静态内部类,公平锁的实现
 
 ```
@@ -179,8 +179,8 @@ public final void acquire(int arg) {
         }
     }
 ```
- 
-- ReentrantLock.FairSync.tryAcquire() //公平锁抽象类FairSync尝试使用cas获取锁 
+
+- ReentrantLock.FairSync.tryAcquire() //公平锁抽象类FairSync尝试使用cas获取锁
 
 ```
 protected final boolean tryAcquire(int acquires) {
@@ -241,6 +241,7 @@ private Node addWaiter(Node mode) {//mode= Node.EXCLUSIVE
 }
 
 ```
+
 -- AbstractQueuedSynchronizer.enq() //循环尝试加入到尾巴节点，直到成功;尾巴节点为null或者多个节点争着加入到CLH同步队列
 
 ```
@@ -272,6 +273,7 @@ private Node enq(final Node node) {
 ```
 
 - AbstractQueuedSynchronizer.acquireQueued() //调用上面的 addWaiter()方法[包括enq()方法]成功使得新节点已经成功入队,下面这个方法是尝试让当前节点来获取锁的(arg=1)
+
 ```
 final boolean acquireQueued(final Node node, int arg) {
         // 失败标识
@@ -310,6 +312,7 @@ final boolean acquireQueued(final Node node, int arg) {
 ```
 
 - AbstractQueuedSynchronizer.shouldParkAfterFailedAcquire()
+
 ```
 //这个方法在 acquireQueued 方法循环里使用第一次调用如果前置节点不为SIGNAL（-1）则会把它设置为-1,会把前一个节点的等待状态设置为SIGNAL,并返回false, 第二次调用才会返回true
 private static boolean shouldParkAfterFailedAcquire(Node pred, Node node) {
@@ -349,9 +352,9 @@ private static boolean shouldParkAfterFailedAcquire(Node pred, Node node) {
         return false;
     } 
 ```
-    
+
 - AbstractQueuedSynchronizer.parkAndCheckInterrupt() //阻塞当前线程,直到锁释放唤醒该阻塞线程
- 
+
 ```
 private final boolean parkAndCheckInterrupt() {
         // 阻塞当前线程，底层调用的是Unsafe的park()方法
@@ -370,7 +373,9 @@ public void lock() {
         sync.lock();
     }
 ```
+
 - ReentrantLock.NonfairSync.lock() 这个方法在公平锁模式下直接调用的 acquire(1)
+
 ````
 final void lock() {
     if (compareAndSetState(0, 1)){ //直接尝试CAS更新状态变量
@@ -380,6 +385,7 @@ final void lock() {
     }
 }
 ````
+
 - ReentrantLock.NonfairSync.tryAcquire()
 
 ```
@@ -387,7 +393,8 @@ protected final boolean tryAcquire(int acquires) {
       return nonfairTryAcquire(acquires);
 }
 ```
--  ReentrantLock.Sync.nonfairTryAcquire()
+
+- ReentrantLock.Sync.nonfairTryAcquire()
 
 ```
 final boolean nonfairTryAcquire(int acquires) {
@@ -421,6 +428,7 @@ public boolean tryLock(long timeout, TimeUnit unit) throws InterruptedException 
         return sync.tryAcquireNanos(1, unit.toNanos(timeout));
  }
 ```
+
 - abstractQueuedSynchronizer.tryAcquireNanos()
 
 ````
@@ -433,6 +441,7 @@ public final boolean tryAcquireNanos(int arg, long nanosTimeout) throws Interrup
    return tryAcquire(arg) || doAcquireNanos(arg, nanosTimeout);
 }
 ````
+
 - AbstractQueuedSynchronizer.doAcquireNanos()
 
 ````
@@ -479,6 +488,7 @@ private boolean doAcquireNanos(int arg, long nanosTimeout) throws InterruptedExc
 #### 释放锁
 
 - java.util.concurrent.locks.ReentrantLock.unlock()
+
 ```
 
 public void unlock() {
@@ -504,6 +514,7 @@ public final boolean release(int arg) {
         return false;
 }
 ````
+
 - java.util.concurrent.locks.ReentrantLock.Sync.tryRelease
 
 ````

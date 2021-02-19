@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.nivelle.rpc.netty.codec.jackcon;
 
@@ -16,66 +16,66 @@ import com.fasterxml.jackson.core.JsonToken;
  **/
 public class JsonParserDemo {
 
-	private static final String FILE_PATH = "d:\\user.json";
+    private static final String FILE_PATH = "d:\\user.json";
 
-	/**
-	 * 
-	 */
-	public JsonParserDemo() {
-		// TODO Auto-generated constructor stub
-	}
+    /**
+     *
+     */
+    public JsonParserDemo() {
+        // TODO Auto-generated constructor stub
+    }
 
-	/**
-	 * @param args
-	 * @throws IOException
-	 * @throws JsonParseException
-	 */
-	public static void main(String[] args) throws JsonParseException,
-			IOException {
+    /**
+     * @param args
+     * @throws IOException
+     * @throws JsonParseException
+     */
+    public static void main(String[] args) throws JsonParseException,
+            IOException {
 
-		JsonFactory jfactory = new JsonFactory();
+        JsonFactory jfactory = new JsonFactory();
 
-		JsonParser jParser = jfactory.createJsonParser(new File(FILE_PATH));
+        JsonParser jParser = jfactory.createJsonParser(new File(FILE_PATH));
 
-		// loop until token equal to "}"
-		while (jParser.nextToken() != JsonToken.END_OBJECT) {
+        // loop until token equal to "}"
+        while (jParser.nextToken() != JsonToken.END_OBJECT) {
 
-			String fieldname = jParser.getCurrentName();
-			if ("name".equals(fieldname)) {
+            String fieldname = jParser.getCurrentName();
+            if ("name".equals(fieldname)) {
 
-				// current token is "name",
-				// move to next, which is "name"'s value
-				jParser.nextToken();
-				System.out.println(jParser.getText()); // display mkyong
+                // current token is "name",
+                // move to next, which is "name"'s value
+                jParser.nextToken();
+                System.out.println(jParser.getText()); // display mkyong
 
-			}
+            }
 
-			if ("age".equals(fieldname)) {
+            if ("age".equals(fieldname)) {
 
-				// current token is "age",
-				// move to next, which is "name"'s value
-				jParser.nextToken();
-				System.out.println(jParser.getIntValue()); // display 29
+                // current token is "age",
+                // move to next, which is "name"'s value
+                jParser.nextToken();
+                System.out.println(jParser.getIntValue()); // display 29
 
-			}
+            }
 
-			if ("messages".equals(fieldname)) {
+            if ("messages".equals(fieldname)) {
 
-				jParser.nextToken(); // current token is "[", move next
+                jParser.nextToken(); // current token is "[", move next
 
-				// messages is array, loop until token equal to "]"
-				while (jParser.nextToken() != JsonToken.END_ARRAY) {
+                // messages is array, loop until token equal to "]"
+                while (jParser.nextToken() != JsonToken.END_ARRAY) {
 
-					// display msg1, msg2, msg3
-					System.out.println(jParser.getText());
+                    // display msg1, msg2, msg3
+                    System.out.println(jParser.getText());
 
-				}
+                }
 
-			}
+            }
 
-		}
-		jParser.close();
+        }
+        jParser.close();
 
-	}
+    }
 
 }

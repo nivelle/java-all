@@ -26,7 +26,6 @@ public class LogAppendInfo {
 
 2. RollParams:定义用于控制日志段是否切分(roll)的数据结构
 
-
 ### Log Object
 
 ````
@@ -255,7 +254,7 @@ private def removeTempFilesAndCollectSwapFiles(): Set[File] = {
 
 ````
 
-2. loadSegmentFiles 
+2. loadSegmentFiles
 
 ````
 
@@ -534,7 +533,7 @@ def read(startOffset: Long,
 
 ````
 
-#### recover 
+#### recover
 
 - 恢复日志段，broker启动时从磁盘上加载所有日志段消息到内存中，并创建相应的LogSegment对象实例
 

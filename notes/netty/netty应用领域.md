@@ -36,7 +36,6 @@
 
 #### 异步非阻塞模式AIO
 
-
 ### 不支持AIO
 
 - windows 实现成熟，但是很少用来做服务器
@@ -48,6 +47,7 @@
 - 范型+反射+工厂实现IO模式切换
 - NioEventLoopGroup 切换
 - NioServerSocketChannel 切换
+
 ````
 public class ReflectiveChannelFactory<T extends Channel> implements ChannelFactory<T> {
 

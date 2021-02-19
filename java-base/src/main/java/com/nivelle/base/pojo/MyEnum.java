@@ -6,11 +6,11 @@ package com.nivelle.base.pojo;
  * @author nivelle
  * @date 2019/06/19
  */
-public enum MyEnum{
+public enum MyEnum {
 
-    ONE(1,"one"),
-    TWO(2,"two"),
-    THIRD(3,"third");
+    ONE(1, "one"),
+    TWO(2, "two"),
+    THIRD(3, "third");
 
     private int type;
     private String desc;

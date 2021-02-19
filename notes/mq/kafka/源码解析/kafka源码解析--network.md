@@ -1,16 +1,17 @@
 ## 请求
+
 ### request
+
 ### shutdownRequest
 
-当Broker进程关闭时，请求处理器会发送ShutDownRequest到专属的请求处理线程。
-该线程接收到此请求后，会触发一系列的Broker关闭逻辑
+当Broker进程关闭时，请求处理器会发送ShutDownRequest到专属的请求处理线程。 该线程接收到此请求后，会触发一系列的Broker关闭逻辑
 
 ### request 请求属性
 
-#### processor 
+#### processor
 
 - processor是Processor 线程的序号，即这个请求是由哪个Processor线程接收处理的。 Broker端参数 **num.network.threads** 控制了Broker每个监听器上创建的Processor线程数
-  
+
 - 线程序号的作用：当Request 被后面的IO线程处理完毕后，还需要依靠Processor 将 response 发送给请求发送方。
 
 - Processor 线程仅仅是网络接收线程，不会执行真正的Request 请求处理逻辑，那是I/O线程负责的事情
@@ -49,8 +50,8 @@ memoryPool 表示源码定义的一个非阻塞式的内存缓冲区，主要作
 
 #### buffer
 
-保存Request对象内容的字节缓存区。 request发送方必须按照Kafka的RPC 协议规定的格式向该缓存区写入字节，否则抛出InvalidRequestException异常。
-这个逻辑主要是由 RequestContext 的 parseRequest方法实现的。
+保存Request对象内容的字节缓存区。 request发送方必须按照Kafka的RPC 协议规定的格式向该缓存区写入字节，否则抛出InvalidRequestException异常。 这个逻辑主要是由 RequestContext 的
+parseRequest方法实现的。
 
 ````
 
@@ -108,21 +109,22 @@ public RequestAndSize parseRequest(ByteBuffer buffer) {
 
 - request : 每个Response 对象都要保存它对应的Request对象
 
-
 ### RequestChannel: 传输 Request/Response 的通道
 
-- requestQueue : 每个 RequestChannel 对象实例创建时，会定义一个队列来保存 Broker 接收到的各类请求，这个队列被称为请求队列或 Request 队列。Kafka 使用 Java 提供的阻塞队列 ArrayBlockingQueue 实现这个请求队列，并利用它天然提供的线程安全性来保证多个线程能够并发安全高效地访问请求队列
+- requestQueue : 每个 RequestChannel 对象实例创建时，会定义一个队列来保存 Broker 接收到的各类请求，这个队列被称为请求队列或 Request 队列。Kafka 使用 Java 提供的阻塞队列
+  ArrayBlockingQueue 实现这个请求队列，并利用它天然提供的线程安全性来保证多个线程能够并发安全高效地访问请求队列
 
-- queueSize: 当 Broker 启动时，SocketServer 组件会创建 RequestChannel 对象，并把 Broker 端参数 **queued.max.requests**赋值给 queueSize。因此，在默认情况下，每个 RequestChannel 上的队列长度是 500
+- queueSize: 当 Broker 启动时，SocketServer 组件会创建 RequestChannel 对象，并把 Broker 端参数 **queued.max.requests**赋值给
+  queueSize。因此，在默认情况下，每个 RequestChannel 上的队列长度是 500
 
 - processors: processors封装的是 RequestChannel 下辖的 Processor 线程池。每个 Processor 线程负责具体的请求处理逻辑
-
 
 #### RequestChannel 的作用：Processor 管理
 
 - 创建Processor线程池，并使用java 的 concurrentHashMap 保存， key 是 processor 序号， value 是 Processor 实例。
 
-- 当前kafka broker 端的所有网络线程都是 requestChannel中维护的。每当 Broker 启动时，它都会调用 addProcessor 方法，向 RequestChannel 对象添加 **num.network.threads** 个 Processor 线程； num.network.threads 是可以动态修改的。
+- 当前kafka broker 端的所有网络线程都是 requestChannel中维护的。每当 Broker 启动时，它都会调用 addProcessor 方法，向 RequestChannel 对象添加 **
+  num.network.threads** 个 Processor 线程； num.network.threads 是可以动态修改的。
 
 #### RequestChannel 的作用： 处理 request 和 response
 
@@ -237,7 +239,6 @@ private[kafka] class Acceptor(val endPoint: EndPoint,
 
 ````
 
-
 - endPoint: 定义kafka连接信息，包括主机名和端口信息，用于创建Server Socekt
 
 - sendBufferSize: 设置SocketOptions的SO_SNDBUF,用于出站网络I/O 底层缓冲区大小。默认值是**socket.send.buffer.bytes** 也就是100KB
@@ -313,6 +314,7 @@ def run(): Unit = {
 ##### 处理单个TCP连接上所有请求的线程。 每个SocketServer实例默认创建若干个（num.network.threads）Processor线程。负责将接收到的Request添加到RequestChannel的Request队列上，同时还负责将Response返回给Request发送方，真正创建连接以及分发请求的地方
 
 ##### Processor 从底层 Socket 通道不断读取已接收到的网络请求，然后转换成 Request 实例，并将其放入到 Request 队列
+
 ````
 
 override def run(): Unit = {
@@ -346,13 +348,13 @@ override def run(): Unit = {
 
 #### processor创建了三个队列
 
-- newConnections: 保存要创建的新连接信息。就是SocketChannel 对象，默认上限是20的队列，每当processor线程接收新的连接请求时，都会将对应的SocketChannel放入这个队列。后面在创建连接时（configureNewConnection时）就从该队列中取出SocketChannel,然后注册新的连接
+- newConnections: 保存要创建的新连接信息。就是SocketChannel
+  对象，默认上限是20的队列，每当processor线程接收新的连接请求时，都会将对应的SocketChannel放入这个队列。后面在创建连接时（configureNewConnection时）就从该队列中取出SocketChannel,然后注册新的连接
 
-- inflightResponse: 临时Response队列。当Processor线程将Response返还给Request发送方之后，还要将Response放入这个临时队列。有些 Response 回调逻辑要在 Response 被发送回发送方之后，才能执行，因此需要暂存在一个临时队列里面
+- inflightResponse: 临时Response队列。当Processor线程将Response返还给Request发送方之后，还要将Response放入这个临时队列。有些 Response 回调逻辑要在 Response
+  被发送回发送方之后，才能执行，因此需要暂存在一个临时队列里面
 
 - responseQueue: 每个Processor线程会维护自己的Response队列，response队列里保存着需要返还给发送方的所有Response对象。
-
-
 
 ### KafkaRequestHandlerPool组件
 
@@ -457,7 +459,8 @@ class KafkaRequestHandlerPool(
 
 ### socketServer 请求的优先级
 
-- Data plane 和 Control plane ： 数据类请求和控制类请求；Controller 与 Broker 交互的请求类型有3种： LeaderAndIsrRequest、StopReplicaRequest、UpdateMetadataRequest 都属于控制类请求，PRODUCE 和 FETCH 属于数据类请求
+- Data plane 和 Control plane ： 数据类请求和控制类请求；Controller 与 Broker 交互的请求类型有3种：
+  LeaderAndIsrRequest、StopReplicaRequest、UpdateMetadataRequest 都属于控制类请求，PRODUCE 和 FETCH 属于数据类请求
 
 - 监听器（listener）: 源码区分数据类请求和控制类请求不同处理方式的主要途径，就是通过监听器。也就是说，创建多组监听器分别来执行数据类和控制类请求的处理代码
 
@@ -486,8 +489,9 @@ case class EndPoint(host: String, port: Int, listenerName: ListenerName, securit
 
 - host:broker主机名
 - port: broker端口号
-- listenerName:监听器名字。 目前预定义的名字包括：PLAINTEXT 、SSL 、SASL_PLAINTEXT和SASL_SSL. 
-- securityProtocol:监听器使用的安全协议。支持4安全协议：PLAINTEXT、SSL、SASL_PLAINTEXT、SASL_SSL. **Broker 端参数 listener.security.protocol.map 用于指定不同名字的监听器都使用哪种安全协议**
+- listenerName:监听器名字。 目前预定义的名字包括：PLAINTEXT 、SSL 、SASL_PLAINTEXT和SASL_SSL.
+- securityProtocol:监听器使用的安全协议。支持4安全协议：PLAINTEXT、SSL、SASL_PLAINTEXT、SASL_SSL. **Broker 端参数 listener.security.protocol.map
+  用于指定不同名字的监听器都使用哪种安全协议**
 
 ````
 
@@ -583,11 +587,10 @@ private def createControlPlaneAcceptorAndProcessor(
 
 ### kafka网络请求全流程
 
-
 [![sYhTW8.jpg](https://s3.ax1x.com/2021/01/12/sYhTW8.jpg)](https://imgchr.com/i/sYhTW8)
 
-
-- 第一步： 接收clients 或者 其他 broker 发送的请求，通过accept方法，创建对应的SocketChannel,然后将该Channel实例传给assignNewConnection方法，等待Processor线程将该Socket连接请求，放入到维护的待处理队列中。
+- 第一步： 接收clients 或者 其他 broker
+  发送的请求，通过accept方法，创建对应的SocketChannel,然后将该Channel实例传给assignNewConnection方法，等待Processor线程将该Socket连接请求，放入到维护的待处理队列中。
 
 后续Processor线程的run方法不断从该队列中取出这些Socket连接请求，然后创建对应的Socket连接;
 
@@ -632,7 +635,8 @@ if (ready > 0) {
 
 - 第二步：Processor 线程处理请求，并放入请求队
 
-一旦 Processor 线程成功地向 SocketChannel 注册了 Selector，Clients 端或其他 Broker 端发送的请求就能通过该 SocketChannel 被获取到，具体的方法是 Processor 的 processCompleteReceives
+一旦 Processor 线程成功地向 SocketChannel 注册了 Selector，Clients 端或其他 Broker 端发送的请求就能通过该 SocketChannel 被获取到，具体的方法是 Processor 的
+processCompleteReceives
 
 ````
 
@@ -708,10 +712,10 @@ def run(): Unit = {
 
 ````
 
-
 - 第四步：KafkaRequestHandler 线程将 Response 放入 Processor 线程的 Response 队列
 
-这一步的工作由 KafkaApis 类完成。当然，这依然是由 KafkaRequestHandler 线程来完成的。KafkaApis.scala 中有个 sendResponse 方法，将 Request 的处理结果 Response 发送出去。本质上，它就是调用了 RequestChannel 的 sendResponse 方法
+这一步的工作由 KafkaApis 类完成。当然，这依然是由 KafkaRequestHandler 线程来完成的。KafkaApis.scala 中有个 sendResponse 方法，将 Request 的处理结果 Response
+发送出去。本质上，它就是调用了 RequestChannel 的 sendResponse 方法
 
 ````
 

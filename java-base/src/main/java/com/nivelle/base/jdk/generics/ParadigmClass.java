@@ -12,7 +12,8 @@ public class ParadigmClass<E> {
 
 
     /**
-     *  虽然在方法中使用了泛型，但是这并不是一个泛型方法
+     * 虽然在方法中使用了泛型，但是这并不是一个泛型方法
+     *
      * @return
      */
     public E getElement() {

@@ -24,11 +24,11 @@ public final class SerializationServer {
         try {
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)
-             .channel(NioServerSocketChannel.class)
-             .option(ChannelOption.SO_BACKLOG, 100)
-             .childOption(ChannelOption.SO_KEEPALIVE, true)
-             .handler(new LoggingHandler(LogLevel.INFO))
-             .childHandler(new SerializationServerHandlerInitializer());
+                    .channel(NioServerSocketChannel.class)
+                    .option(ChannelOption.SO_BACKLOG, 100)
+                    .childOption(ChannelOption.SO_KEEPALIVE, true)
+                    .handler(new LoggingHandler(LogLevel.INFO))
+                    .childHandler(new SerializationServerHandlerInitializer());
 
             // Start the server.
             ChannelFuture f = b.bind(PORT).sync();

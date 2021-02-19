@@ -82,9 +82,10 @@ int connect(int sockfd, const struct sockaddr *servaddr, socklen_t addrlen)
 
 1. 三次握手无法建立，客户端发出的SYN包没有任何响应，于是返回TIMEOUT错。--ip写错
 
-2. 客户端收到了RST(复位)回答，这时客户端会立即返回CONNECTION REFUSED 错误。这种情况比较常见于客户端发送连接请求时的请求端口写错，因为RST是TCP在发送错误时发生的一种TCP分节。产生RET三个条件：目的地为某端口的SYN
-到达，然而该端口上没有正在监听的服务器；TCP想取消一个已有连接；TCP接受到一个根本不存在的连接上的分节。--端口错误
-   
+2. 客户端收到了RST(复位)回答，这时客户端会立即返回CONNECTION REFUSED
+   错误。这种情况比较常见于客户端发送连接请求时的请求端口写错，因为RST是TCP在发送错误时发生的一种TCP分节。产生RET三个条件：目的地为某端口的SYN
+   到达，然而该端口上没有正在监听的服务器；TCP想取消一个已有连接；TCP接受到一个根本不存在的连接上的分节。--端口错误
+
 3. 客户端发出的SYN包在网路上引起"destination unreachable”，即目的不可达错误。 --客户端和服务端路由不通
 
 #### 握手成功
@@ -120,6 +121,7 @@ ssize_t send (int socketfd, const void *buffer, size_t size, int flags)
 ssize_t sendmsg(int sockfd, const struct msghdr *msg, int flags)
 
 ````
+
 - 第一个函数是常见的文件写函数，如果把 socketfd 换成文件描述符，就是普通的文件写入。
 
 - 如果想指定选项，发送带外数据，就需要使用第二个带 flag 的函数。所谓带外数据，是一种基于 TCP 协议的紧急数据，用于客户端 - 服务器在特定场景下的紧急处理。
@@ -146,12 +148,12 @@ read 函数要求操作系统内核从套接字描述字socketfd读取多少个�
 
 如果返回值为-1，表示出错。
 
-
 ### 四次挥手： TIME_WAIT 详解
 
 [![rordj1.png](https://s3.ax1x.com/2020/12/28/rordj1.png)](https://imgchr.com/i/rordj1)
 
-- TIME_WAIT 停留持续时间是固定的，是最长分节生命期MSL(maximum segment lifetime)的两倍，2MSL. TCP_TIME_WAIT_LEN 值为60秒，linux 系统停留在TIME_WAIT的时间为固定的60s
+- TIME_WAIT 停留持续时间是固定的，是最长分节生命期MSL(maximum segment lifetime)的两倍，2MSL. TCP_TIME_WAIT_LEN 值为60秒，linux
+  系统停留在TIME_WAIT的时间为固定的60s
 
 - 只有发起连接终止的一方会进入TIME_WAIT状态。
 
@@ -159,9 +161,10 @@ read 函数要求操作系统内核从套接字描述字socketfd读取多少个�
 
 1. 主动关闭方应用调用close函数，该端TCP发送一个FIN包，表示需要关闭连接，之后主动关闭方进入FIN_WAIT_1状态
 
-2. 接收到FIN包的对端执行被动关闭，这个FIN由TCPx协议处理。 TCP协议栈为FIN包插入一个文件结束符EOF到接收缓冲区中，应用程序可以通过read调用来感知这个FIN包。这个EOF会被放在已经排队等候的其他已接收的数据之后，这意味接收端要处理这种异常，表示EOF之后无
-额外数据到达。被动关闭方进入CLOSE_WAIT状态
-   
+2. 接收到FIN包的对端执行被动关闭，这个FIN由TCPx协议处理。
+   TCP协议栈为FIN包插入一个文件结束符EOF到接收缓冲区中，应用程序可以通过read调用来感知这个FIN包。这个EOF会被放在已经排队等候的其他已接收的数据之后，这意味接收端要处理这种异常，表示EOF之后无
+   额外数据到达。被动关闭方进入CLOSE_WAIT状态
+
 3. 被动关闭方将读到这个EOF，应用程序也调用close关闭它的套接字，这导致它的TCP也发送一个FIN包。 被动关闭方进入LAST_ACK
 
 4. 主动关闭方接收到对方的FIN包，并确认这个FIN包。主动关闭方进入TIME_WAIT状态，而接收到ACK的被动关闭方进入CLOSED状态。经过2MSL时间之后，主动关闭方也进入CLOSED状态。
@@ -170,11 +173,14 @@ read 函数要求操作系统内核从套接字描述字socketfd读取多少个�
 
 1. 确保最后的ACK能让被动关闭方接收，从而帮助其正常关闭。
 
-假设报文传输出错，需要重传。如果主机1 的 ACK 报文没有传输成功，那么主机2 就会重新发送FIN报文。 如果主机1没有维护TIME_WAIT 状态，直接进入CLOSED状态，它就会失去当前状态上下文，只能回复一个RET操作，从而导致被动关闭方出现错误 现在主机1处于TIME_WAIT的状态，可以在接收到FIN报文之后，重新发送一个ACK 报文，使得主机2进入正常的CLOSED 状态
+假设报文传输出错，需要重传。如果主机1 的 ACK 报文没有传输成功，那么主机2 就会重新发送FIN报文。 如果主机1没有维护TIME_WAIT
+状态，直接进入CLOSED状态，它就会失去当前状态上下文，只能回复一个RET操作，从而导致被动关闭方出现错误 现在主机1处于TIME_WAIT的状态，可以在接收到FIN报文之后，重新发送一个ACK 报文，使得主机2进入正常的CLOSED
+状态
 
 2. 相同地址的连接 和 报文迷走 有关,问了让旧连接的重复分节在网络中自然迷失
 
-经过2MSL时间，让两个方向上的分组都被丢弃，使得原来连接的分组在网路中都自然消失，再出现的分组都是新化身所产生的。 2MSL的时间都是从主机1接收到FIN后发送ACK开始计时，如果在TIME_WAIT时间内，因为主机1的ACK没有传输到主机2，主机1又接收到了主机2重发的FIN报文，那么2MSL将重新计时。
+经过2MSL时间，让两个方向上的分组都被丢弃，使得原来连接的分组在网路中都自然消失，再出现的分组都是新化身所产生的。
+2MSL的时间都是从主机1接收到FIN后发送ACK开始计时，如果在TIME_WAIT时间内，因为主机1的ACK没有传输到主机2，主机1又接收到了主机2重发的FIN报文，那么2MSL将重新计时。
 
 3. MSL RFC793协议规定为2分钟，linux 实际设置为30秒
 
@@ -196,14 +202,14 @@ read 函数要求操作系统内核从套接字描述字socketfd读取多少个�
 
 ##### setsockopt 设置SO_REUSEADDR ，解决端口复用，告诉内核即使TIME_WAIT状态的套接字，也可以继续使用它作为新的套集字使用
 
-
 ### 连接关闭
 
-- close 
+- close
 
 ````
 int close(int sockfd)
 ````
+
 1. 这个函数会对套接字引用计数减一，一旦发现套接字引用计数到0，就会对套接字进行彻底释放，并且会关闭TCP两个方向的数据流
 
 2. 在输入方向，系统内核会将该套接字设置为不可读，任何读操作都会返回异常
@@ -233,7 +239,6 @@ int shutdown(int sockfd,int howto)
 
 - close 的引用计数导致不一定会发出FIN报文，而showdown 则总是会发出FIN结束报文，这在我们打算关闭连接通知对端的时候，非常重要。
 
-
 ### Keep-Alive
 
 定义一个时间段，在这个时间段内，如果没有任何连接相关的活动，TCP保活机制会开始作用，每隔一个时间间隔，发送一个探测报文，该探测报文包含的数据非常少，如果连续几个探测报文都没有得到响应，则认为当前的TCP链接
@@ -246,7 +251,6 @@ int shutdown(int sockfd,int howto)
 - net.ipv4.tcp_keepalive_intvl：默认值75秒
 
 - net.ipv4.tcp_keepalive_probes：默认为9
-
 
 #### TCP保活机制默认是关闭的，可分别在连接的两个方向开启，也可单独在一个方向开启。
 

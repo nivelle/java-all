@@ -8,18 +8,18 @@ import java.util.List;
 
 public class PermGenOomMock {
 
-    public static void main(String []args){
-        URL url =null;
+    public static void main(String[] args) {
+        URL url = null;
         List<ClassLoader> classLoaderList = new ArrayList<ClassLoader>();
         try {
             url = new File("/tmp").toURI().toURL();
             URL[] urls = {url};
-            while (true){
+            while (true) {
                 ClassLoader loader = new URLClassLoader(urls);
                 classLoaderList.add(loader);
                 loader.loadClass("com.nivelle.spring.javacore.instance.Foo");
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

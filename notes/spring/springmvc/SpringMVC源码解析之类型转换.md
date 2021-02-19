@@ -225,6 +225,7 @@ public interface ConverterFactory<S, R> {
 }
 
 ```
+
 - GenericConverter
 
 ````
@@ -280,7 +281,6 @@ public interface ConditionalConverter {
 public interface Formatter<T> extends Printer<T>, Parser<T> {
 }
 ```
-
 
 #### HttpMessage 转换
 
@@ -357,7 +357,7 @@ protected <T> Object readWithMessageConverters(HttpInputMessage inputMessage, Me
 
 ```
 
-##### public abstract class AbstractMessageConverterMethodProcessor extends AbstractMessageConverterMethodArgumentResolver implements HandlerMethodReturnValueHandler 
+##### public abstract class AbstractMessageConverterMethodProcessor extends AbstractMessageConverterMethodArgumentResolver implements HandlerMethodReturnValueHandler
 
 - 返参转 HttpOutMessage
 

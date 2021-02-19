@@ -37,6 +37,7 @@ select count(distinct(gender)) from students; //性别种类数
 |                       3 |
 +-------------------------+
 ````
+
 #### order by
 
 ````
@@ -54,6 +55,7 @@ select * from students where (age between 18 and 34) and gender = 1 order by hig
 +----+--------+-----+--------+--------+--------+---------------------+---------------------+----+
 
 ````
+
 #### group by
 
 ````
@@ -137,10 +139,13 @@ select sum(age),gender from students group by gender limit 1,2; //对分组后�
 |      183 | girl   |
 +----------+--------+
 ````
+
 #### 统计group by 之后的count()
+
 ````
 select count(*) from(SELECT count(*) FROM 表名 WHERE 条件 GROUP BY id ) a ;
 ````
+
 #### 关联查询
 
 ``````
@@ -337,7 +342,9 @@ select * from students where high > (select avg(high) from students);
 | 27 | 老19      |  12 | 173.04 | girl   |    111 | 2020-06-17 18:27:48 | 2020-06-17 18:27:48 |  1 |
 +----+-----------+-----+--------+--------+--------+---------------------+---------------------+----+
 ``````
+
 ##### 列子查询: 返回的结果是一列(一列多行)
+
 ``````
 select id,name from students where cls_id in (select id from classes); //子查询为 id列的多行数据
 +----+-----------+
@@ -372,6 +379,7 @@ select id,name from students where cls_id in (select id from classes); //子查�
 | 27 | 老19      |
 +----+-----------+
 ``````
+
 ### 行子查询: 返回的结果是一行(一行多列)
 
 ### sql 执行顺序
@@ -396,7 +404,6 @@ create database teambuild CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 #### 查看数据库版本
 
-
 ```
 select version();
 
@@ -420,7 +427,6 @@ mysql> select @@global.tx_isolation;
 
 #### 查看当前默认的数据库引擎
 
-
 ```
 show engines;  
 
@@ -438,6 +444,7 @@ show engines;
 | CSV                | YES     | CSV storage engine                                             | NO           | NO   | NO         |
 +--------------------+---------+----------------------------------------------------------------+--------------+------+------------+
 ```
+
 #### 查看当前的查询状态
 
 ```
@@ -472,6 +479,7 @@ show databases;
 use databases;
 
 ```
+
 #### 删除某个数据库
 
 ```
@@ -506,6 +514,7 @@ CREATE TABLE `activity` (
 ```
 show tables;
 ```
+
 #### 删除表
 
 ```
@@ -517,6 +526,7 @@ drop table tableName;
 ```
 alter table oldTableName rename to newTableName;
 ```
+
 #### 修改列
 
 ```
@@ -530,6 +540,7 @@ alter table tableName change oldName newName;
 alter table tableName add column 列名 类型；
 
 ```
+
 #### 修改列属性
 
 ```
@@ -566,6 +577,7 @@ CREATE TABLE `t` (
 select city,name,age from t where city='杭州' order by name limit 1000  ;
 
 ````
+
 #### 全字段排序
 
 - MySQL 会给每个线程分配一块内存用于排序，称为 sort_buffer。
@@ -586,7 +598,8 @@ select city,name,age from t where city='杭州' order by name limit 1000  ;
 
 [![y3fkz6.md.jpg](https://s3.ax1x.com/2021/02/04/y3fkz6.md.jpg)](https://imgchr.com/i/y3fkz6)
 
-- sort_buffer_size，就是 MySQL 为排序开辟的内存（sort_buffer）的大小。如果要排序的数据量小于 sort_buffer_size，排序就在内存中完成。但如果排序数据量太大，内存放不下，则不得不利用磁盘临时文件辅助排序。
+- sort_buffer_size，就是 MySQL 为排序开辟的内存（sort_buffer）的大小。如果要排序的数据量小于
+  sort_buffer_size，排序就在内存中完成。但如果排序数据量太大，内存放不下，则不得不利用磁盘临时文件辅助排序。
 
 - 外部排序一般使用归并排序算法。可以这么简单理解，MySQL 将需要排序的数据分成 12 份，每一份单独排序后存在这些临时文件中。然后把这 12 个有序文件再合并成一个有序的大文件
 
@@ -617,12 +630,12 @@ select city,name,age from t where city='杭州' order by name limit 1000  ;
 #### 比较
 
 - 如果 MySQL 实在是担心排序内存太小，会影响排序效率，才会采用 rowid 排序算法，这样排序过程中一次可以排序更多行，但是需要再回到原表去取数据。
-  
+
 - 如果 MySQL 认为内存足够大，会优先选择全字段排序，把需要的字段都放到 sort_buffer 中，这样排序后就会直接从内存里面返回查询结果了，不用再回到原表去取数据。
-  
+
 - 这也就体现了 MySQL 的一个设计思想：如果内存够，就要多利用内存，尽量减少磁盘访问。对于 InnoDB 表来说，rowid 排序会要求回表多造成磁盘读，因此不会被优先选择。
 
-####  建立 （city,name）联合索引
+#### 建立 （city,name）联合索引
 
 ````
 alter table t add index city_user(city, name);
@@ -636,7 +649,6 @@ alter table t add index city_user(city, name);
 3. 从索引 (city,name) 取下一个记录主键 id；
 
 4. 重复步骤 2、3，直到查到第 1000 条记录，或者是不满足 city='杭州’条件时循环结束
-
 
 [![y3II4H.md.jpg](https://s3.ax1x.com/2021/02/05/y3II4H.md.jpg)](https://imgchr.com/i/y3II4H)
 

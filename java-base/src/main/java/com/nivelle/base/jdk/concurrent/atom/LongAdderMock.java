@@ -16,8 +16,8 @@ public class LongAdderMock {
 
     /**
      * ![LongAdder](https://s1.ax1x.com/2020/04/28/J42eIJ.jpg)
-     *
-     *
+     * <p>
+     * <p>
      * LongAdder是java8中新增的原子类,在多线程环境中,它比AtomicLong性能要高出不少,特别是写多的场景。
      */
     public static void main(String[] args) throws Exception {

@@ -2,13 +2,13 @@ package com.nivelle.base.patterns.produceconsumer;
 
 /**
  * 生成者消费者模式的优势：
- *
+ * <p>
  * 1. 解耦
- *
+ * <p>
  * 2. 支持异步，并且能够平衡生产者和消费者的速度差异;生产者 - 消费者模式恰好能支持你用适量的线程
- *
+ * <p>
  * 3. 支持批量执行以提升性能
- *
+ * <p>
  * 4. 支持分阶段提交以提升性能
  *
  * @author fuxinzhong

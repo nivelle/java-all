@@ -2,8 +2,8 @@
 
 #### 第一步:prepareRefresh(); 刷新前的预处理:(Prepare this context for refreshing.)
 
-   (1) initPropertySources();//初始化一些属性设置,默认不做任何处理,留给子类自定义属性设置方法;//servletContextInitParams 和 servletConfigInitParams
-    
+(1) initPropertySources();//初始化一些属性设置,默认不做任何处理,留给子类自定义属性设置方法;//servletContextInitParams 和 servletConfigInitParams
+
        - AbstractRefreshableWebApplicationContext
        
          - ConfigurableEnvironment env = getEnvironment();
@@ -11,21 +11,22 @@
          - ((ConfigurableWebEnvironment) env).initPropertySources(this.servletContext, this.servletConfig);
          
            - WebApplicationContextUtils.initServletPropertySources(getPropertySources(), servletContext, servletConfig);//解析 servletContextInitParams 和 servletConfigInitParams 参数
-   
-   (2) getEnvironment().validateRequiredProperties();//校验非空属性是否设置了值，没有设置的话抛出异常(MissingRequiredPropertiesException);//Validate that all properties marked as required are resolvable:see ConfigurablePropertyResolver#setRequiredProperties
-   
+
+(2) getEnvironment().validateRequiredProperties();//校验非空属性是否设置了值，没有设置的话抛出异常(MissingRequiredPropertiesException)
+;//Validate that all properties marked as required are resolvable:see ConfigurablePropertyResolver#setRequiredProperties
+
        - systemEnvironment
       
        - systemProperties
-       
-   (3) earlyApplicationEvents= new LinkedHashSet<ApplicationEvent>(); //保存容器中的一些早期的事件,如果存在则先清理掉旧的监听器
-  
+
+(3) earlyApplicationEvents= new LinkedHashSet<ApplicationEvent>(); //保存容器中的一些早期的事件,如果存在则先清理掉旧的监听器
+
 #### 第二步:ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory(): 获得一个刷新的bean容器 （Tell the subclass to refresh the internal bean factory.）
 
-   ##### 子类实现: AbstractRefreshableApplicationContext //子类真正的执行配置加载操作,在其他初始化工作之前就先执行完毕。返回一个单例的BeanFactory,这个操作是非线程安全的，会抛出IllegalStateException异常
-   
-   (1) refreshBeanFactory(): 刷新(CAS刷新容器状态)并创建，this.beanFactory = new DefaultListableBeanFactory()并设置id;
-     
+##### 子类实现: AbstractRefreshableApplicationContext //子类真正的执行配置加载操作,在其他初始化工作之前就先执行完毕。返回一个单例的BeanFactory,这个操作是非线程安全的，会抛出IllegalStateException异常
+
+(1) refreshBeanFactory(): 刷新(CAS刷新容器状态)并创建，this.beanFactory = new DefaultListableBeanFactory()并设置id;
+
        - destroyBeans()&closeBeanFactory() //如果已经存在beanFactory则先销毁旧的容器
        
        - DefaultListableBeanFactory beanFactory = createBeanFactory();
@@ -47,9 +48,9 @@
          - beanFactory.setAllowCircularReferences(this.allowCircularReferences);//设置是否允许bean之间的循环引用并自动尝试解析它们。默认值为“true”。关闭此选项可在遇到循环引用时引发异常，完全不允许循环引用
          
        - loadBeanDefinitions(beanFactory);//让子类实现
-       
-   ##### 子类实现:AnnotationConfigWebApplicationContext 
-         
+
+##### 子类实现:AnnotationConfigWebApplicationContext
+
          - AnnotatedBeanDefinitionReader reader = getAnnotatedBeanDefinitionReader(beanFactory);
 		
          - ClassPathBeanDefinitionScanner scanner = getClassPathBeanDefinitionScanner(beanFactory);
@@ -64,11 +65,10 @@
 	     
 	     - String[] configLocations = getConfigLocations();//获得 XmlWebApplicationContext 的资源路径,先reader.register(new Class[]{clazz}) 若异常 scanner.scan(new String[]{configLocation})
 
-  
-   (2) getBeanFactory(): 返回刚才创建的BeanFactory对象 DefaultListableBeanFactory;
-	
+(2) getBeanFactory(): 返回刚才创建的BeanFactory对象 DefaultListableBeanFactory;
+
 #### 第三步:prepareBeanFactory(beanFactory):BeanFactory的预准备工作（BeanFactory进行一些设置;
-  
+
 ```
         // Tell the internal bean factory to use the context's class loader etc.
         //设置类加载器：存在则直接设置/不存在则新建一个默认类加载器
@@ -123,36 +123,38 @@
 ```
 
 #### 第四步:postProcessBeanFactory(beanFactory);
-     
-   - 子类通过重写这个方法来在BeanFactory创建并预准备完成以后做进一步的设置;
-   
+
+- 子类通过重写这个方法来在BeanFactory创建并预准备完成以后做进一步的设置;
+
    ````  
     它在spring容器加载了bean的定义文件之后，在bean实例化之前执行的。也就是说，Spring允许BeanFactoryPostProcessor在容器创建bean之前读取bean配置元数据，并可进行修改
    ````
-      
-   ###### 子类实现: AnnotationConfigServletWebServerApplicationContext
-            
-   - super.postProcessBeanFactory(beanFactory);
-              
-     - beanFactory.addBeanPostProcessor(new WebApplicationContextServletContextAwareProcessor(this));
-              
-     - this.scanner.scan(this.basePackages);
-              
-     - this.reader.register(ClassUtils.toClassArray(this.annotatedClasses));
+
+###### 子类实现: AnnotationConfigServletWebServerApplicationContext
+
+- super.postProcessBeanFactory(beanFactory);
+
+    - beanFactory.addBeanPostProcessor(new WebApplicationContextServletContextAwareProcessor(this));
+
+    - this.scanner.scan(this.basePackages);
+
+    - this.reader.register(ClassUtils.toClassArray(this.annotatedClasses));
 
 #### 第五步:invokeBeanFactoryPostProcessors(beanFactory):
-  
-   - Spring Boot调用AbstractApplicationContext的refresh方法，通过refresh的invokeBeanFactoryPostProcessors处理了 DeferredImportSelector 类型，完成了自动装配
+
+- Spring Boot调用AbstractApplicationContext的refresh方法，通过refresh的invokeBeanFactoryPostProcessors处理了 DeferredImportSelector
+  类型，完成了自动装配
 
    ````
    Instantiate and invoke all registered BeanFactoryPostProcessor beans,respecting explicit order if given.Must be called before singleton instantiation.
 
    在实例化之前,执行所有的BeanFactoryPostProcessor
    ````
-   ##### 委托给:PostProcessorRegistrationDelegate.invokeBeanFactoryPostProcessors(beanFactory, getBeanFactoryPostProcessors());来实现功能
-                                                 	
-   ##### 两个接口:接口 BeanDefinitionRegistryPostProcessor 继承自 BeanFactoryPostProcessor
-	
+
+##### 委托给:PostProcessorRegistrationDelegate.invokeBeanFactoryPostProcessors(beanFactory, getBeanFactoryPostProcessors());来实现功能
+
+##### 两个接口:接口 BeanDefinitionRegistryPostProcessor 继承自 BeanFactoryPostProcessor
+
    ````
    final class PostProcessorRegistrationDelegate {
        public static void invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory beanFactory, List<BeanFactoryPostProcessor> beanFactoryPostProcessors) {
@@ -324,17 +326,17 @@
            beanFactory.clearMetadataCache();
        }
    ````
-   - beanFactory.addBeanPostProcessor(new LoadTimeWeaverAwareProcessor(beanFactory));
-   
-   - beanFactory.setTempClassLoader(new ContextTypeMatchClassLoader(beanFactory.getBeanClassLoader()));
-     
-			
+
+- beanFactory.addBeanPostProcessor(new LoadTimeWeaverAwareProcessor(beanFactory));
+
+- beanFactory.setTempClassLoader(new ContextTypeMatchClassLoader(beanFactory.getBeanClassLoader()));
+
 #### 第六步:registerBeanPostProcessors,注册BeanPostProcessor(注册到beanFactory)
 
-   ##### 委托给:PostProcessorRegistrationDelegate.registerBeanPostProcessors(beanFactory, this) 来实现功能
-		
-   ##### BeanPostProcessor类型:DestructionAwareBeanPostProcessor、InstantiationAwareBeanPostProcessor、SmartInstantiationAwareBeanPostProcessor、MergedBeanDefinitionPostProcessor
-		
+##### 委托给:PostProcessorRegistrationDelegate.registerBeanPostProcessors(beanFactory, this) 来实现功能
+
+##### BeanPostProcessor类型:DestructionAwareBeanPostProcessor、InstantiationAwareBeanPostProcessor、SmartInstantiationAwareBeanPostProcessor、MergedBeanDefinitionPostProcessor
+
    ````
    public static void registerBeanPostProcessors(ConfigurableListableBeanFactory beanFactory, AbstractApplicationContext applicationContext) {
         //找出所有实现 BeanPostProcessor接口的类
@@ -430,47 +432,50 @@
    		beanFactory.addBeanPostProcessor(new ApplicationListenerDetector(applicationContext));
    	}
    ````
-   
+
 #### 第七步:initMessageSource();在SpringMVC中做初始化MessageSource组件(做国际化功能,消息绑定，消息解析)  :
 
-   （1）获取BeanFactory=>getBeanFactory()
-		
-   （2）看容器中是否有id为messageSource的,类型是MessageSource的组件如果有赋值给messageSource,如果没有自己创建一个DelegatingMessageSource的空的MessageSource,所有请求都请求到了父MessageSources;
-      //If no parent is available, it simply won't resolve any message.
-      
+（1）获取BeanFactory=>getBeanFactory()
+
+（2）看容器中是否有id为messageSource的,类型是MessageSource的组件如果有赋值给messageSource,如果没有自己创建一个DelegatingMessageSource的空的MessageSource,所有请求都请求到了父MessageSources;
+//If no parent is available, it simply won't resolve any message.
+
      ```
         MessageSource:取出国际化配置文件中的某个key的值,能按照区域信息获取;
           
      ```		
-   (3) 把创建好的MessageSource注册在容器中，以后获取国际化配置文件的值的时候，可以自动注入MessageSource;
-       
+
+(3) 把创建好的MessageSource注册在容器中，以后获取国际化配置文件的值的时候，可以自动注入MessageSource;
+
      ```
        beanFactory.registerSingleton(MESSAGE_SOURCE_BEAN_NAME, this.messageSource);	
 	   MessageSource.getMessage(String code, Object[] args, String defaultMessage, Locale locale);
 	  
      ```
-#### 第八步:initApplicationEventMulticaster();初始化事件派发器；
-		
-   (1) 获取BeanFactory=>	ConfigurableListableBeanFactory beanFactory = getBeanFactory();
 
-   (2) 从BeanFactory中获取name = "applicationEventMulticaster"的 applicationEventMulticaster;
-   
-   (3) 如果上一步没有配置则创建一个 SimpleApplicationEventMulticaster;
-   
-   (4) 将创建的ApplicationEventMulticaster添加到BeanFactory中，以后其他组件直接自动注入=>	beanFactory.registerSingleton(MESSAGE_SOURCE_BEAN_NAME, this.messageSource);
-   
-   		
+#### 第八步:initApplicationEventMulticaster();初始化事件派发器；
+
+(1) 获取BeanFactory=>    ConfigurableListableBeanFactory beanFactory = getBeanFactory();
+
+(2) 从BeanFactory中获取name = "applicationEventMulticaster"的 applicationEventMulticaster;
+
+(3) 如果上一步没有配置则创建一个 SimpleApplicationEventMulticaster;
+
+(4) 将创建的ApplicationEventMulticaster添加到BeanFactory中，以后其他组件直接自动注入=>    beanFactory.registerSingleton(
+MESSAGE_SOURCE_BEAN_NAME, this.messageSource);
+
 #### 第九步:onRefresh() 模版方法让子类实现
 
 	// Called on initialization of special beans, before instantiation of singletons.  特定bean初始化的时候调用，实例化之前调用。
-   ##### 子类重写这个方法,默认不做任何操作在容器刷新的时候可以自定义逻辑; 内嵌tomcat在这个地方实例化;
-   ##### springMVC 中 DispatcherServlet里的initStrategies()初始化九大组件也在这里实现
-   
+
+##### 子类重写这个方法,默认不做任何操作在容器刷新的时候可以自定义逻辑; 内嵌tomcat在这个地方实例化;
+
+##### springMVC 中 DispatcherServlet里的initStrategies()初始化九大组件也在这里实现
+
 ##### 具体类型子类 AbstractRefreshableWebApplicationContext;GenericWebApplicationContext;ServletWebServerApplicationContext;ReactiveWebServerApplicationContext;StaticWebApplicationContext
-   
-   ##### ServletWebServerApplicationContext;//[springBoot tomcat启动](../springboot/SpringBoot源码解析之tomcat启动过程.md)
-   
-              
+
+##### ServletWebServerApplicationContext;//[springBoot tomcat启动](../springboot/SpringBoot源码解析之tomcat启动过程.md)
+
 #### 第十步:registerListeners();
 
     ````
@@ -500,6 +505,7 @@
     		}
     	}
     ```` 
+
 #### 第十一步:finishBeanFactoryInitialization(beanFactory);//初始化所有剩下的单实例bean；
 
    ````
@@ -540,9 +546,10 @@
 
    ````
 
-   - beanFactory.preInstantiateSingletons();初始化后剩下的单实例非懒加载的bean;// Instantiate all remaining (non-lazy-init) singletons.
-   
-   ##### 子类实现: DefaultListableBeanFactory
+- beanFactory.preInstantiateSingletons();初始化后剩下的单实例非懒加载的bean;// Instantiate all remaining (non-lazy-init) singletons.
+
+##### 子类实现: DefaultListableBeanFactory
+
 ````
             // Iterate over a copy to allow for init methods which in turn register new bean definitions.
      		// While this may not be part of the regular factory bootstrap, it does otherwise work fine.
@@ -599,7 +606,9 @@
      			}
      		}
 ````
+
 ##### 合并BeanDefinition定义
+
 ````
 protected RootBeanDefinition getMergedBeanDefinition(
 			String beanName, BeanDefinition bd, @Nullable BeanDefinition containingBd)
@@ -670,25 +679,28 @@ protected RootBeanDefinition getMergedBeanDefinition(
 		}
 	}
 ````
+
 ##### 赋值之前使用后置处理器: [spring getBean()方法](./Spring源码解析之createBean()方法.md)
 
-                 
 #### 第十二步:finishRefresh() => 完成BeanFactory的初始化创建工作；IOC容器就创建完成；[Tomcat真正启动](../springboot/SpringBoot源码解析之tomcat启动过程.md)
-	
-   - clearResourceCaches()
-  
-   - initLifecycleProcessor();//初始化和生命周期有关的后置处理器；LifecycleProcessor 默认从容器中找是否有lifecycleProcessor的组件【LifecycleProcessor】；如果没有new DefaultLifecycleProcessor();加入到容器；写一个LifecycleProcessor的实现类，可以在BeanFactory void onRefresh();void onClose();	
-		
-   - getLifecycleProcessor().onRefresh();//拿到前面定义的生命周期处理器（BeanFactory）；回调onRefresh()；
-   
-   - publishEvent(new ContextRefreshedEvent(this));//发布容器刷新完成事件；
-		
-   - liveBeansView.registerApplicationContext(this);
-   
+
+- clearResourceCaches()
+
+- initLifecycleProcessor();//初始化和生命周期有关的后置处理器；LifecycleProcessor
+  默认从容器中找是否有lifecycleProcessor的组件【LifecycleProcessor】；如果没有new DefaultLifecycleProcessor()
+  ;加入到容器；写一个LifecycleProcessor的实现类，可以在BeanFactory void onRefresh();void onClose();
+
+- getLifecycleProcessor().onRefresh();//拿到前面定义的生命周期处理器（BeanFactory）；回调onRefresh()；
+
+- publishEvent(new ContextRefreshedEvent(this));//发布容器刷新完成事件；
+
+- liveBeansView.registerApplicationContext(this);
+
 ##### 子类: ServletWebServerApplicationContext
 
-   - WebServer webServer = startWebServer();//子类启动tomcat容器，发布事件(Tomcat started on port(s): XX (http) with context path '/XX')
-     		
+- WebServer webServer = startWebServer();//子类启动tomcat容器，发布事件(Tomcat started on port(s): XX (http) with context path '
+  /XX')
+
 #### root容器启动成功,监听到时间后创建 DispatcherServlet->FrameworkServlet(initServletBean())->HttpServletBean->HttpServlet
   
      

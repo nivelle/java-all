@@ -32,10 +32,10 @@ public class ThreadPerConnection implements Runnable {
         public void run() {
             try {
                 byte[] input = new byte[1024];
-                 //阻塞
+                //阻塞
                 socket.getInputStream().read(input);
                 byte[] output = process(input);
-                 //阻塞
+                //阻塞
                 socket.getOutputStream().write(output);
             } catch (Exception e) {
             }

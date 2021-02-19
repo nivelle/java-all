@@ -103,13 +103,13 @@ public class CollectionsMock {
         System.out.println("rotate after:" + list6);
 
         HashMap hashMap = Maps.newHashMap();
-        hashMap.put(1,2);
-        System.out.println(hashMap.getOrDefault(1,defaultValue()));
-        System.out.println(hashMap.getOrDefault(2,defaultValue()));
+        hashMap.put(1, 2);
+        System.out.println(hashMap.getOrDefault(1, defaultValue()));
+        System.out.println(hashMap.getOrDefault(2, defaultValue()));
 
     }
 
-    private static int defaultValue(){
+    private static int defaultValue() {
         System.out.println("default value action");
         return 1;
     }

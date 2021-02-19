@@ -1,4 +1,3 @@
-
 ### @EnableWebMvc
 
 ```
@@ -11,6 +10,7 @@
 public @interface EnableWebMvc {
 }
 ```
+
 ### DelegatingWebMvcConfiguration
 
 ````

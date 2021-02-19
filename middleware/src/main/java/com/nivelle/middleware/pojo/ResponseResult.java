@@ -12,7 +12,7 @@ public class ResponseResult<T> implements Serializable {
     /**
      * 成功：0 失败：其它
      */
-    private int code = 0 ;
+    private int code = 0;
     /**
      * 成功："ok" 失败：其它
      */
@@ -22,7 +22,7 @@ public class ResponseResult<T> implements Serializable {
      */
     private T body;
 
-    public static  ResponseResult newResponseResult(){
+    public static ResponseResult newResponseResult() {
         return new ResponseResult();
     }
 

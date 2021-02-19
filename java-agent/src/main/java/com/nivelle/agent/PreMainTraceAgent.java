@@ -18,7 +18,7 @@ public class PreMainTraceAgent {
         inst.addTransformer(new DefineTransformer(), true);
     }
 
-    static class DefineTransformer implements ClassFileTransformer{
+    static class DefineTransformer implements ClassFileTransformer {
 
         @Override
         public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {

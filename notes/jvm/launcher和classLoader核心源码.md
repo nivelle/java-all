@@ -49,7 +49,8 @@
     }
 
 ````
-####  ExtClassLoader //Launcher的静态内部类
+
+#### ExtClassLoader //Launcher的静态内部类
 
 ````
 public static Launcher.ExtClassLoader getExtClassLoader() throws IOException {
@@ -141,6 +142,7 @@ public static ClassLoader getAppClassLoader(final ClassLoader var0) throws IOExc
 - 自定义的类加载逻辑写findClass()方法中，在loadClass()方法中调用，当loadClass()方法中父加载器加载失败后，则会调用自己的findClass()方法来完成类加载，这样也就可以保证自定类加载器也符合双亲委托模式
 
 ###### URLClassLoader 实现类
+
 ````
  protected Class<?> findClass(final String name)throws ClassNotFoundException
     {
@@ -171,11 +173,12 @@ public static ClassLoader getAppClassLoader(final ClassLoader var0) throws IOExc
         return result;
     }
 ````
+
 ###### 实现类实现具体逻辑
 
 - defineClass()方法是用来将byte字节留解析成JVM能够识别的class对象,通过这个方法不仅能够通过class文件实例化class对象,也可以通过其他方式实现实例化class对象,例如通过网络接收一个类的字节码，
-然后转换为byte字节流创建对应的class对象，defineClass()方法通常与findClass()方法一起使用，一般情况下，在自定义类加载器时，会直接覆盖ClassLoader的findClass()方法并编写加载规则，取得要加载类的字节码后转换成流，然后调用defineClass()方法生成类
-的Class对象。
+  然后转换为byte字节流创建对应的class对象，defineClass()方法通常与findClass()方法一起使用，一般情况下，在自定义类加载器时，会直接覆盖ClassLoader的findClass()
+  方法并编写加载规则，取得要加载类的字节码后转换成流，然后调用defineClass()方法生成类 的Class对象。
 
 - 自定义类加载器时，会直接覆盖ClassLoader的findClass()方法并编写加载规则，取得要加载类的字节码后转换成流，然后调用defineClass()方法生成类的Class对象
 
@@ -203,6 +206,7 @@ protected Class<?> findClass(String name) throws ClassNotFoundException {
         return c;
     }
 ````
+
 - 如果直接调用defineClass()方法生成类的Class对象,这个类的Class对象并没有解析(理解为链接阶段),其解析阶段需要等待初始化阶段进行。
 
 - 如果使用 resolveClass()可以是类创建完成时同时也完成解析, 链接阶段主要是对字节码进行验证,为类变量分配内存并设置初始值同时将字节码文件中的符号引用转为直接引用.
@@ -229,8 +233,9 @@ protected Class<?> findClass(String name) throws ClassNotFoundException {
 
 - 父类委托：先让父类加载器试图加载该类，只有在父类加载器无法加载该类时才从自己的类路径加载该类
 
-- 缓存机制： 缓存机制将会保证所有加载过的Class都会被缓存，当程序中需要使用某个Class时，类加载器先从缓存区寻找该Class，只有缓存区不存在，系统才会读取该类对应的二进制数据，并将其转换成class对象，存入缓存区。这就是为什么修改了Class后，
-必须重启JVM，程序的修改才会生效。
+- 缓存机制：
+  缓存机制将会保证所有加载过的Class都会被缓存，当程序中需要使用某个Class时，类加载器先从缓存区寻找该Class，只有缓存区不存在，系统才会读取该类对应的二进制数据，并将其转换成class对象，存入缓存区。这就是为什么修改了Class后，
+  必须重启JVM，程序的修改才会生效。
 
 ### 加载类的三种方式
 
@@ -261,6 +266,7 @@ protected Class<?> findClass(String name) throws ClassNotFoundException {
 ````
 Class.forName()是一个静态方法，同样可以用来加载类，Class.forName()返回与给定的字符串名称相关联类或接口的Class对象。注意这是一种获取Class对象的方法
 ````
+
 #### 源码
 
 ````
@@ -285,6 +291,7 @@ Class.forName()是一个静态方法，同样可以用来加载类，Class.forNa
         return forName0(name, initialize, loader, caller);
     }
 ````
+
 - Class.forName():除了将类的.class文件加载到JVM中之外，还会对类进行解析，执行类中的static块
 
 - ClassLoader.loadClass():只干一件事，就是将.class文件加载到jvm中,不会执行static中的内容,只有在newInstance才会去执行static块；将类属性赋值延迟到类初始化阶段;
@@ -303,9 +310,11 @@ Class.forName()是一个静态方法，同样可以用来加载类，Class.forNa
 
 - "定义类加载器"和"初始化类加载器"
 - jvm为每个类加载器维护的一个"表"，这个表记录了所有以此类加载器为"初始类加载器"（而不是定义类加载器，所以一个类可以存在于很多的命名空间中）加载的类的列表
+
 ````
 String类，bootstrap是"定义类加载器"，AppClassLoader、ExtClassloader都是String的初始类加载器
 ````
+
 - 一个类，由不同的类加载器实例加载的话，会在方法区产生两个不同的类，彼此不可见，并且在堆中生成不同Class实例
 
 - 所有通过正常双亲委派模式的类加载器加载的classpath下的和ext下的所有类在方法区都是同一个类，堆中的Class实例也是同一个

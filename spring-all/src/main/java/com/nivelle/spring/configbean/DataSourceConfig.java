@@ -32,6 +32,7 @@ public class DataSourceConfig {
     public DataSource slaveDataSource() {
         return DataSourceBuilder.create().build();
     }
+
     /**
      * 数据源
      *

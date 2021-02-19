@@ -31,7 +31,7 @@ public class DateTimeInfo {
     /**
      * 将LocalDateTime字段以指定格式化日期的方式返回给前端
      */
-    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime dateTime2;
 
     /**

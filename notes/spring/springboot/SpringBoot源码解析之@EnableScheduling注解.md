@@ -9,13 +9,13 @@
 - ScheduledAnnotationBeanPostProcessor在容器启动时做如下事情:
 
   (1) 记所有使用@Scheduled注解的bean方法到一个 ScheduledTaskRegistrar，供调度任务执行器 TaskScheduler 执行
-  
-  (2) 为ScheduledTaskRegistrar指定任务执行器TaskScheduler,该任务执行器来自容器中的bean TaskScheduler/ScheduledExecutorService(如果不指定,ScheduledTaskRegistrar自己会本地创建一个ConcurrentTaskScheduler)
-      
+
+  (2) 为ScheduledTaskRegistrar指定任务执行器TaskScheduler,该任务执行器来自容器中的bean TaskScheduler/ScheduledExecutorService(
+  如果不指定,ScheduledTaskRegistrar自己会本地创建一个ConcurrentTaskScheduler)
+
   (3) 告诉ScheduledTaskRegistrar将所注册的调度任务,也就是使用@Scheduled注解的bean方法,调度到任务执行器TaskScheduler执行
 
 ### 核心源码
-
 
 #### @EnableScheduling
 
@@ -48,6 +48,7 @@ public class SchedulingConfiguration {
 ```
 
 #### ScheduledAnnotationBeanPostProcessor#postProcessAfterInitialization检测处理每个@Scheduled 注解的方法ScheduledAnnotationBeanPostProcessor实现了DestructionAwareBeanPostProcessor,BeanPostProcessor等接口。
+
 #### 作为一个BeanPostProcessor,ScheduledAnnotationBeanPostProcessor会针对每个bean的创建,在bean生命周期方法#postProcessAfterInitialization中，扫描该bean中使用了注解@Scheduled的方法.
 
 ```
@@ -95,9 +96,10 @@ public class SchedulingConfiguration {
 
 #### processScheduled()
 
-rocessScheduled处理方法上的每个@Scheduled注解，生成一个ScheduledTask并登记到this.scheduledTasks。 
+rocessScheduled处理方法上的每个@Scheduled注解，生成一个ScheduledTask并登记到this.scheduledTasks。
 
-this.scheduledTasks 数据结构为Map: key:是一个对象,其类就是含有方法使用了注解@Scheduled的类; value:是一个ScheduledTask集合,方法上的每个注解@Scheduled对应一个ScheduledTask;
+this.scheduledTasks 数据结构为Map: key:是一个对象,其类就是含有方法使用了注解@Scheduled的类; value:
+是一个ScheduledTask集合,方法上的每个注解@Scheduled对应一个ScheduledTask;
 
 ```
 	/**
@@ -237,12 +239,12 @@ this.scheduledTasks 数据结构为Map: key:是一个对象,其类就是含有�
 ```
 
 #### 经过ScheduledAnnotationBeanPostProcessor以上这些处理，每个bean中所包含的@Scheduled注解都被发现了，这样的每条信息最终对应生成一个ScheduledTask,该ScheduledTask会被 ScheduledTaskRegistrar registrar 登记调度。
+
 #### 这意味着该ScheduledTask从此刻起在程序运行期间就会按照@Scheduled注解所设定的时间点被执行。
 
 ### 备注1: 从上面的代码可以看出,如果多个定时任务定义的是同一个时间,那么也是顺序执行的，会根据程序加载Scheduled方法的先后来执行。
 
 ### 备注2: 但是如果某个定时任务执行未完成此任务一直无法执行完成，无法设置下次任务执行时间，之后会导致此任务后面的所有定时任务无法继续执行，也就会出现所有的定时任务“失效”现象
-        
 
 ### 定时任务处理
 
@@ -251,10 +253,9 @@ this.scheduledTasks 数据结构为Map: key:是一个对象,其类就是含有�
 - initialDelay:初始化多久后开始执行
 
 - period:周期
-       
+
 - unit: 时间单位
-    
-    
+
 ```
      
       public ScheduledFuture<?> scheduleAtFixedRate(Runnable command,long initialDelay,long period,TimeUnit unit) {
@@ -274,7 +275,7 @@ this.scheduledTasks 数据结构为Map: key:是一个对象,其类就是含有�
               return t;
           }
 ```     
-      
+
 ##### triggerTime:触发时间计算
 
 ```
@@ -307,7 +308,7 @@ ScheduledThreadPoolExecutor.delayedExecute(RunnableScheduledFuture task)
         }
         
 ```
-        
+
 ##### ensurePrestart() 保证有足够的线程执行任务
 
 ```
@@ -321,6 +322,7 @@ ScheduledThreadPoolExecutor.delayedExecute(RunnableScheduledFuture task)
               }
           }
 ```     
+
 ##### ScheduledThreadPoolExecutor.ScheduledFutureTask
 
 ```
@@ -342,6 +344,7 @@ ScheduledThreadPoolExecutor.delayedExecute(RunnableScheduledFuture task)
                   }
               }
  ```    
+
 ##### ScheduledFutureTask.reExecutePeriodic
 
 ```
@@ -360,6 +363,7 @@ ScheduledThreadPoolExecutor.delayedExecute(RunnableScheduledFuture task)
               }
           }
 ```     
+
 #### DelayedWorkQueue 延迟队列 内部类
 
 ```

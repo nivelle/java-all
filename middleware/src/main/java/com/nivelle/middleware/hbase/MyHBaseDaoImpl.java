@@ -19,7 +19,7 @@ public class MyHBaseDaoImpl {
     private static final String SPLIT_CHAR = "-";
 
     private static final Integer DEFAULT_MAX_NUM = 100;
-    
+
     @Autowired
     private HbaseTemplate hbaseTemplate;
 

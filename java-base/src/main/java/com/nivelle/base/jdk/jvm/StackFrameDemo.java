@@ -3,10 +3,11 @@ package com.nivelle.base.jdk.jvm;
 /**
  * 方法执行和栈帧
  *
- *
- *
  * @author fuxinzhong
  * @date 2020/12/19
+ * <p>
+ * 编译：javac com\nivelle\base\jdk\StackFrameDemo.java
+ * 反编译：javap -p -v com\nivelle\base\jdk\StackFrameDemo.class
  */
 /**
  * 编译：javac com\nivelle\base\jdk\StackFrameDemo.java
@@ -94,7 +95,7 @@ package com.nivelle.base.jdk.jvm;
 public class StackFrameDemo {
 
     public static void main(String[] args) {
-        add(1,2);
+        add(1, 2);
     }
 
     private static int add(int a, int b) {

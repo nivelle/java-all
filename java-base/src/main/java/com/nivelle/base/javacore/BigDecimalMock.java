@@ -33,8 +33,8 @@ public class BigDecimalMock {
         System.out.println(doubleValue.add(doubleValue2));
 
         BigDecimal bigDecimal4 = new BigDecimal("4.5");
-        System.out.println("bigDecimal4:"+bigDecimal4);
-        System.out.println("bigDecimal1:"+bigDecimal1);
+        System.out.println("bigDecimal4:" + bigDecimal4);
+        System.out.println("bigDecimal1:" + bigDecimal1);
         BigDecimal subSubtract = bigDecimal4.subtract(bigDecimal1);
         System.out.println("减法：" + subSubtract);
 

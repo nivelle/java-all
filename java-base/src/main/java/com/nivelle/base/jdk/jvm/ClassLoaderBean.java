@@ -8,5 +8,5 @@ package com.nivelle.base.jdk.jvm;
  */
 public class ClassLoaderBean {
 
-    private static final String str ="123";
+    private static final String str = "123";
 }

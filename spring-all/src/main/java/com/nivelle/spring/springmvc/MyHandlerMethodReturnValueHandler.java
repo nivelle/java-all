@@ -24,13 +24,13 @@ public class MyHandlerMethodReturnValueHandler implements HandlerMethodReturnVal
 
     @Override
     public boolean supportsReturnType(MethodParameter returnType) {
-        System.out.println("HandlerMethodReturnValueHandler ==>supportsReturnType \n returnType:"+returnType+"\n supportsReturnType:"+Properties.class.equals(returnType.getMethod().getReturnType()));
+        System.out.println("HandlerMethodReturnValueHandler ==>supportsReturnType \n returnType:" + returnType + "\n supportsReturnType:" + Properties.class.equals(returnType.getMethod().getReturnType()));
         return Properties.class.equals(returnType.getMethod().getReturnType());
     }
 
     @Override
     public void handleReturnValue(Object returnValue, MethodParameter returnType, ModelAndViewContainer mavContainer, NativeWebRequest webRequest) throws Exception {
-        System.out.println("HandlerMethodReturnValueHandler ==>handleReturnValue \n returnValue:"+returnValue+"\n returnType:"+returnType+"\n mavContainer :"+mavContainer+"\n webRequest:"+webRequest);
+        System.out.println("HandlerMethodReturnValueHandler ==>handleReturnValue \n returnValue:" + returnValue + "\n returnType:" + returnType + "\n mavContainer :" + mavContainer + "\n webRequest:" + webRequest);
         Properties properties = (Properties) returnValue;
         ServletWebRequest servletWebRequest = (ServletWebRequest) webRequest;
         HttpServletResponse response = servletWebRequest.getResponse();

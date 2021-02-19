@@ -1,10 +1,9 @@
-
 [阮一峰的网络日志 ](http://www.ruanyifeng.com/blog/2015/12/git-cheat-sheet.html)
 
 ### 状态查询
 
 - git status //git status 显示有变更的文件。
-              
+
 ```
 git status
 
@@ -62,10 +61,8 @@ Date:   Mon Jun 15 18:41:15 2020 +0800
 - git diff :  比较工作区和暂存区之间的差异（git add ./ 之后无差别）
 
 - git diff HEAD [ <path> … ]:比较工作区与最新本地仓库之间的差异
-  
+
 - git diff --cached [ <path>… ]:比较暂存区与最新本地仓库（本地仓库最近一次commit的内容）的差异
-
-
 
 ### 撤销
 
@@ -114,14 +111,14 @@ Date:   Mon Jun 15 18:41:15 2020 +0800
 
 - git branch;//列出所有本地分支
 
-- git  checkout -b <新分支名> //新建一个分支，并切换到该分支
+- git checkout -b <新分支名> //新建一个分支，并切换到该分支
 
 - git branch -r //列出所有远程分支
 
-- git pull --rebase //表示把你的本地当前分支里的每个提交(commit)取消掉，并且把它们临时 保存为补丁(patch)(这些补丁放到".git/rebase"目录中),然后把本地当前分支更新 为最新的"origin"分支，最后把保存的这些补丁应用到本地当前分支上
+- git pull --rebase //表示把你的本地当前分支里的每个提交(commit)取消掉，并且把它们临时 保存为补丁(patch)(这些补丁放到".git/rebase"目录中),然后把本地当前分支更新 为最新的"origin"
+  分支，最后把保存的这些补丁应用到本地当前分支上
 
-- git rebase 
-
+- git rebase
 
 ### tag
 
@@ -129,7 +126,7 @@ Date:   Mon Jun 15 18:41:15 2020 +0800
 
 - git tag [tag] //在当前commit新建一个tag
 
-- git tag [tag] [commit] //在指定commit新建一个tag 
+- git tag [tag] [commit] //在指定commit新建一个tag
 
 - git tag -d [tag] //删除本地tag
 

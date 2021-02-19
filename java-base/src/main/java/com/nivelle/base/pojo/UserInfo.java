@@ -1,8 +1,6 @@
 package com.nivelle.base.pojo;
 
 /**
- *
- *
  * @author nivelle
  * @date 2019/08/19
  */

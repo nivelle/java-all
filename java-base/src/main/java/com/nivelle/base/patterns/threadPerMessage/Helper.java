@@ -16,6 +16,7 @@ public class Helper {
         System.out.println("");
         System.out.println("        handle(" + count + ", " + c + ") END");
     }
+
     private void slowly() {
         try {
             Thread.sleep(100);

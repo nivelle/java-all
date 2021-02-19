@@ -1,6 +1,5 @@
 ## http基础
 
-
 ### header
 
 #### general 通用头部 (同时适用于请求和响应消息，但与最终消息传输的数据无关的消息头 不属于headers，只用于收集请求url和响应的status等信息)
@@ -9,7 +8,7 @@
 
 - Request Method: GET
 
-- Status Code: 200 
+- Status Code: 200
 
 - Remote Address: 39.107.11.210:443 //路由地址
 
@@ -21,16 +20,17 @@
 
 - Cache-Control: //缓存控制
 
-  1. no-store 规定不能对请求或响应的任何一部分进行缓存(no-store 规定不能对请求或响应的任何一部分进行缓存) 
-  
-  2. no-cache (no-cache 指令规定缓存服务器需要先向源服务器验证缓存资源的有效性，只有当缓存资源有效才将能使用该缓存对客户端的请求进行响应。)
-   
-  3. max-age 指令出现在请求报文中，并且缓存资源的缓存时间小于该指令指定的时间，那么就能接受该缓存; max-age 指令出现在响应报文中，表示缓存资源在缓存服务器中保存的时间。或者使用Expires
+    1. no-store 规定不能对请求或响应的任何一部分进行缓存(no-store 规定不能对请求或响应的任何一部分进行缓存)
+
+    2. no-cache (no-cache 指令规定缓存服务器需要先向源服务器验证缓存资源的有效性，只有当缓存资源有效才将能使用该缓存对客户端的请求进行响应。)
+
+    3. max-age 指令出现在请求报文中，并且缓存资源的缓存时间小于该指令指定的时间，那么就能接受该缓存; max-age 指令出现在响应报文中，表示缓存资源在缓存服务器中保存的时间。或者使用Expires
 
 - If-None-Match: //缓存验证
 
-  可以将缓存资源的值放入request header的 If-None-Match 首部，服务器收到该请求后，判断缓存资源的 值和资源的最新 值是否一致，如果一致则表示缓存资源有效，返回 304 Not Modified。并在response header中戴上 ETag 值
-  
+  可以将缓存资源的值放入request header的 If-None-Match 首部，服务器收到该请求后，判断缓存资源的 值和资源的最新 值是否一致，如果一致则表示缓存资源有效，返回 304 Not
+  Modified。并在response header中戴上 ETag 值
+
 ```
 //请求
 If-None-Match: W/"646-RJRVaOjMluW+SOAL0EThThA2lnM"
@@ -38,8 +38,7 @@ If-None-Match: W/"646-RJRVaOjMluW+SOAL0EThThA2lnM"
 //响应
 ETag: W/"646-RJRVaOjMluW+SOAL0EThThA2lnM"
 ```
-                                                                                            
-                                                 
+
 #### Request Headers(包含更多有关要获取的资源或客户端本身信息的消息头)
 
 - Accept:告诉WEB服务器自己接受什么介质类型，*/* 表示任何类型，type/* 表示该类型下的所有子类型;
@@ -48,25 +47,26 @@ ETag: W/"646-RJRVaOjMluW+SOAL0EThThA2lnM"
 
 - Accept-Encoding: 浏览器申明自己接收的编码方法,通常指定压缩方法,是否支持压缩,支持什么压缩方法(gzip,deflate)
 
-- Connection: 表示是否需要持久连接。close（告诉WEB服务器或者代理服务器,在完成本次请求的响应后，断开连接,不要等待本次连接的后续请求了）。keep-alive（告诉WEB服务器或者代理服务器，在完成本次请求的响应后，保持连接，等待本次连接的后续请求）。
+- Connection:
+  表示是否需要持久连接。close（告诉WEB服务器或者代理服务器,在完成本次请求的响应后，断开连接,不要等待本次连接的后续请求了）。keep-alive（告诉WEB服务器或者代理服务器，在完成本次请求的响应后，保持连接，等待本次连接的后续请求）。
 
-- Authorization: HTTP授权的授权证书	 Authorization: Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==
+- Authorization: HTTP授权的授权证书 Authorization: Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==
 
-- Content-Type: 请求参数对应的MIME信息 
+- Content-Type: 请求参数对应的MIME信息
 
-- Referer: 先前网页的地址，当前请求网页紧随其后,即来路	
+- Referer: 先前网页的地址，当前请求网页紧随其后,即来路
 
 - Origin: 表明了请求来自于哪个站点  (eg:<scheme> "://" <host> [ ":" <port> ])
 
 #### Response Headers(包含有关响应的补充信息，如其位置或服务器本身（名称和版本等）的消息头)
 
-- Content-Location: 请求资源可替代的备用的另一地址	
+- Content-Location: 请求资源可替代的备用的另一地址
 
-- Location: 令客户端重定向至指定 URI;	
+- Location: 令客户端重定向至指定 URI;
 
-- Allow: 对某网络资源的有效的请求行为,不允许则返回405	
+- Allow: 对某网络资源的有效的请求行为,不允许则返回405
 
-- Content-Type:返回内容的MIME类型	(Content-Type: text/html; charset=utf-8)
+- Content-Type:返回内容的MIME类型    (Content-Type: text/html; charset=utf-8)
 
 #### Entity Headers(包含有关实体主体的更多信息，比如主体长(Content-Length)度或其MIME类型)
 
@@ -77,7 +77,6 @@ ETag: W/"646-RJRVaOjMluW+SOAL0EThThA2lnM"
 - Content-Length: 发送给接收方的消息主体的大小；
 
 - Content-Type:告诉客户端实际返回的内容的内容类型；详情
-
 
 ### mime
 
@@ -99,11 +98,13 @@ ETag: W/"646-RJRVaOjMluW+SOAL0EThThA2lnM"
 
 - 303(See Other) 和 302 有着相同的功能，但是 303 明确要求客户端应该采用 GET 方法获取资源。
 
-- 304(Not Modified) 如果请求报文首部包含一些条件，例如：If-Match，If-Modified-Since，If-None-Match，If-Range，If-Unmodified-Since，如果不满足条件，则服务器会返回 304 状态码。
+- 304(Not Modified)
+  如果请求报文首部包含一些条件，例如：If-Match，If-Modified-Since，If-None-Match，If-Range，If-Unmodified-Since，如果不满足条件，则服务器会返回 304 状态码。
 
 - 400(Bad Request) 该状态码表示请求报文中存在语法错误。当错误发生时，需修改请求的内容后再次发送请求。
 
-- 401 Unauthorized 该状态码表示发送的请求需要有认证信息。返回含有 401 的响应必须包含一个适用于被请求资源的 WWW-Authenticate 首部用以询问用户信息。当浏览器初次接收到 401 响应，会弹出认证用的对话窗口。第二次接收到，则不弹出，直接表示认证失败。
+- 401 Unauthorized 该状态码表示发送的请求需要有认证信息。返回含有 401 的响应必须包含一个适用于被请求资源的 WWW-Authenticate 首部用以询问用户信息。当浏览器初次接收到 401
+  响应，会弹出认证用的对话窗口。第二次接收到，则不弹出，直接表示认证失败。
 
 - 403(Forbidden) 对请求资源的访问被服务器拒绝了，一般是未获得文件系统的访问授权，问权限出现某些问题。
 
@@ -119,7 +120,8 @@ ETag: W/"646-RJRVaOjMluW+SOAL0EThThA2lnM"
 
 ### CORS
 
-是一种机制，它使用额外的 HTTP 头来告诉浏览器 让运行在一个 origin (domain) 上的Web应用被准许访问来自不同源服务器上的指定的资源。当一个资源从与该资源本身所在的服务器不同的域、协议或端口请求一个资源时，资源会发起一个跨域 HTTP 请求。
+是一种机制，它使用额外的 HTTP 头来告诉浏览器 让运行在一个 origin (domain)
+上的Web应用被准许访问来自不同源服务器上的指定的资源。当一个资源从与该资源本身所在的服务器不同的域、协议或端口请求一个资源时，资源会发起一个跨域 HTTP 请求。
 
 1. 简单请求
 
@@ -143,6 +145,7 @@ Origin: http://foo.example
 Access-Control-Allow-Origin: *
 
 ```
+
 如果返回
 
 ```
@@ -161,8 +164,8 @@ POST | PUT | DELETE | CONNECT | OPTIONS | TRACE | PATCH
 application/x-www-form-urlencoded | multipart/form-data | text/plain
 ```
 
-如果在 http://foo.exmaple 上要访问 http://bar.other/resources/po... 上的资源。且 request headers 中 Content-Type为application/xml，请求method为post。
-那么此请求是个“非简单请求”。首先浏览器会自动发送带有options选项的预检请求，然后发送实际请求:
+如果在 http://foo.exmaple 上要访问 http://bar.other/resources/po... 上的资源。且 request headers 中
+Content-Type为application/xml，请求method为post。 那么此请求是个“非简单请求”。首先浏览器会自动发送带有options选项的预检请求，然后发送实际请求:
 
 ```
 //预检请求request headers

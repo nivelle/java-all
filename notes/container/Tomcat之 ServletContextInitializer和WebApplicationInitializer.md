@@ -2,9 +2,11 @@
 
 1. ServletContainerInitializer是servlet3.0规范中引入的接口，能够让web应用程序在servlet容器启动后做一些自定义的操作
 
-2. ServletContainerInitializer 基于服务提供者接口（SPI）概念，因此你需要在你的jar包目录下添加META-INF/services/javax.servlet.ServletContainerInitializer文件，内容就是ServletContainerInitializer实现类的全限定名。
+2. ServletContainerInitializer
+   基于服务提供者接口（SPI）概念，因此你需要在你的jar包目录下添加META-INF/services/javax.servlet.ServletContainerInitializer文件，内容就是ServletContainerInitializer实现类的全限定名。
 
-3. ServletContainerInitializer#onStartup方法由Servlet容器调用(必须至少支持Servlet 3.0版本)。我们在这个方法中通过编程的方式去注册Servlet Filter Listener等组件，代替web.xml
+3. ServletContainerInitializer#onStartup方法由Servlet容器调用(必须至少支持Servlet 3.0版本)。我们在这个方法中通过编程的方式去注册Servlet Filter
+   Listener等组件，代替web.xml
 
 4. 可以配合 @HandleTypes 注解，通过指定Class，容器会把所有的指定类的子类作为方法onStartup 的参数Set<Class<?>> c传递进来
 
@@ -55,9 +57,8 @@ public void onStartup(@Nullable Set<Class<?>> webAppInitializerClasses, ServletC
 2. WebApplicationInitializer在SpringServletContainerInitializer中实例化后被调用。
 
 3. SpringServletContainerInitializer实现了servlet容器提供的接口带了个头，接下来的事可以交由 spring自己定义的WebApplicationInitializer
- 
 
-####  ServletContextInitializerBeans 实例表示一个从ListableBeanFactory bean容器中获得的ServletContextInitializer实例的集合。这个集合中的每个元素来自容器中定义的每个如下类型的bean
+#### ServletContextInitializerBeans 实例表示一个从ListableBeanFactory bean容器中获得的ServletContextInitializer实例的集合。这个集合中的每个元素来自容器中定义的每个如下类型的bean
 
 - ServletContextInitializer bean:具体可能以ServletRegistrationBean/FilterRegistrationBean/EventListenerRegistrationBean的形式存在
 
@@ -82,9 +83,11 @@ private void selfInitialize(ServletContext servletContext) throws ServletExcepti
 		}
 	}
 ```
+
 #### SpringBoot 调用链
 
 - 在主线程中,SpringBoot启动过程交给内置Tomcat Servlet 容器一个ServletContextInitializer
+
 ```
 SpringApplication.run()
  => refreshContext()
@@ -95,7 +98,7 @@ SpringApplication.run()
 
 ```
 
-- 在内置Tomcat Servlet容器启动线程中，ServletContext创建之后调用该ServletContextInitializer 
+- 在内置Tomcat Servlet容器启动线程中，ServletContext创建之后调用该ServletContextInitializer
 
 ```
 StandartContext.startInternal()
@@ -107,11 +110,12 @@ StandartContext.startInternal()
 ```
 
 ---
-  
-一组ServletContextInitializer会被设置到ServletContainerInitializer TomcatStarter上,
-而TomcatStarter在Servlet容器启动过程中调用自己的方法(onStartup)会逐一调用这些ServletContextInitializer的方法onStartUp的方法 onStartUp初始化ServletContext
+
+一组ServletContextInitializer会被设置到ServletContainerInitializer TomcatStarter上, 而TomcatStarter在Servlet容器启动过程中调用自己的方法(
+onStartup)会逐一调用这些ServletContextInitializer的方法onStartUp的方法 onStartUp初始化ServletContext
 
 #### class TomcatStarter implements ServletContainerInitializer
+
 ```
 public void onStartup(Set<Class<?>> classes, ServletContext servletContext) throws ServletException {
 		try {
@@ -138,7 +142,6 @@ public void onStartup(Set<Class<?>> classes, ServletContext servletContext) thro
 - 这些ServletContextInitializer的设计目的主要是用于这些实例被Spring IoC容器管理。
 
 - 这些ServletContextInitializer实例不会被SpringServletContainerInitializer检测，因此不会被Servlet容器自动启动
-
 
 #### WebApplicationInitializer:
 

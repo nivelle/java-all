@@ -1,6 +1,7 @@
 ### SocketProcessor
 
 #### Socket NIO 发生时从Poller到SocketProcessor的调用链
+
 ```
 NioEndpoint$Poller.run()
 	=> processkey()
@@ -9,6 +10,7 @@ NioEndpoint$Poller.run()
 ```
 
 #### AbstractEndpoint.processSocket
+
 ```
 public boolean processSocket(SocketWrapperBase<S> socketWrapper, SocketEvent event, boolean dispatch) {
         try {
@@ -59,6 +61,7 @@ public boolean processSocket(SocketWrapperBase<S> socketWrapper, SocketEvent eve
     }
 
 ```
+
 #### SocketProcessor 套接字处理器
 
 ```
@@ -193,7 +196,7 @@ public SocketState process(SocketWrapperBase<?> socketWrapper, SocketEvent statu
 
 ```
 
-####  public abstract class AbstractProtocol<S> implements ProtocolHandler,MBeanRegistration 
+#### public abstract class AbstractProtocol<S> implements ProtocolHandler,MBeanRegistration
 
 ```
  public SocketState process(SocketWrapperBase<S> wrapper, SocketEvent status) {
@@ -442,7 +445,9 @@ public SocketState process(SocketWrapperBase<?> socketWrapper, SocketEvent statu
         }
 
 ```
-#### public abstract class AbstractHttp11Protocol<S> extends AbstractProtocol<S>  
+
+#### public abstract class AbstractHttp11Protocol<S> extends AbstractProtocol<S>
+
 ```
 public SocketState service(SocketWrapperBase<?> socketWrapper)throws IOException {
         RequestInfo rp = request.getRequestProcessor();
@@ -662,6 +667,7 @@ public SocketState service(SocketWrapperBase<?> socketWrapper)throws IOException
     }
 
 ```
+
 #### public class CoyoteAdapter implements Adapter（connector 和 container的适配器）
 
 ```
@@ -964,7 +970,7 @@ public final void invoke(Request request, Response response)
 
 ```
 
-#### public class StandardWrapper extends ContainerBase implements ServletConfig, Wrapper, NotificationEmitter 
+#### public class StandardWrapper extends ContainerBase implements ServletConfig, Wrapper, NotificationEmitter
 
 - 实例化Servlet
 
@@ -1066,6 +1072,7 @@ public Servlet allocate() throws ServletException {
 ```
 
 - loadServlet()
+
 ```
 public synchronized Servlet loadServlet() throws ServletException {
 

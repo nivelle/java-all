@@ -31,6 +31,7 @@ public class NettyServerFilter extends ChannelInitializer<SocketChannel> {
      * 所有超时
      */
     private static final int ALL_IDLE_TIME_OUT = 7;
+
     @Override
     protected void initChannel(SocketChannel ch) throws Exception {
         ChannelPipeline ph = ch.pipeline();

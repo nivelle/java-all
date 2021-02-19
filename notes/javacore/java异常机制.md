@@ -6,32 +6,35 @@
 
 - Exception 又分为可检查（checked）异常和不检查（unchecked）异常，可检查异常在源代码里必须显式地进行捕获处理，这是编译期检查的一部分
 
-
 #### 常见受检异常
 
 - ClassNotFoundException
-  
+
 - IOException
-  
+
 - SQLException
-  
-- FileNotFoundException 
-  
+
+- FileNotFoundException
+
 - InterruptedException
 
 #### 常见非受检异常
+
 - NullPointerException
 - ArrayIndexOutBoundException
+
 ````
 1. Thrown to indicate that an array has been accessed with an illegal index. The index is either negative or greater than or equal to the size of the array.
 2. 是IndexOutOfBoundsException的子类
 ````
+
 - ClassCastException
 - IndexOutOfBoundsException
-  
+
 ````
 Thrown to indicate that an index of some sort (such as to an array, to a string, or to a vector) is out of range.
 ````
+
 - ArrayStoreException
 
 ````

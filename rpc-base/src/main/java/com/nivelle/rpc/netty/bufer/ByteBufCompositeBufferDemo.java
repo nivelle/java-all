@@ -49,6 +49,7 @@ public class ByteBufCompositeBufferDemo {
             }
         }
     }
+
     private static void printBuffer(byte[] array, int offset, int len) {
         System.out.println("array：" + array);
         System.out.println("array->String：" + new String(array));

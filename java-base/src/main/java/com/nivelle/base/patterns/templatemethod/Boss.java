@@ -1,6 +1,6 @@
 package com.nivelle.base.patterns.templatemethod;
 
-public class Boss extends  AbstractCompany {
+public class Boss extends AbstractCompany {
 
     @Override
     public boolean doWork(String userName) {

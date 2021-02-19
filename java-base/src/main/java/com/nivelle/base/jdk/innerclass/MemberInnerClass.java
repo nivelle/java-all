@@ -38,7 +38,7 @@ public class MemberInnerClass {
         MemberInnerClass memberInnerClass = new MemberInnerClass();
         memberInnerClass.action();
 
-        MemberInnerClass.Inner  inner = memberInnerClass.new Inner();
+        MemberInnerClass.Inner inner = memberInnerClass.new Inner();
         inner.innerMethod();
 
         memberInnerClass.outMethod();

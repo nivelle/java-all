@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.nivelle.spring.springboot.mapper.ActivityPvMapper" >
+<mapper namespace="com.nivelle.spring.springboot.mapper.ActivityPvMapper">
 
-    <resultMap id="BaseResultMap" type="com.nivelle.spring.pojo.ActivityPvEntity" >
+    <resultMap id="BaseResultMap" type="com.nivelle.spring.pojo.ActivityPvEntity">
         <id column="id" property="id"/>
         <result column="activity_id" property="activityId"/>
         <result column="position_type" property="positionType"/>
@@ -14,19 +14,20 @@
         <result column="update_time" property="updateTime"/>
     </resultMap>
 
-    <sql id="Base_Column_List" >
+    <sql id="Base_Column_List">
         id, activity_id, position_type, ip, device_type,device_no,create_time,update_time
     </sql>
-     <!--XML中只需resultType属性值为实体对象别名或全路径名。
-     * mybatis会通过接口文件的返回值类型来判断返回的是集合还是对象。
-     * 如果是对象，则按常规查询并返回；如果是List集合，mybatis则会将查询到的多条记录设置进集合中并返回 -->
-    <select id="getAll" resultMap="BaseResultMap" >
+    <!--XML中只需resultType属性值为实体对象别名或全路径名。
+    * mybatis会通过接口文件的返回值类型来判断返回的是集合还是对象。
+    * 如果是对象，则按常规查询并返回；如果是List集合，mybatis则会将查询到的多条记录设置进集合中并返回 -->
+    <select id="getAll" resultMap="BaseResultMap">
         SELECT
-        <include refid="Base_Column_List" />
+        <include refid="Base_Column_List"/>
         FROM activity_pv
     </select>
 
-    <insert id="insert" useGeneratedKeys="true" keyProperty="id"  parameterType="com.nivelle.spring.pojo.ActivityPvEntity">
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id"
+            parameterType="com.nivelle.spring.pojo.ActivityPvEntity">
         INSERT INTO
         activity_pv
         (activity_id,position_type,ip,device_type,device_no)

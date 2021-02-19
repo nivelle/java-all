@@ -20,7 +20,7 @@ consumer group 是Kafka 提供的可扩展且具有容错性的消费者机制�
 
 ### 位移主题
 
-- 新版本 consumer group 奖位移保存在broker端的内部主题中，内部主题__consumer_offsets 
+- 新版本 consumer group 奖位移保存在broker端的内部主题中，内部主题__consumer_offsets
 
 #### 消费者组的 rebalance 的触发条件有3个
 
@@ -32,19 +32,21 @@ consumer group 是Kafka 提供的可扩展且具有容错性的消费者机制�
 
 ##### rebalance 的弊端
 
--  rebalance影响consumer 端的tps。
+- rebalance影响consumer 端的tps。
 
--  rebalance 很慢
+- rebalance 很慢
 
--  rebalance 效率不高
+- rebalance 效率不高
 
 #### rebalance 的避免
 
 - session.timeout.ms : 默认值是10秒，如果coordinator在10秒内没有收到group 下某个consumer实例的心跳，它就会认为这个实例已经挂掉，需要rebalance
 
-- heartbeat.interval.ms:consumer实例控制发送心跳请求的频率，值越小，频率越快。 coordinator 通知各个consumer开启rebalance的方法就是将REBALANCE_NEEDED 标志封装进心跳请求的响应体中
+- heartbeat.interval.ms:consumer实例控制发送心跳请求的频率，值越小，频率越快。 coordinator 通知各个consumer开启rebalance的方法就是将REBALANCE_NEEDED
+  标志封装进心跳请求的响应体中
 
-- max.poll.interval.ms: 限定了consumer端两次调用poll方法的最大时间间隔。默认值：5分钟 表示你的consumer程序如果在5分钟内无法消费完poll方法返回的消息。那么consumer会主动发起"离开组”的请求，coordinator也会开启新的一轮rebalance
+- max.poll.interval.ms: 限定了consumer端两次调用poll方法的最大时间间隔。默认值：5分钟 表示你的consumer程序如果在5分钟内无法消费完poll方法返回的消息。那么consumer会主动发起"
+  离开组”的请求，coordinator也会开启新的一轮rebalance
 
 ### 位移提交
 
@@ -57,7 +59,7 @@ consumer group 是Kafka 提供的可扩展且具有容错性的消费者机制�
 ### 消费位移
 
 - consumer需要向kafka汇报自己的位移数据，这个汇报过程被称为提交位移(committing offsets).
-  
+
 - 因为consumer能够同时消费多个分区的数据，所以位移的提交实际上是在分区粒度上进行的，即consumer需要为分配给它的每个分区提交各自的位移数据。
 
 #### 提交方式
@@ -68,10 +70,10 @@ consumer group 是Kafka 提供的可扩展且具有容错性的消费者机制�
 
 - auto.commit.interval.ms 默认是5，表明kafka每5秒就会自动提交一次位移,至少5秒可能多余5秒
 
-- 可能会出现重复消费，提交后积累一定消息后发生rebalance,之后从上次提交的位移处开始消费，导致这段时间积累的数据重新提交。可通过auto.commit.interval.ms 来提高提交频率，单仅仅缩小了重复消费的事件窗口，不可能完全消除。
+- 可能会出现重复消费，提交后积累一定消息后发生rebalance,之后从上次提交的位移处开始消费，导致这段时间积累的数据重新提交。可通过auto.commit.interval.ms
+  来提高提交频率，单仅仅缩小了重复消费的事件窗口，不可能完全消除。
 
-- consumer poll是从commit的位置开始的，但是持续消费的时候，就会利用consumer内部指针探测到下一次poll的位置，可能这个位置还没有commit 
-
+- consumer poll是从commit的位置开始的，但是持续消费的时候，就会利用consumer内部指针探测到下一次poll的位置，可能这个位置还没有commit
 
 ##### 手动提交
 
@@ -99,7 +101,6 @@ consumer group 是Kafka 提供的可扩展且具有容错性的消费者机制�
 
 4. 下游系统使用多线程来加速消费
 
-
 ### kafka java consumer 设计原理
 
 v0.10.1.0版本开始，kafkaConsumer就变成了双线程设计：**用户主线程和心跳线程**
@@ -112,9 +113,8 @@ v0.10.1.0版本开始，kafkaConsumer就变成了双线程设计：**用户主�
 
 3. 消费者程序启动多个线程，每个线程维护专属的KafkaConsumer实例，负责完整的消息获取、消息处理流程
 
-4. 消费者程序使用单或者多线程获取消息，同时创建多个消费线程执行消息处理逻辑。获取消息的线程可以是一个，也可以是多个，每个线程维护专属的kafkaConsumer实例，处理消息则交由特定的线程池来做，从而实现消息
-   获取与消息处理的真正解耦
-   
+4. 消费者程序使用单或者多线程获取消息，同时创建多个消费线程执行消息处理逻辑。获取消息的线程可以是一个，也可以是多个，每个线程维护专属的kafkaConsumer实例，处理消息则交由特定的线程池来做，从而实现消息 获取与消息处理的真正解耦
+
 ````
 1. 消息放在数据库或者redis这种不会丢失的队列中，多线程消费队列
 
@@ -123,7 +123,6 @@ v0.10.1.0版本开始，kafkaConsumer就变成了双线程设计：**用户主�
 ````
 
 [![rIu3Mq.jpg](https://s3.ax1x.com/2020/12/27/rIu3Mq.jpg)](https://imgchr.com/i/rIu3Mq)
-
 
 ### 消费者创建TCP连接
 
@@ -140,7 +139,8 @@ broker处理完上一步发送的FindCoordinator请求之后，会返还对应�
 
 - 消费数据时
 
-消费者会为每个要消费的分区创建与该分区领导者副本所在Broker连接的TCP.假设消费者要消费 5 个分区的数据，这 5 个分区各自的领导者副本分布在 4 台 Broker 上，那么该消费者在消费时会创建与这 4 台 Broker 的 Socket 连接
+消费者会为每个要消费的分区创建与该分区领导者副本所在Broker连接的TCP.假设消费者要消费 5 个分区的数据，这 5 个分区各自的领导者副本分布在 4 台 Broker 上，那么该消费者在消费时会创建与这 4 台 Broker 的
+Socket 连接
 
 #### 三类TCP连接
 
@@ -150,14 +150,11 @@ broker处理完上一步发送的FindCoordinator请求之后，会返还对应�
 
 - 执行实际的消息获取，当该类连接创建成功后，消费者程序就会废弃第一类TCP连接，之后在定期请求元数据时，它会改为使用该类TCP连接；最终第一类连接会在后台逐渐关闭，后面只会有后面两类TCP连接存在
 
-
-
 ### 消费者关闭TCP连接
 
 - 主动关闭:KafkaConsumer.close()方法，或者执行 kill 命令
 
-- 自动关闭：connection.max.idle.ms  默认9分钟，如果某个连接上连续9分钟没有任何请求，那么消费者强行"杀掉”这个socket连接
-
+- 自动关闭：connection.max.idle.ms 默认9分钟，如果某个连接上连续9分钟没有任何请求，那么消费者强行"杀掉”这个socket连接
 
 ### 消费者组消费进度监控方法
 

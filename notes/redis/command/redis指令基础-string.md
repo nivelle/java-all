@@ -2,7 +2,6 @@
 
 #### 1. SET key value [EX seconds] [PX milliseconds] [NX|XX]
 
-
 ````
 SET key value [EX seconds] [PX milliseconds] [NX|XX]
 
@@ -10,20 +9,21 @@ SET key value [EX seconds] [PX milliseconds] [NX|XX]
 
 - EX seconds ： 将键的过期时间设置为 seconds 秒。 执行 SET key value EX seconds 的效果等同于执行 SETEX key seconds value
 
-- PX milliseconds ： 将键的过期时间设置为 milliseconds 毫秒。 执行 SET key value PX milliseconds 的效果等同于执行 PSETEX key milliseconds value 。
-  
+- PX milliseconds ： 将键的过期时间设置为 milliseconds 毫秒。 执行 SET key value PX milliseconds 的效果等同于执行 PSETEX key milliseconds value
+  。
+
 - NX ： 只在键不存在时， 才对键进行设置操作。 执行 SET key value NX 的效果等同于执行 SETNX key value 。
-  
+
 - XX ： 只在键已经存在时， 才对键进行设置操作。
-  
-#### 2. SETNX key value 
+
+#### 2. SETNX key value
 
 ```
 SETNX key value
 
 ```
 
-#### 3. SETEX key seconds value  
+#### 3. SETEX key seconds value
 
 ````
 SETEX key seconds value //将键 key 的值设置为 value ， 并将键 key 的生存时间设置为 seconds 秒钟。
@@ -33,7 +33,6 @@ SETEX key seconds value //将键 key 的值设置为 value ， 并将键 key 的
 ````
 
 #### 4. PSETEX key milliseconds value
-
 
 ````
 PSETEX key milliseconds value
@@ -51,7 +50,6 @@ PSETEX key milliseconds value
 
 #### 6. GETSET key value
 
-
 ````
 
 //将键 key 的值设为 value ， 并返回键 key 在被设置之前的旧值。
@@ -60,7 +58,6 @@ PSETEX key milliseconds value
 ````
 
 #### 7. STRLEN key
-
 
 ```
 //返回键 key 储存的字符串值的长度。
@@ -84,7 +81,6 @@ PSETEX key milliseconds value
 
 #### 9. SETRANGE key offset value
 
-
 ````
 
 // 从偏移量 offset 开始， 用 value 参数覆写(overwrite)键 key 储存的字符串值。
@@ -97,7 +93,6 @@ PSETEX key milliseconds value
 ````
 
 #### 10. GETRANGE key start end
-
 
 ```
 
@@ -141,6 +136,7 @@ PSETEX key milliseconds value
    
 
 ````
+
 #### 13. INCRBYFLOAT key increment
 
 ````
@@ -176,7 +172,6 @@ PSETEX key milliseconds value
 //如果键 key 储存的值不能被解释为数字， 那么 DECRBY 命令将返回一个错误
 
 ````
-
 
 #### 15. MSET key value [key value …]
 

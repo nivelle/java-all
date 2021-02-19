@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Menu extends Compont{
+public class Menu extends Compont {
 
     private Long id;
 
@@ -16,6 +16,6 @@ public class Menu extends Compont{
 
     @Override
     public void canShow() {
-        System.out.println("菜单可以展示出来！"+this.menuName);
+        System.out.println("菜单可以展示出来！" + this.menuName);
     }
 }

@@ -27,19 +27,18 @@ import java.util.PriorityQueue;
 public class PriorityQueueMock {
     /**
      * （1）入队不允许null元素；
-     *
+     * <p>
      * （2）如果数组不够用了，先扩容；
-     *
+     * <p>
      * （3）如果还没有元素，就插入下标0的位置；
-     *
+     * <p>
      * （4）如果有元素了，就插入到最后一个元素往后的一个位置
-     *
+     * <p>
      * （5）自下而上堆化，一直往上跟父节点比较；
-     *
+     * <p>
      * （6）如果比父节点小，就与父节点交换位置，直到出现比父节点大为止；
-     *
+     * <p>
      * （7）由此可见，PriorityQueue是一个小顶堆
-     *
      */
 
     public static void main(String[] args) {

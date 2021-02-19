@@ -13,7 +13,7 @@ public class ReentrantConditionMock {
 
     /**
      * ConditionObject 是 AbstractQueuedSynchronizer 的内部类
-     *
+     * <p>
      * 条件锁,是指在获取锁之后发现当前业务场景自己无法处理,而需要等待某个条件的出现才可以继续处理时使用的一种锁。
      */
     public static void main(String[] args) throws InterruptedException {

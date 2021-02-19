@@ -29,16 +29,16 @@ public class ValidDataControllor {
 
         LOG.info("保存用户请求参数person={}", rerson);
         //范性放在变量处
-        Map <String,Object>result = new HashMap();
-        result.put("haha","haha");
+        Map<String, Object> result = new HashMap();
+        result.put("haha", "haha");
         //转成json数据依赖与java对象的set方法
         return ResponseResult.newResponseResult().setSuccess(result);
 
     }
 
-    @GetMapping(value = "savePerson2",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseResult savePerson2(@Valid @NotNull String name){
-        LOG.info("name is"+ name);
+    @GetMapping(value = "savePerson2", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseResult savePerson2(@Valid @NotNull String name) {
+        LOG.info("name is" + name);
         Person person = new Person();
         person.setName(name);
 

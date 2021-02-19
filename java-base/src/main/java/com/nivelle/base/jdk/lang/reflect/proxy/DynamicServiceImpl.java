@@ -8,7 +8,7 @@ public class DynamicServiceImpl implements DynamicService {
 
     @Override
     public int add(int a, int b) {
-        System.out.println("a:"+a+"  "+"b:"+b);
+        System.out.println("a:" + a + "  " + "b:" + b);
         return a + b;
     }
 

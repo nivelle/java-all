@@ -14,7 +14,7 @@ protected void startAcceptorThread() {
     }
     
 ```
-    
+
 #### 关闭套接字通道
 
 ```
@@ -25,7 +25,8 @@ protected void closeSocket(U socket) {
         }
     }
 ```
-#### 关闭套接字  
+
+#### 关闭套接字
 
 ``` 
 public void close() {
@@ -45,7 +46,7 @@ public void close() {
     }
 ```
 
-####  连接计数
+#### 连接计数
 
 ```
 //if we have reached max connections, wait
@@ -60,7 +61,7 @@ protected void countUpOrAwaitConnection() throws InterruptedException {
     }
 ```
 
-####  处理连接 public class Acceptor<U> implements Runnable
+#### 处理连接 public class Acceptor<U> implements Runnable
 
 ```
 public void run() {

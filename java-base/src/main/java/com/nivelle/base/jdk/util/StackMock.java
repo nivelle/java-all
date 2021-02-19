@@ -47,7 +47,7 @@ public class StackMock {
 /**
  * 基于数组实现的
  */
-class ArrayStack{
+class ArrayStack {
 
 }
 
