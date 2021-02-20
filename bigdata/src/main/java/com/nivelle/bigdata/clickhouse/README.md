@@ -17,3 +17,10 @@ docker run -it --rm --link clickhouse-test-server:clickhouse-server yandex/click
 
 ````
 
+### clickhouse创建 hdfs引擎的表
+
+````
+create table hdfsTest14(name String) 
+engine = HDFS('hdfs://39.105.201.242:8020/hdfs/*','CSV');
+````
+
