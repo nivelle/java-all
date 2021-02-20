@@ -182,3 +182,68 @@ root@namenode:/opt/hdfs/name/current# pwd
 - Edits文件：存放HEFS文件系统的所有更新操作的路径，文件系统客户端执行的所有写操作首先会被记录到Edits文件中
 - seen_txid文件保存的是一个数字，就是最后一个edits_的数字
 - 每次nameNode启动的时候都会将Fsimage文件读入内存，加载Edits里面的更新操作，保证内存中的元数据信息是最新的，同步的，可以看成NameNode启动的时候将Fsimage和Edits文件进行了合并
+
+### NameNode故障处理
+
+- 将SecondaryNameNode中的数据拷贝到NameNode存储数据目录：2nn的数据有部分没有合并，存在数据丢失的问题
+
+````
+1. kill -9 NameNode进程
+
+2. 删除NameNode存储的数据（/opt/module/hadoop-2.7.2/data/tmp/dfs/name）
+
+[atguigu@hadoop102 hadoop-2.7.2]$ rm -rf /opt/module/hadoop-2.7.2/data/tmp/dfs/name/*
+
+3. 拷贝SecondaryNameNode中数据到原NameNode存储数据目录
+
+[atguigu@hadoop102 dfs]$ scp -r atguigu@hadoop104:/opt/module/hadoop-2.7.2/data/tmp/dfs/namesecondary/* ./name/
+
+4. 重新启动NameNode
+
+[atguigu@hadoop102 hadoop-2.7.2]$ sbin/hadoop-daemon.sh start namenode
+````
+
+- 使用-importCheckpoint 选项启动NameNode守护进程，从而将SecondaryNameNode中数据拷贝到NameNode目录中
+
+````
+1.修改hdfs-site.xml中的
+<property>
+  <name>dfs.namenode.checkpoint.period</name>
+  <value>120</value>
+</property>
+<property>
+  <name>dfs.namenode.name.dir</name>
+  <value>/opt/module/hadoop-2.7.2/data/tmp/dfs/name</value>
+</property>
+
+2.  kill -9 NameNode进程
+
+3. 删除NameNode存储的数据（/opt/module/hadoop-2.7.2/data/tmp/dfs/name）
+
+[atguigu@hadoop102 hadoop-2.7.2]$ rm -rf /opt/module/hadoop-2.7.2/data/tmp/dfs/name/*
+
+4. 如果SecondaryNameNode不和NameNode在一个主机节点上，需要将SecondaryNameNode存储数据的目录拷贝到NameNode存储数据的平级目录，并删除in_use.lock文件
+
+[atguigu@hadoop102 dfs]$ scp -r atguigu@hadoop104:/opt/module/hadoop-2.7.2/data/tmp/dfs/namesecondary ./
+
+[atguigu@hadoop102 namesecondary]$ rm -rf in_use.lock
+
+[atguigu@hadoop102 dfs]$ pwd
+
+/opt/module/hadoop-2.7.2/data/tmp/dfs
+
+[atguigu@hadoop102 dfs]$ ls
+
+data  name  namesecondary
+
+5. 导入检查点数据（等待一会ctrl+c结束掉）
+
+[atguigu@hadoop102 hadoop-2.7.2]$ bin/hdfs namenode -importCheckpoint
+
+6. 启动NameNode
+
+[atguigu@hadoop102 hadoop-2.7.2]$ sbin/hadoop-daemon.sh start namenode
+
+````
+
+### 集群安全模式
