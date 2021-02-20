@@ -98,4 +98,87 @@ san gu mao lu
 这里设置的副本数只是记录在NameNode的元数据中，是否真的会有这么多副本，还得看DataNode的数量。因为目前只有3台设备，最多也就3个副本，只有节点数的增加到10台时，副本数才能达到10。
 
 ````
-### HDFS读写流程
+### HDFS读写流程(上传文件)
+
+[![y53PDH.md.png](https://s3.ax1x.com/2021/02/20/y53PDH.md.png)](https://imgchr.com/i/y53PDH)
+
+1. 客户端通过 Distributed FileSystem 模块向NameNode请求上传文件，NameNode检查目标文件是否存在，父目录是否存在
+
+2. NameNode 返回是否可以上传
+3. 客户端请求第一个Block上传到那几个DataNode服务器上
+4. NameNode返回3个DataNode节点，分别 dn1、dn2、dn3
+5. 客户端通过FSDataOutputStream模块请求dn1上传数据、dn1收到请求会继续调用dn2,r然后dn2调用dn3,通信管道建立完成
+6. dn1、dn2、dn3 逐级应答客户端
+7. 客户端开始往dn1上传第一个Block(先从磁盘读取数据放到一个本地内存缓存)，以packet为单位，dn1收到一个Packet就会传给dn2,dn2传给dn3;dn1每传一个packet会放入一个应答队列等待应答
+8. 当一个Block 传输完成之后，客户端请求NameNode上传第二个Block的服务器(重复执行3-7步)
+
+- 在HDFS写数据的过程中，NameNode会选择距离待上传数据距离最近的DataNode接收数据。节点距离：两个节点到达最近的共同祖先的距离总和
+
+### HDFS读数据流程(下载)
+
+[![y5aPAg.md.png](https://s3.ax1x.com/2021/02/20/y5aPAg.md.png)](https://imgchr.com/i/y5aPAg)
+
+1. 客户端通过Distributed FileSystem向NameNode请求下载文件，NameNode通过查询元数据，找到文件所在DataNode地址
+2. 挑选一台DataNode（就近原则，然后随机）服务器，请求读取数据
+3. DataNode开始传输数据给客户端（从磁盘里面读取数据输入流，以Packet为单位来做校验）
+4. 客户端以Packet为单位接收，现在本地缓存，然后写入目标文件
+
+### NameNode 和 SecondaryNameNode
+
+[![y5Rvm4.md.png](https://s3.ax1x.com/2021/02/20/y5Rvm4.md.png)](https://imgchr.com/i/y5Rvm4)
+
+NameNode节点元数据存于磁盘中，因为需要经常进行随机访问，且还响应客户端的请求，效率底下。因此，要将元数据放在内存中，但是如果断电，内存中的数据就会丢失，集群无法工作了。因此在磁盘中备份元数据的FsImage
+
+但是这样会带来新的问题就是，在更新内存中的数据同时，还要同时更新FsImage,这样效率底下，因此，引入Edits文件（只进行追加，效率高），每当元数据有更新或者添加元数据时，修改内存中的数据并追加到Edits中。这样，一旦NameNode节点断电，可以通过FsImage和Edits的合并，合成元数据
+
+但是如果长时间添加数据到Edits中，导致文件太大，某天断电，那么恢复元数据时间很长，因此，需要定期合并FsImage 和 Edits 文件，但是这个操作由NameNode节点来完成，效率底下，因此引入新的节点SecondaryNameNode,专门用于FsImage和Edits定期合并
+
+- Fsimage:NameNode内存中元数据序列化后形成的文件。包含HDFS文件系统的所有目录和文件inode的序列化信息；是HDFS文件系统元数据的永久性检查点；
+- Edits:记录客户端更新--增删改元数据的每一步操作
+- NameNode启动时，先滚动Edits并生成一个空的edits.inprogress，然后加载Edits和Fsimage到内存中，此时NameNode内存就持有最新的元数据信息
+
+#### 第一阶段：NameNode启动
+
+1. 第一次启动NameNode格式化后，创建Fsimage和Edits文件。如果不是第一次启动，直接加载编辑日志和镜像文件到内存
+2. 客户端对元数据进行增删改的请求
+3. NameNode记录操作日志，更新滚动日志
+4. NameNode在内存中对元数据进行增删改
+
+#### 第二阶段：Secondary NameNode工作
+
+1. Secondary NameNode询问NameNode是否需要CheckPoint. 直接带回NameNode是否检查结果
+2. Secondary NameNode请求执行CheckPoint
+3. NameNode滚动正在写的Edits日志
+4. 将滚动前的编辑日志和镜像文件拷贝到Secondary NameNode
+5. Secondary NameNode加载编辑日志和镜像文件到内存，并合并
+6. 生成新的镜像文件fsimage.chkpoint
+7. 拷贝fsimage.chkpoint到NameNode
+8. NameNode将fsimage.chkpoint重新命名成fsimage
+
+### Fsimage和Edits解析
+
+````
+root@namenode:/opt/hdfs/name/current# ls
+VERSION                                        edits_0000000000000000035-0000000000000000036  edits_0000000000000000063-0000000000000000064
+edits_0000000000000000001-0000000000000000003  edits_0000000000000000037-0000000000000000038  edits_0000000000000000065-0000000000000000072
+edits_0000000000000000004-0000000000000000012  edits_0000000000000000039-0000000000000000040  edits_0000000000000000073-0000000000000000074
+edits_0000000000000000013-0000000000000000014  edits_0000000000000000041-0000000000000000042  edits_inprogress_0000000000000000075
+edits_0000000000000000015-0000000000000000017  edits_0000000000000000043-0000000000000000044  fsimage_0000000000000000072
+edits_0000000000000000018-0000000000000000026  edits_0000000000000000045-0000000000000000046  fsimage_0000000000000000072.md5
+edits_0000000000000000027-0000000000000000028  edits_0000000000000000047-0000000000000000048  fsimage_0000000000000000074
+edits_0000000000000000029-0000000000000000030  edits_0000000000000000049-0000000000000000050  fsimage_0000000000000000074.md5
+edits_0000000000000000031-0000000000000000032  edits_0000000000000000051-0000000000000000060  seen_txid
+edits_0000000000000000033-0000000000000000034  edits_0000000000000000061-0000000000000000062
+root@namenode:/opt/hdfs/name/current# vi seen_txid 
+bash: vi: command not found
+root@namenode:/opt/hdfs/name/current# cat seen_txid 
+75
+root@namenode:/opt/hdfs/name/current# pwd
+/opt/hdfs/name/current
+
+````
+
+- Fsimage文件：HDFS文件系统元数据的一个永久检查点，其中包含HDFS文件系统的所有目录和文件inode的序列化信息
+- Edits文件：存放HEFS文件系统的所有更新操作的路径，文件系统客户端执行的所有写操作首先会被记录到Edits文件中
+- seen_txid文件保存的是一个数字，就是最后一个edits_的数字
+- 每次nameNode启动的时候都会将Fsimage文件读入内存，加载Edits里面的更新操作，保证内存中的元数据信息是最新的，同步的，可以看成NameNode启动的时候将Fsimage和Edits文件进行了合并
