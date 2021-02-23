@@ -1,13 +1,10 @@
 spring:
   datasource:
-    type: com.alibaba.druid.pool.DruidDataSource
-    click:
-      driverClassName: ru.yandex.clickhouse.ClickHouseDriver
-      url: jdbc:clickhouse://localhost:9000/user_info
-#      initialSize: 10
-#      maxActive: 100
-#      minIdle: 10
-#      maxWait: 6000
+    driver-class-name: ru.yandex.clickhouse.ClickHouseDriver
+    ##driver-class-name: com.github.housepower.jdbc.ClickHouseDriver
+    url: jdbc:clickhouse://127.0.0.1:8123/user_info?characterEncoding=UTF-8&useSSL=false
+  application:
+    name: bigdata
 mybatis:
   configuration:
     map-underscore-to-camel-case: true

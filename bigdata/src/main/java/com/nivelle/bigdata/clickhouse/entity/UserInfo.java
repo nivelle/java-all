@@ -2,6 +2,8 @@ package com.nivelle.bigdata.clickhouse.entity;
 
 import lombok.Data;
 
+import java.time.LocalDate;
+
 /**
  * TODO:DOCUMENT ME!
  *
@@ -11,10 +13,10 @@ import lombok.Data;
 @Data
 public class UserInfo {
 
-    private int id;
+    private Integer id;
     private String userName;
     private String passWord;
     private String phone;
     private String email;
-    private String createDay;
+    private LocalDate createDay;
 }

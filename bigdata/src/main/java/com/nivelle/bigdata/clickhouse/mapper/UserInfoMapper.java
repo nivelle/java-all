@@ -1,4 +1,4 @@
-package com.nivelle.bigdata.clickhouse;
+package com.nivelle.bigdata.clickhouse.mapper;
 
 import com.nivelle.bigdata.clickhouse.entity.UserInfo;
 import org.apache.ibatis.annotations.Mapper;

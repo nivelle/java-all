@@ -1,10 +1,12 @@
 package com.nivelle.bigdata.clickhouse;
 
 import com.nivelle.bigdata.clickhouse.entity.UserInfo;
+import com.nivelle.bigdata.clickhouse.mapper.UserInfoMapper;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -27,7 +29,7 @@ public class UserInfoController {
         userInfo.setPassWord("567");
         userInfo.setPhone("13977776789");
         userInfo.setEmail("winter");
-        userInfo.setCreateDay("2020-02-20");
+        userInfo.setCreateDay(LocalDate.now());
         userInfoService.saveData(userInfo);
         return "sus";
     }
