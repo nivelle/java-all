@@ -25,10 +25,10 @@ public class UserInfoController {
     public String saveData() {
         UserInfo userInfo = new UserInfo();
         userInfo.setId(4);
-        userInfo.setUserName("winter");
+        userInfo.setUserName("nivelle");
         userInfo.setPassWord("567");
-        userInfo.setPhone("13977776789");
-        userInfo.setEmail("winter");
+        userInfo.setPhone("176001400137");
+        userInfo.setEmail("fix");
         userInfo.setCreateDay(LocalDate.now());
         userInfoService.saveData(userInfo);
         return "sus";

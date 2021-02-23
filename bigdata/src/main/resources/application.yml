@@ -2,7 +2,7 @@ spring:
   datasource:
     driver-class-name: ru.yandex.clickhouse.ClickHouseDriver
     ##driver-class-name: com.github.housepower.jdbc.ClickHouseDriver
-    url: jdbc:clickhouse://127.0.0.1:8123/user_info?characterEncoding=UTF-8&useSSL=false
+    url: jdbc:clickhouse://39.105.201.242:8123/user_info?characterEncoding=UTF-8&useSSL=false
   application:
     name: bigdata
 mybatis:
