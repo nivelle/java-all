@@ -38,10 +38,10 @@ public class MyOverloadMethod extends MyOverloadMethodParent {
         System.out.println("MyOverloadMethod==>myMethod4");
     }
 
-    public int myMethod5(long i, int j) {
-        System.out.println("MyOverloadMethod==>myMethod4");
-        return 10;
-    }
+//    public int myMethod5(long i, int j) {
+//        System.out.println("MyOverloadMethod==>myMethod4");
+//        return 10;
+//    }
 
 }
 

@@ -1,6 +1,16 @@
-clickhouse:
-  address: jdbc:clickhouse://localhost:9000
-  username: default
-  password: root
-  db: marketing
-  socketTimeout: 600000
+spring:
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    click:
+      driverClassName: ru.yandex.clickhouse.ClickHouseDriver
+      url: jdbc:clickhouse://localhost:9000/user_info
+#      initialSize: 10
+#      maxActive: 100
+#      minIdle: 10
+#      maxWait: 6000
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+  ## 实体类包名称
+  type-aliases-package: com.nivelle.bigdata.clickhouse.Entity
+  mapper-locations: classpath:mapper/*.xml

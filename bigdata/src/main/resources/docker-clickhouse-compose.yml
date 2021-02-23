@@ -1,0 +1,80 @@
+version: '2'
+
+services:
+  zookeeper:
+    image: zookeeper:3.5
+    ports:
+      - "2181:2181"
+      - "2182:2182"
+
+  clickhouse01:
+    image: yandex/clickhouse-server:1.1
+    expose:
+      - "9000"
+    user: root
+    privileged: true
+    ports:
+      - "9001:9000"
+    volumes:
+      - ./ch01/etc:/etc/clickhouse-server
+      - ./ch01/data:/var/lib/clickhouse
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+    depends_on:
+      - "zookeeper"
+
+  clickhouse02:
+    image: yandex/clickhouse-server:1.1
+    expose:
+      - "9000"
+    user: root
+    privileged: true
+    ports:
+      - "9002:9000"
+    volumes:
+      - ./ch02/etc:/etc/clickhouse-server
+      - ./ch02/data:/var/lib/clickhouse
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+    depends_on:
+      - "zookeeper"
+
+  clickhouse03:
+    image: yandex/clickhouse-server:1.1
+    expose:
+      - "9000"
+    user: root
+    privileged: true
+    ports:
+      - "9003:9000"
+    volumes:
+      - ./ch03/etc:/etc/clickhouse-server
+      - ./ch03/data:/var/lib/clickhouse
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+    depends_on:
+      - "zookeeper"
+
+  clickhouse04:
+    image: yandex/clickhouse-server:1.1
+    expose:
+      - "9000"
+    user: root
+    privileged: true
+    ports:
+      - "9004:9000"
+    volumes:
+      - ./ch04/etc:/etc/clickhouse-server
+      - ./ch04/data:/var/lib/clickhouse
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+    depends_on:
+      - "zookeeper"
