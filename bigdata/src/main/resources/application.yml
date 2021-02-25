@@ -8,6 +8,7 @@ spring:
 mybatis:
   configuration:
     map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   ## 实体类包名称
   type-aliases-package: com.nivelle.bigdata.clickhouse.Entity
   mapper-locations: classpath:mapper/*.xml

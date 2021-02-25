@@ -1,4 +1,4 @@
-package com.nivelle.bigdata.clickhouse;
+package com.nivelle.bigdata.clickhouse.controller;
 
 import com.nivelle.bigdata.clickhouse.entity.UserInfo;
 import com.nivelle.bigdata.clickhouse.mapper.UserInfoMapper;

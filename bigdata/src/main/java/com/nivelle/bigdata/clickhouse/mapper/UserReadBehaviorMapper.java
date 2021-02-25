@@ -1,10 +1,13 @@
 package com.nivelle.bigdata.clickhouse.mapper;
 
 import com.nivelle.bigdata.clickhouse.entity.UserReadBehavior;
+import com.nivelle.bigdata.clickhouse.params.UserReadBehaviorResponse;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * TODO:DOCUMENT ME!
@@ -21,4 +24,8 @@ public interface UserReadBehaviorMapper {
     List<UserReadBehavior> selectList();
 
     void save(UserReadBehavior userReadBehavior);
+
+
+    List<UserReadBehaviorResponse> getCondition(HashMap<String,Object> params);
+
 }
