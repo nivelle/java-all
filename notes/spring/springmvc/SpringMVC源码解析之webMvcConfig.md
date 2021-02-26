@@ -36,7 +36,7 @@ public class DelegatingWebMvcConfiguration extends WebMvcConfigurationSupport {
 	
 }
 
-```
+````
 
 
 ### WebMvcConfigurationSupport
