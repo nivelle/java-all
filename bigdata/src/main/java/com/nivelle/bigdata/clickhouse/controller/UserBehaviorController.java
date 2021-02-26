@@ -92,17 +92,18 @@ public class UserBehaviorController {
     public List<UserReadBehavior> selectList() {
         return userReadBehaviorMapper.selectList();
     }
+
     @RequestMapping("/getByCondition")
-    public Object getListByCondition(){
+    public Object getListByCondition() {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-        LocalDateTime startTime = LocalDateTime.parse("2021-02-25 00:00:00",dtf);
-        LocalDateTime endTime = LocalDateTime.parse("2021-02-25 23:00:00",dtf);
-        HashMap<String,Object> params = Maps.newHashMap();
-        params.put("startTime",startTime);
-        params.put("endTime",endTime);
-
-        List<UserReadBehaviorResponse> result= userReadBehaviorMapper.getCondition(params);
+        LocalDateTime startTime = LocalDateTime.parse("2021-02-25 00:00:00", dtf);
+        LocalDateTime endTime = LocalDateTime.parse("2021-02-25 23:00:00", dtf);
+        HashMap<String, Object> params = Maps.newHashMap();
+        params.put("startTime", startTime);
+        params.put("endTime", endTime);
+        params.put("bookIds", Lists.newArrayList(117, 166));
+        List<UserReadBehaviorResponse> result = userReadBehaviorMapper.getCondition(params);
         System.out.println(result);
         return result;
     }

@@ -4,9 +4,9 @@ Premain-Class: com.nivelle.agent.PreMainTraceAgent
 Built-By: nivellefu
 ##包含 agentmain 方法的类（类的全路径名）
 Agent-Class: com.nivelle.agent.PreMainTraceAgent
-##Can-Redefine-Classes ：true表示能重定义此代理所需的类，默认值为 false（可选）
+##Can-Redefine-Classes：true表示能重定义此代理所需的类，默认值为 false（可选）
 Can-Redefine-Classes: true
-##Can-Retransform-Classes ：true 表示能重转换此代理所需的类，默认值为 false （可选）
+##Can-Retransform-Classes:true 表示能重转换此代理所需的类，默认值为 false （可选）
 Can-Retransform-Classes: true
 Created-By: Apache Maven 3.6.1
 Build-Jdk: 1.8.0_191
