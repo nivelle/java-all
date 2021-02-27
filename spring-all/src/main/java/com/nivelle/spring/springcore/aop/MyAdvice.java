@@ -1,10 +1,9 @@
 package com.nivelle.spring.springcore.aop;
 
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
-import org.aspectj.lang.annotation.Around;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.annotation.*;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 
@@ -34,6 +33,25 @@ public class MyAdvice {
     public void cutService() {
     }
 
+    @Before(value = "cutService()")
+    public void logBefore() {
+        System.out.println("logBefore............");
+    }
+
+    @After(value = "cutService()")
+    public void logAfter() {
+        System.out.println("logAfter..............");
+    }
+
+    @AfterReturning(value = "cutService()", returning = "result")
+    public void logReturn(Object result) {
+        System.out.println("logReturn............." + result);
+    }
+    @AfterThrowing(value = "cutService()",throwing = "exception")
+    public void logException(JoinPoint joinPoint,Exception exception){
+        System.out.println(joinPoint.getSignature().getName()+"logException........"+exception);
+    }
+
     @Around("cutService()")
     public Object writeLog(ProceedingJoinPoint point) throws Throwable {
 
@@ -49,7 +67,7 @@ public class MyAdvice {
         Method currentMethod = target.getClass().getMethod(methodSignature.getName(), methodSignature.getParameterTypes());
         AopAnnotation annotation = currentMethod.getAnnotation(AopAnnotation.class);
         if (Objects.nonNull(annotation)) {
-            System.out.println("对原来逻辑完成了织入");
+            System.out.println("环绕方法-》对原来逻辑完成了织入");
             result = point.proceed();
         }
         System.out.println("Aop方法执行完了！！！");

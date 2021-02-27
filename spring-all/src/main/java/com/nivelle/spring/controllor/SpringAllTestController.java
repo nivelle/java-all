@@ -34,7 +34,7 @@ import javax.servlet.http.HttpSession;
 import java.io.PrintWriter;
 import java.util.*;
 
-@Controller
+@RestController
 public class SpringAllTestController implements ApplicationContextAware {
 
     @Autowired
@@ -398,8 +398,8 @@ public class SpringAllTestController implements ApplicationContextAware {
      */
     @RequestMapping("myService")
     public String writeLog() {
-        myService.writeLog();
-        return "SUCCESS";
+        System.out.println(myService.getClass());
+        return myService.writeLog();
     }
 
     /**

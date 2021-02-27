@@ -40,9 +40,7 @@
 
 ````
 
-- 2、postProcessAfterInstantiation方法
-
-当postProcessBeforeInstantiation返回的不为null 的时候才会执行下面的方法（创建Machine 对象时返回的是null所有不会调用）
+- 2、postProcessAfterInstantiation 方法,当postProcessBeforeInstantiation返回的不为null 的时候才会执行下面的方法
 
 ````
 public boolean postProcessAfterInstantiation(Object bean, String beanName) {
@@ -50,10 +48,12 @@ public boolean postProcessAfterInstantiation(Object bean, String beanName) {
 	}
 
 ````
-- 3、postProcessBeforeInitialization方法
+- 3、postProcessBeforeInitialization 方法
 
 因为尝试返回一个代理对象失败，所以将执行doCreateBean方法。创建一个bean。然后在创建完成初始化之前会调用
-applyBeanPostProcessorsBeforeInitialization方法，这个方法的内部就是，遍历所有后置处理器调用他们的postProcessBeforeInitialization方法。当然也会调用AnnotationAwareAspectJAutoProxyCreator的postProcessBeforeInitialization方法。他就会执行在每次创建bean的时候执行下面操作。
+applyBeanPostProcessorsBeforeInitialization方法，这个方法的内部就是，遍历所有后置处理器并调用他们的postProcessBeforeInitialization方法。
+
+当然也会调用AnnotationAwareAspectJAutoProxyCreator的postProcessBeforeInitialization方法。他就会执行在每次创建bean的时候执行下面操作。
 
 ``````
 	@Override
@@ -65,8 +65,9 @@ applyBeanPostProcessorsBeforeInitialization方法，这个方法的内部就是�
 
 - 4、postProcessAfterInitialization方法
 
-在调用完invokeInitMethods(beanName, wrappedBean, mbd); 初始化方法之后，也会遍历所有的后置处理器，执行他们的后置方法。所以每个bean创建的时候都会调用AnnotationAwareAspectJAutoProxyCreator的postProcessAfterInitialization方法。在这里也就是尝试创建一个代理对象。
-前面都是准备工作。
+在调用完invokeInitMethods(beanName, wrappedBean, mbd); 初始化方法之后，也会遍历所有的后置处理器，执行他们的后置方法。
+
+所以每个bean创建的时候都会调用AnnotationAwareAspectJAutoProxyCreator的postProcessAfterInitialization方法。在这里也就是尝试创建一个代理对象。 前面都是准备工作。
 
 ``````
 	@Override
@@ -100,9 +101,8 @@ applyBeanPostProcessorsBeforeInitialization方法，这个方法的内部就是�
 			this.advisedBeans.put(cacheKey, Boolean.TRUE);
 			//如果当前bean需要增强，创建当前bean的代理对象,spring自动决定创建哪种
 			//JdkDynamicAopProxy(config);jdk动态代理；
- * 			//ObjenesisCglibAopProxy(config);cglib的动态代理；
-			Object proxy = createProxy(
-					bean.getClass(), beanName, specificInterceptors, new SingletonTargetSource(bean))；
+  			//ObjenesisCglibAopProxy(config);cglib的动态代理；
+			Object proxy = createProxy(bean.getClass(), beanName, specificInterceptors, new SingletonTargetSource(bean))；
 			this.proxyTypes.put(cacheKey, proxy.getClass());
 			//返回代理对象
 			return proxy;
@@ -110,9 +110,6 @@ applyBeanPostProcessorsBeforeInitialization方法，这个方法的内部就是�
 		this.advisedBeans.put(cacheKey, Boolean.FALSE);
 		return bean;
 	}
-
-
-
 ``````
 
 

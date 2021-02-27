@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
  *
  * @author nivellefu
  */
-@Component
+//@Component
 public class SchedulerTask {
 
 

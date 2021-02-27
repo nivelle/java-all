@@ -14,7 +14,8 @@ public class MyService {
 
 
     @AopAnnotation
-    public void writeLog() {
+    public String writeLog() {
         System.out.println("被代理的方法！！！");
+        return "被代理的方法返回值";
     }
 }

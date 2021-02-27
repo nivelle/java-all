@@ -1,9 +1,11 @@
 ### 目标方法执行
 
+[![69kQrq.md.png](https://s3.ax1x.com/2021/02/27/69kQrq.md.png)](https://imgtu.com/i/69kQrq)
+
 ````
-	@Override
+	    @Override
 		public Object intercept(Object proxy, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
-			// --------------------部分代码省略-------------------
+			     // --------------------部分代码省略-------------------
 				target = getTarget();
 				if (target != null) {
 				//获取目标对象 #1
@@ -16,8 +18,7 @@
 				if (chain.isEmpty() && Modifier.isPublic(method.getModifiers())) {
 				.adaptArgumentsIfNecessary(method, args);
 					retVal = methodProxy.invoke(target, argsToUse);
-				}
-				else {
+				}else {
 					// 如果有拦截器链那么获取一个CglibMethodInvocation对象 #4 推动拦截器 // Object retVal =  mi.proceed(); #5
 					retVal = new CglibMethodInvocation(proxy, target, method, args, targetClass, chain, methodProxy).proceed();
 				}
@@ -38,11 +39,11 @@
 
 ````
 
-- 获取目标对象 #1
-- 尝试返回一个拦截器链 #2
-- 如果没有返回拦截器链 那么直接执行目标方法 #3
-- 如果有拦截器链那么获取一个CglibMethodInvocation对象 #4
-- Object retVal = mi.proceed(); 推动拦截器 #
+- 获取目标对象 
+- 尝试返回一个拦截器链 
+- 如果没有返回拦截器链 那么直接执行目标方法 
+- 如果有拦截器链那么获取一个CglibMethodInvocation对象 
+- Object retVal = mi.proceed(); 推动拦截器 
 
 #### 尝试返回一个拦截器链 getInterceptorsAndDynamicInterceptionAdvice
 
@@ -52,13 +53,18 @@
 		MethodCacheKey cacheKey = new MethodCacheKey(method);
 		List<Object> cached = this.methodCache.get(cacheKey);
 		if (cached == null) {
-		// 从工厂拿到拦截器链  具体在下面
+		   // 从工厂拿到拦截器链  具体在下面
 			cached = this.advisorChainFactory.getInterceptorsAndDynamicInterceptionAdvice(this, method, targetClass);
 			this.methodCache.put(cacheKey, cached);
 		}
 		return cached;
 	}
-   //######################################getInterceptorsAndDynamicInterceptionAdvice方法#########################################
+	
+`````
+
+-  DefaultAdvisorChainFactory.getInterceptorsAndDynamicInterceptionAdvice方法
+
+````
 	@Override
 	public List<Object> getInterceptorsAndDynamicInterceptionAdvice(Advised config, Method method, Class<?> targetClass) {
 		//创建一个增强器链条的list集合 在后面会不断向里面增加拦截器
@@ -109,7 +115,7 @@
 
 - 这个方法的主要作用就是 将所有增强器方法中需转换的 转换成为MethodInterceptor类型，也就是拦截器链。然后如果有拦截器链，就会执行#4方法
 
-#### new CglibMethodInvocation().process()方法执行器的调用
+#### 如果有拦截器链，则执行 该步骤-》new CglibMethodInvocation().process()方法执行器的调用
 
 - 拦截器链该是如何进行调用的。我们说的拦截器链条，就是我们定义的那些通知方法比如:前置通知，后置通知，返回通知 异常通知
 
@@ -121,16 +127,13 @@
 		//1、拦截器链条的长度为0
 		//2、或者执行到最后一个拦截器器(也就是最后一个通知方法)
 		if (this.currentInterceptorIndex == this.interceptorsAndDynamicMethodMatchers.size() - 1) {
-			//类似于我们手动推进执行目标方法
+			//类似于我们手动推进执行目标方法，目标方法的调用
 			return invokeJoinpoint();
 		}
-		
 		// 当执行一个拦截器之前会currentInterceptorIndex 加一
-		Object interceptorOrInterceptionAdvice =
-				this.interceptorsAndDynamicMethodMatchers.get(++this.currentInterceptorIndex);
+		Object interceptorOrInterceptionAdvice = this.interceptorsAndDynamicMethodMatchers.get(++this.currentInterceptorIndex);
 		if (interceptorOrInterceptionAdvice instanceof InterceptorAndDynamicMethodMatcher) {
-			InterceptorAndDynamicMethodMatcher dm =
-					(InterceptorAndDynamicMethodMatcher) interceptorOrInterceptionAdvice;
+			InterceptorAndDynamicMethodMatcher dm =(InterceptorAndDynamicMethodMatcher) interceptorOrInterceptionAdvice;
 			if (dm.methodMatcher.matches(this.method, this.targetClass, this.arguments)) {
 				return dm.interceptor.invoke(this);
 			}
@@ -150,7 +153,8 @@
 	}
 
 ````
-- 第一个拦截器是ExposeInvocationInterceptor，进入他的invoke方法(这是它内部自带的一个通知方法)，下面代码有一个重要的一句话mi.proceed(),他也执行了mi.proceed方法
+
+#### 第一个拦截器是ExposeInvocationInterceptor，进入他的invoke方法(这是它内部自带的一个通知方法)，下面代码有一个重要的一句话mi.proceed(),他也执行了mi.proceed方法
 
 ````
 	@Override
@@ -171,16 +175,12 @@
 ````
 	@Override
 	public Object proceed() throws Throwable {
-		// 部分代码省略..................
 		//判断 是否到达最后一个
 		if (this.currentInterceptorIndex == this.interceptorsAndDynamicMethodMatchers.size() - 1) {
 			return invokeJoinpoint();
 		}
-		// 部分代码省略...................
 		//获得 角标为1的拦截器
-		Object interceptorOrInterceptionAdvice =
-				this.interceptorsAndDynamicMethodMatchers.get(++this.currentInterceptorIndex);
-		// 部分代码省略...................
+		Object interceptorOrInterceptionAdvice = this.interceptorsAndDynamicMethodMatchers.get(++this.currentInterceptorIndex);
 		// 调用拦截器的invoke(this);方法
 			return ((MethodInterceptor) interceptorOrInterceptionAdvice).invoke(this);
 		}
@@ -188,7 +188,7 @@
 
 ````
 
-- 这个角标为1的拦截器是 AspectJAfterThrowingAdvice，同样进入他的invoke方法，代码如下：
+#### 第二个拦截器是AspectJAfterThrowingAdvice，同样进入他的invoke方法，代码如下：
 
 ````
 	@Override
@@ -211,16 +211,13 @@
 ````
 @Override
 	public Object proceed() throws Throwable {
-		// 部分代码省略..................
 		//判断 是否到达最后一个
 		if (this.currentInterceptorIndex == this.interceptorsAndDynamicMethodMatchers.size() - 1) {
 			return invokeJoinpoint();
 		}
-		// 部分代码省略...................
 		//获得 角标为2的拦截器
 		Object interceptorOrInterceptionAdvice =
 				this.interceptorsAndDynamicMethodMatchers.get(++this.currentInterceptorIndex);
-		// 部分代码省略...................
 		// 调用拦截器的invoke(this);方法
 			return ((MethodInterceptor) interceptorOrInterceptionAdvice).invoke(this);
 		}
@@ -228,8 +225,7 @@
 
 ````
 
-- 与之前不同的是，此时又取到了下一个拦截器。AspectJAfterReturningAdvice返回通知，同样它由调用返回通知的invoke(this)方法…
-就这样形成了一个链条，直到最后一个拦截器执行完毕之后，执行上一个拦截器。这里就不一一往下记录，直接看当执行到最后一个拦截器MethodBeforeAdviceInterceptor的方法代码。
+##### 第三个AspectJAfterReturningAdvice返回通知，同样它由调用返回通知的invoke(this)方法，就这样形成了一个链条
   
 ````
 	@Override
@@ -242,5 +238,13 @@
 
 
 ````
+#### 第四个拦截器MethodBeforeAdviceInterceptor的方法代码
 
-- 
+[![69Fygs.md.png](https://s3.ax1x.com/2021/02/27/69Fygs.md.png)](https://imgtu.com/i/69Fygs)
+
+----
+
+
+### 环绕通知
+
+[![69Fguq.md.png](https://s3.ax1x.com/2021/02/27/69Fguq.md.png)](https://imgtu.com/i/69Fguq)
