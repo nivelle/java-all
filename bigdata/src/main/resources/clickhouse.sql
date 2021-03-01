@@ -2,7 +2,7 @@
   *
   * 用于阅读数据统计
  */
-CREATE TABLE nd_bi_data.user_read_behavior
+CREATE TABLE nd_bi_data.nd_user_read_behavior
 (
     user_name     String,
     book_id       UInt16,
@@ -38,7 +38,7 @@ CREATE TABLE nd_bi_data.user_read_behavior
 /**
   用于交易数据统计
  */
-CREATE TABLE nd_bi_data.user_transaction_info
+CREATE TABLE nd_bi_data.nd_user_transaction_info
 (
     user_name         String,
     book_id           UInt16,

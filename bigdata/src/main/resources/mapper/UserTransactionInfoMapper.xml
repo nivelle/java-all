@@ -31,7 +31,7 @@
 apple_amount,refund_amount,main_gift_amount,main_amount,amount,create_time
     </sql>
     <insert id="batchSave" parameterType="com.nivelle.bigdata.clickhouse.entity.UserTransactionInfo">
-        INSERT INTO user_transaction_info
+        INSERT INTO nd_user_transaction_info
         (user_name,book_id,book_name,chapter_id,book_type,category_id,category_name,p2,p16,copyright_id,company_id,origin,coupon_amount,apple_gift_amount,
         apple_amount,refund_amount,main_gift_amount,main_amount,amount,create_time)
         VALUES
@@ -43,7 +43,7 @@ apple_amount,refund_amount,main_gift_amount,main_amount,amount,create_time
         </foreach>
     </insert>
     <insert id="save" parameterType="com.nivelle.bigdata.clickhouse.entity.UserTransactionInfo">
-        INSERT INTO user_transaction_info
+        INSERT INTO nd_user_transaction_info
         (user_name,book_id,book_name,chapter_id,book_type,category_id,category_name,p2,p16,copyright_id,company_id,origin,coupon_amount,apple_gift_amount,apple_amount,refund_amount,main_gift_amount,main_amount,amount,create_time)
         VALUES
         (#{userName},#{bookId},#{bookName}, #{chapterId}, #{bookType}, #{categoryId}, #{categoryName}, #{p2},#{p16},#{copyrightId}, #{companyId}, #{origin}, #{couponAmount},#{appleGiftAmount},#{appleAmount},#{refundAmount}, #{mainGiftAmount},#{mainAmount},#{amount},#{createTime})
@@ -51,14 +51,14 @@ apple_amount,refund_amount,main_gift_amount,main_amount,amount,create_time
     <select id="selectList" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
-        from user_transaction_info
+        from nd_user_transaction_info
     </select>
 
 
     <select id="getCondition" parameterType="java.util.Map" resultType="com.nivelle.bigdata.clickhouse.params.UserTransactionInfoResponse">
         select count(*) as payPersons,
         book_id as bookId, sum(amount) as payAmount,sum (apple_amount+main_amount) as payRechargeAmount,sum (apple_gift_amount+main_gift_amount) as payCouponAmount, sum (refund_amount) as payRefundAmount
-        from user_transaction_info
+        from nd_user_transaction_info
         <where>
             create_time between #{startTime} and #{endTime}
             <if test="categoryIds!=null">
