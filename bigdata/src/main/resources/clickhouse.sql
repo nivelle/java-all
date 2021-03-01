@@ -54,27 +54,28 @@ CREATE TABLE nd_bi_data.user_transaction_info
     /**渠道**/
     p2                String,
     /**客户端机型**/
-    client_type       String,
-    /** 赠送币金额**/
-    coupon_amount     String,
+    p16       String,
+
     /** 版权方ID**/
     copyright_id      UInt16,
     /**企业ID**/
     company_id        String,
     /** 交易来源**/
     origin            String,
+    /** 赠送币金额**/
+    coupon_amount     Decimal(16,2),
     /**苹果礼品账户交易金额**/
-    apple_gift_amount String,
+    apple_gift_amount Decimal(16,2),
     /** 苹果账户交易金额 **/
-    apple_amount      String,
+    apple_amount      Decimal(16,2),
     /** 退款账户交易金额 **/
-    refund_amount     String,
+    refund_amount     Decimal(16,2),
     /**礼品账户交易金额 **/
-    main_gift_amount  String,
+    main_gift_amount  Decimal(16,2),
     /**主账户交易金额**/
-    main_amount       String,
+    main_amount       Decimal(16,2),
     /** 交易总金额**/
-    amount            String,
+    amount            Decimal(16,2),
     /** 创建时间 **/
     create_time       DateTime
 )ENGINE = MergeTree partition by toYYYYMMDD(create_time) order by (create_time);
