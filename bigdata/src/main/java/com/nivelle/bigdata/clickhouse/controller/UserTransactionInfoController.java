@@ -1,13 +1,19 @@
 package com.nivelle.bigdata.clickhouse.controller;
 
+import com.google.common.collect.Maps;
 import com.nivelle.bigdata.clickhouse.entity.UserTransactionInfo;
 import com.nivelle.bigdata.clickhouse.mapper.UserTransactionInfoMapper;
+import com.nivelle.bigdata.clickhouse.params.UserReadBehaviorResponse;
+import org.assertj.core.util.Lists;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * @author fuxinzhong
@@ -52,7 +58,7 @@ public class UserTransactionInfoController {
     }
 
     /**
-     * 单个添加
+     * 批量添加
      *
      * @return
      */
@@ -82,5 +88,38 @@ public class UserTransactionInfoController {
             userTransactionInfoMapper.save(userTransactionInfo);
         }
         return "sus";
+    }
+
+    /**
+     * 批量添加
+     *
+     * @return
+     */
+    @RequestMapping("/selectList")
+    public List<UserTransactionInfo> selectList() {
+
+        return userTransactionInfoMapper.selectList();
+    }
+
+
+    /**
+     * 批量添加
+     *
+     * @return
+     */
+    @RequestMapping("/getCondition")
+    public List<UserTransactionInfo> getCondition() {
+
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        LocalDateTime startTime = LocalDateTime.parse("2021-02-25 00:00:00", dtf);
+        LocalDateTime endTime = LocalDateTime.parse("2021-03-01 23:00:00", dtf);
+        HashMap<String, Object> params = Maps.newHashMap();
+        params.put("startTime", startTime);
+        params.put("endTime", endTime);
+        params.put("bookIds", Lists.newArrayList(117, 118));
+        List<UserTransactionInfo> result = userTransactionInfoMapper.getCondition(params);
+        System.out.println(result);
+        return result;
     }
 }

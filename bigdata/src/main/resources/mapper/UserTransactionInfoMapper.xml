@@ -55,4 +55,41 @@ apple_amount,refund_amount,main_gift_amount,main_amount,amount,create_time
     </select>
 
 
+    <select id="getCondition" parameterType="java.util.Map" resultType="com.nivelle.bigdata.clickhouse.params.UserTransactionInfoResponse">
+        select count(*) as payPersons,
+        book_id as bookId, sum(amount) as payAmount,sum (apple_amount+main_amount) as payRechargeAmount,sum (apple_gift_amount+main_gift_amount) as payCouponAmount, sum (refund_amount) as payRefundAmount
+        from user_transaction_info
+        <where>
+            create_time between #{startTime} and #{endTime}
+            <if test="categoryIds!=null">
+                and category_id in
+                <foreach collection="categoryIds" item="categoryId" index="index"
+                         open="(" close=")" separator=",">
+                    #{categoryId}
+                </foreach>
+            </if>
+            <if test="bookIds!=null">
+                and book_id in
+                <foreach collection="bookIds" item="bookId" index="index"
+                         open="(" close=")" separator=",">
+                    #{bookId}
+                </foreach>
+            </if>
+            <if test="copyrightIds!=null">
+                and copyright_id in
+                <foreach collection="copyrightIds" item="copyrightId" index="index"
+                         open="(" close=")" separator=",">
+                    #{copyrightId}
+                </foreach>
+            </if>
+            <if test="channels!=null">
+                and p2 in
+                <foreach collection="channels" item="channel" index="index"
+                         open="(" close=")" separator=",">
+                    #{channel}
+                </foreach>
+            </if>
+            group by book_id;
+        </where>
+    </select>
 </mapper>

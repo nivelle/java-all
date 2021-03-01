@@ -4,6 +4,7 @@ import com.nivelle.bigdata.clickhouse.entity.UserTransactionInfo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -22,6 +23,8 @@ public interface UserTransactionInfoMapper {
 
     // 查询全部
     List<UserTransactionInfo> selectList();
+
+    List<UserTransactionInfo> getCondition(HashMap<String,Object> params);
 
 
 }
