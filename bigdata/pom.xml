@@ -23,6 +23,7 @@
         <scala.version>2.11</scala.version>
         <spark.version>2.1.0</spark.version>
         <springboot.version>1.5.15.RELEASE</springboot.version>
+        <basedir>/Users/nivellefu/IdeaProjects/java-guides/bigdata</basedir>
     </properties>
 
     <dependencies>
@@ -58,13 +59,6 @@
             <artifactId>clickhouse-jdbc</artifactId>
             <version>0.2.4</version>
         </dependency>
-
-<!--        <dependency>-->
-<!--            <groupId>com.github.housepower</groupId>-->
-<!--            <artifactId>clickhouse-native-jdbc</artifactId>-->
-<!--            <version>1.7-stable</version>-->
-<!--        </dependency>-->
-
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -74,6 +68,11 @@
             <groupId>org.mybatis.spring.boot</groupId>
             <artifactId>mybatis-spring-boot-starter</artifactId>
             <version>2.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid-spring-boot-starter</artifactId>
+            <version>1.1.13</version>
         </dependency>
     </dependencies>
 
@@ -115,5 +114,75 @@
             </snapshots>
         </pluginRepository>
     </pluginRepositories>
+
+
+    <build>
+        <plugins>
+
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>
+                            <groupId>org.springframework.boot</groupId>
+                            <artifactId>spring-boot-devtools</artifactId>
+                        </exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <profiles>
+
+        <profile>
+            <id>grey</id>
+            <build>
+                <resources>
+                    <resource>
+                        <directory>${basedir}/src/main/resources/config/grey/</directory>
+                        <includes>
+                            <include>*.*</include>
+                        </includes>
+                        <targetPath>config/</targetPath>
+                    </resource>
+                </resources>
+            </build>
+            <activation>
+                <property>
+                    <name>env</name>
+                    <value>grey</value>
+                </property>
+            </activation>
+        </profile>
+
+        <profile>
+            <id>prod</id>
+            <build>
+                <resources>
+                    <resource>
+                        <directory>${basedir}/src/main/resources/config/prod/</directory>
+                        <includes>
+                            <include>*.*</include>
+                        </includes>
+                        <targetPath>config/</targetPath>
+                    </resource>
+                    <resource>
+                        <directory>${basedir}/src/main/resources/mapper</directory>
+                        <includes>
+                            <include>*.xml</include>
+                        </includes>
+                        <targetPath>./</targetPath>
+                    </resource>
+                </resources>
+            </build>
+            <activation>
+                <property>
+                    <name>grey</name>
+                    <value>prod</value>
+                </property>
+            </activation>
+        </profile>
+    </profiles>
 
 </project>
