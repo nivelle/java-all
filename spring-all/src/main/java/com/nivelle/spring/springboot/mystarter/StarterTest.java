@@ -1,22 +1,20 @@
 package com.nivelle.spring.springboot.mystarter;
 
-//import com.startertest.starter.AddPrexService;
+import com.nivelle.starter.MyStarterService;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import org.springframework.stereotype.Service;
+import javax.annotation.Resource;
 
-@Service
+@RestController
 public class StarterTest {
 
+    @Resource
+    private MyStarterService myStarterService;
 
-//    @Autowired
-//    AddPrexService addPrexService;
-//
-//    public AddPrexService getAddPrexService() {
-//        return addPrexService;
-//    }
-//
-//    public String addPrex(String word){
-//        return addPrexService.wrap(word);
-//    }
+    @GetMapping("/say")
+    public String sayWhat() {
+        return myStarterService.say();
+    }
 
 }
