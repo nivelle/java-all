@@ -13,6 +13,11 @@ public class Menu extends Compont {
 
     private String menuName;
 
+    public Menu(Long id, String menuName) {
+        this.id = id;
+        this.menuName = menuName;
+    }
+
 
     @Override
     public void canShow() {

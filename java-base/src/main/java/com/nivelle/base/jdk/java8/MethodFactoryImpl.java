@@ -3,8 +3,6 @@ package com.nivelle.base.jdk.java8;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-@NoArgsConstructor
 @Data
 @AllArgsConstructor
 public class MethodFactoryImpl {
@@ -20,6 +18,7 @@ public class MethodFactoryImpl {
     public Integer testOptional() {
         return null;
     }
+    public MethodFactoryImpl(){}
 
 
 }
