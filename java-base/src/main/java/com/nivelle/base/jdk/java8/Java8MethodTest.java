@@ -46,9 +46,9 @@ public class Java8MethodTest {
         System.out.println(converted4);
 
         //::调用构造方法
-//        FunctionMethodFactory<MethodFactoryImpl> functionMethodFactory = MethodFactoryImpl::new;
-//        MethodFactoryImpl functionMethodFactoryImpl = functionMethodFactory.create("nivelle", 18);
-//        System.out.println(functionMethodFactoryImpl);
+        FunctionMethodFactory<MethodFactoryImpl> functionMethodFactory = MethodFactoryImpl::new;
+        MethodFactoryImpl functionMethodFactoryImpl = functionMethodFactory.create("nivelle", 18);
+        System.out.println(functionMethodFactoryImpl);
 
         //Lambda 访问的局部变量隐式是final的
         //不能访问接口默认实现的方法

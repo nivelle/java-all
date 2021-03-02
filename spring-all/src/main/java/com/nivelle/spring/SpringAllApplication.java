@@ -33,6 +33,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 //@EnableConfigurationProperties
 //@ComponentScan(includeFilters ={@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,classes = {MyTypeFilter.class})})
 @EnableAspectJAutoProxy
+@ComponentScan(basePackages = "com.nivelle.**.*")
 public class SpringAllApplication {
     public static void main(String[] args) {
         SpringApplication springApplication = new SpringApplication(SpringAllApplication.class);

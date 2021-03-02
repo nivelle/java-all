@@ -2,7 +2,6 @@ package com.nivelle.base.jdk.java8;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 public class MethodFactoryImpl {
@@ -15,9 +14,6 @@ public class MethodFactoryImpl {
         return String.valueOf(s.charAt(0));
     }
 
-    public Integer testOptional() {
-        return null;
-    }
     public MethodFactoryImpl(){}
 
 
