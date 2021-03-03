@@ -20,14 +20,15 @@ import javax.sql.DataSource;
  * @date 2021/03/02
  */
 
-@MapperScan(basePackages = "com.nivelle.bigdata.clickhouse.mapper", sqlSessionFactoryRef = "clickHouseSqlSessionFactory")
 @Configuration
-public class MyBatisConfing {
+@MapperScan(basePackages = "com.nivelle.bigdata.clickhouse.mapper", sqlSessionFactoryRef = "clickHouseSqlSessionFactory")
+public class MybatisConfig {
+
     @Autowired
-    ClickhouseConfing clickhouseConfing;
-    static final String DRIVER_CLASS_NAME = "ru.yandex.clickhouse.ClickHouseDriver";
-    static final String CLICKHOUSE_URL = "jdbc:clickhouse://39.105.201.242:8123/nd_bi_data?characterEncoding=UTF-8&useSSL=false";
-    static final String LOCATION = "classpath:/*.xml";
+    ClickhouseConfig clickhouseConfig;
+
+    static final String LOCATION="classpath:/*.xml";
+
 
     /**
      * 数据源
@@ -37,8 +38,9 @@ public class MyBatisConfing {
     @Bean(name = "clickHouseDataSource")
     public DataSource clickHouseDataSource() {
         DruidDataSource dataSource = new DruidDataSource();
-        dataSource.setDriverClassName(clickhouseConfing.getDriverClassName());
-        dataSource.setUrl(clickhouseConfing.getUrl());
+        dataSource.setDriverClassName(clickhouseConfig.getDriverClassName());
+        dataSource.setUrl(clickhouseConfig.getUrl());
+
         return dataSource;
     }
 

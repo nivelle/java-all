@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -43,4 +44,6 @@ public class UserInfoController {
     public List<UserInfo> selectList() {
         return userInfoService.selectList();
     }
+
+
 }

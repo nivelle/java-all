@@ -14,7 +14,7 @@ import org.springframework.context.annotation.PropertySource;
 @Data
 @PropertySource("classpath:config/clickhouse.properties")
 @Configuration
-public class ClickhouseConfing {
+public class ClickhouseConfig {
 
     @Value("${click.house.driver.class.name}")
     private String driverClassName;
