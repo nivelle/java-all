@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class Menu extends Compont {
 
     private Long id;
