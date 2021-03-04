@@ -29,6 +29,9 @@ select distinct(gender) from students; //查询性别种类
 | boy    |
 | girl   |
 +--------+
+
+----------
+
 select count(distinct(gender)) from students; //性别种类数
 
 +-------------------------+
@@ -244,8 +247,6 @@ select s.id as sId,s.name sName,s.cls_id sclsId, c.id as cid ,c.name as cname fr
 
 select * from students left join classes on students.cls_id=classes.id; //以左表为主表与右表满足条件的数据关联
 
-select * from classes right join students on students.cls_id=classes.id; //以左表为主表与右表满足条件的数据关联
-
 +----+-----------+-----+--------+--------+--------+---------------------+---------------------+----+------+--------------+---------------------+---------------------+------+
 | id | name      | age | high   | gender | cls_id | create_time         | update_time         | yn | id   | name         | create_time         | update_time         | yn   |
 +----+-----------+-----+--------+--------+--------+---------------------+---------------------+----+------+--------------+---------------------+---------------------+------+
@@ -401,6 +402,10 @@ CREATE DATABASE javaguideslave;
 drop database if EXISTS teambuild;
 create database teambuild CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
+
+
+
+
 
 #### 查看数据库版本
 

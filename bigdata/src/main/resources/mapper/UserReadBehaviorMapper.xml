@@ -85,4 +85,44 @@
             group by book_id;
         </where>
     </select>
+
+
+    <select id="getConditionUnion" parameterType="java.util.Map" resultType="com.nivelle.bigdata.clickhouse.params.UserReadBehaviorResponse">
+        select
+        book_id as bookId, count (distinct(user_name)) as uv,count (user_name) as pv, sum (read_times) as sumTimes
+        from user_read_behavior
+        <where>
+            create_time between #{startTime} and #{endTime}
+            <if test="categoryIds!=null">
+                and category_id in
+                <foreach collection="categoryIds" item="categoryId" index="index"
+                         open="(" close=")" separator=",">
+                    #{categoryId}
+                </foreach>
+            </if>
+            <if test="bookIds!=null">
+                and book_id in
+                <foreach collection="bookIds" item="bookId" index="index"
+                         open="(" close=")" separator=",">
+                    #{bookId}
+                </foreach>
+            </if>
+            <if test="copyrightIds!=null">
+                and copyright_id in
+                <foreach collection="copyrightIds" item="copyrightId" index="index"
+                         open="(" close=")" separator=",">
+                    #{copyrightId}
+                </foreach>
+            </if>
+
+            <if test="channels!=null">
+                and p2 in
+                <foreach collection="channels" item="channel" index="index"
+                         open="(" close=")" separator=",">
+                    #{channel}
+                </foreach>
+            </if>
+            group by book_id;
+        </where>
+    </select>
 </mapper>
