@@ -27,7 +27,7 @@ public class MybatisConfig {
     @Autowired
     ClickhouseConfig clickhouseConfig;
 
-    static final String LOCATION="classpath:/*.xml";
+    static final String LOCATION="classpath:/mapper/*.xml";
 
 
     /**
