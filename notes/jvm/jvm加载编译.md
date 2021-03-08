@@ -293,17 +293,64 @@ StackReplacement）编译，即栈上编译，将编译后的机器语言缓存�
 
 - Java 虚拟机中的即时编译器会使用内联缓存来加速动态绑定。Java 虚拟机所采用的单态内联缓存将纪录调用者的动态类型，以及它所对应的目标方法。
 
-### Java方法反射调用性能慢的原因:
+--------
 
-1. 由于Method.invoke是一个变长参数方法，在字节码层面它的最后一个参数会是 Object 数组
+### 反射调用的实现
 
-2. 由于Object数组不能存储基本类型,Java 编译器会对传入的基本类型参数进行自动装箱
+````
+ public Object invoke(Object obj, Object... args) throws IllegalAccessException, IllegalArgumentException,InvocationTargetException
+    {
+        if (!override) {
+            if (!Reflection.quickCheckMemberAccess(clazz, modifiers)) {
+                Class<?> caller = Reflection.getCallerClass();
+                checkAccess(caller, clazz, obj, modifiers);
+            }
+        }
+        //MethodAccessor 是一个接口，它有两个已有的具体实现：一个通过本地方法来实现反射调用，另一个则使用了委派模式。
+        MethodAccessor ma = methodAccessor; // read volatile
+        if (ma == null) {
+            ma = acquireMethodAccessor();
+        }
+        return ma.invoke(obj, args);
+    }
+````
+- 每个 Method 实例的第一次反射调用都会生成一个委派实现，它所委派的具体实现便是一个本地实现
+
+- Java 的反射调用机制还设立了另一种动态生成字节码的实现,直接使用invoke指令来调用目标方法;之所以采用委派实现，便是为了能够在本地实现以及动态实现中切换。
+
+- 动态实现比本地实现，效率上要快20倍，因为动态实现无需经过java到C++再到Java的切换，但由于生成字节码十分耗时，仅调用一次，反而是本地实现要快3到4倍
+
+- Java 虚拟机设置了一个阈值 15（可以通过 **-Dsun.reflect.inflationThreshold**= 来调整），当某个反射调用的调用次数在 15 之下时，采用本地实现；当达到 15 时，便开始动态生成字节码，并将委派实现的委派对象切换至动态实现，这个过程我们称之为 Inflation[膨胀]。
+
+#### 反射调用的开销
+
+- Class.forName 会调用本地方法, Class.getMethod 则会遍历该类的公有方法。如果没有匹配到，它还将遍历父类的公有方法。可想而知，这两个操作都非常费时。
+
+- 以 getMethod 为代表的查找方法操作，会返回查找得到结果的一份拷贝。因此，我们应当避免在热点代码中使用返回 Method 数组的 getMethods 或者 getDeclaredMethods 方法，以减少不必要的堆空间消耗
+
+- 由于Method.invoke 第二个参数是一个变长参数方法，在字节码层面它的最后一个参数会是 Object 数组;由于Object数组不能存储基本类型,Java 编译器会对传入的基本类型参数进行自动装箱
 
 **以上两个操作除了带来性能开销外,还可能占用堆内存,使得 GC 更加频繁。**
 
-3. 方法内联:方法内联指的是编译器在编译一个方法时，将某个方法调用的目标方法也纳入编译范围内，并用其返回值替代原方法调用这么个过程
+##### 方法内联:方法内联指的是编译器在编译一个方法时，将某个方法调用的目标方法也纳入编译范围内，并用其返回值替代原方法调用这么个过程
+````
+内联函数就是指函数在被调用的地方直接展开，编译器在调用时不用像一般函数那样，参数压栈，返回时参数出栈以及资源释放等，这样提高了程序执行速度。
+Java不支持直接声明为内联函数的，如果想让他内联，则是由编译器说了算，你只能够向编译器提出请求。
+````
+---------
+### java异常
 
-内联函数就是指函数在被调用的地方直接展开，编译器在调用时不用像一般函数那样，参数压栈，返回时参数出栈以及资源释放等，这样提高了程序执行速度。Java不支持直接声明为内联函数的，如果想让他内联，则是由编译器说了算，你只能够向编译器提出请求。
+[![6lXKeO.md.png](https://s3.ax1x.com/2021/03/08/6lXKeO.md.png)](https://imgtu.com/i/6lXKeO)
+
+- 所有的异常都是 Throwable 类或其子类的实例; Throwable 有两大子类
+
+- 第一个是Error ，涵盖程序不应捕获的异常；当程序触发Error时，它的执行状态已经无法恢复，需要中止线程甚至中止虚拟机
+
+- 第二个是Exception,涵盖程序可能需要捕获并且处理的异常；Exception有一个特殊的子类 RuntimeException ，表示"程序虽然无法继续执行，但是还能抢救一下"
+
+- RuntimeException和Error属于java非检查异常(unchecked exception);其他异常属于检查异常(checked exception)
+
+- 异常实例的构造十分昂贵。这是由于在构造异常实例时，Java 虚拟机便需要生成该异常的栈轨迹（stack trace）。
 
 ### jvm虚拟机处理异常
 
@@ -319,6 +366,8 @@ StackReplacement）编译，即栈上编译，将编译后的机器语言缓存�
 - target 指针则指向异常处理器的起始位置
 
 - Java 字节码中，每个方法对应一个异常表。当程序触发异常时，Java 虚拟机将查找异常表，并依此决定需要将控制流转移至哪个异常处理器之中。Java 代码中的 catch 代码块和 finally 代码块都会生成异常表条目。
+
+--------
 
 ### 编译优化
 
