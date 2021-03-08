@@ -37,8 +37,10 @@ public class UserBehaviorController {
             userReadBehavior.setUserName("SNivelle");
             userReadBehavior.setBookId(117 + i);
             userReadBehavior.setBookType(64);
-            userReadBehavior.setCategoryId(2 + i);
-            userReadBehavior.setCategoryName("男频");
+            userReadBehavior.setCategoryId1(2 + i);
+            userReadBehavior.setCategoryId2(3+i);
+            userReadBehavior.setCategoryId3(3+i);
+            userReadBehavior.setCategoryId4(3+i);
             userReadBehavior.setChapterId("201-1" + "-" + i);
             userReadBehavior.setCopyrightId(125 + i);
             userReadBehavior.setInCoPkg(1);
@@ -66,8 +68,10 @@ public class UserBehaviorController {
         userReadBehavior.setUserName("jessy");
         userReadBehavior.setBookId(117 + i);
         userReadBehavior.setBookType(64);
-        userReadBehavior.setCategoryId(2 + i);
-        userReadBehavior.setCategoryName("男频");
+        userReadBehavior.setCategoryId1(2 + i);
+        userReadBehavior.setCategoryId2(3+i);
+        userReadBehavior.setCategoryId3(3+i);
+        userReadBehavior.setCategoryId4(3+i);
         userReadBehavior.setChapterId("201-1" + "-" + i);
         userReadBehavior.setCopyrightId(125 + i);
         userReadBehavior.setInCoPkg(1);

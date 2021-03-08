@@ -25,7 +25,6 @@ public interface UserReadBehaviorMapper {
 
     void save(UserReadBehavior userReadBehavior);
 
-
     List<UserReadBehaviorResponse> getCondition(HashMap<String,Object> params);
 
 }

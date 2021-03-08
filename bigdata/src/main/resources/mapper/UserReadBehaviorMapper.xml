@@ -8,8 +8,10 @@
         <result column="chapter_id" jdbcType="VARCHAR" property="chapterId"/>
         <result column="book_type" jdbcType="INTEGER" property="bookType"/>
         <result column="read_times" jdbcType="INTEGER" property="readTimes"/>
-        <result column="category_id" jdbcType="INTEGER" property="categoryId"/>
-        <result column="category_name" jdbcType="VARCHAR" property="categoryName"/>
+        <result column="category_id1" jdbcType="INTEGER" property="categoryId1"/>
+        <result column="category_id2" jdbcType="INTEGER" property="categoryId2"/>
+        <result column="category_id3" jdbcType="INTEGER" property="categoryId3"/>
+        <result column="category_id4" jdbcType="INTEGER" property="categoryId4"/>
         <result column="p2" jdbcType="VARCHAR" property="p2"/>
         <result column="p16" jdbcType="VARCHAR" property="p16"/>
         <result column="ip" jdbcType="VARCHAR" property="ip"/>
@@ -22,43 +24,62 @@
 
     <sql id="Base_Column_List">
         user_name
-        ,book_id,chapter_id,book_type,read_times,category_id,category_name,p2,p16,ip,copyright_id,company_id,in_co_pkg,user_groupId,create_time
+        ,book_id,chapter_id,book_type,read_times,category_id1,category_id2,category_id3,category_id4,p2,p16,ip,copyright_id,company_id,in_co_pkg,user_groupId,create_time
     </sql>
     <insert id="batchSave" parameterType="com.nivelle.bigdata.clickhouse.entity.UserReadBehavior">
-        INSERT INTO user_read_behavior
-        (user_name,book_id,chapter_id,book_type,read_times,category_id,category_name,p2,p16,ip,copyright_id,company_id,in_co_pkg,user_groupId,create_time)
+        INSERT INTO nd_user_read_behavior
+        (user_name,book_id,chapter_id,book_type,read_times,category_id1,category_id2,category_id3,category_id4,category_name,p2,p16,ip,copyright_id,company_id,in_co_pkg,user_groupId,create_time)
         VALUES
         <foreach collection="userReadBehaviorList" item="item" index="index" separator=",">
             (#{item.userName},#{item.bookId},#{item.chapterId},
-            #{item.bookType},#{item.readTimes},#{item.categoryId},#{item.categoryName},
+            #{item.bookType},#{item.readTimes},#{item.categoryId1},#{item.categoryId2},#{item.categoryId3},#{item.categoryId4},
             #{item.p2},#{item.p16},#{item.ip},#{item.copyrightId},#{item.companyId},#{item.inCoPkg},#{item.userGroupId},#{item.createTime})
         </foreach>
     </insert>
     <insert id="save" parameterType="com.nivelle.bigdata.clickhouse.entity.UserReadBehavior">
-        INSERT INTO user_read_behavior
-        (user_name, book_id, chapter_id, book_type, read_times, category_id, category_name, p2, p16, ip, copyright_id,
+        INSERT INTO nd_user_read_behavior
+        (user_name, book_id, chapter_id, book_type, read_times, category_id1, category_id2, category_id3, category_id4,
+         p2, p16, ip, copyright_id,
          company_id, in_co_pkg, user_groupId, create_time)
-        VALUES (#{userName}, #{bookId}, #{chapterId}, #{bookType}, #{readTimes}, #{categoryId}, #{categoryName}, #{p2},
+        VALUES (#{userName}, #{bookId}, #{chapterId}, #{bookType}, #{readTimes}, #{item.categoryId1},
+                #{item.categoryId2}, #{item.categoryId3}, #{item.categoryId4}, #{p2},
                 #{p16}, #{ip}, #{copyrightId}, #{companyId}, #{inCoPkg}, #{userGroupId}, #{createTime})
     </insert>
     <select id="selectList" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
-        from user_read_behavior
+        from nd_user_read_behavior
     </select>
 
-    <select id="getCondition" parameterType="java.util.Map" resultType="com.nivelle.bigdata.clickhouse.params.UserReadBehaviorResponse">
+    <select id="getCondition" parameterType="java.util.Map"
+            resultType="com.nivelle.bigdata.clickhouse.params.UserReadBehaviorResponse">
         select
         book_id as bookId, count (distinct(user_name)) as uv,count (user_name) as pv, sum (read_times) as sumTimes
-        from user_read_behavior
+        from nd_user_read_behavior
         <where>
             create_time between #{startTime} and #{endTime}
             <if test="categoryIds!=null">
-                and category_id in
+                and (category_id1 in
                 <foreach collection="categoryIds" item="categoryId" index="index"
                          open="(" close=")" separator=",">
                     #{categoryId}
                 </foreach>
+                or category_id2 in
+                <foreach collection="categoryIds" item="categoryId" index="index"
+                         open="(" close=")" separator=",">
+                    #{categoryId}
+                </foreach>
+                or category_id3 in
+                <foreach collection="categoryIds" item="categoryId" index="index"
+                         open="(" close=")" separator=",">
+                    #{categoryId}
+                </foreach>
+                or category_id4 in
+                <foreach collection="categoryIds" item="categoryId" index="index"
+                         open="(" close=")" separator=",">
+                    #{categoryId}
+                </foreach>
+                )
             </if>
             <if test="bookIds!=null">
                 and book_id in
@@ -87,42 +108,4 @@
     </select>
 
 
-    <select id="getConditionUnion" parameterType="java.util.Map" resultType="com.nivelle.bigdata.clickhouse.params.UserReadBehaviorResponse">
-        select
-        book_id as bookId, count (distinct(user_name)) as uv,count (user_name) as pv, sum (read_times) as sumTimes
-        from user_read_behavior
-        <where>
-            create_time between #{startTime} and #{endTime}
-            <if test="categoryIds!=null">
-                and category_id in
-                <foreach collection="categoryIds" item="categoryId" index="index"
-                         open="(" close=")" separator=",">
-                    #{categoryId}
-                </foreach>
-            </if>
-            <if test="bookIds!=null">
-                and book_id in
-                <foreach collection="bookIds" item="bookId" index="index"
-                         open="(" close=")" separator=",">
-                    #{bookId}
-                </foreach>
-            </if>
-            <if test="copyrightIds!=null">
-                and copyright_id in
-                <foreach collection="copyrightIds" item="copyrightId" index="index"
-                         open="(" close=")" separator=",">
-                    #{copyrightId}
-                </foreach>
-            </if>
-
-            <if test="channels!=null">
-                and p2 in
-                <foreach collection="channels" item="channel" index="index"
-                         open="(" close=")" separator=",">
-                    #{channel}
-                </foreach>
-            </if>
-            group by book_id;
-        </where>
-    </select>
 </mapper>

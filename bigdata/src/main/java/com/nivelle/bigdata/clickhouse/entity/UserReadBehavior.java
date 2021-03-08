@@ -30,11 +30,13 @@ public class UserReadBehavior {
     /**
      * 书籍底层分类id
      **/
-    private int categoryId;
+    private int categoryId1;
     /**
-     * 书籍底层分类名字
+     * 书籍底层分类id
      **/
-    private String categoryName;
+    private int categoryId2;
+    private int categoryId3;
+    private int categoryId4;
     /**
      * 渠道
      **/

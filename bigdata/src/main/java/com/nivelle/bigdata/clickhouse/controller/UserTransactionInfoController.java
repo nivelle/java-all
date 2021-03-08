@@ -39,8 +39,10 @@ public class UserTransactionInfoController {
         userTransactionInfo.setBookName("千山万水");
         userTransactionInfo.setChapterId("201-1" + "-" + i);
         userTransactionInfo.setBookType(64);
-        userTransactionInfo.setCategoryId(2 + i);
-        userTransactionInfo.setCategoryName("男频");
+        userTransactionInfo.setCategoryId1(2 + i);
+        userTransactionInfo.setCategoryId2(2 + i);
+        userTransactionInfo.setCategoryId3(24);
+        userTransactionInfo.setCategoryId4(2 + i);
         userTransactionInfo.setP2("123002");
         userTransactionInfo.setP16("ios");
         userTransactionInfo.setCopyrightId(125 + i);
@@ -71,8 +73,10 @@ public class UserTransactionInfoController {
             userTransactionInfo.setBookName("千山万水");
             userTransactionInfo.setChapterId("201-1" + "-" + i);
             userTransactionInfo.setBookType(64);
-            userTransactionInfo.setCategoryId(2 + i);
-            userTransactionInfo.setCategoryName("男频");
+            userTransactionInfo.setCategoryId1(2 + i);
+            userTransactionInfo.setCategoryId2(2 + i);
+            userTransactionInfo.setCategoryId3(2 + i);
+            userTransactionInfo.setCategoryId4(2 + i);
             userTransactionInfo.setP2("123002");
             userTransactionInfo.setP16("ios");
             userTransactionInfo.setCopyrightId(125 + i);
@@ -112,12 +116,13 @@ public class UserTransactionInfoController {
 
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-        LocalDateTime startTime = LocalDateTime.parse("2021-02-25 00:00:00", dtf);
-        LocalDateTime endTime = LocalDateTime.parse("2021-03-01 23:00:00", dtf);
+        LocalDateTime startTime = LocalDateTime.parse("2021-03-07 00:00:00", dtf);
+        LocalDateTime endTime = LocalDateTime.parse("2021-03-08 23:00:00", dtf);
         HashMap<String, Object> params = Maps.newHashMap();
         params.put("startTime", startTime);
         params.put("endTime", endTime);
-        params.put("bookIds", Lists.newArrayList(117, 118));
+        //params.put("bookIds", Lists.newArrayList(117, 118));
+        params.put("categoryIds",Lists.newArrayList(21, 22,24));
         List<UserTransactionInfo> result = userTransactionInfoMapper.getCondition(params);
         System.out.println(result);
         return result;
