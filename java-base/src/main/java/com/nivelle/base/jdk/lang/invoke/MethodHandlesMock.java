@@ -20,6 +20,7 @@ public class MethodHandlesMock {
     public void invokeExact() throws Throwable {
         MethodHandles.Lookup lookup = MethodHandles.lookup();
         MethodType type = MethodType.methodType(String.class, int.class, int.class);
+        //调用String类的 substring方法，方法参数类型：String,int,int
         MethodHandle mh = lookup.findVirtual(String.class, "substring", type);
         String str = (String) mh.invokeExact("Hello World", 1, 3);
         System.out.println(str);
@@ -43,8 +44,7 @@ public class MethodHandlesMock {
     public void multipleBindTo() throws Throwable {
 
         MethodHandles.Lookup lookup = MethodHandles.lookup();
-        MethodHandle mh = lookup.findVirtual(String.class, "indexOf",
-                MethodType.methodType(int.class, String.class, int.class));
+        MethodHandle mh = lookup.findVirtual(String.class, "indexOf", MethodType.methodType(int.class, String.class, int.class));
         mh = mh.bindTo("Hello").bindTo("l");
         System.out.println(mh.invoke(2));
     }
