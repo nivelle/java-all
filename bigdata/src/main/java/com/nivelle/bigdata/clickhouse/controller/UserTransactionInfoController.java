@@ -1,11 +1,11 @@
 package com.nivelle.bigdata.clickhouse.controller;
 
-import com.google.common.collect.Maps;
+import com.nivelle.bigdata.clickhouse.UserTransactionInfosService;
 import com.nivelle.bigdata.clickhouse.entity.UserTransactionInfo;
 import com.nivelle.bigdata.clickhouse.mapper.UserTransactionInfoMapper;
-import com.nivelle.bigdata.clickhouse.params.UserReadBehaviorResponse;
 import com.nivelle.bigdata.clickhouse.params.UserTransactionInfoResponse;
-import org.assertj.core.util.Lists;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,10 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * @author fuxinzhong
@@ -27,6 +25,9 @@ import java.util.Objects;
 public class UserTransactionInfoController {
     @Resource
     private UserTransactionInfoMapper userTransactionInfoMapper;
+
+    @Autowired
+    UserTransactionInfosService userTransactionInfosService;
 
     /**
      * 单个添加
@@ -114,27 +115,11 @@ public class UserTransactionInfoController {
      *
      * @return
      */
-    @RequestMapping("/getCondition")
+    @GetMapping("/getCondition")
     public List<UserTransactionInfoResponse> getCondition(@RequestParam HashMap<String, Object> params) {
 
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-        Object pageNo = params.get("pageNo");
-        Object pageSize = params.get("pageSize");
-        if (Objects.isNull(pageNo)) {
-            params.put("pageNo", 1);
-        }
-        if (Objects.isNull(pageSize)) {
-            params.put("pageSize", 100);
-        }
-
-        Object startTime = params.get("startTime");
-
-        LocalDateTime localStartTime = LocalDateTime.parse(String.valueOf(params.get("startTime")), dtf);
-        LocalDateTime localEndTime = LocalDateTime.parse(String.valueOf(params.get("endTime")), dtf);
-        params.put("startTime", localStartTime);
-        params.put("endTime", localEndTime);
-        List<UserTransactionInfoResponse> result = userTransactionInfoMapper.getCondition(params);
+        List<UserTransactionInfoResponse> result = userTransactionInfosService.getTransactionByCondition(params);
 
         return result;
     }
