@@ -48,18 +48,11 @@ java class文件指定的page路径+类名
 - javap -v -p //根据classs字节码文件，反解析出当前类对应的code区（汇编指令），本地变量表，异常表和代码偏移量映射表，常量池等信息。
 
 ```
-javap com.nivelle.base.pojo.javaclass/JvmExceptionDemo
-
-
-Compiled from "JvmExceptionDemo.java"
-public class com.nivelle.base.pojo.javaclass.JvmExceptionDemo {
-  public com.nivelle.base.pojo.javaclass.JvmExceptionDemo();
-  public void test();
-  public static void main(java.lang.String[]);
-}
+这里面我用到了两个选项。第一个选项是 -p。默认情况下 javap 会打印所有非私有的字段和方法，当加了 -p 选项后，它还将打印私有的字段和方法。第二个选项是 -v。它尽可能地打印所有信息。如果你只需要查阅方法对应的字节码，那么可以用 -c 选项来替换 -v。
 
  
 ```
+
 
 ----------------------
 
