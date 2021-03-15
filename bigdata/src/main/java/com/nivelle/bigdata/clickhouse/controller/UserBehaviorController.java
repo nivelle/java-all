@@ -101,7 +101,7 @@ public class UserBehaviorController {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
         LocalDateTime startTime = LocalDateTime.parse("2021-02-25 00:00:00", dtf);
-        LocalDateTime endTime = LocalDateTime.parse("2021-02-25 23:00:00", dtf);
+        LocalDateTime endTime = LocalDateTime.parse("2021-03-25 23:00:00", dtf);
         HashMap<String, Object> params = Maps.newHashMap();
         params.put("startTime", startTime);
         params.put("endTime", endTime);

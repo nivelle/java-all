@@ -5,6 +5,7 @@
     <resultMap id="BaseResultMap" type="com.nivelle.bigdata.clickhouse.entity.UserReadBehavior">
         <result column="user_name" jdbcType="VARCHAR" property="userName"/>
         <result column="book_id" jdbcType="INTEGER" property="bookId"/>
+        <result column="book_name" jdbcType="VARCHAR" property="bookName"/>
         <result column="chapter_id" jdbcType="VARCHAR" property="chapterId"/>
         <result column="book_type" jdbcType="INTEGER" property="bookType"/>
         <result column="read_times" jdbcType="INTEGER" property="readTimes"/>
@@ -24,25 +25,23 @@
 
     <sql id="Base_Column_List">
         user_name
-        ,book_id,chapter_id,book_type,read_times,category_id1,category_id2,category_id3,category_id4,p2,p16,ip,copyright_id,company_id,in_co_pkg,user_groupId,create_time
+        ,book_id,book_name,chapter_id,book_type,read_times,category_id1,category_id2,category_id3,category_id4,p2,p16,ip,copyright_id,company_id,in_co_pkg,user_groupId,create_time
     </sql>
     <insert id="batchSave" parameterType="com.nivelle.bigdata.clickhouse.entity.UserReadBehavior">
         INSERT INTO nd_user_read_behavior
-        (user_name,book_id,chapter_id,book_type,read_times,category_id1,category_id2,category_id3,category_id4,category_name,p2,p16,ip,copyright_id,company_id,in_co_pkg,user_groupId,create_time)
+        (user_name,book_id,book_name,chapter_id,book_type,read_times,category_id1,category_id2,category_id3,category_id4,p2,p16,ip,copyright_id,company_id,in_co_pkg,user_groupId,create_time)
         VALUES
         <foreach collection="userReadBehaviorList" item="item" index="index" separator=",">
-            (#{item.userName},#{item.bookId},#{item.chapterId},
+            (#{item.userName},#{item.bookId},#{item.bookName},#{item.chapterId},
             #{item.bookType},#{item.readTimes},#{item.categoryId1},#{item.categoryId2},#{item.categoryId3},#{item.categoryId4},
             #{item.p2},#{item.p16},#{item.ip},#{item.copyrightId},#{item.companyId},#{item.inCoPkg},#{item.userGroupId},#{item.createTime})
         </foreach>
     </insert>
     <insert id="save" parameterType="com.nivelle.bigdata.clickhouse.entity.UserReadBehavior">
         INSERT INTO nd_user_read_behavior
-        (user_name, book_id, chapter_id, book_type, read_times, category_id1, category_id2, category_id3, category_id4,
-         p2, p16, ip, copyright_id,
+        (user_name, book_id, book_name,chapter_id, book_type, read_times, category_id1,category_id2,category_id3,category_id4, p2, p16, ip, copyright_id,
          company_id, in_co_pkg, user_groupId, create_time)
-        VALUES (#{userName}, #{bookId}, #{chapterId}, #{bookType}, #{readTimes}, #{item.categoryId1},
-                #{item.categoryId2}, #{item.categoryId3}, #{item.categoryId4}, #{p2},
+        VALUES (#{userName}, #{bookId}, #{bookName},#{chapterId}, #{bookType}, #{readTimes}, #{item.categoryId1},#{item.categoryId2},#{item.categoryId3},#{item.categoryId4}, #{p2},
                 #{p16}, #{ip}, #{copyrightId}, #{companyId}, #{inCoPkg}, #{userGroupId}, #{createTime})
     </insert>
     <select id="selectList" resultMap="BaseResultMap">
@@ -51,10 +50,9 @@
         from nd_user_read_behavior
     </select>
 
-    <select id="getCondition" parameterType="java.util.Map"
-            resultType="com.nivelle.bigdata.clickhouse.params.UserReadBehaviorResponse">
+    <select id="getCondition" parameterType="java.util.Map" resultType="com.nivelle.bigdata.clickhouse.params.UserReadBehaviorResponse">
         select
-        book_id as bookId, count (distinct(user_name)) as uv,count (user_name) as pv, sum (read_times) as sumTimes
+        book_id as bookId, topK(book_name) as bookName, count (distinct(user_name)) as uv,count (user_name) as pv, sum (read_times) as sumTimes
         from nd_user_read_behavior
         <where>
             create_time between #{startTime} and #{endTime}
@@ -106,6 +104,4 @@
             group by book_id;
         </where>
     </select>
-
-
 </mapper>

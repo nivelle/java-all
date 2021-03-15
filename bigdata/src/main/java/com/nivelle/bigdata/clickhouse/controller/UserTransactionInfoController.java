@@ -5,10 +5,7 @@ import com.nivelle.bigdata.clickhouse.entity.UserTransactionInfo;
 import com.nivelle.bigdata.clickhouse.mapper.UserTransactionInfoMapper;
 import com.nivelle.bigdata.clickhouse.params.UserTransactionInfoResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -115,10 +112,10 @@ public class UserTransactionInfoController {
      *
      * @return
      */
-    @GetMapping("/getCondition")
-    public List<UserTransactionInfoResponse> getCondition(@RequestParam HashMap<String, Object> params) {
+    @PostMapping("/getCondition")
+    public List<UserTransactionInfoResponse> getCondition(@RequestBody HashMap<String, Object> params) {
 
-
+        System.out.println("查询参数：" + params);
         List<UserTransactionInfoResponse> result = userTransactionInfosService.getTransactionByCondition(params);
 
         return result;

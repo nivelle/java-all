@@ -69,7 +69,7 @@ apple_amount,refund_amount,main_gift_amount,main_amount,amount,create_time
         from nd_user_transaction_info
         <where>
             create_time between #{startTime} and #{endTime}
-            <if test="categoryIds!=null">
+            <if test="categoryIds!=null and categoryIds.size()>0">
                 and (category_id1 in
                 <foreach collection="categoryIds" item="categoryId" index="index"
                          open="(" close=")" separator=",">
@@ -92,21 +92,21 @@ apple_amount,refund_amount,main_gift_amount,main_amount,amount,create_time
                 </foreach>
                 )
             </if>
-            <if test="bookIds!=null">
+            <if test="bookIds!=null and bookIds.size()>0 ">
                 and book_id in
                 <foreach collection="bookIds" item="bookId" index="index"
                          open="(" close=")" separator=",">
                     #{bookId}
                 </foreach>
             </if>
-            <if test="copyrightIds!=null">
+            <if test="copyrightIds!=null and copyrightIds.size()>0 ">
                 and copyright_id in
                 <foreach collection="copyrightIds" item="copyrightId" index="index"
                          open="(" close=")" separator=",">
                     #{copyrightId}
                 </foreach>
             </if>
-            <if test="channels!=null">
+            <if test="channels!=null and channels.size()>0 ">
                 and p2 in
                 <foreach collection="channels" item="channel" index="index"
                          open="(" close=")" separator=",">
