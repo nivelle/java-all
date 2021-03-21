@@ -7,7 +7,7 @@ import java.util.Objects;
 public class ProxyObject implements CompanyUser {
 
     private RealObject realObject;
-
+    @Override
     public boolean doHardWork(User user) {
 
         System.out.println("代理对象做艰难的工作");
@@ -15,7 +15,7 @@ public class ProxyObject implements CompanyUser {
         return true;
 
     }
-
+    @Override
     public boolean doEasyWork(User user) {
 
         if (Objects.isNull(realObject)) {

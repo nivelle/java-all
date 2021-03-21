@@ -12,6 +12,7 @@ public class RealObject implements CompanyUser {
 
     }
 
+    @Override
     public boolean doEasyWork(User user) {
         System.out.println("真实对象做简单的工作");
 
