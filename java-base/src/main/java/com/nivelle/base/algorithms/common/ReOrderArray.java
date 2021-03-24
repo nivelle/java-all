@@ -9,7 +9,7 @@ import java.util.Vector;
  * @author nivelle
  * @date 2019/09/03
  */
-public class reOrderArray {
+public class ReOrderArray {
 
     public static void main(String[] args) {
         Integer[] arrary = new Integer[]{3, 6, 7, 9, 10, 12, 12, 23};
