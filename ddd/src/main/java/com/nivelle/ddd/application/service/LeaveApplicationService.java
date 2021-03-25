@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class LeaveApplicationService{
+public class LeaveApplicationService {
 
     @Autowired
     LeaveDomainService leaveDomainService;
@@ -24,9 +24,10 @@ public class LeaveApplicationService{
 
     /**
      * 创建一个请假申请并为审批人生成任务
+     *
      * @param leave
      */
-    public void createLeaveInfo(Leave leave){
+    public void createLeaveInfo(Leave leave) {
         //get approval leader max level by rule
         int leaderMaxLevel = approvalRuleDomainService.getLeaderMaxLevel(leave.getApplicant().getPersonType(), leave.getType().toString(), leave.getDuration());
         //find next approver
@@ -36,31 +37,33 @@ public class LeaveApplicationService{
 
     /**
      * 更新请假单基本信息
+     *
      * @param leave
      */
-    public void updateLeaveInfo(Leave leave){
+    public void updateLeaveInfo(Leave leave) {
         leaveDomainService.updateLeaveInfo(leave);
     }
 
     /**
      * 提交审批，更新请假单信息
+     *
      * @param leave
      */
-    public void submitApproval(Leave leave){
+    public void submitApproval(Leave leave) {
         //find next approver
         Person approver = personDomainService.findNextApprover(leave.getApprover().getPersonId(), leave.getLeaderMaxLevel());
         leaveDomainService.submitApproval(leave, Approver.fromPerson(approver));
     }
 
-    public Leave getLeaveInfo(String leaveId){
+    public Leave getLeaveInfo(String leaveId) {
         return leaveDomainService.getLeaveInfo(leaveId);
     }
 
-    public List<Leave> queryLeaveInfosByApplicant(String applicantId){
+    public List<Leave> queryLeaveInfosByApplicant(String applicantId) {
         return leaveDomainService.queryLeaveInfosByApplicant(applicantId);
     }
 
-    public List<Leave> queryLeaveInfosByApprover(String approverId){
+    public List<Leave> queryLeaveInfosByApprover(String approverId) {
         return leaveDomainService.queryLeaveInfosByApprover(approverId);
     }
 }

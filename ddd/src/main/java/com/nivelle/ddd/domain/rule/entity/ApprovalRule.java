@@ -11,7 +11,7 @@ public class ApprovalRule {
     long duration;
     int maxLeaderLevel;
 
-    public static ApprovalRule getByLeave(Leave leave){
+    public static ApprovalRule getByLeave(Leave leave) {
         ApprovalRule rule = new ApprovalRule();
         rule.setPersonType(leave.getApplicant().getPersonType());
         rule.setLeaveType(leave.getType().toString());

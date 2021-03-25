@@ -19,12 +19,12 @@ public class DateUtil {
         return sdf.parse(dateTimeStr);
     }
 
-    public static String formatDate(Date date){
+    public static String formatDate(Date date) {
         SimpleDateFormat sdf = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
         return sdf.format(date);
     }
 
-    public static String formatDateTime(Date date){
+    public static String formatDateTime(Date date) {
         SimpleDateFormat sdf = new SimpleDateFormat(DEFAULT_DATE_TIME_FORMAT);
         return sdf.format(date);
     }

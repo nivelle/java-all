@@ -19,19 +19,19 @@ public class Person {
     Date lastModifyTime;
     PersonStatus status;
 
-    public Person create(){
+    public Person create() {
         this.createTime = new Date();
         this.status = PersonStatus.ENABLE;
         return this;
     }
 
-    public Person enable(){
+    public Person enable() {
         this.lastModifyTime = new Date();
         this.status = PersonStatus.ENABLE;
         return this;
     }
 
-    public Person disable(){
+    public Person disable() {
         this.lastModifyTime = new Date();
         this.status = PersonStatus.DISABLE;
         return this;

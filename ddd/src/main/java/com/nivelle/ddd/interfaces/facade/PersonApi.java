@@ -40,6 +40,7 @@ public class PersonApi {
         }
         return Response.ok();
     }
+
     @DeleteMapping("/{personId}")
     public Response delete(@PathVariable String personId) {
         personApplicationService.deleteById(personId);

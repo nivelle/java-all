@@ -51,7 +51,7 @@ public class LeaveFactory {
         return leave;
     }
 
-    public LeaveEventPO createLeaveEventPO(LeaveEvent leaveEvent){
+    public LeaveEventPO createLeaveEventPO(LeaveEvent leaveEvent) {
         LeaveEventPO eventPO = new LeaveEventPO();
         eventPO.setLeaveEventType(leaveEvent.getLeaveEventType());
         eventPO.setSource(leaveEvent.getSource());
@@ -67,7 +67,7 @@ public class LeaveFactory {
                 .collect(Collectors.toList());
     }
 
-    private ApprovalInfoPO approvalInfoPOFromDO(ApprovalInfo approvalInfo){
+    private ApprovalInfoPO approvalInfoPOFromDO(ApprovalInfo approvalInfo) {
         ApprovalInfoPO po = new ApprovalInfoPO();
         po.setApproverId(approvalInfo.getApprover().getPersonId());
         po.setApproverLevel(approvalInfo.getApprover().getLevel());
@@ -78,7 +78,7 @@ public class LeaveFactory {
         return po;
     }
 
-    private ApprovalInfo approvalInfoFromPO(ApprovalInfoPO approvalInfoPO){
+    private ApprovalInfo approvalInfoFromPO(ApprovalInfoPO approvalInfoPO) {
         ApprovalInfo approvalInfo = new ApprovalInfo();
         approvalInfo.setApprovalInfoId(approvalInfoPO.getApprovalInfoId());
         Approver approver = Approver.builder()
@@ -92,7 +92,7 @@ public class LeaveFactory {
         return approvalInfo;
     }
 
-    private List<ApprovalInfo> getApprovalInfos(List<ApprovalInfoPO> approvalInfoPOList){
+    private List<ApprovalInfo> getApprovalInfos(List<ApprovalInfoPO> approvalInfoPOList) {
         return approvalInfoPOList.stream()
                 .map(approvalInfoPO -> approvalInfoFromPO(approvalInfoPO))
                 .collect(Collectors.toList());

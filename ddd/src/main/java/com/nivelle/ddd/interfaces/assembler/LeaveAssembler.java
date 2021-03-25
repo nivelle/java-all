@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 public class LeaveAssembler {
 
-    public static LeaveDTO toDTO(Leave leave){
+    public static LeaveDTO toDTO(Leave leave) {
         LeaveDTO dto = new LeaveDTO();
         dto.setLeaveId(leave.getId());
         dto.setLeaveType(leave.getType().toString());
@@ -27,7 +27,8 @@ public class LeaveAssembler {
         dto.setDuration(leave.getDuration());
         return dto;
     }
-    public static Leave toDO(LeaveDTO dto){
+
+    public static Leave toDO(LeaveDTO dto) {
         Leave leave = new Leave();
         leave.setId(dto.getLeaveId());
         leave.setApplicant(ApplicantAssembler.toDO(dto.getApplicantDTO()));

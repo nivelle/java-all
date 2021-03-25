@@ -50,7 +50,7 @@ public class LeaveDomainService {
     @Transactional
     public void submitApproval(Leave leave, Approver approver) {
         LeaveEvent event;
-        if ( ApprovalType.REJECT == leave.getCurrentApprovalInfo().getApprovalType()) {
+        if (ApprovalType.REJECT == leave.getCurrentApprovalInfo().getApprovalType()) {
             //reject, then the leave is finished with REJECTED status
             leave.reject(approver);
             event = LeaveEvent.create(LeaveEventType.REJECT_EVENT, leave);

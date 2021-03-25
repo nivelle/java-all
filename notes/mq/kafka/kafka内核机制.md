@@ -32,7 +32,7 @@
 - In-sync Replicas(ISR)
 
     1.
-    ISR副本集合，ISR中的副本都是与Leader同步的副本，相反不在ISR中的追随者就被认为是与Leader不同步的。Leader副本天然在ISR,ISR不只是追随者副本集合，它必然包括Leader副本。甚至某些情况下，ISR只有Leader一个副本。
+  ISR副本集合，ISR中的副本都是与Leader同步的副本，相反不在ISR中的追随者就被认为是与Leader不同步的。Leader副本天然在ISR,ISR不只是追随者副本集合，它必然包括Leader副本。甚至某些情况下，ISR只有Leader一个副本。
 
     2. broker参数->同步的标准是：**replica.lag.time.max.ms** 参数。 参数含义是Follower副本能够落后Leader副本的最长事件间隔，默认是10秒。
 
@@ -49,6 +49,7 @@
 #### 内部实现
 
 1.
+
 kafka在启动的时候会开启两个任务，一个任务用来定期检测是否需要缩减或者扩大ISR集合，这个周期是replica.lag.time.max.ms的一半，默认是5000ms.当检测到ISR集合中有失效副本时，就会收缩ISR集合，当检测到有Follower的HighWatermark
 追赶上leader 时，就会扩充ISR
 
@@ -131,6 +132,7 @@ Stable| 消费者组的稳定状态。该状态表明重平衡已经完成，组
 - joinGroup
 
 1.
+
 当组内成员加入时，会向协调者发送JoinGroup请求。在该请求中，每个成员都要将自己订阅的主题上报，这样的协调者就能收集到所有成员的订阅信息。一旦收集了全部成员的joinGroup请求后，协调者会从这些成员中选择一个担任这个消费者组的领导者
 
 2. 第一个发送JoinGroup请求的成员自动成为领导者
@@ -231,6 +233,7 @@ kafka-reassign-partitions 脚本提供的对已有主题分区进行细粒度的
 ![高水位更新机制.jpg](https://i.loli.net/2021/01/03/XqRxDlOnJmpMdK1.jpg)
 
 -
+
 每个副本对象都保存了一组高水位值和LEO值，但实际上，在Leader副本所在的Broker上，还保存了其他Follower副本的LEO值，其他的Follower副本又成为远程副本，这些远程副本的作用是帮助Leader副本确定其高水位，也就是区分高水位。
 
 - kafka副本机制在运行过程中，会更新broker1上的Follower副本的高水位和LEO值，同时也会更新Broker0上Leader副本的高水位和LEO 以及所有远程副本的LEO， 但它不会更新远程副本的高水位

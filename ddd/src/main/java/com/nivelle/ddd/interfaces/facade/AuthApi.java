@@ -21,14 +21,14 @@ public class AuthApi {
     LoginApplicationService loginApplicationService;
 
     @PostMapping("/login")
-    public Response login(PersonDTO personDTO){
+    public Response login(PersonDTO personDTO) {
         try {
-			return loginApplicationService.login(PersonAssembler.toDO(personDTO));
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+            return loginApplicationService.login(PersonAssembler.toDO(personDTO));
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
-		return null;
+        return null;
     }
 }

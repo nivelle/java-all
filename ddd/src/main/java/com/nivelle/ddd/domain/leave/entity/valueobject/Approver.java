@@ -16,7 +16,7 @@ public class Approver {
     String personName;
     int level;
 
-    public static Approver fromPerson(Person person){
+    public static Approver fromPerson(Person person) {
         Approver approver = new Approver();
         approver.setPersonId(person.getPersonId());
         approver.setPersonName(person.getPersonName());

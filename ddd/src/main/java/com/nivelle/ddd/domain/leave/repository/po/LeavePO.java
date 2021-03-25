@@ -16,8 +16,8 @@ import java.util.*;
 public class LeavePO {
 
     @Id
-    @GenericGenerator(name="idGenerator", strategy="uuid") //这个是hibernate的注解/生成32位UUID
-    @GeneratedValue(generator="idGenerator")
+    @GenericGenerator(name = "idGenerator", strategy = "uuid") //这个是hibernate的注解/生成32位UUID
+    @GeneratedValue(generator = "idGenerator")
     String id;
     String applicantId;
     String applicantName;

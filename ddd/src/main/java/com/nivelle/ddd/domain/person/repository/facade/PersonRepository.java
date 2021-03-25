@@ -1,8 +1,8 @@
- package com.nivelle.ddd.domain.person.repository.facade;
+package com.nivelle.ddd.domain.person.repository.facade;
 
- import com.nivelle.ddd.domain.person.repository.po.PersonPO;
+import com.nivelle.ddd.domain.person.repository.po.PersonPO;
 
- public interface PersonRepository {
+public interface PersonRepository {
 
     void insert(PersonPO personPO);
 

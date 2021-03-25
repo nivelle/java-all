@@ -13,7 +13,7 @@ public class PersonFactory {
     PersonRepository personRepository;
 
 
-    public PersonPO createPersonPO(Person person){
+    public PersonPO createPersonPO(Person person) {
         PersonPO personPO = new PersonPO();
         personPO.setPersonId(person.getPersonId());
         personPO.setPersonName(person.getPersonName());
@@ -24,7 +24,7 @@ public class PersonFactory {
         return personPO;
     }
 
-    public Person createPerson(PersonPO po){
+    public Person createPerson(PersonPO po) {
         Person person = new Person();
         person.setPersonId(po.getPersonId());
         person.setPersonType(po.getPersonType());
@@ -36,7 +36,7 @@ public class PersonFactory {
         return person;
     }
 
-    public Person getPerson(PersonPO personPO){
+    public Person getPerson(PersonPO personPO) {
         personPO = personRepository.findById(personPO.getPersonId());
         return createPerson(personPO);
     }

@@ -10,7 +10,7 @@ import java.text.ParseException;
 
 public class PersonAssembler {
 
-    public static PersonDTO toDTO(Person person){
+    public static PersonDTO toDTO(Person person) {
         PersonDTO dto = new PersonDTO();
         dto.setPersonId(person.getPersonId());
         dto.setPersonType(person.getPersonType().toString());

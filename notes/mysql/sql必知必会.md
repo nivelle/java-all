@@ -403,10 +403,6 @@ drop database if EXISTS teambuild;
 create database teambuild CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
-
-
-
-
 #### 查看数据库版本
 
 ```

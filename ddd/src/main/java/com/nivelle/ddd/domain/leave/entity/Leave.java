@@ -40,26 +40,26 @@ public class Leave {
         return this;
     }
 
-    public Leave create(){
+    public Leave create() {
         this.setStatus(Status.APPROVING);
         this.setStartTime(new Date());
         return this;
     }
 
-    public Leave agree(Approver nextApprover){
+    public Leave agree(Approver nextApprover) {
         this.setStatus(Status.APPROVING);
         this.setApprover(nextApprover);
         return this;
     }
 
-    public Leave reject(Approver approver){
+    public Leave reject(Approver approver) {
         this.setApprover(approver);
         this.setStatus(Status.REJECTED);
         this.setApprover(null);
         return this;
     }
 
-    public Leave finish(){
+    public Leave finish() {
         this.setApprover(null);
         this.setStatus(Status.APPROVED);
         this.setEndTime(new Date());
