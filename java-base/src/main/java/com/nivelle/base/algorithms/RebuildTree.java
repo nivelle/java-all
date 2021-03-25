@@ -1,4 +1,4 @@
-package com.nivelle.base.algorithms.common;
+package com.nivelle.base.algorithms;
 
 /**
  * 重建二叉树
