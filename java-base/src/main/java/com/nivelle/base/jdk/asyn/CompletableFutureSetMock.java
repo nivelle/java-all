@@ -8,7 +8,7 @@ import java.util.concurrent.*;
  * @author fuxinzhong
  * @date 2021/04/02
  */
-public class TestCompletableFutureSetMock {
+public class CompletableFutureSetMock {
 
     private final static int AVAILABLE_PROCESS = Runtime.getRuntime().availableProcessors();
     private final static ThreadPoolExecutor THREAD_POOL_EXECUTOR = new ThreadPoolExecutor(
@@ -28,10 +28,12 @@ public class TestCompletableFutureSetMock {
 
             }
             System.out.println("------" + Thread.currentThread().getName() + "set future result");
+            //显示设置CompletableFuture 的结果
             future.complete("fuck jessy");
         });
         //等待计算结果
         System.out.println("main thread wait result----");
+        //future 获取结果，如果任务没有执行完毕，则阻塞
         System.out.println(future.get());
         System.out.println("main thread wait result success");
     }
