@@ -1,23 +1,23 @@
 package com.nivelle.base.jdk.asyn;
 
-import com.sun.xml.internal.ws.util.CompletedFuture;
-
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
  * TODO:DOCUMENT ME!
  *
  * @author fuxinzhong
- * @date 2021/04/02
+ * @date 2021/04/03
  */
-public class CompleteAbleThenRunMock {
+public class CompletableThenApplyMock {
 
     public static void main(String[] args) throws Exception {
-        thenRun();
+        thenAccept();
     }
 
-    public static void thenRun() throws Exception {
+    public static void thenAccept() throws Exception {
         CompletableFuture<String> oneFuture = CompletableFuture.supplyAsync(new Supplier<String>() {
             @Override
             public String get() {
@@ -31,17 +31,18 @@ public class CompleteAbleThenRunMock {
         });
         System.out.println("one exec after");
         System.out.println("oneFuture after value:" + oneFuture.get());
-        //基于thenRun()实现异步任务A，执行完毕后，激活异步任务B，这种激活的任务B是无法获取A的执行结果的
-        CompletableFuture twoFuture = oneFuture.thenRun(new Runnable() {
+        //基于thenRun()实现异步任务A，执行完毕后，激活异步任务B，这种激活的任务B能够获取A的执行结果的
+        CompletableFuture twoFuture = oneFuture.thenApply(new Function<String, Object>() {
+
             @Override
-            public void run() {
+            public String apply(String s){
                 try {
-                    Thread.sleep(3000);
-                } catch (InterruptedException e) {
+                    System.out.println("在 one future 的基础上，再次进行加工："+s);
+                }catch (Exception e){
 
                 }
-                System.out.println("oneFuture 执行完之后，开始执行oneFuture thenRun 操作。。。");
-                System.out.println(Thread.currentThread().getName() + "执行！");
+                return s+"thenApplyValue";
+
             }
         });
 

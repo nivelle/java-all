@@ -1,9 +1,8 @@
 package com.nivelle.base.jdk.java8;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
+
 @Data
-@AllArgsConstructor
 public class MethodFactoryImpl {
 
     private String name;
@@ -14,7 +13,27 @@ public class MethodFactoryImpl {
         return String.valueOf(s.charAt(0));
     }
 
-    public MethodFactoryImpl(){}
+    public MethodFactoryImpl(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
 
+    public MethodFactoryImpl() {
+    }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Integer getAge() {
+        return age;
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
+    }
 }

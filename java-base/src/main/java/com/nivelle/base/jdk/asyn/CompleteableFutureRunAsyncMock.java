@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
  * @author fuxinzhong
  * @date 2021/04/02
  */
-public class CompleteAbleFutureRunAsyncMock {
+public class CompleteableFutureRunAsyncMock {
     private final static int AVAILABLE_PROCESS = Runtime.getRuntime().availableProcessors();
 
     private final static ThreadPoolExecutor THREAD_POOL_EXECUTOR = new ThreadPoolExecutor(

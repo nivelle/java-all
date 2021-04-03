@@ -10,7 +10,7 @@ import java.util.function.Supplier;
  * @author fuxinzhong
  * @date 2021/04/02
  */
-public class CompleteAbleFutureSupplyMock {
+public class CompleteableFutureSupplyMock {
 
     public static void main(String[] args) throws InterruptedException, ExecutionException {
         //基于 supplyAsync 实现有返回值的异步计算
