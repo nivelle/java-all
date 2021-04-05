@@ -2,6 +2,7 @@ package com.nivelle.base.jdk.asyn;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -10,7 +11,7 @@ import java.util.function.Supplier;
  * @author fuxinzhong
  * @date 2021/04/03
  */
-public class CompletableThenAcceptMock {
+public class CompletableFutureThenApplyMock {
 
     public static void main(String[] args) throws Exception {
         thenAccept();
@@ -31,10 +32,17 @@ public class CompletableThenAcceptMock {
         System.out.println("one exec after");
         System.out.println("oneFuture after value:" + oneFuture.get());
         //基于thenRun()实现异步任务A，执行完毕后，激活异步任务B，这种激活的任务B能够获取A的执行结果的
-        CompletableFuture twoFuture = oneFuture.thenAccept(new Consumer<String>() {
+        CompletableFuture twoFuture = oneFuture.thenApply(new Function<String, Object>() {
+
             @Override
-            public void accept(String s) {
-                System.out.println("tow accept one value:" + s);
+            public String apply(String s){
+                try {
+                    System.out.println("在 one future 的基础上，再次进行加工："+s);
+                }catch (Exception e){
+
+                }
+                return s+"thenApplyValue";
+
             }
         });
 

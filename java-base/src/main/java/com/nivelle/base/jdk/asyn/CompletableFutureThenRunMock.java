@@ -1,7 +1,5 @@
 package com.nivelle.base.jdk.asyn;
 
-import com.sun.xml.internal.ws.util.CompletedFuture;
-
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
@@ -11,7 +9,7 @@ import java.util.function.Supplier;
  * @author fuxinzhong
  * @date 2021/04/02
  */
-public class CompleteableThenRunMock {
+public class CompletableFutureThenRunMock {
 
     public static void main(String[] args) throws Exception {
         thenRun();

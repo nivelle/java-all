@@ -9,10 +9,13 @@ import java.util.function.Supplier;
  * @author fuxinzhong
  * @date 2021/04/03
  */
-public class ManyCompletableMock {
+public class CompletableFutureThenComposeMock {
 
     public static void main(String[] args) throws Exception {
-        CompletableFuture<String> result = doSomeThingOne("fuck jessy").thenCompose(x -> doSomeThingTwo(x));
+        //两个并发运行的CompletableFuture 任务完成后，使用两者
+        CompletableFuture<String> result = doSomeThingOne("fuck jessy").thenCombine(doSomeThingTwo("456"), (one, two) -> {
+            return one + "------" + "two";
+        });
         System.out.println(result.get());
     }
 

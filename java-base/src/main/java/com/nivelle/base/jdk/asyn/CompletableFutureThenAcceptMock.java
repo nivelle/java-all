@@ -1,8 +1,7 @@
 package com.nivelle.base.jdk.asyn;
 
 import java.util.concurrent.CompletableFuture;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
@@ -11,18 +10,19 @@ import java.util.function.Supplier;
  * @author fuxinzhong
  * @date 2021/04/03
  */
-public class CompletableWhenCompleteMock {
+public class CompletableFutureThenAcceptMock {
 
     public static void main(String[] args) throws Exception {
-        whenCompleteMock();
+        thenAccept();
     }
 
-    public static void whenCompleteMock() throws Exception {
+    public static void thenAccept() throws Exception {
         CompletableFuture<String> oneFuture = CompletableFuture.supplyAsync(new Supplier<String>() {
             @Override
             public String get() {
                 try {
                     Thread.sleep(3000);
+
                 } catch (InterruptedException e) {
                 }
                 return "one ok";
@@ -30,22 +30,11 @@ public class CompletableWhenCompleteMock {
         });
         System.out.println("one exec after");
         System.out.println("oneFuture after value:" + oneFuture.get());
-        CompletableFuture twoFuture = oneFuture.whenComplete(new BiConsumer<String, Throwable>() {
+        //基于thenRun()实现异步任务A，执行完毕后，激活异步任务B，这种激活的任务B能够获取A的执行结果的
+        CompletableFuture twoFuture = oneFuture.thenAccept(new Consumer<String>() {
             @Override
-            public void accept(String s, Throwable throwable) {
-                try {
-                    Thread.sleep(1000);
-
-                } catch (Exception e) {
-
-                }
-                if (throwable == null) {
-                    System.out.println("没有异常信息");
-                } else {
-                    System.out.println(throwable.getMessage());
-                }
-                System.out.println("oneFuture.whenComplete value:" + s);
-
+            public void accept(String s) {
+                System.out.println("tow accept one value:" + s);
             }
         });
 
