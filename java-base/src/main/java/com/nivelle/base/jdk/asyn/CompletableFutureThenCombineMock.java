@@ -12,7 +12,10 @@ import java.util.function.Supplier;
 public class CompletableFutureThenCombineMock {
 
     public static void main(String[] args) throws Exception {
-        CompletableFuture<String> result = doSomeThingOne("fuck jessy").thenCompose(x -> doSomeThingTwo(x));
+        //两个并发运行的 CompletableFuture 任务完成后，使用两者
+        CompletableFuture<String> result = doSomeThingOne("fuck").thenCombine(doSomeThingTwo("456"), (one, two) -> {
+            return one + "------" + two;
+        });
         System.out.println(result.get());
     }
 
@@ -39,6 +42,7 @@ public class CompletableFutureThenCombineMock {
                 } catch (Exception e) {
 
                 }
+                System.out.println("doSomeThingTwo return value:" + (x + ":2"));
                 return x + ":2";
             }
         });

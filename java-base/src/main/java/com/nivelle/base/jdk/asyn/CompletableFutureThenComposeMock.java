@@ -12,10 +12,7 @@ import java.util.function.Supplier;
 public class CompletableFutureThenComposeMock {
 
     public static void main(String[] args) throws Exception {
-        //两个并发运行的CompletableFuture 任务完成后，使用两者
-        CompletableFuture<String> result = doSomeThingOne("fuck jessy").thenCombine(doSomeThingTwo("456"), (one, two) -> {
-            return one + "------" + "two";
-        });
+        CompletableFuture<String> result = doSomeThingOne("fuck jessy").thenCompose(x -> doSomeThingTwo(x));
         System.out.println(result.get());
     }
 
@@ -28,6 +25,7 @@ public class CompletableFutureThenComposeMock {
                 } catch (Exception e) {
 
                 }
+                System.out.println(Thread.currentThread().getName() + "doSomeThingOne is running");
                 return params + ":1";
             }
         });
@@ -42,6 +40,7 @@ public class CompletableFutureThenComposeMock {
                 } catch (Exception e) {
 
                 }
+                System.out.println(Thread.currentThread().getName() + "doSomeThingTwo is running");
                 return x + ":2";
             }
         });
