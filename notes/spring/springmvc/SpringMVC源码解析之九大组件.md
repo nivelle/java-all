@@ -336,39 +336,45 @@ public interface ViewResolver {
 
 ### initFlashMapManager
 
-```
-public interface FlashMapManager {
+首先尝试从容器(及其祖先容器)获取名称为flashMapManager的bean组件对象，记录到DispatcherServlet实例成员属性flashMapManager。如果容器中名称为flashMapManager的bean组件不存在，则创建缺省的FlashMapManager对象记录到flashMapManager
 
+- DispatcherServlet优先使用注册到容器中名为flashMapManager的FlashMapManager策略组件。利用这一特性，开发人员可以注册一个自定义的FlashMapManager,但必须使用名称flashMapManager。
+
+- DispatcherServlet的属性flashMapManager总是会对应一个FlashMapManager策略组件,如果容器中名称为flashMapManager的组件不存在,则DispatcherServlet会缺省创建一个FlashMapManager供使用。
+
+- 基于@EnableWebMvc+Java Config的Spring MVC应用缺省情况下，容器中并没有注册的FlashMapManager组件，所以这里会创建一个缺省的FlashMapManager组件，使用的实现类是SessionFlashMapManager,如下DispatcherServlet.properties所定义所示。
+
+````
 	/**
-	 * Find a FlashMap saved by a previous request that matches to the current
-	 * request, remove it from underlying storage, and also remove other
-	 * expired FlashMap instances.
-	 * <p>This method is invoked in the beginning of every request in contrast
-	 * to {@link #saveOutputFlashMap}, which is invoked only when there are
-	 * flash attributes to be saved - i.e. before a redirect.
-	 * @param request the current request
-	 * @param response the current response
-	 * @return a FlashMap matching the current request or {@code null}
+	 * Initialize the FlashMapManager used by this servlet instance.
+	 * If no implementation is configured then we default to
+	 * org.springframework.web.servlet.support.DefaultFlashMapManager.
 	 */
-	@Nullable
-	FlashMap retrieveAndUpdate(HttpServletRequest request, HttpServletResponse response);
+	private void initFlashMapManager(ApplicationContext context) {
+		try {
+			// 从容器获取名称为 flashMapManager 类型为 FlashMapManager 的策略组件
+			this.flashMapManager = context.getBean(FLASH_MAP_MANAGER_BEAN_NAME, FlashMapManager.class);
+			if (logger.isTraceEnabled()) {
+				logger.trace("Detected " + this.flashMapManager.getClass().getSimpleName());
+			}
+			else if (logger.isDebugEnabled()) {
+				logger.debug("Detected " + this.flashMapManager);
+			}
+		}
+		catch (NoSuchBeanDefinitionException ex) {
+			// We need to use the default.
+			// 如果从容器获取指定组件失败，则创建并使用缺省组件
+			this.flashMapManager = getDefaultStrategy(context, FlashMapManager.class);
+			if (logger.isTraceEnabled()) {
+				logger.trace("No FlashMapManager '" + FLASH_MAP_MANAGER_BEAN_NAME +
+						"': using default [" + this.flashMapManager.getClass().getSimpleName() + "]");
+			}
+		}
+	}
 
-	/**
-	 * Save the given FlashMap, in some underlying storage and set the start
-	 * of its expiration period.
-	 * <p><strong>NOTE:</strong> Invoke this method prior to a redirect in order
-	 * to allow saving the FlashMap in the HTTP session or in a response
-	 * cookie before the response is committed.
-	 * @param flashMap the FlashMap to save
-	 * @param request the current request
-	 * @param response the current response
-	 */
-	void saveOutputFlashMap(FlashMap flashMap, HttpServletRequest request, HttpServletResponse response);
 
+````
 
-
-
-```
 
 ##### 获取默认的组件(handlerMapping,handlerAdapter,handlerExceptionResolvers,viewResolvers,themResolver,localResolver,FlashMapManager,RequestToViewNameTranslator)
 
