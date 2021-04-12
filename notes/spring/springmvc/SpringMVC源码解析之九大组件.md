@@ -1,3 +1,5 @@
+### 初始化策略9大组件
+
 ```
 protected void initStrategies(ApplicationContext context) {
 		initMultipartResolver(context);
@@ -15,7 +17,7 @@ protected void initStrategies(ApplicationContext context) {
 
 #### springBoot 默认配置的组件（文件DispatcherServlet.properties）
 
-文件DispatcherServlet.properties是一个属性文件。每个属性的key是一个策略接口的长名称，而value是key指定的策略接口的多个实现类的长名称，每个类名称之间使用,分割。
+文件**DispatcherServlet.properties**是一个属性文件。每个属性的key是一个策略接口的长名称，而value是key指定的策略接口的多个实现类的长名称，每个类名称之间使用,分割。
 
 ```
 org.springframework.web.servlet.LocaleResolver=
@@ -61,10 +63,10 @@ public interface MultipartResolver {
 ```
 
 MultipartResolver 用于处理文件上传，当收到请求时 DispatcherServlet#checkMultipart() 方法会调用 MultipartResolver#isMultipart()
-方法判断请求中是否包含文件。如果请求数据中包含文件，则调用 MultipartResolver#resolveMultipart() 方法对请求的数据进行解析。 然后将文件数据解析成 MultipartFile 并封装在
-MultipartHttpServletRequest(继承了 HttpServletRequest) 对象中，最后传递给 Controller
+方法判断请求中是否包含文件。如果请求数据中包含文件,则调用 MultipartResolver#resolveMultipart() 方法对请求的数据进行解析。 然后将文件数据解析成 MultipartFile 并封装在
+MultipartHttpServletRequest(继承了 HttpServletRequest) 对象中,最后传递给 Controller
 
-#### 子类实现
+#### MultipartResolver 子类实现
 
 - public class StandardServletMultipartResolver implements MultipartResolver
 
@@ -85,39 +87,52 @@ public interface LocaleResolver {
 
 ```
 
-#### 子类实现
-
-//其会将Locale信息存储在session中，如果用户想要修改Locale信息，可以通过修改session中对应属性的值即可；
+#### LocaleResolver 子类实现
 
 - public class SessionLocaleResolver extends AbstractLocaleContextResolver
+  //其会将Locale信息存储在session中，如果用户想要修改Locale信息，可以通过修改session中对应属性的值即可；
 
-  //其会通过用户请求中名称为Accept-Language的header来获取Locale信息，如果想要修改展示的视图，只需要修改该header信息即可
 - public class AcceptHeaderLocaleResolver implements LocaleResolver
+  //其会通过用户请求中名称为Accept-Language的header来获取Locale信息，如果想要修改展示的视图，只需要修改该header信息即可
 
+- public class CookieLocaleResolver extends CookieGenerator implements LocaleContextResolver
   //其读取Locale的方式是在session中通过Cookie来获取其指定的Locale的，如果修改了Cookie的值，页面视图也会同步切换；
-- public class CookieLocaleResolver extends CookieGenerator implements LocaleContextResolver //
-  在声明该resolver时，需要指定一个默认的Locale，在进行Locale获取时，始终返回该Locale，并且调用其setLocale()方法也无法改变其Locale
-- public class FixedLocaleResolver extends AbstractLocaleContextResolver
 
-对于Locale的切换，Spring是通过拦截器来实现的，其提供了一个LocaleChangeInterceptor，若要生效，这个Bean需要自己配置
+- public class FixedLocaleResolver extends AbstractLocaleContextResolver
+  //在声明该resolver时，需要指定一个默认的Locale，在进行Locale获取时，始终返回该Locale，并且调用其setLocale()方法也无法改变其Locale
+
+#### 对于Locale的切换，Spring是通过拦截器来实现的，其提供了一个LocaleChangeInterceptor，若要生效，这个Bean需要自己配置
 
 ### initThemeResolver
 
-- CookieThemeResolver
+- ViewResolver
+    - AbstractCachingViewResolver
+        - UrlBasedViewResolver
+            - AbstractTemplateViewResolver
+                - FreeMarkerViewResolver – 针对FreeMarkerView
+                - GroovyMarkupViewResolver – 针对GroovyMarkupView
+            - InternalResourceViewResolver – 针对InternalResourceView
+            - ScriptTemplateViewResolver – 针对ScriptTemplateView
+            - TilesViewResolver – 针对TilesView
+            - XsltViewResolver – 针对XsltView
+        - ResourceBundleViewResolver
+        - XmlViewResolver
 
-- SessionThemeResolver
+    - BeanNameViewResolver //根据 beanName 从容器获取 View 组件 bean
 
-- FixedThemeResolver
+    - ContentNegotiatingViewResolver //结合考虑 viewName 和 请求 MIME 解析 View
+
+    - ViewResolverComposite //多个ViewResolver 的组合
 
 ### initHandlerMappings
 
-作用是根据当前请求的找到对应的 Handler，并将 Handler（执行程序）与一堆 HandlerInterceptor（拦截器,也是他来处理的）封装到 HandlerExecutionChain 对象中。返回给中央调度器
+根据当前请求的找到对应的 Handler, 并将 Handler（执行程序）与一堆 HandlerInterceptor（拦截器,也是他来处理的）封装到 HandlerExecutionChain 对象中。返回给中央调度器
 
 ```
 private void initHandlerMappings(ApplicationContext context) {
         //初始化记录 HandlerMapping 对象的属性变量为null
 		this.handlerMappings = null;
-		//根据属性 detectAllHandlerMappings 决定是检测所有的 HandlerMapping对象,还是使用指定名称的 HandlerMapping； 对象默认是true按照类型获取handlerMapping组件
+		//根据属性 detectAllHandlerMappings 决定是检测所有的 HandlerMapping对象,还是使用指定名称的 HandlerMapping;对象默认是true按照类型获取handlerMapping组件
 		if (this.detectAllHandlerMappings) {
 			// Find all HandlerMappings in the ApplicationContext, including ancestor contexts.
 			Map<String, HandlerMapping> matchingBeans = BeanFactoryUtils.beansOfTypeIncludingAncestors(context, HandlerMapping.class, true, false);
@@ -138,8 +153,7 @@ private void initHandlerMappings(ApplicationContext context) {
 			}
 		}
 
-		// Ensure we have at least one HandlerMapping, by registering
-		// a default HandlerMapping if no other mappings are found.
+		// Ensure we have at least one HandlerMapping, by registeringa default HandlerMapping if no other mappings are found.
 		// 如果上面步骤从容器获取 HandlerMapping 失败，则使用缺省策略创建 HandlerMapping 对象记录到handlerMappings
 		if (this.handlerMappings == null) {
 			this.handlerMappings = getDefaultStrategies(context, HandlerMapping.class);
@@ -205,8 +219,7 @@ private void initHandlerExceptionResolvers(ApplicationContext context) {
         //根据属性 detectAllHandlerExceptionResolvers 决定是检测所有的 HandlerExceptionResolver 对象，还是使用指定名称的 HandlerExceptionResolver 对象
 		if (this.detectAllHandlerExceptionResolvers) {
 			// Find all HandlerExceptionResolvers in the ApplicationContext, including ancestor contexts.
-			Map<String, HandlerExceptionResolver> matchingBeans = BeanFactoryUtils
-					.beansOfTypeIncludingAncestors(context, HandlerExceptionResolver.class, true, false);
+			Map<String, HandlerExceptionResolver> matchingBeans = BeanFactoryUtils.beansOfTypeIncludingAncestors(context, HandlerExceptionResolver.class, true, false);
 			if (!matchingBeans.isEmpty()) {
 				this.handlerExceptionResolvers = new ArrayList<>(matchingBeans.values());
 				// We keep HandlerExceptionResolvers in sorted order.
@@ -249,7 +262,7 @@ public interface RequestToViewNameTranslator {
 
 ```
 
-- 子类：DefaultRequestToViewNameTranslator
+#### 子类：DefaultRequestToViewNameTranslator
 
 ```
    /**

@@ -3,17 +3,20 @@ package com.nivelle.spring.controllor;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.nivelle.spring.configbean.CommonConfig;
-import com.nivelle.spring.pojo.*;
+import com.nivelle.spring.pojo.Dog;
+import com.nivelle.spring.pojo.TimeLine;
+import com.nivelle.spring.pojo.User;
 import com.nivelle.spring.springboot.dao.ActivityDaoImpl;
 import com.nivelle.spring.springboot.mapper.ActivityPvMapper;
 import com.nivelle.spring.springcore.aop.MyService;
+import com.nivelle.spring.springcore.event.MyEvent;
+import com.nivelle.spring.springcore.factorybean.MyFactoryBean;
 import com.nivelle.spring.springcore.lifecycle.InitSpringBean;
 import com.nivelle.spring.springcore.lifecycle.XmlBean;
-import com.nivelle.spring.springcore.factorybean.*;
-import com.nivelle.spring.springcore.event.MyEvent;
 import com.nivelle.spring.springmvc.MyHandlerMethodArgumentResolver;
 import com.nivelle.spring.springmvc.MyHandlerMethodReturnValueHandler;
 import com.nivelle.spring.springmvc.MyHttpMessageConverter;
+import org.apache.shiro.crypto.hash.Hash;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,12 +24,13 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.util.UrlPathHelper;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -69,7 +73,7 @@ public class SpringAllTestController implements ApplicationContextAware {
      * @RequestHeader
      */
     @PostMapping("/header")
-    @ResponseBody
+
     public Object configHeader(@RequestHeader(name = HttpHeaders.CONTENT_TYPE) String contentType) {
         System.out.println(contentType);
         return contentType + "aa";
@@ -83,7 +87,7 @@ public class SpringAllTestController implements ApplicationContextAware {
      * @RequestHeader
      */
     @PostMapping("/headers")
-    @ResponseBody
+
     public Object configHeaders(@RequestHeader Map headers) {
         System.out.println(headers);
         return headers;
@@ -96,7 +100,7 @@ public class SpringAllTestController implements ApplicationContextAware {
      * @Value
      */
     @PostMapping("/value")
-    @ResponseBody
+
     @ResponseStatus(value = HttpStatus.SERVICE_UNAVAILABLE, reason = "瞎几吧搞")
     public Object value(@Value(value = "${myConfig.desc}") String name) {
         System.out.println(name);
@@ -110,7 +114,7 @@ public class SpringAllTestController implements ApplicationContextAware {
      * @return
      */
     @PostMapping("/config")
-    @ResponseBody
+
     @ResponseStatus(code = HttpStatus.BAD_GATEWAY)
     public Object config(@RequestBody User user) {
         String desc = commonConfig.getDesc();
@@ -129,7 +133,7 @@ public class SpringAllTestController implements ApplicationContextAware {
      * @return
      */
     @GetMapping({"/pathValue/{id}", "/pathValue"})
-    @ResponseBody
+
     public Object pathValue(@PathVariable(required = false) String id) {
         HashMap result = Maps.newHashMap();
         result.put("id", id);
@@ -142,7 +146,7 @@ public class SpringAllTestController implements ApplicationContextAware {
      * @return
      */
     @PostMapping("/config2")
-    @ResponseBody
+
     public Object config2(@RequestParam Map params) {
         System.out.println(params);
         System.out.println(params.get("name"));
@@ -156,7 +160,7 @@ public class SpringAllTestController implements ApplicationContextAware {
      * @RequestParam value 支持占位符
      */
     @PostMapping("/config3")
-    @ResponseBody
+
     public Object config3(@RequestParam(value = "${myConfig.desc}") String desc) {
         HashMap result = Maps.newHashMap();
         result.put("desc", desc);
@@ -169,7 +173,7 @@ public class SpringAllTestController implements ApplicationContextAware {
      * @return
      */
     @RequestMapping("/argument")
-    @ResponseBody
+
     public String argument() {
         return "nivelle";
     }
@@ -180,7 +184,7 @@ public class SpringAllTestController implements ApplicationContextAware {
      * @return
      */
     @RequestMapping("/return")
-    @ResponseBody
+
     public Map returnValue() {
         Map map = Maps.newHashMap();
         map.put(1, 2);
@@ -193,7 +197,7 @@ public class SpringAllTestController implements ApplicationContextAware {
      * @return
      */
     @RequestMapping("/return2")
-    @ResponseBody
+
     public User returnValue2() {
         User user = new User();
         user.setAge(1);
@@ -202,7 +206,7 @@ public class SpringAllTestController implements ApplicationContextAware {
     }
 
     @RequestMapping("/return3")
-    @ResponseBody
+
     public Properties returnValue3() {
         Properties properties = new Properties();
         User user = new User();
@@ -286,7 +290,7 @@ public class SpringAllTestController implements ApplicationContextAware {
      * @return
      */
     @RequestMapping("/init")
-    @ResponseBody
+
     public Object myInitSpringBean() {
         String name = initSpringBean.getName();
         int age = initSpringBean.getAge();
@@ -339,7 +343,7 @@ public class SpringAllTestController implements ApplicationContextAware {
     }
 
     /**
-     * 自定义参数转换器测试,不依赖@RequestBody和 @ResponseBody
+     * 自定义参数转换器测试,不依赖@RequestBody和
      * <p>
      * {@link MyHandlerMethodArgumentResolver}
      * {@link MyHandlerMethodReturnValueHandler}
@@ -354,7 +358,7 @@ public class SpringAllTestController implements ApplicationContextAware {
     }
 
     /**
-     * 自定义参数转换器测试,依赖@RequestBody和 @ResponseBody
+     * 自定义参数转换器测试,依赖@RequestBody和
      * <p>
      * {@link MyHttpMessageConverter}
      *
@@ -362,7 +366,7 @@ public class SpringAllTestController implements ApplicationContextAware {
      * @return
      */
     @RequestMapping(value = "convertAnnotation", produces = "text/properties", consumes = "text/properties")
-    @ResponseBody
+
     public Properties getConvertAnnotation(@RequestBody Properties properties) {
         System.out.println("入参被解析:properties的类型:" + properties.getClass().getSimpleName());
         return properties;
@@ -411,7 +415,7 @@ public class SpringAllTestController implements ApplicationContextAware {
      * @throws Exception
      */
     @RequestMapping("/writeData")
-    @ResponseBody
+
     public void writeData(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         try {
             int i = 0;
@@ -435,7 +439,7 @@ public class SpringAllTestController implements ApplicationContextAware {
      * @param source
      */
     @RequestMapping("/converter")
-    @ResponseBody
+
     public Object converter(Boolean source) {
         /**
          *      trueValues.add("true");
@@ -456,7 +460,7 @@ public class SpringAllTestController implements ApplicationContextAware {
      * @param source
      */
     @RequestMapping("/converter2")
-    @ResponseBody
+
     public Object converter2(Date source) {
         System.err.println(source);
         System.err.println(source);
@@ -470,7 +474,7 @@ public class SpringAllTestController implements ApplicationContextAware {
      * @param user
      */
     @RequestMapping("/converter3")
-    @ResponseBody
+
     public Object converter3(@RequestBody User user) {
         System.err.println(user);
         System.err.println(user);
@@ -484,11 +488,37 @@ public class SpringAllTestController implements ApplicationContextAware {
      * @para
      */
     @RequestMapping("/defaultBeans")
-    @ResponseBody
+
     public Object defaultBeans() {
         String[] defaultBeans = applicationContext.getBeanDefinitionNames();
         System.out.println(defaultBeans.length);
         return defaultBeans;
+    }
+
+    /**
+     * 默认加载类
+     *
+     * @para
+     */
+    @RequestMapping("/urlUtil")
+    public Object getUrlUtil(HttpServletRequest httpRequest) {
+        HashMap<String, String> urls = Maps.newHashMap();
+        UrlPathHelper urlUtil = UrlPathHelper.defaultInstance;
+        String lookupPath = urlUtil.getLookupPathForRequest(httpRequest);
+        urls.put("lookupPath", lookupPath);
+        String pathWithApplicationUrl = urlUtil.getPathWithinApplication(httpRequest);
+        urls.put("pathWithApplicationUrl", pathWithApplicationUrl);
+        String servletPath = urlUtil.getServletPath(httpRequest);
+        urls.put("servletPath", servletPath);
+        String uri = urlUtil.getRequestUri(httpRequest);
+        urls.put("uri", uri);
+        String contextPath = urlUtil.getContextPath(httpRequest);
+        urls.put("contextPath", contextPath);
+
+        String lookupPathForRequestUrl = urlUtil.getLookupPathForRequest(httpRequest, HandlerMapping.LOOKUP_PATH);
+        urls.put("lookupPathForRequestUrl", lookupPathForRequestUrl);
+
+        return urls;
     }
 
 
