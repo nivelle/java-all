@@ -9,7 +9,7 @@ public <T> T convertIfNecessary(@Nullable String propertyName, @Nullable Object 
 		// 根据 requiredType 和 propertyName 获取对应的自定义 编辑器
 		PropertyEditor editor = this.propertyEditorRegistry.findCustomEditor(requiredType, propertyName);
 		ConversionFailedException conversionAttemptEx = null;
-		// 获取对应的conversionService
+		// 获取对应的 conversionService
 		ConversionService conversionService = this.propertyEditorRegistry.getConversionService();
 		// 类型编辑器为kong
 		if (editor == null && conversionService != null && newValue != null && typeDescriptor != null) {

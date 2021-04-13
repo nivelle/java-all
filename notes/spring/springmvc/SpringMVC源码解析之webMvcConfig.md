@@ -26,12 +26,12 @@ public class DelegatingWebMvcConfiguration extends WebMvcConfigurationSupport {
 			this.configurers.addWebMvcConfigurers(configurers);
 		}
 	}
-	
+	//当前类实现了接口ApplicationContextAware用于记录ApplicationContext，该变量就是对应该接口用于记录ApplicationContext的变量
     @Nullable
-   	private ApplicationContext applicationContext;//当前类实现了接口ApplicationContextAware用于记录ApplicationContext，该变量就是对应该接口用于记录ApplicationContext的变量
-   
+   	private ApplicationContext applicationContext;
+    //当前类实现了接口ServletContextAware用于记录ServletContext，该变量就是对应该接口用于记录ServletContext的变量
    	@Nullable
-   	private ServletContext servletContext;//当前类实现了接口ServletContextAware用于记录ServletContext，该变量就是对应该接口用于记录ServletContext的变量
+   	private ServletContext servletContext;
    
 	
 }
