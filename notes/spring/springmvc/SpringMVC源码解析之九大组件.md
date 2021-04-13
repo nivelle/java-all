@@ -378,8 +378,9 @@ public interface ViewResolver {
 
 ##### 获取默认的组件(handlerMapping,handlerAdapter,handlerExceptionResolvers,viewResolvers,themResolver,localResolver,FlashMapManager,RequestToViewNameTranslator)
 
+- 该方法使用指定的策略接口 strategyInterface 创建一组策略对象。上面的方法initHandlerMappings就是使用该方法创建了一组缺省的HandlerMapping策略对象
+
 ```
-//该方法使用指定的策略接口 strategyInterface 创建一组策略对象。上面的方法initHandlerMappings就是使用该方法创建了一组缺省的HandlerMapping策略对象	
 protected <T> List<T> getDefaultStrategies(ApplicationContext context, Class<T> strategyInterface) {
         //策略接口长名称作为 key
 		String key = strategyInterface.getName();
