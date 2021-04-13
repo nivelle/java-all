@@ -9,10 +9,7 @@ import org.springframework.format.FormatterRegistry;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.util.UrlPathHelper;
 
 import java.util.List;
@@ -33,11 +30,15 @@ import java.util.List;
 
 /**
  * @EnableWebMvc 完全自定义控制
+ * <p>
  * 1. SpringMVC;If you want to take complete control of Spring MVC, you can add your own @Configuration annotated with @EnableWebMvc
  * <p>
- * 如果既想保留自动配置的SpringMVC又想使用自己自定义的MVC属性，需要使用实现了WebMvcConfigurer的配置类。该配置类不能加 @EnableWebMvc
+ * 如果既想保留自动配置的SpringMVC又想使用自己自定义的MVC属性，需要使用实现了WebMvcConfigurer 的配置类。该配置类不能加 @EnableWebMvc
+ * <p>
+ * 2. 继承 WebMvcConfigurationSupport 或者 DelegatingWebMvcConfiguration 不实用 EnableWebMvc注解，不暴露过多的自定义配置
  **/
-//@Configuration
+@Configuration
+@EnableWebMvc
 public class MyWebConfig implements WebMvcConfigurer {
 
     @Override

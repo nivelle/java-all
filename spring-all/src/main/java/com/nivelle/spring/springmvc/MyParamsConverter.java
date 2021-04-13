@@ -56,6 +56,7 @@ public class MyParamsConverter implements Converter<String, Date> {
      *
      *  2. DataBinder调用转配在Spring Web上下文中的ConversionService进行数据类型转换、数据格式化等工作，将ServletRequest中的消息填充到入参对象中。
      *
-     *  3. 调用Validator对已经绑定的请求信息数据的入参对象进行数据合法性校验，生成数据绑定结果BindingResult。BindingResult包含完成绑定的入参对象和相应的校验错误对象。而后将BindingResult中的入参对象及校验错误对象赋给处理方法的入参。
+     *  3. 调用Validator对已经绑定的请求信息数据的入参对象进行数据合法性校验，生成数据绑定结果BindingResult。BindingResult包含完成绑定的入参对象和相应的校验错误对象。
+     *   而后将BindingResult中的入参对象及校验错误对象赋给处理方法的入参。
      */
 }

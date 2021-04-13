@@ -6,6 +6,8 @@ import java.beans.PropertyEditorSupport;
 
 /**
  * 自定义属性转换器(类型转换的一种)
+ * <p>
+ * 通过 WebBindingInitializer 注入自定义的类型处理器
  *
  * @author fuxinzhong
  * @date 2020/08/16
