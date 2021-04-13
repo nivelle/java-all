@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * Spring MVC框架对AOP的一种实现方式
- * 一般简单的功能又是通用的,每个请求都要去处理的,比如判断token是否失效可以使用spring mvc的 HanlderInterceptor,
+ * 一般简单的功能又是通用的,每个请求都要去处理的,比如判断token是否失效可以使用spring mvc的 HandlerInterceptor,
  * 复杂的,比如缓存,需要高度自定义的就用spring aop。
  * 一般来说service层更多用spring aop，controller层有必要用到request和response的时候，可以用拦截器。
  *

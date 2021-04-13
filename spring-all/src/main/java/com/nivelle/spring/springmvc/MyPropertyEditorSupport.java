@@ -5,7 +5,7 @@ import com.nivelle.spring.pojo.User;
 import java.beans.PropertyEditorSupport;
 
 /**
- * 自定义属性转换器(类型转的一种)
+ * 自定义属性转换器(类型转换的一种)
  *
  * @author fuxinzhong
  * @date 2020/08/16
@@ -13,6 +13,7 @@ import java.beans.PropertyEditorSupport;
 public class MyPropertyEditorSupport extends PropertyEditorSupport {
     @Override
     public void setAsText(String text) throws IllegalArgumentException {
+        //解析逗号分割字符串的内容
         if (text.indexOf(",") > 0) {
             User user = new User();
             String[] arr = text.split(",");

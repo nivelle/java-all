@@ -12,7 +12,7 @@ import javax.servlet.ServletRegistration;
  * @author nivelle
  * @date 2020/01/15
  */
-@Component
+//容器启动时自动注入
 public class RegisterMyServlet2 implements ServletContextInitializer {
 
     @Override

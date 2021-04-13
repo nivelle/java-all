@@ -14,9 +14,9 @@ import java.io.IOException;
 public class MyServlet1 extends HttpServlet {
 
     @Override
-    protected void service(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    protected void service(HttpServletRequest req, HttpServletResponse httpServletResponse) throws IOException {
         String desc = getServletConfig().getInitParameter("desc");
-        resp.getOutputStream().println("desc is " + desc);
+        httpServletResponse.getOutputStream().println("desc is " + desc);
     }
 
 }

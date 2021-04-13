@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.InitBinder;
  * @author fuxinzhong
  * @date 2020/08/04
  */
-//@Configuration
+@Configuration
 public class MyBaseConfig {
 
 
@@ -30,7 +30,7 @@ public class MyBaseConfig {
      * <p>
      * 2.@WebServlet
      * <p>
-     * 3.ServletContextInitializer
+     * 3.实现 ServletContextInitializer 接口
      */
     @Bean
     public ServletRegistrationBean registerServlet() {

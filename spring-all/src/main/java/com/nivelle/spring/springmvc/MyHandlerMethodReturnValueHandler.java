@@ -28,6 +28,15 @@ public class MyHandlerMethodReturnValueHandler implements HandlerMethodReturnVal
         return Properties.class.equals(returnType.getMethod().getReturnType());
     }
 
+    /**
+     * 返回Properties 类型的数据
+     *
+     * @param returnValue
+     * @param returnType
+     * @param mavContainer
+     * @param webRequest
+     * @throws Exception
+     */
     @Override
     public void handleReturnValue(Object returnValue, MethodParameter returnType, ModelAndViewContainer mavContainer, NativeWebRequest webRequest) throws Exception {
         System.out.println("HandlerMethodReturnValueHandler ==>handleReturnValue \n returnValue:" + returnValue + "\n returnType:" + returnType + "\n mavContainer :" + mavContainer + "\n webRequest:" + webRequest);

@@ -40,7 +40,7 @@ public class MyHandlerMethodArgumentResolver implements HandlerMethodArgumentRes
     /**
      * 从指定请求上下文中，将方法参数MethodParameter解析为参数值。这里需要解析的参数parameter一定符合如下条件:将其交给当前HandlerMethodArgumentResolver对象的方法supportsParameter,返回结果是true
      * <p>
-     * 它是HandlerMethod方法的解析器，将HttpServletRequest(header + body 中的内容)解析为HandlerMethod方法的参数（method parameters）
+     * 它是HandlerMethod方法的解析器,将HttpServletRequest(header + body 中的内容)解析为HandlerMethod方法的参数（method parameters）
      */
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {

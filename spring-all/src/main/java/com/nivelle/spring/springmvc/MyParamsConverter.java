@@ -40,7 +40,7 @@ public class MyParamsConverter implements Converter<String, Date> {
     }
 
     /**
-     * HttpMessageConverte 只负责解析Http包的Body体部分，其余部分都交由相关的Convert SPI处理
+     * HttpMessageConverter 只负责解析Http包的Body体部分，其余部分都交由相关的Convert SPI处理
      *
      * SpringMVC还有一些需要Convert SPI的场景，如读取Cookie值的@CookieValue（本质是Header），
      * 解析矩阵URL的@MatrixVariable（本质是URL），读取本地会话的@SessionAttribute，解析SpEL的@Value
