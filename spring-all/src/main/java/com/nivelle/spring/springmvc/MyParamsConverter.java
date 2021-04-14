@@ -25,6 +25,10 @@ public class MyParamsConverter implements Converter<String, Date> {
 
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
+    /**
+     * 在Spring3中引入了一个Converter接口，它支持从一个Object转为另一个Object。
+     * 除了Converter接口之外，实现ConverterFactory接口和GenericConverter接口也可以实现我们自己的类型转换逻辑。
+     */
     @Override
     public Date convert(String source) {
         System.err.println("MyParamsConverter is running");

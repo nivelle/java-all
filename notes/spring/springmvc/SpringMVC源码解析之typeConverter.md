@@ -1,3 +1,7 @@
+### SpringMVC类型转换
+
+以往我们需要SpringMVC为我们自动进行类型转换的时候都是用的PropertyEditor。通过PropertyEditor的setAsText()方法我们可以实现字符串向特定类型的转换。但是这里有一个限制是它只支持从String类型转为其他类型。在Spring3中引入了一个Converter接口，它支持从一个Object转为另一个Object。除了Converter接口之外，实现ConverterFactory接口和GenericConverter接口也可以实现我们自己的类型转换逻辑。
+
 ### TypeConverter
 
 #### 实现子类: TypeConverterDelegate()
@@ -184,14 +188,34 @@ public <T> T convertIfNecessary(@Nullable String propertyName, @Nullable Object 
 
 ```
 
-### ConversionService
+
+
+### 类型转换接口
+
+#### Converter<S, T>
+
+- 范性接口，从S类型转换为T类型
+
+```
+@FunctionalInterface
+public interface Converter<S, T> {
+    @Nullable
+    T convert(S var1);
+}
+
+```
+
+#### ConversionService
+
+在定义好Converter之后，就是使用Converter了。为了统一调用Converter进行类型转换，Spring为我们提供了一个ConversionService接口。
+通过实现这个接口我们可以实现自己的Converter调用逻辑
 
 ```
 public interface ConversionService {
 
 	boolean canConvert(@Nullable Class<?> sourceType, Class<?> targetType);
 
-	boolean canConvert(@Nullable TypeDescriptor sourceType, TypeDescriptor targetType);
+	boolean canConvert(@Nullable TypeDescriptor sourceType, TypeDConversionServiceFactoryBeanescriptor targetType);
 
 	@Nullable
 	<T> T convert(@Nullable Object source, Class<T> targetType);
@@ -203,21 +227,9 @@ public interface ConversionService {
 
 ```
 
-#### 转换器
+#### ConverterFactory<S, R>
 
-- Converter<S, T>
-
-```
-@FunctionalInterface
-public interface Converter<S, T> {
-    @Nullable
-    T convert(S var1);
-}
-
-```
-
-- ConverterFactory<S, R>
-
+- ConverterFactory的出现可以让我们统一管理一些相关联的Converter。顾名思义，ConverterFactory就是产生Converter的一个工厂，确实ConverterFactory就是用来产生Converter的
 ```
 //从S类型到T类型的转换器，而T类型必定继承或实现R类型，我们可以形象地称为“一对多”，因此该接口更适合实现需要转换为同一类型的转换器。
 public interface ConverterFactory<S, R> {
@@ -226,7 +238,9 @@ public interface ConverterFactory<S, R> {
 
 ```
 
-- GenericConverter
+#### GenericConverter
+
+- GenericConverter接口支持在多个不同的原类型和目标类型之间进行转换
 
 ````
 public interface GenericConverter {
@@ -263,7 +277,7 @@ public interface GenericConverter {
 }
 ````
 
-- ConditionalGenericConverter
+#### ConditionalGenericConverter
 
 ````
 public interface ConditionalGenericConverter extends GenericConverter, ConditionalConverter 
@@ -274,6 +288,28 @@ public interface ConditionalConverter {
 
 }
 ````
+#### ConverterRegistry
+
+- 正如前言所说的，要实现自己的类型转换逻辑我们可以实现Converter接口、ConverterFactory接口和GenericConverter接口，ConverterRegistry接口就分别为这三种类型提供了对应的注册方法，至于里面的逻辑就可以发挥自己的设计能力进行设计实现了。
+
+- 对于ConversionService，Spring已经为我们提供了一个实现，它就是GenericConversionService，位于org.springframework.core.convert.support包下面，它实现了ConversionService接口和ConverterRegistry接口
+````
+public interface ConverterRegistry {  
+     
+    void addConverter(Converter<?, ?> converter);  
+   
+    void addConverter(GenericConverter converter);  
+   
+    void addConverterFactory(ConverterFactory<?, ?> converterFactory);  
+   
+    void removeConvertible(Class<?> sourceType, Class<?> targetType);  
+   
+}  
+
+````
+
+#### ConversionServiceFactoryBean
+
 
 ### Formatter
 
