@@ -188,8 +188,6 @@ public <T> T convertIfNecessary(@Nullable String propertyName, @Nullable Object 
 
 ```
 
-
-
 ### 类型转换接口
 
 #### Converter<S, T>
@@ -308,10 +306,16 @@ public interface ConverterRegistry {
 
 ````
 
-#### ConversionServiceFactoryBean
+-----
 
+是否支持	 | URL | Parameter | Header |Body
+---|---|---|---|---|
+HttpMessageConverter | 否 | 否|否|是
+Convert SPI	 | 是 | 是|是 | 否
 
 ### Formatter
+
+Spring3引入了较Spring2的PropertyEditor更加强大、通用的Convert/Format SPI，Convert SPI可以实现任意类型的转换；Format SPI支持国际化，并在前者的基础上实现了String与任意类型的转换。这两类SPI属于spring-core，被整个spring-framework共享，是一种通用的类型转换器。
 
 ```
 public interface Formatter<T> extends Printer<T>, Parser<T> {

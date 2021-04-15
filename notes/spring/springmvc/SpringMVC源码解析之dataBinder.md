@@ -12,7 +12,7 @@ public class DataBinder implements PropertyEditorRegistry, TypeConverter {
 	private final Object target;
 	private final String objectName; // 默认值是target
 
-	// BindingResult：绑定错误、失败的时候会放进这里来
+	// BindingResult：绑定错误、失败的时候会放进这里来~
 	@Nullable
 	private AbstractPropertyBindingResult bindingResult;
 
@@ -20,16 +20,16 @@ public class DataBinder implements PropertyEditorRegistry, TypeConverter {
 	@Nullable
 	private SimpleTypeConverter typeConverter;
 
-	// 默认忽略不能识别的字段
+	// 默认忽略不能识别的字段~
 	private boolean ignoreUnknownFields = true;
-	// 不能忽略非法的字段
+	// 不能忽略非法的字段（比如我要Integer，你给传aaa，那肯定就不让绑定了，抛错）
 	private boolean ignoreInvalidFields = false;
-	// 默认是支持级联的
+	// 默认是支持级联的~~~
 	private boolean autoGrowNestedPaths = true;
 
 	private int autoGrowCollectionLimit = DEFAULT_AUTO_GROW_COLLECTION_LIMIT;
 
-	// 这三个参数  都可以自己指定：允许的字段、不允许的、必须的
+	// 这三个参数  都可以自己指定~~ 允许的字段、不允许的、必须的
 	@Nullable
 	private String[] allowedFields;
 	@Nullable
@@ -40,15 +40,15 @@ public class DataBinder implements PropertyEditorRegistry, TypeConverter {
 	// 转换器ConversionService
 	@Nullable
 	private ConversionService conversionService;
-	// 状态码处理器
+	// 状态码处理器~
 	@Nullable
 	private MessageCodesResolver messageCodesResolver;
-	// 绑定出现错误的处理器
+	// 绑定出现错误的处理器~
 	private BindingErrorProcessor bindingErrorProcessor = new DefaultBindingErrorProcessor();
-	// 校验器
+	// 校验器（这个非常重要）
 	private final List<Validator> validators = new ArrayList<>();
 
-	// objectName没有指定，就用默认的
+	//  objectName没有指定，就用默认的
 	public DataBinder(@Nullable Object target) {
 		this(target, DEFAULT_OBJECT_NAME);
 	}
@@ -56,7 +56,9 @@ public class DataBinder implements PropertyEditorRegistry, TypeConverter {
 		this.target = ObjectUtils.unwrapOptional(target);
 		this.objectName = objectName;
 	}
-	// 提供一些列的初始化方法,供给子类使用 或者外部使用,下面两个初始化方法是互斥的
+	... // 省略所有属性的get/set方法
+
+	// 提供一些列的初始化方法，供给子类使用 或者外部使用  下面两个初始化方法是互斥的
 	public void initBeanPropertyAccess() {
 		Assert.state(this.bindingResult == null, "DataBinder is already initialized - call initBeanPropertyAccess before other configuration methods");
 		this.bindingResult = createBeanPropertyBindingResult();
@@ -71,7 +73,7 @@ public class DataBinder implements PropertyEditorRegistry, TypeConverter {
 		}
 		return result;
 	}
-	// 你会发现，初始化DirectFieldAccess的时候，校验的也是bindingResult
+	// 你会发现，初始化DirectFieldAccess的时候，校验的也是bindingResult ~~~~
 	public void initDirectFieldAccess() {
 		Assert.state(this.bindingResult == null, "DataBinder is already initialized - call initDirectFieldAccess before other configuration methods");
 		this.bindingResult = createDirectFieldBindingResult();
@@ -86,10 +88,13 @@ public class DataBinder implements PropertyEditorRegistry, TypeConverter {
 		}
 		return result;
 	}
+
+	...
 	// 把属性访问器返回，PropertyAccessor(默认直接从结果里拿)，子类MapDataBinder有复写
 	protected ConfigurablePropertyAccessor getPropertyAccessor() {
 		return getInternalBindingResult().getPropertyAccessor();
 	}
+
 	// 可以看到简单的转换器也是使用到了conversionService的，可见conversionService它的效用
 	protected SimpleTypeConverter getSimpleTypeConverter() {
 		if (this.typeConverter == null) {
@@ -100,10 +105,12 @@ public class DataBinder implements PropertyEditorRegistry, TypeConverter {
 		}
 		return this.typeConverter;
 	}
+
+	... // 省略众多get方法
 	
-	// 设置指定的可以绑定的字段，默认是所有字段
+	// 设置指定的可以绑定的字段，默认是所有字段~~~
 	// 例如，在绑定HTTP请求参数时，限制这一点以避免恶意用户进行不必要的修改。
-	// 简单的说：我可以控制只有指定的一些属性才允许你修改
+	// 简单的说：我可以控制只有指定的一些属性才允许你修改~~~~
 	// 注意：它支持xxx*,*xxx,*xxx*这样的通配符  支持[]这样子来写~
 	public void setAllowedFields(@Nullable String... allowedFields) {
 		this.allowedFields = PropertyAccessorUtils.canonicalPropertyNames(allowedFields);
@@ -119,13 +126,14 @@ public class DataBinder implements PropertyEditorRegistry, TypeConverter {
 			logger.debug("DataBinder requires binding of required fields [" + StringUtils.arrayToCommaDelimitedString(requiredFields) + "]");
 		}
 	}
-
+	...
 	// 注意：这个是set方法，后面是有add方法的~
+	// 注意：虽然是set，但是引用是木有变的~~~~
 	public void setValidator(@Nullable Validator validator) {
-		// 判断逻辑在下面：你的validator至少得支持这种类型呀
+		// 判断逻辑在下面：你的validator至少得支持这种类型呀  哈哈
 		assertValidators(validator);
-		// 因为自己手动设置了，所以先清空  再加进来
-		// 这步你会发现，即使validator是null
+		// 因为自己手动设置了，所以先清空  再加进来~~~
+		// 这步你会发现，即使validator是null，也是会clear的哦~  符合语意
 		this.validators.clear();
 		if (validator != null) {
 			this.validators.add(validator);
@@ -177,9 +185,9 @@ public class DataBinder implements PropertyEditorRegistry, TypeConverter {
 	// 实现接口方法
 	public void registerCustomEditor(Class<?> requiredType, PropertyEditor propertyEditor);
 	public void registerCustomEditor(@Nullable Class<?> requiredType, @Nullable String field, PropertyEditor propertyEditor);
-
+	...
 	// 实现接口方法
-	// 统一委托给持有的TypeConverter或者是getInternalBindingResult().getPropertyAccessor();这里面的
+	// 统一委托给持有的TypeConverter~~或者是getInternalBindingResult().getPropertyAccessor();这里面的
 	@Override
 	@Nullable
 	public <T> T convertIfNecessary(@Nullable Object value, @Nullable Class<T> requiredType,
@@ -187,6 +195,8 @@ public class DataBinder implements PropertyEditorRegistry, TypeConverter {
 
 		return getTypeConverter().convertIfNecessary(value, requiredType, methodParam);
 	}
+
+
 	// ===========上面的方法都是开胃小菜，下面才是本类最重要的方法==============
 
 	// 该方法就是把提供的属性值们，绑定到目标对象target里去~~~
@@ -194,7 +204,7 @@ public class DataBinder implements PropertyEditorRegistry, TypeConverter {
 		MutablePropertyValues mpvs = (pvs instanceof MutablePropertyValues ? (MutablePropertyValues) pvs : new MutablePropertyValues(pvs));
 		doBind(mpvs);
 	}
-	// 此方法是protected的，子类WebDataBinder有复写加强了一下
+	// 此方法是protected的，子类WebDataBinder有复写~~~加强了一下
 	protected void doBind(MutablePropertyValues mpvs) {
 		// 前面两个check就不解释了，重点看看applyPropertyValues(mpvs)这个方法~
 		checkAllowedFields(mpvs);
@@ -249,5 +259,6 @@ public class DataBinder implements PropertyEditorRegistry, TypeConverter {
 		return getBindingResult().getModel();
 	}
 }
+
 
 ```
