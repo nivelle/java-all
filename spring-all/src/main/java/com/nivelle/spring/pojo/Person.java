@@ -1,42 +1,29 @@
 package com.nivelle.spring.pojo;
 
 
+import lombok.Data;
+
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.util.List;
+import java.util.Map;
 
-
+@Data
 public class Person {
 
-    @NotNull(message = "年龄不能为空")//测试发现是说key不能为空注意哦
-    @Min(value = 0, message = "年龄不能小于0岁")
-    private Integer age;
+    //@NotNull(message = "年龄不能为空")//测试发现是说key不能为空注意哦
+    //@Min(value = 0, message = "年龄不能小于0岁")
+    public int age;
 
-    @NotNull(message = "姓名不能为空")
-    private String name;
+    //@NotNull(message = "姓名不能为空")
+    public String name;
 
-    private String addRess;
+    public String address;
 
-    public Integer getAge() {
-        return age;
-    }
+    public Boolean flag;
+    public int index;
+    public List<String> list;
+    public Map<String, String> map;
 
-    public void setAge(Integer age) {
-        this.age = age;
-    }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getAddRess() {
-        return addRess;
-    }
-
-    public void setAddRess(String addRess) {
-        this.addRess = addRess;
-    }
 }

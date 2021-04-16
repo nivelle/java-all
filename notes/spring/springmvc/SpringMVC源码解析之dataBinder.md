@@ -271,8 +271,7 @@ public class DataBinder implements PropertyEditorRegistry, TypeConverter {
 // @since 1.2
 public class WebDataBinder extends DataBinder {
 
-	// 此字段意思是：字段标记  比如name -> _name
-	// 这对于HTML复选框和选择选项特别有用。
+	// 此字段意思是：字段标记  比如name -> _name; 这对于HTML复选框和选择选项特别有用。
 	public static final String DEFAULT_FIELD_MARKER_PREFIX = "_";
 	// !符号是处理默认值的，提供一个默认值代替空值
 	public static final String DEFAULT_FIELD_DEFAULT_PREFIX = "!";
@@ -300,6 +299,7 @@ public class WebDataBinder extends DataBinder {
 		super.doBind(mpvs);
 	}
 
+    // 处理！ 开头属性的逻辑
 	protected void checkFieldDefaults(MutablePropertyValues mpvs) {
 		String fieldDefaultPrefix = getFieldDefaultPrefix();
 		if (fieldDefaultPrefix != null) {
@@ -307,10 +307,9 @@ public class WebDataBinder extends DataBinder {
 			for (PropertyValue pv : pvArray) {
 
 				// 若你给定的PropertyValue的属性名确实是以!打头的  那就做处理如下：
-				// 如果JavaBean的该属性可写 同时 mpvs不存在去掉!后的同名属性，那就添加进来表示后续可以使用了（毕竟是默认值，没有精确匹配的高的）
-				// 然后把带!的给移除掉（因为默认值以已经转正了）
-				// 其实这里就是说你可以使用！来给个默认值。比如!name表示若找不到name这个属性的时，就取它的值
-				// 也就是说你request里若有传!name保底，也就不怕出现null值啦~
+				// 1. 如果JavaBean的该属性可写 同时 mpvs不存在去掉!后的同名属性，那就添加进来表示后续可以使用了（毕竟是默认值，没有精确匹配的高的）
+				// 2. 然后把带!的给移除掉（因为默认值以已经转正了）其实这里就是说你可以使用！来给个默认值。比如!name表示若找不到name这个属性的时，就取它的值 也就是说你request里若有传!name保底，也就不怕出现null值了
+				// 3. 也就是 @Required(required=true ,default = defaultVale) 
 				if (pv.getName().startsWith(fieldDefaultPrefix)) {
 					String field = pv.getName().substring(fieldDefaultPrefix.length());
 					if (getPropertyAccessor().isWritableProperty(field) && !mpvs.contains(field)) {
@@ -322,12 +321,10 @@ public class WebDataBinder extends DataBinder {
 		}
 	}
 
-	// 处理_的步骤
-	// 若传入的字段以_打头
-	// JavaBean的这个属性可写 同时 mpvs没有去掉_后的属性名字
-	// getEmptyValue(field, fieldType)就是根据Type类型给定默认值。
-	// 比如Boolean类型默认给false，数组给空数组[]，集合给空集合，Map给空map  可以参考此类：CollectionFactory
-	// 当然，这一切都是建立在你传的属性值是以_打头的基础上的，Spring才会默认帮你处理这些默认值
+	// 处理"_" 开头的逻辑 
+	// 1. 若传入的字段以_打头 JavaBean的这个属性可写 同时 mpvs没有去掉_后的属性名字
+	// 2. 则 getEmptyValue(field, fieldType)就是根据Type类型给定默认值。
+	// 比如Boolean类型默认给false，数组给空数组[]，集合给空集合，Map给空map  可以参考此类：CollectionFactory 当然，这一切都是建立在你传的属性值是以_打头的基础上的，Spring才会默认帮你处理这些默认值
 	protected void checkFieldMarkers(MutablePropertyValues mpvs) {
 		String fieldMarkerPrefix = getFieldMarkerPrefix();
 		if (fieldMarkerPrefix != null) {
@@ -391,3 +388,7 @@ public class WebDataBinder extends DataBinder {
 
 
 ````
+
+- 支持对属性名以"_"打头的默认值处理（自动设置默认值，根据类型来处理 所有的Bool、Collection、Map等）
+- 支持对属性名以"!"打头的默认值处理（手动给某个属性赋默认值，自己控制的灵活性很高）
+- 提供方法，支持把MultipartFile绑定到JavaBean的属性上~
