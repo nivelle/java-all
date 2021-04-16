@@ -1,5 +1,7 @@
 ### DataBinder 数据绑定
 
+- 它位于spring-context这个工程的org.springframework.validation包内，所以需要再次明确的是：它是Spring提供的能力而非web提供的
+
 ```
 public class DataBinder implements PropertyEditorRegistry, TypeConverter {
 
@@ -16,20 +18,20 @@ public class DataBinder implements PropertyEditorRegistry, TypeConverter {
 	@Nullable
 	private AbstractPropertyBindingResult bindingResult;
 
-	//类型转换器，会注册最为常用的那么多类型转换Map<Class<?>, PropertyEditor> defaultEditors
+	//类型转换器，会注册常用的类型转换Map<Class<?>, PropertyEditor> defaultEditors
 	@Nullable
 	private SimpleTypeConverter typeConverter;
 
-	// 默认忽略不能识别的字段~
+	// 默认忽略不能识别的字段
 	private boolean ignoreUnknownFields = true;
 	// 不能忽略非法的字段（比如我要Integer，你给传aaa，那肯定就不让绑定了，抛错）
 	private boolean ignoreInvalidFields = false;
-	// 默认是支持级联的~~~
+	// 默认是支持级联的
 	private boolean autoGrowNestedPaths = true;
 
 	private int autoGrowCollectionLimit = DEFAULT_AUTO_GROW_COLLECTION_LIMIT;
 
-	// 这三个参数  都可以自己指定~~ 允许的字段、不允许的、必须的
+	// 这三个参数  都可以自己指定:允许的字段、不允许的、必须的
 	@Nullable
 	private String[] allowedFields;
 	@Nullable
@@ -56,9 +58,8 @@ public class DataBinder implements PropertyEditorRegistry, TypeConverter {
 		this.target = ObjectUtils.unwrapOptional(target);
 		this.objectName = objectName;
 	}
-	... // 省略所有属性的get/set方法
 
-	// 提供一些列的初始化方法，供给子类使用 或者外部使用  下面两个初始化方法是互斥的
+	// 提供一些列的初始化方法，供给子类使用 或者外部使用;initBeanPropertyAccess 和 initDirectFieldAccess 是互斥的
 	public void initBeanPropertyAccess() {
 		Assert.state(this.bindingResult == null, "DataBinder is already initialized - call initBeanPropertyAccess before other configuration methods");
 		this.bindingResult = createBeanPropertyBindingResult();
@@ -73,7 +74,7 @@ public class DataBinder implements PropertyEditorRegistry, TypeConverter {
 		}
 		return result;
 	}
-	// 你会发现，初始化DirectFieldAccess的时候，校验的也是bindingResult ~~~~
+	// 你会发现，初始化DirectFieldAccess的时候，校验的也是bindingResult
 	public void initDirectFieldAccess() {
 		Assert.state(this.bindingResult == null, "DataBinder is already initialized - call initDirectFieldAccess before other configuration methods");
 		this.bindingResult = createDirectFieldBindingResult();
@@ -105,13 +106,11 @@ public class DataBinder implements PropertyEditorRegistry, TypeConverter {
 		}
 		return this.typeConverter;
 	}
-
-	... // 省略众多get方法
 	
-	// 设置指定的可以绑定的字段，默认是所有字段~~~
+	// 设置指定的可以绑定的字段，默认是所有字段
 	// 例如，在绑定HTTP请求参数时，限制这一点以避免恶意用户进行不必要的修改。
-	// 简单的说：我可以控制只有指定的一些属性才允许你修改~~~~
-	// 注意：它支持xxx*,*xxx,*xxx*这样的通配符  支持[]这样子来写~
+	// 简单的说：我可以控制只有指定的一些属性才允许你修改
+	// 注意：它支持xxx*,*xxx,*xxx*这样的通配符  支持[]这样子来写
 	public void setAllowedFields(@Nullable String... allowedFields) {
 		this.allowedFields = PropertyAccessorUtils.canonicalPropertyNames(allowedFields);
 	}
@@ -126,13 +125,12 @@ public class DataBinder implements PropertyEditorRegistry, TypeConverter {
 			logger.debug("DataBinder requires binding of required fields [" + StringUtils.arrayToCommaDelimitedString(requiredFields) + "]");
 		}
 	}
-	...
 	// 注意：这个是set方法，后面是有add方法的~
-	// 注意：虽然是set，但是引用是木有变的~~~~
+	// 注意：虽然是set，但是引用是木有变的
 	public void setValidator(@Nullable Validator validator) {
-		// 判断逻辑在下面：你的validator至少得支持这种类型呀  哈哈
+		// 判断逻辑在下面：你的validator至少得支持这种类型呀 
 		assertValidators(validator);
-		// 因为自己手动设置了，所以先清空  再加进来~~~
+		// 因为自己手动设置了，所以先清空  再加进来
 		// 这步你会发现，即使validator是null，也是会clear的哦~  符合语意
 		this.validators.clear();
 		if (validator != null) {
@@ -187,7 +185,7 @@ public class DataBinder implements PropertyEditorRegistry, TypeConverter {
 	public void registerCustomEditor(@Nullable Class<?> requiredType, @Nullable String field, PropertyEditor propertyEditor);
 	...
 	// 实现接口方法
-	// 统一委托给持有的TypeConverter~~或者是getInternalBindingResult().getPropertyAccessor();这里面的
+	// 统一委托给持有的TypeConverter或者是getInternalBindingResult().getPropertyAccessor();这里面的
 	@Override
 	@Nullable
 	public <T> T convertIfNecessary(@Nullable Object value, @Nullable Class<T> requiredType,
@@ -204,7 +202,7 @@ public class DataBinder implements PropertyEditorRegistry, TypeConverter {
 		MutablePropertyValues mpvs = (pvs instanceof MutablePropertyValues ? (MutablePropertyValues) pvs : new MutablePropertyValues(pvs));
 		doBind(mpvs);
 	}
-	// 此方法是protected的，子类WebDataBinder有复写~~~加强了一下
+	// 此方法是protected的，子类WebDataBinder有复写
 	protected void doBind(MutablePropertyValues mpvs) {
 		// 前面两个check就不解释了，重点看看applyPropertyValues(mpvs)这个方法~
 		checkAllowedFields(mpvs);
@@ -220,13 +218,13 @@ public class DataBinder implements PropertyEditorRegistry, TypeConverter {
 				(ObjectUtils.isEmpty(disallowed) || !PatternMatchUtils.simpleMatch(disallowed, field)));
 	}
 	...
-	// protected 方法，给target赋值~~~~
+	// protected 方法，给target赋值
 	protected void applyPropertyValues(MutablePropertyValues mpvs) {
 		try {
 			// 可以看到最终赋值 是委托给PropertyAccessor去完成的
 			getPropertyAccessor().setPropertyValues(mpvs, isIgnoreUnknownFields(), isIgnoreInvalidFields());
 
-		// 抛出异常，交给BindingErrorProcessor一个个处理~~~
+		// 抛出异常，交给BindingErrorProcessor一个个处理
 		} catch (PropertyBatchUpdateException ex) {
 			for (PropertyAccessException pae : ex.getPropertyAccessExceptions()) {
 				getBindingErrorProcessor().processPropertyAccessException(pae, getInternalBindingResult());
@@ -234,12 +232,12 @@ public class DataBinder implements PropertyEditorRegistry, TypeConverter {
 		}
 	}
 
-	// 执行校验，此处就和BindingResult 关联上了，校验失败的消息都会放进去（不是直接抛出异常哦~ ）
+	// 执行校验，此处就和BindingResult 关联上了，校验失败的消息都会放进去
 	public void validate() {
 		Object target = getTarget();
 		Assert.state(target != null, "No target to validate");
 		BindingResult bindingResult = getBindingResult();
-		// 每个Validator都会执行~~~~
+		// 每个Validator都会执行
 		for (Validator validator : getValidators()) {
 			validator.validate(target, bindingResult);
 		}
@@ -262,3 +260,134 @@ public class DataBinder implements PropertyEditorRegistry, TypeConverter {
 
 
 ```
+
+- 把属性值PropertyValues绑定到target上（bind()方法，依赖于PropertyAccessor实现）
+- 提供校验的能力：提供了public方法validate()对各个属性使用Validator执行校验~
+- 提供了注册属性编辑器（PropertyEditor）和对类型进行转换的能力（TypeConverter）
+
+### webDataBinder
+
+````
+// @since 1.2
+public class WebDataBinder extends DataBinder {
+
+	// 此字段意思是：字段标记  比如name -> _name
+	// 这对于HTML复选框和选择选项特别有用。
+	public static final String DEFAULT_FIELD_MARKER_PREFIX = "_";
+	// !符号是处理默认值的，提供一个默认值代替空值
+	public static final String DEFAULT_FIELD_DEFAULT_PREFIX = "!";
+	
+	@Nullable
+	private String fieldMarkerPrefix = DEFAULT_FIELD_MARKER_PREFIX;
+	@Nullable
+	private String fieldDefaultPrefix = DEFAULT_FIELD_DEFAULT_PREFIX;
+	// 默认也会绑定空的文件流
+	private boolean bindEmptyMultipartFiles = true;
+
+	// 完全沿用父类的两个构造
+	public WebDataBinder(@Nullable Object target) {
+		super(target);
+	}
+	public WebDataBinder(@Nullable Object target, String objectName) {
+		super(target, objectName);
+	}
+
+	// 在父类的基础上，增加了对_和!的处理
+	@Override
+	protected void doBind(MutablePropertyValues mpvs) {
+		checkFieldDefaults(mpvs);
+		checkFieldMarkers(mpvs);
+		super.doBind(mpvs);
+	}
+
+	protected void checkFieldDefaults(MutablePropertyValues mpvs) {
+		String fieldDefaultPrefix = getFieldDefaultPrefix();
+		if (fieldDefaultPrefix != null) {
+			PropertyValue[] pvArray = mpvs.getPropertyValues();
+			for (PropertyValue pv : pvArray) {
+
+				// 若你给定的PropertyValue的属性名确实是以!打头的  那就做处理如下：
+				// 如果JavaBean的该属性可写 同时 mpvs不存在去掉!后的同名属性，那就添加进来表示后续可以使用了（毕竟是默认值，没有精确匹配的高的）
+				// 然后把带!的给移除掉（因为默认值以已经转正了）
+				// 其实这里就是说你可以使用！来给个默认值。比如!name表示若找不到name这个属性的时，就取它的值
+				// 也就是说你request里若有传!name保底，也就不怕出现null值啦~
+				if (pv.getName().startsWith(fieldDefaultPrefix)) {
+					String field = pv.getName().substring(fieldDefaultPrefix.length());
+					if (getPropertyAccessor().isWritableProperty(field) && !mpvs.contains(field)) {
+						mpvs.add(field, pv.getValue());
+					}
+					mpvs.removePropertyValue(pv);
+				}
+			}
+		}
+	}
+
+	// 处理_的步骤
+	// 若传入的字段以_打头
+	// JavaBean的这个属性可写 同时 mpvs没有去掉_后的属性名字
+	// getEmptyValue(field, fieldType)就是根据Type类型给定默认值。
+	// 比如Boolean类型默认给false，数组给空数组[]，集合给空集合，Map给空map  可以参考此类：CollectionFactory
+	// 当然，这一切都是建立在你传的属性值是以_打头的基础上的，Spring才会默认帮你处理这些默认值
+	protected void checkFieldMarkers(MutablePropertyValues mpvs) {
+		String fieldMarkerPrefix = getFieldMarkerPrefix();
+		if (fieldMarkerPrefix != null) {
+			PropertyValue[] pvArray = mpvs.getPropertyValues();
+			for (PropertyValue pv : pvArray) {
+				if (pv.getName().startsWith(fieldMarkerPrefix)) {
+					String field = pv.getName().substring(fieldMarkerPrefix.length());
+					if (getPropertyAccessor().isWritableProperty(field) && !mpvs.contains(field)) {
+						Class<?> fieldType = getPropertyAccessor().getPropertyType(field);
+						mpvs.add(field, getEmptyValue(field, fieldType));
+					}
+					mpvs.removePropertyValue(pv);
+				}
+			}
+		}
+	}
+
+	// @since 5.0
+	@Nullable
+	public Object getEmptyValue(Class<?> fieldType) {
+		try {
+			if (boolean.class == fieldType || Boolean.class == fieldType) {
+				// Special handling of boolean property.
+				return Boolean.FALSE;
+			} else if (fieldType.isArray()) {
+				// Special handling of array property.
+				return Array.newInstance(fieldType.getComponentType(), 0);
+			} else if (Collection.class.isAssignableFrom(fieldType)) {
+				return CollectionFactory.createCollection(fieldType, 0);
+			} else if (Map.class.isAssignableFrom(fieldType)) {
+				return CollectionFactory.createMap(fieldType, 0);
+			}
+		} catch (IllegalArgumentException ex) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Failed to create default value - falling back to null: " + ex.getMessage());
+			}
+		}
+		// 若不在这几大类型内，就返回默认值null呗
+		// 但需要说明的是，若你是简单类型比如int，
+		// Default value: null. 
+		return null;
+	}
+
+	// 单独提供的方法，用于绑定org.springframework.web.multipart.MultipartFile类型的数据到JavaBean属性上~
+	// 显然默认是允许MultipartFile作为Bean一个属性  参与绑定的
+	// Map<String, List<MultipartFile>>它的key，一般来说就是文件
+	protected void bindMultipart(Map<String, List<MultipartFile>> multipartFiles, MutablePropertyValues mpvs) {
+		multipartFiles.forEach((key, values) -> {
+			if (values.size() == 1) {
+				MultipartFile value = values.get(0);
+				if (isBindEmptyMultipartFiles() || !value.isEmpty()) {
+					mpvs.add(key, value);
+				}
+			}
+			else {
+				mpvs.add(key, values);
+			}
+		});
+	}
+}
+
+
+````
