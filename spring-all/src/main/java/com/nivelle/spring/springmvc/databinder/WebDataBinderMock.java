@@ -21,6 +21,7 @@ public class WebDataBinderMock {
         MutablePropertyValues pvs = new MutablePropertyValues();
 
         // 使用!来模拟各个字段手动指定默认值
+
         //pvs.add("name", "fsx");
         HashMap hashMap = new HashMap();
         hashMap.put(1,1);

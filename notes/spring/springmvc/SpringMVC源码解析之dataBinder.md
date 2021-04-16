@@ -391,4 +391,36 @@ public class WebDataBinder extends DataBinder {
 
 - 支持对属性名以"_"打头的默认值处理（自动设置默认值，根据类型来处理 所有的Bool、Collection、Map等）
 - 支持对属性名以"!"打头的默认值处理（手动给某个属性赋默认值，自己控制的灵活性很高）
-- 提供方法，支持把MultipartFile绑定到JavaBean的属性上~
+- 提供方法，支持把MultipartFile绑定到JavaBean的属性上
+
+### ServletRequestDataBinder
+
+````
+public class ServletRequestDataBinder extends WebDataBinder {
+	// 沿用父类构造
+	// 注意这个可不是父类的方法，是本类增强的,意思就是kv都从request里来,当然内部还是适配成了一个MutablePropertyValues
+	public void bind(ServletRequest request) {
+		// 内部最核心方法是它：WebUtils.getParametersStartingWith()  把request参数转换成一个Map, request.getParameterNames()
+		MutablePropertyValues mpvs = new ServletRequestParameterPropertyValues(request);
+		MultipartRequest multipartRequest = WebUtils.getNativeRequest(request, MultipartRequest.class);
+	
+		// 调用父类的bindMultipart方法，把MultipartFile都放进MutablePropertyValues里去
+		if (multipartRequest != null) {
+			bindMultipart(multipartRequest.getMultiFileMap(), mpvs);
+		}
+		// 这个方法是本类流出来的一个扩展点，子类可以复写此方法自己往里继续添加
+		// 比如ExtendedServletRequestDataBinder它就复写了这个方法，进行了增强（下面会说）  支持到了uriTemplateVariables的绑定
+		addBindValues(mpvs, request);
+		doBind(mpvs);
+	}
+
+	// 这个方法和父类的close方法类似，很少直接调用
+	public void closeNoCatch() throws ServletRequestBindingException {
+		if (getBindingResult().hasErrors()) {
+			throw new ServletRequestBindingException("Errors binding onto object '" + getBindingResult().getObjectName() + "'", new BindException(getBindingResult()));
+		}
+	}
+}
+
+
+````
