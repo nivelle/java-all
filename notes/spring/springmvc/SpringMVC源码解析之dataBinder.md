@@ -424,3 +424,41 @@ public class ServletRequestDataBinder extends WebDataBinder {
 
 
 ````
+
+### ExtendedServletRequestDataBinder
+
+它是对ServletRequestDataBinder的一个增强，它用于把URI template variables参数添加进来用于绑定。它会去从request的HandlerMapping.class.getName() + ".uriTemplateVariables";这个属性里查找到值出来用于绑定
+
+比如我们熟悉的@PathVariable它就和这相关：它负责把参数从url模版中解析出来，然后放在attr上，最后交给ExtendedServletRequestDataBinder进行绑定
+
+````
+// @since 3.1
+public class ExtendedServletRequestDataBinder extends ServletRequestDataBinder {
+	... // 沿用父类构造
+
+	//本类的唯一方法
+	@Override
+	@SuppressWarnings("unchecked")
+	protected void addBindValues(MutablePropertyValues mpvs, ServletRequest request) {
+		// 它的值是：HandlerMapping.class.getName() + ".uriTemplateVariables";
+		String attr = HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE;
+
+		// 注意：此处是attr，而不是parameter
+		Map<String, String> uriVars = (Map<String, String>) request.getAttribute(attr);
+		if (uriVars != null) {
+			uriVars.forEach((name, value) -> {
+				
+				// 若已经存在确切的key了，不会覆盖
+				if (mpvs.contains(name)) {
+					if (logger.isWarnEnabled()) {
+						logger.warn("Skipping URI variable '" + name + "' because request contains bind value with same name.");
+					}
+				} else {
+					mpvs.addPropertyValue(name, value);
+				}
+			});
+		}
+	}
+}
+
+````
