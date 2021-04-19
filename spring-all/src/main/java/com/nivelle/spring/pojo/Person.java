@@ -5,6 +5,7 @@ import lombok.Data;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +25,10 @@ public class Person {
     public int index;
     public List<String> list;
     public Map<String, String> map;
+
+    private Date start;
+    private Date end;
+    private Date endTest;
 
 
 }

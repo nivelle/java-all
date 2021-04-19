@@ -427,27 +427,23 @@ public class ServletRequestDataBinder extends WebDataBinder {
 
 ### ExtendedServletRequestDataBinder
 
-它是对ServletRequestDataBinder的一个增强，它用于把URI template variables参数添加进来用于绑定。它会去从request的HandlerMapping.class.getName() + ".uriTemplateVariables";这个属性里查找到值出来用于绑定
+- 它是对ServletRequestDataBinder的一个增强，它用于把URI template variables参数添加进来用于绑定。它会去从request的HandlerMapping.class.getName() + ".uriTemplateVariables";这个属性里查找到值出来用于绑定
 
-比如我们熟悉的@PathVariable它就和这相关：它负责把参数从url模版中解析出来，然后放在attr上，最后交给ExtendedServletRequestDataBinder进行绑定
+- 比如我们熟悉的@PathVariable它就和这相关：它负责把参数从url模版中解析出来，然后放在attr上，最后交给ExtendedServletRequestDataBinder进行绑定
 
 ````
 // @since 3.1
 public class ExtendedServletRequestDataBinder extends ServletRequestDataBinder {
-	... // 沿用父类构造
-
 	//本类的唯一方法
 	@Override
 	@SuppressWarnings("unchecked")
 	protected void addBindValues(MutablePropertyValues mpvs, ServletRequest request) {
 		// 它的值是：HandlerMapping.class.getName() + ".uriTemplateVariables";
 		String attr = HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE;
-
-		// 注意：此处是attr，而不是parameter
+		// 注意: 此处是attr，而不是parameter
 		Map<String, String> uriVars = (Map<String, String>) request.getAttribute(attr);
 		if (uriVars != null) {
-			uriVars.forEach((name, value) -> {
-				
+			uriVars.forEach((name, value) -> {				
 				// 若已经存在确切的key了，不会覆盖
 				if (mpvs.contains(name)) {
 					if (logger.isWarnEnabled()) {
@@ -460,5 +456,64 @@ public class ExtendedServletRequestDataBinder extends ServletRequestDataBinder {
 		}
 	}
 }
+
+````
+
+### MapDataBinder
+
+- 专门用于处理target是Map<String, Object>类型的目标对象的绑定，它并非一个public类
+  
+- 它用的属性访问器是MapPropertyAccessor：一个继承自AbstractPropertyAccessor的私有静态内部类,也支持到了SpEL
+
+### ConfigurableWebBindingInitializer
+
+````
+public class ConfigurableWebBindingInitializer implements WebBindingInitializer {
+	private boolean autoGrowNestedPaths = true;
+	private boolean directFieldAccess = false; // 显然这里是false
+
+	// 下面这些参数，不就是WebDataBinder那些可以配置的属性们吗？
+	@Nullable
+	private MessageCodesResolver messageCodesResolver;
+	@Nullable
+	private BindingErrorProcessor bindingErrorProcessor;
+	@Nullable
+	private Validator validator;
+	@Nullable
+	private ConversionService conversionService;
+	// 此处使用的PropertyEditorRegistrar来管理的，最终都会被注册进PropertyEditorRegistry嘛
+	@Nullable
+	private PropertyEditorRegistrar[] propertyEditorRegistrars;
+
+	... //  省略所有get/set
+	
+	// 它做的事无非就是把配置的值都放进去而已~~
+	@Override
+	public void initBinder(WebDataBinder binder) {
+		binder.setAutoGrowNestedPaths(this.autoGrowNestedPaths);
+		if (this.directFieldAccess) {
+			binder.initDirectFieldAccess();
+		}
+		if (this.messageCodesResolver != null) {
+			binder.setMessageCodesResolver(this.messageCodesResolver);
+		}
+		if (this.bindingErrorProcessor != null) {
+			binder.setBindingErrorProcessor(this.bindingErrorProcessor);
+		}
+		// 可以看到对校验器这块  内部还是做了容错的
+		if (this.validator != null && binder.getTarget() != null && this.validator.supports(binder.getTarget().getClass())) {
+			binder.setValidator(this.validator);
+		}
+		if (this.conversionService != null) {
+			binder.setConversionService(this.conversionService);
+		}
+		if (this.propertyEditorRegistrars != null) {
+			for (PropertyEditorRegistrar propertyEditorRegistrar : this.propertyEditorRegistrars) {
+				propertyEditorRegistrar.registerCustomEditors(binder);
+			}
+		}
+	}
+}
+
 
 ````
