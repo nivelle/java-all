@@ -167,3 +167,257 @@ public Person test() { ... }
 
 
 
+### HeaderContentNegotiationStrategy
+
+- Accept Header解析：它根据请求头Accept来协商。
+
+````
+public class HeaderContentNegotiationStrategy implements ContentNegotiationStrategy {
+	@Override
+	public List<MediaType> resolveMediaTypes(NativeWebRequest request) throws HttpMediaTypeNotAcceptableException {
+	
+		// 我的Chrome浏览器值是：[text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3]
+		// postman的值是：[*/*]
+		String[] headerValueArray = request.getHeaderValues(HttpHeaders.ACCEPT);
+		if (headerValueArray == null) {
+			return MEDIA_TYPE_ALL_LIST;
+		}
+
+		List<String> headerValues = Arrays.asList(headerValueArray);
+		try {
+			List<MediaType> mediaTypes = MediaType.parseMediaTypes(headerValues);
+			// 排序
+			MediaType.sortBySpecificityAndQuality(mediaTypes);
+			// 最后Chrome浏览器的List如下：
+			// 0 = {MediaType@6205} "text/html"
+			// 1 = {MediaType@6206} "application/xhtml+xml"
+			// 2 = {MediaType@6207} "image/webp"
+			// 3 = {MediaType@6208} "image/apng"
+			// 4 = {MediaType@6209} "application/signed-exchange;v=b3"
+			// 5 = {MediaType@6210} "application/xml;q=0.9"
+			// 6 = {MediaType@6211} "*/*;q=0.8"
+			return !CollectionUtils.isEmpty(mediaTypes) ? mediaTypes : MEDIA_TYPE_ALL_LIST;
+		} catch (InvalidMediaTypeException ex) {
+			throw new HttpMediaTypeNotAcceptableException("Could not parse 'Accept' header " + headerValues + ": " + ex.getMessage());
+		}
+	}
+}
+
+````
+
+可以看到，如果没有传递Accept，则默认使用MediaType.ALL 也就是*/*
+
+### AbstractMappingContentNegotiationStrategy
+
+````
+// @since 3.2 它是个协商策略抽象实现，同时也有了扩展名+MediaType对应关系的能力
+public abstract class AbstractMappingContentNegotiationStrategy extends MappingMediaTypeFileExtensionResolver implements ContentNegotiationStrategy {
+
+	// Whether to only use the registered mappings to look up file extensions,
+	// or also to use dynamic resolution (e.g. via {@link MediaTypeFactory}.
+	// org.springframework.http.MediaTypeFactory是Spring5.0提供的一个工厂类
+	// 它会读取/org/springframework/http/mime.types这个文件，里面有记录着对应关系
+	private boolean useRegisteredExtensionsOnly = false;
+	// Whether to ignore requests with unknown file extension. Setting this to
+	// 默认false：若认识不认识的扩展名，抛出异常：HttpMediaTypeNotAcceptableException
+	private boolean ignoreUnknownExtensions = false;
+
+	// 唯一构造函数
+	public AbstractMappingContentNegotiationStrategy(@Nullable Map<String, MediaType> mediaTypes) {
+		super(mediaTypes);
+	}
+
+	// 实现策略接口方法
+	@Override
+	public List<MediaType> resolveMediaTypes(NativeWebRequest webRequest) throws HttpMediaTypeNotAcceptableException {
+		// getMediaTypeKey：抽象方法(让子类把扩展名这个key提供出来)
+		return resolveMediaTypeKey(webRequest, getMediaTypeKey(webRequest));
+	}
+
+	public List<MediaType> resolveMediaTypeKey(NativeWebRequest webRequest, @Nullable String key) throws HttpMediaTypeNotAcceptableException {
+		if (StringUtils.hasText(key)) {
+			// 调用父类方法：根据key去查找出一个MediaType出来
+			MediaType mediaType = lookupMediaType(key); 
+			// 找到了就return就成（handleMatch是protected的空方法~~~  子类目前没有实现的）
+			if (mediaType != null) {
+				handleMatch(key, mediaType); // 回调
+				return Collections.singletonList(mediaType);
+			}
+
+			// 若没有对应的MediaType，交给handleNoMatch处理（默认是抛出异常，见下面）
+			// 注意：handleNoMatch如果通过工厂找到了，那就addMapping()保存起来（相当于注册上去）
+			mediaType = handleNoMatch(webRequest, key);
+			if (mediaType != null) {
+				addMapping(key, mediaType);
+				return Collections.singletonList(mediaType);
+			}
+		}
+		return MEDIA_TYPE_ALL_LIST; // 默认值：所有
+	}
+
+	// 此方法子类ServletPathExtensionContentNegotiationStrategy有复写
+	@Nullable
+	protected MediaType handleNoMatch(NativeWebRequest request, String key) throws HttpMediaTypeNotAcceptableException {
+
+		// 若不是仅仅从注册里的拿，那就再去MediaTypeFactory里看看~~~  找到了就返回
+		if (!isUseRegisteredExtensionsOnly()) {
+			Optional<MediaType> mediaType = MediaTypeFactory.getMediaType("file." + key);
+			if (mediaType.isPresent()) {
+				return mediaType.get();
+			}
+		}
+
+		// 忽略找不到，返回null吧  否则抛出异常：HttpMediaTypeNotAcceptableException
+		if (isIgnoreUnknownExtensions()) {
+			return null;
+		}
+		throw new HttpMediaTypeNotAcceptableException(getAllMediaTypes());
+	}
+}
+
+
+````
+通过file extension/query param来协商的抽象实现类。在了解它之前，有必要先插队先了解MediaTypeFileExtensionResolver它的作用：
+
+MediaTypeFileExtensionResolver：MediaType和路径扩展名解析策略的接口，例如将 .json 解析成 application/json 或者反向解析
+
+#### 子类实现： MappingMediaTypeFileExtensionResolver
+
+````
+public class MappingMediaTypeFileExtensionResolver implements MediaTypeFileExtensionResolver {
+
+	// key是lowerCaseExtension，value是对应的mediaType
+	private final ConcurrentMap<String, MediaType> mediaTypes = new ConcurrentHashMap<>(64);
+	// 和上面相反，key是mediaType，value是lowerCaseExtension（显然用的是多值map）
+	private final MultiValueMap<MediaType, String> fileExtensions = new LinkedMultiValueMap<>();
+	// 所有的扩展名（List非set哦~）
+	private final List<String> allFileExtensions = new ArrayList<>();
+
+	...
+	public Map<String, MediaType> getMediaTypes() {
+		return this.mediaTypes;
+	}
+	// protected 方法
+	protected List<MediaType> getAllMediaTypes() {
+		return new ArrayList<>(this.mediaTypes.values());
+	}
+	// 给extension添加一个对应的mediaType
+	// 采用ConcurrentMap是为了避免出现并发情况下导致的一致性问题
+	protected void addMapping(String extension, MediaType mediaType) {
+		MediaType previous = this.mediaTypes.putIfAbsent(extension, mediaType);
+		if (previous == null) {
+			this.fileExtensions.add(mediaType, extension);
+			this.allFileExtensions.add(extension);
+		}
+	}
+
+	// 接口方法：拿到指定的mediaType对应的扩展名们~
+	@Override
+	public List<String> resolveFileExtensions(MediaType mediaType) {
+		List<String> fileExtensions = this.fileExtensions.get(mediaType);
+		return (fileExtensions != null ? fileExtensions : Collections.emptyList());
+	}
+	@Override
+	public List<String> getAllFileExtensions() {
+		return Collections.unmodifiableList(this.allFileExtensions);
+	}
+
+	// protected 方法：根据扩展名找到一个MediaType~（当然可能是找不到的）
+	@Nullable
+	protected MediaType lookupMediaType(String extension) {
+		return this.mediaTypes.get(extension.toLowerCase(Locale.ENGLISH));
+	}
+}
+
+````
+
+### ParameterContentNegotiationStrategy
+
+````
+public class ParameterContentNegotiationStrategy extends AbstractMappingContentNegotiationStrategy {
+	// 请求参数默认的key是format，你是可以设置和更改的。(set方法)
+	private String parameterName = "format";
+
+	// 唯一构造
+	public ParameterContentNegotiationStrategy(Map<String, MediaType> mediaTypes) {
+		super(mediaTypes);
+	}
+	... // 生路get/set
+
+	// 小Tips：这里调用的是getParameterName()而不是直接用属性名，以后建议大家设计框架也都这么使用 虽然很多时候效果是一样的，但更符合使用规范
+	@Override
+	@Nullable
+	protected String getMediaTypeKey(NativeWebRequest request) {
+		return request.getParameter(getParameterName());
+	}
+}
+
+
+````
+
+### PathExtensionContentNegotiationStrategy
+
+``````
+public class PathExtensionContentNegotiationStrategy extends AbstractMappingContentNegotiationStrategy {
+
+	private UrlPathHelper urlPathHelper = new UrlPathHelper();
+
+	// 它额外提供了一个空构造
+	public PathExtensionContentNegotiationStrategy() {
+		this(null);
+	}
+	// 有参构造
+	public PathExtensionContentNegotiationStrategy(@Nullable Map<String, MediaType> mediaTypes) {
+		super(mediaTypes);
+		setUseRegisteredExtensionsOnly(false);
+		setIgnoreUnknownExtensions(true); // 注意：这个值设置为了true
+		this.urlPathHelper.setUrlDecode(false); // 不需要解码（url请勿有中文）
+	}
+
+	// @since 4.2.8  可见Spring MVC允许你自己定义解析的逻辑
+	public void setUrlPathHelper(UrlPathHelper urlPathHelper) {
+		this.urlPathHelper = urlPathHelper;
+	}
+
+
+	@Override
+	@Nullable
+	protected String getMediaTypeKey(NativeWebRequest webRequest) {
+		HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
+		if (request == null) {
+			return null;
+		}
+
+		// 借助urlPathHelper、UriUtils从URL中把扩展名解析出来
+		String path = this.urlPathHelper.getLookupPathForRequest(request);
+		String extension = UriUtils.extractFileExtension(path);
+		return (StringUtils.hasText(extension) ? extension.toLowerCase(Locale.ENGLISH) : null);
+	}
+
+	// 子类ServletPathExtensionContentNegotiationStrategy有使用和复写
+	// 它的作用是面向Resource找到这个资源对应的MediaType ~
+	@Nullable
+	public MediaType getMediaTypeForResource(Resource resource) { ... }
+}
+
+
+``````
+
+### FixedContentNegotiationStrategy
+
+``````
+public class FixedContentNegotiationStrategy implements ContentNegotiationStrategy {
+	private final List<MediaType> contentTypes;
+
+	// 构造函数：必须指定MediaType
+	// 一般通过@RequestMapping.produces这个注解属性指定（可指定多个）
+	public FixedContentNegotiationStrategy(MediaType contentType) {
+		this(Collections.singletonList(contentType));
+	}
+	// @since 5.0
+	public FixedContentNegotiationStrategy(List<MediaType> contentTypes) {
+		this.contentTypes = Collections.unmodifiableList(contentTypes);
+	}
+}
+
+``````
