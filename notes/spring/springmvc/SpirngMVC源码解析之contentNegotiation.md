@@ -22,7 +22,7 @@
 
 #### Spring MVC实现了HTTP内容协商的同时，又进行了扩展。它支持4种协商方式：
 
-#####  HTTP头Accept
+#####  1. HTTP头Accept
 
 Chrome浏览器请求默认发出的Accept是：Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3。
 由于我例子使用的是@ResponseBody，因此它不会返回一个view：交给消息转换器处理，因此这就和MediaType以及权重有关了。
@@ -116,7 +116,7 @@ AbstractMessageConverterMethodProcessor：
 默认情况下优先级是xml高于json。当然一般都木有xml包，所以才轮到json的。
 
 
-##### 扩展名
+##### 2.扩展名
 
 基于上面例子：若我访问/test/1.xml返回的是xml，若访问/test/1.json返回的是json；
 
@@ -129,7 +129,7 @@ AbstractMessageConverterMethodProcessor：
 3. 扩展名优先级比Accept要高（并且和使用神马浏览器无关）
 
 
-##### 请求参数
+##### 3.请求参数
 
 这种协商方式Spring MVC支持，但默认是关闭的，需要显示的打开：
 
@@ -151,7 +151,7 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 1. 前两种方式默认是开启的，但此种方式需要手动显示开启
 2. 此方式优先级低于扩展名（因此你测试时若想它生效，请去掉url的后缀）
 
-- 固定类型（producers）
+##### 4.固定类型（producers）
 
 它就是利用@RequestMapping注解属性produces（可能你平时也在用，但并不知道原因）：
 
