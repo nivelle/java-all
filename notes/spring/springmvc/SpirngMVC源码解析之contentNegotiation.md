@@ -153,7 +153,7 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 
 ##### 4.固定类型（producers）
 
-它就是利用@RequestMapping注解属性produces（可能你平时也在用，但并不知道原因）：
+它就是利用@RequestMa****pping注解属性produces（可能你平时也在用，但并不知道原因）：
 
 ````
 @ResponseBody
