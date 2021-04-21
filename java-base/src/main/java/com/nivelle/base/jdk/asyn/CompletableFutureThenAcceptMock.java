@@ -22,23 +22,29 @@ public class CompletableFutureThenAcceptMock {
             public String get() {
                 try {
                     Thread.sleep(3000);
-
+                    System.out.println("exec one");
                 } catch (InterruptedException e) {
                 }
                 return "one ok";
             }
         });
         System.out.println("one exec after");
-        System.out.println("oneFuture after value:" + oneFuture.get());
-        //基于thenRun()实现异步任务A，执行完毕后，激活异步任务B，这种激活的任务B能够获取A的执行结果的
+        // System.out.println("oneFuture after value:" + oneFuture.get());
         CompletableFuture twoFuture = oneFuture.thenAccept(new Consumer<String>() {
             @Override
             public void accept(String s) {
+                try {
+                    Thread.sleep(3000);
+                    System.out.println("exec two");
+                } catch (InterruptedException e) {
+                }
+
                 System.out.println("tow accept one value:" + s);
             }
         });
 
-        System.out.println("两个关键步骤执行完成：" + twoFuture.get());
+        System.out.println("两个关键步骤执行完成");
+        Thread.sleep(8000);
 
     }
 }

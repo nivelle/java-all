@@ -2,10 +2,10 @@
 
 #### 基于Name
 
-- AbstractNameValueMethodArgumentResolver
+##### AbstractNameValueMethodArgumentResolver 抽象类
 
 ```
-// 负责从路径变量、请求、头等中拿到值。（都可以指定name、required、默认值等属性）
+// 负责从路径变量、请求参数、请求头等中拿到值。 （都可以指定name、required、默认值等属性）
 // 子类需要做如下事：获取方法参数的命名值信息、将名称解析为参数值当需要参数值时处理缺少的参数值、可选地处理解析值特别注意的是：默认值可以使用${}占位符，或者SpEL语句#{}是木有问题的
 public abstract class AbstractNamedValueMethodArgumentResolver implements HandlerMethodArgumentResolver {
 
@@ -51,7 +51,8 @@ public abstract class AbstractNamedValueMethodArgumentResolver implements Handle
 		if (resolvedName == null) {
 			throw new IllegalArgumentException("Specified name must not resolve to null: [" + namedValueInfo.name + "]");
 		}
-		// 模版抽象方法：将给定的参数类型和值名称解析为参数值。  由子类去实现
+		// 模版抽象方法：将给定的参数类型和值名称解析为参数值。  
+		// 由子类去实现
 		// @PathVariable     --> 通过对uri解析后得到的decodedUriVariables值(常用) ==》PathVariableMethodArgumentResolver
 		// @RequestParam     --> 通过 HttpServletRequest.getParameterValues(name) ==》RequestParamMethodArgumentResolver
 		// @RequestAttribute --> 通过 HttpServletRequest.getAttribute(name,RequestAttributes.SCOPE_REQUEST) ==》RequestAttributeMethodArgumentResolver
@@ -96,22 +97,21 @@ public abstract class AbstractNamedValueMethodArgumentResolver implements Handle
 			}
 		}
 		// protected的方法，本类为空实现，交给子类去复写（并不是必须的）
-		// 唯独只有PathVariableMethodArgumentResolver把解析处理啊的值存储一下数据到 
-		// HttpServletRequest.setAttribute中（若key已经存在也不会存储了）
+		// 唯独只有PathVariableMethodArgumentResolver把解析处理后的值存储一下数据到 HttpServletRequest.setAttribute中（若key已经存在也不会存储了）
 		handleResolvedValue(arg, namedValueInfo.name, parameter, mavContainer, webRequest);
 		return arg;
 	}
 	
-	// 此处有缓存，记录下每一个MethodParameter对象   value是NamedValueInfo值
+	// 此处有缓存，记录下每一个MethodParameter对象,value是NamedValueInfo值
 	private NamedValueInfo getNamedValueInfo(MethodParameter parameter) {
 		NamedValueInfo namedValueInfo = this.namedValueInfoCache.get(parameter);
 		if (namedValueInfo == null) {
 			// createNamedValueInfo是抽象方法，子类必须实现
 			namedValueInfo = createNamedValueInfo(parameter);
-			// updateNamedValueInfo：这一步就是我们之前说过的为何Spring MVC可以根据参数名封装的方法
-			// 如果info.name.isEmpty()的话（注解里没指定名称），就通过`parameter.getParameterName()`去获取参数名~
+			// updateNamedValueInfo:这一步就是我们之前说过的为何Spring MVC可以根据参数名封装的方法
+			// 如果info.name.isEmpty()的话（注解里没指定名称），就通过`parameter.getParameterName()`去获取参数名
 			// 它还会处理注解指定的defaultValue：`\n\t\.....`等等都会被当作null处理
-			// 都处理好后：new NamedValueInfo(name, info.required, defaultValue);（相当于吧注解解析成了此对象嘛~~）
+			// 都处理好后：new NamedValueInfo(name, info.required, defaultValue);（相当于吧注解解析成了此对象嘛）
 			namedValueInfo = updateNamedValueInfo(parameter, namedValueInfo);
 			this.namedValueInfoCache.put(parameter, namedValueInfo);
 		}
@@ -152,7 +152,7 @@ public class RequestParamMethodArgumentResolver extends AbstractNamedValueMethod
 	}
 
 	// 此处理器能处理如下Case：
-	// 1、所有标注有@RequestParam注解的类型（非Map）/ 注解指定了value值的Map类型（自己提供转换器哦）
+	// 1、所有标注有@RequestParam注解的类型（非Map）/ 注解指定了value值的Map类型（自己提供转换器）
 	// ======下面都表示没有标注@RequestParam注解了的=======
 	// 1、不能标注有@RequestPart注解，否则直接不处理了
 	// 2、是上传的request：isMultipartArgument() = true（MultipartFile类型或者对应的集合/数组类型  或者javax.servlet.http.Part对应结合/数组类型）
@@ -230,7 +230,7 @@ public class RequestParamMethodArgumentResolver extends AbstractNamedValueMethod
 			//小知识点：getParameter()其实本质是getParameterNames()[0]的效果
 			// 强调一遍：?ids=1,2,3 结果是["1,2,3"]（兼容方式，不建议使用。注意：只能是逗号分隔）
 			// ?ids=1&ids=2&ids=3  结果是[1,2,3]（标准的传值方式，建议使用）
-			// 但是Spring MVC这两种都能用List接收  请务必注意他们的区别~~~
+			// 但是Spring MVC这两种都能用List接收  请务必注意他们的区别
 			String[] paramValues = request.getParameterValues(name);
 			if (paramValues != null) {
 				arg = (paramValues.length == 1 ? paramValues[0] : paramValues);

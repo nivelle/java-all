@@ -30,7 +30,7 @@ public class CompletableFutureThenApplyMock {
             }
         });
         System.out.println("one exec after");
-        System.out.println("oneFuture after value:" + oneFuture.get());
+        //System.out.println("oneFuture after value:" + oneFuture.get());
         //基于thenRun()实现异步任务A，执行完毕后，激活异步任务B，这种激活的任务B能够获取A的执行结果的
         CompletableFuture twoFuture = oneFuture.thenApply(new Function<String, Object>() {
 

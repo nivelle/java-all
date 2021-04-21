@@ -10,9 +10,9 @@ import java.util.function.Supplier;
  * @date 2021/04/03
  */
 public class CompletableFutureThenCombineMock {
-
+    ////两个并发运行的 CompletableFuture 任务完成后，使用两者
     public static void main(String[] args) throws Exception {
-        //两个并发运行的 CompletableFuture 任务完成后，使用两者
+
         CompletableFuture<String> result = doSomeThingOne("fuck").thenCombine(doSomeThingTwo("456"), (one, two) -> {
             return one + "------" + two;
         });
