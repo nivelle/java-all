@@ -1,5 +1,6 @@
 package com.nivelle.base.jdk.lang;
 
+import com.nivelle.base.pojo.User;
 import org.springframework.stereotype.Service;
 
 /**
@@ -54,8 +55,8 @@ public class ThreadLocalMock {
         }, "thread3").start();
         System.out.println(Thread.currentThread().getName() + ":" + threadLocal1.get());
         System.out.println(Thread.currentThread().getName() + ":" + threadLocal2.get());
-
-
+        System.out.println("threadlocal 传递参数");
+        changeParams();
     }
 
     /**
@@ -69,8 +70,7 @@ public class ThreadLocalMock {
      * ThreadLocalMap使用ThreadLocal的弱引用作为key,如果一个ThreadLocal没有外部强引用来引用它,
      * 那么系统 GC 的时候，这个ThreadLocal势必会被回收，这样一来，ThreadLocalMap中就会出现key为null的Entry,
      * 也就没有办法访问这些key为null的Entry的value，如果当前线程再迟迟不结束的话,这些key为null的Entry的value就会一直存在一条强引用链:
-     * Thread Ref -> Thread -> ThreadLocalMap -> Entry -> value永远无法回收，
-     * 造成内存泄漏;
+     * Thread Ref -> Thread -> ThreadLocalMap -> Entry -> value永远无法回收，造成内存泄漏;
      *
      * 当把 threadLocal 实例置为null以后，没有任何强引用指向 ThreadLocal 实例，所以 ThreadLocal 将会被gc回收
      */
@@ -78,8 +78,33 @@ public class ThreadLocalMock {
     /**
      * Entry继承WeakReference,使用弱引用，可以将ThreadLocal对象的生命周期和线程生命周期解绑,持有对ThreadLocal的弱引用,
      * 可以使得ThreadLocal在没有其他强引用的时候被回收掉，这样可以避免因为线程得不到销毁导致ThreadLocal对象无法被回收。
-     *
      */
+
+    private static final ThreadLocal<User> THREAD_LOCAL = new ThreadLocal<>();
+
+    private static void changeParams() {
+
+
+        // 方法入口处，设置一个变量和当前线程绑定
+        setData(new User(12,"jessy"));
+        // 调用其它方法，其它方法内部也能获取到刚放进去的变量
+        getAndPrintData();
+
+        System.out.println("======== Finish =========");
+
+
+    }
+
+    private static void setData(User user) {
+        System.out.println("set数据，线程名：" + Thread.currentThread().getName());
+        THREAD_LOCAL.set(user);
+    }
+
+    private static void getAndPrintData() {
+        // 拿到当前线程绑定的一个变量，然后做逻辑（本处只打印）
+        User user = THREAD_LOCAL.get();
+        System.out.println("get数据，线程名：" + Thread.currentThread().getName() + "，数据为：" + user);
+    }
 
 
 }
