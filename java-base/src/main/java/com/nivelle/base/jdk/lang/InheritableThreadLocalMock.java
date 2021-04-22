@@ -53,7 +53,7 @@ public class InheritableThreadLocalMock {
 
 
     @Test
-    public void fTHREAD_POOL_TTLun2() throws InterruptedException {
+    public void fun2() throws InterruptedException {
         THREAD_LOCAL_TTL.set(new Person());
         THREAD_POOL_TTL.execute(() -> getAndPrintDataLocal());
         TimeUnit.SECONDS.sleep(2);
