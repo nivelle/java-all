@@ -8,17 +8,19 @@
 
 #### TCP层的keepalive核心参数
 
-- net.ipv4.tcp_keepalive_time= 7200
+- net.ipv4.tcp_keepalive_time= 7200//阀值
 
-- net.ipv4.tcp_keepalive_intvl=75
+- net.ipv4.tcp_keepalive_intvl=75 //间隔
 
-- net.ipv4.tcp_keepalive_probes=9
+- net.ipv4.tcp_keepalive_probes=9 //探测次数
 
-**当启用keepalive时，tcp在没有数据是，通过7200秒后发送keepalive消息，当探测到没有确认时，按75秒的重试频率重发。一直发9个探测包都没有确认，就认定连接失效。**
+**当启用keepalive时，tcp在没有数据时，通过7200秒后发送keepalive消息，当探测到没有确认时，按75秒的重试频率重发。一直发9个探测包都没有确认，就认定连接失效。**
 
-##### tcp层的keepalive默认是关闭的，且经过路由等中转设备keepalive包可能会被丢弃
+- tcp层的keepalive默认是关闭的，且经过路由等中转设备keepalive包可能会被丢弃
 
-##### tcp层的keepalive时间太长
+- tcp层的keepalive时间太长
+
+------------
 
 #### 应用层keepalive
 
@@ -39,7 +41,7 @@ bootstrap.childOption(NioChannelOption.of(StandardSocket.SO_KEEPALIVE),true);
 
 ````
 
-- idle
+- idle(空闲)
 
 ````
 ch.pipleline().addLast("idleCheckHandler",new idleStateHandler(0,20,0,TimeUnit.SECONDS));

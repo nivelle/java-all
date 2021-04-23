@@ -45,7 +45,9 @@
 ### 模式切换
 
 - 范型+反射+工厂实现IO模式切换
+  
 - NioEventLoopGroup 切换
+  
 - NioServerSocketChannel 切换
 
 ````
