@@ -94,6 +94,11 @@
             <artifactId>com.springsource.org.apache.coyote</artifactId>
             <version>7.0.26</version>
         </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>7.1.0</version>
+        </dependency>
     </dependencies>
 
 </project>
