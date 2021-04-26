@@ -63,7 +63,7 @@ public class NettyServer {
              *
              * 1. handler()是发生在初始化的时候;
              *
-             * 2. childHandler() 方法所添加的ChannelHandler将由已被接受的子Channel 处理，其代表一个绑定到远程节点的套接字”
+             * 2. childHandler() 方法所添加的ChannelHandler将由已被接受的子 Channel 处理，其代表一个绑定到远程节点的套接字”
              *
              * 如果需要在客户端连接前的请求进行handler处理，则需要配置handler(),如果是处理客户端连接之后的handler,则需要配置在childHandler();
              *
