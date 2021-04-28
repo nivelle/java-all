@@ -3,6 +3,8 @@ package com.nivelle.rpc.netty.protocol;
 
 public class ClientTask implements Runnable {
 
+    private static volatile int count = 1;
+
     /**
      *
      */
@@ -21,6 +23,8 @@ public class ClientTask implements Runnable {
 
             client.run();
 
+            System.out.println("第" + count + "个客户端启动了！！");
+            count++;
 
         } catch (InterruptedException e) {
             // TODO Auto-generated catch block

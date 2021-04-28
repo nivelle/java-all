@@ -12,9 +12,9 @@ public class ProtocolServerHandler extends SimpleChannelInboundHandler<Object> {
             throws Exception {
         Channel incoming = ctx.channel();
 
-        if (obj instanceof ProtocolMsg) {
-            ProtocolMsg msg = (ProtocolMsg) obj;
-            System.out.println("Client->Server:" + incoming.remoteAddress() + msg.getBody());
+        if (obj instanceof MsgObject) {
+            MsgObject msg = (MsgObject) obj;
+            System.out.println("服务器收到消息:" + incoming.remoteAddress() + msg.getBody());
             incoming.write(obj);
         }
     }

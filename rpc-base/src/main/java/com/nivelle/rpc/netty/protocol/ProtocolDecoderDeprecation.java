@@ -54,15 +54,15 @@ public class ProtocolDecoderDeprecation extends ByteToMessageDecoder {
         byte[] req = new byte[buf.readableBytes()];
         buf.readBytes(req);
         String body = new String(req, "UTF-8");
-        ProtocolMsg msg = new ProtocolMsg();
+        MsgObject msg = new MsgObject();
 
 //		ProtocolBody body2 = new ProtocolBody();
 //		body2.setBody(body);
-        ProtocolHeader protocolHeader = new ProtocolHeader(magic, msgType,
+        MsgHeader msgHeader = new MsgHeader(magic, msgType,
                 reserve, sn, len);
         //msg.setProtocolBody(body2);
         msg.setBody(body);
-        msg.setProtocolHeader(protocolHeader);
+        msg.setProtocolHeader(msgHeader);
         out.add(msg);
 
     }

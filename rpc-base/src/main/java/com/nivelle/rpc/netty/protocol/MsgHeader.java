@@ -4,7 +4,7 @@ package com.nivelle.rpc.netty.protocol;
 /**
  * 说明：协议消息头
  **/
-public class ProtocolHeader {
+public class MsgHeader {
 
     private byte magic;    // 魔数
     private byte msgType;    // 消息类型
@@ -52,13 +52,13 @@ public class ProtocolHeader {
         this.len = len;
     }
 
-    public ProtocolHeader() {
+    public MsgHeader() {
     }
 
     /**
      *
      */
-    public ProtocolHeader(byte magic, byte msgType, short reserve, short sn, int len) {
+    public MsgHeader(byte magic, byte msgType, short reserve, short sn, int len) {
         this.magic = magic;
         this.msgType = msgType;
         this.reserve = reserve;

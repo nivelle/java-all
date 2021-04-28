@@ -9,9 +9,9 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
 
 /**
- * 说明：编码器
+ * 说明：编码器（java object-> byte）
  **/
-public class ProtocolEncoder extends MessageToByteEncoder<ProtocolMsg> {
+public class ProtocolEncoder extends MessageToByteEncoder<MsgObject> {
 
     /**
      *
@@ -23,7 +23,7 @@ public class ProtocolEncoder extends MessageToByteEncoder<ProtocolMsg> {
     /**
      * @param outboundMessageType
      */
-    public ProtocolEncoder(Class<? extends ProtocolMsg> outboundMessageType) {
+    public ProtocolEncoder(Class<? extends MsgObject> outboundMessageType) {
         super(outboundMessageType);
         // TODO Auto-generated constructor stub
     }
@@ -40,7 +40,7 @@ public class ProtocolEncoder extends MessageToByteEncoder<ProtocolMsg> {
      * @param outboundMessageType
      * @param preferDirect
      */
-    public ProtocolEncoder(Class<? extends ProtocolMsg> outboundMessageType,
+    public ProtocolEncoder(Class<? extends MsgObject> outboundMessageType,
                            boolean preferDirect) {
         super(outboundMessageType, preferDirect);
         // TODO Auto-generated constructor stub
@@ -50,12 +50,12 @@ public class ProtocolEncoder extends MessageToByteEncoder<ProtocolMsg> {
      * @see io.netty.handler.codec.MessageToByteEncoder#encode(io.netty.channel.ChannelHandlerContext, java.lang.Object, io.netty.buffer.ByteBuf)
      */
     @Override
-    protected void encode(ChannelHandlerContext ctx, ProtocolMsg msg,
+    protected void encode(ChannelHandlerContext ctx, MsgObject msg,
                           ByteBuf out) throws Exception {
         if (msg == null | msg.getProtocolHeader() == null) {
             throw new Exception("The encode message is null");
         }
-        ProtocolHeader header = msg.getProtocolHeader();
+        MsgHeader header = msg.getProtocolHeader();
         String body = msg.getBody();
         byte[] bodyBytes = body.getBytes(Charset.forName("utf-8"));
         int bodySize = bodyBytes.length;

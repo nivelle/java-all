@@ -1,6 +1,8 @@
 package com.nivelle.rpc.netty.protocol;
 
 import java.nio.charset.Charset;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
@@ -62,12 +64,12 @@ public class ProtocolClient {
             while (true) {
 
                 // 发送消息给服务器
-                ProtocolMsg msg = new ProtocolMsg();
-                ProtocolHeader protocolHeader = new ProtocolHeader();
-                protocolHeader.setMagic((byte) 0x01);
-                protocolHeader.setMsgType((byte) 0x01);
-                protocolHeader.setReserve((short) 0);
-                protocolHeader.setSn((short) 0);
+                MsgObject msg = new MsgObject();
+                MsgHeader msgHeader = new MsgHeader();
+                msgHeader.setMagic((byte) 0x01);
+                msgHeader.setMsgType((byte) 0x01);
+                msgHeader.setReserve((short) 0);
+                msgHeader.setSn((short) 0);
                 String body = "床前明月光疑是地上霜";
                 StringBuffer sb = new StringBuffer();
                 for (int i = 0; i < 2700; i++) {
@@ -77,9 +79,9 @@ public class ProtocolClient {
                 byte[] bodyBytes = sb.toString().getBytes(
                         Charset.forName("utf-8"));
                 int bodySize = bodyBytes.length;
-                protocolHeader.setLen(bodySize);
+                msgHeader.setLen(bodySize);
 
-                msg.setProtocolHeader(protocolHeader);
+                msg.setProtocolHeader(msgHeader);
                 msg.setBody(sb.toString());
 
                 f.channel().writeAndFlush(msg);
@@ -92,12 +94,21 @@ public class ProtocolClient {
         }
     }
 
+    private static final int POOL_SIZE_SEND = 100;
+
     /**
      * @param args
      * @throws InterruptedException
      */
     public static void main(String[] args) throws InterruptedException {
-        new ProtocolClient("localhost", 8082).run();
+
+        Executor executor = Executors.newFixedThreadPool(POOL_SIZE_SEND);
+        for (int i = 0; i < POOL_SIZE_SEND; i++) {
+            executor.execute(new ClientTask());
+            Thread.sleep(100);
+        }
+
     }
+
 
 }

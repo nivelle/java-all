@@ -10,9 +10,9 @@
     <description>Spring基础学习</description>
     <parent>
         <groupId>com.nivelle</groupId>
-        <artifactId>parent</artifactId>
+        <artifactId>javaguides-parent</artifactId>
         <version>1.0.1</version>
-        <relativePath>../parent/pom.xml</relativePath>
+        <relativePath>../javaguides-parent/pom.xml</relativePath>
     </parent>
     <properties>
         <java.version>1.8</java.version>

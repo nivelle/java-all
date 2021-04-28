@@ -3,9 +3,9 @@ package com.nivelle.rpc.netty.protocol;
 /**
  * 说明：消息对象
  **/
-public class ProtocolMsg {
+public class MsgObject {
 
-    private ProtocolHeader protocolHeader = new ProtocolHeader();
+    private MsgHeader msgHeader = new MsgHeader();
     private String body;
 
     public String getBody() {
@@ -20,16 +20,16 @@ public class ProtocolMsg {
     /**
      *
      */
-    public ProtocolMsg() {
+    public MsgObject() {
         // TODO Auto-generated constructor stub
     }
 
-    public ProtocolHeader getProtocolHeader() {
-        return protocolHeader;
+    public MsgHeader getProtocolHeader() {
+        return msgHeader;
     }
 
-    public void setProtocolHeader(ProtocolHeader protocolHeader) {
-        this.protocolHeader = protocolHeader;
+    public void setProtocolHeader(MsgHeader msgHeader) {
+        this.msgHeader = msgHeader;
     }
 
 

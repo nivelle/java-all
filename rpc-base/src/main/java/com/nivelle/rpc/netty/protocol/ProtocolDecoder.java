@@ -5,9 +5,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 
 /**
- * 说明：
- *
- * @author <a href="http://www.waylau.com">waylau.com</a> 2015年11月11日
+ * 消息解码器（byte->java object）
  */
 public class ProtocolDecoder extends LengthFieldBasedFrameDecoder {
     private static final int HEADER_SIZE = 10;
@@ -49,7 +47,7 @@ public class ProtocolDecoder extends LengthFieldBasedFrameDecoder {
 
 
     @Override
-    protected ProtocolMsg decode(ChannelHandlerContext ctx, ByteBuf in2) throws Exception {
+    protected MsgObject decode(ChannelHandlerContext ctx, ByteBuf in2) throws Exception {
         ByteBuf in = (ByteBuf) super.decode(ctx, in2);
         if (in == null) {
             return null;
@@ -73,11 +71,11 @@ public class ProtocolDecoder extends LengthFieldBasedFrameDecoder {
         byte[] req = new byte[buf.readableBytes()];
         buf.readBytes(req);
         String body = new String(req, "UTF-8");
-        ProtocolMsg msg = new ProtocolMsg();
-        ProtocolHeader protocolHeader = new ProtocolHeader(magic, msgType,
+        MsgObject msg = new MsgObject();
+        MsgHeader msgHeader = new MsgHeader(magic, msgType,
                 reserve, sn, len);
         msg.setBody(body);
-        msg.setProtocolHeader(protocolHeader);
+        msg.setProtocolHeader(msgHeader);
         return msg;
     }
 }
