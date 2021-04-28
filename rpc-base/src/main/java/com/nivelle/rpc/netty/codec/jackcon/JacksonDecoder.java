@@ -1,20 +1,16 @@
 package com.nivelle.rpc.netty.codec.jackcon;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.util.List;
-
-import com.sun.imageio.plugins.common.InputStreamAdapter;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
-import org.springframework.util.StreamUtils;
+
+import java.io.InputStream;
+import java.util.List;
 
 /**
- * 说明：Jackson json 解码器
- *
- * @author <a href="http://www.waylau.com">waylau.com</a> 2015年11月9日
+ * byte -> json object
+ * @param <T>
  */
 public class JacksonDecoder<T> extends ByteToMessageDecoder {
 
