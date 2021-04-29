@@ -1,3 +1,9 @@
+### channel
+
+- 是socket的抽象，为用户提供了关于socket状态（是连接还是断开）以及对socket的读写操作。
+
+- 每当netty建立一个连接、都创建一个与其对应的channel 实例
+
 ### ServerBootstrap
 
 ````
