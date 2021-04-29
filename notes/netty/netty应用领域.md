@@ -45,9 +45,9 @@
 ### 模式切换
 
 - 范型+反射+工厂实现IO模式切换
-  
+
 - NioEventLoopGroup 切换
-  
+
 - NioServerSocketChannel 切换
 
 ````
@@ -92,7 +92,7 @@ public class ReflectiveChannelFactory<T extends Channel> implements ChannelFacto
 
 #### 零拷贝
 
-1.  Netty接收和发送ByteBuffer采用DirectBuffer,使用堆外内存进行Socket读写，不需要进行字节缓冲区的二次拷贝。
+1. Netty接收和发送ByteBuffer采用DirectBuffer,使用堆外内存进行Socket读写，不需要进行字节缓冲区的二次拷贝。
 
 2. 提供了组合Buffer对象，聚合多个ByteBuffer对象，用户可以像操作一个Buffer那样方便地对组合Buffer进行操作
 
@@ -102,8 +102,19 @@ public class ReflectiveChannelFactory<T extends Channel> implements ChannelFacto
 
 netty设计了一套基于内存池的缓冲区重用机制。
 
-
 #### reactor线程模型
+
+#### netty锁使用
+
+- 在意锁的对象和范围（减少粒度）
+
+- 注意锁的对象本书大小（减少空间占用）
+
+- 注意锁的速度
+
+- 不同场景选择不同的并发类
+
+- 衡量好锁的价值
 
 
 
