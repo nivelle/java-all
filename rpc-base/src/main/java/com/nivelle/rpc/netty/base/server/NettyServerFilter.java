@@ -55,7 +55,10 @@ public class NettyServerFilter extends ChannelInitializer<SocketChannel> {
         ph.addLast(new FixedLengthFrameDecoder(2));
         //字节解码器 ,其中2是规定一行数据最大的字节数。  用于解决拆包问题
         ph.addLast(new LineBasedFrameDecoder(3));
+        //idle 检测 long readerIdleTime, long writerIdleTime, long allIdleTime,TimeUnit unit
         ph.addLast(new IdleStateHandler(READ_IDLE_TIME_OUT, WRITE_IDLE_TIME_OUT, ALL_IDLE_TIME_OUT, TimeUnit.SECONDS));
         ph.addLast(new HeartbeatServerHandler());
+
+
     }
 }

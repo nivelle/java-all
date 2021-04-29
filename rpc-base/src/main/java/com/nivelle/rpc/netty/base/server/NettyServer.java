@@ -6,6 +6,7 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.oio.OioEventLoopGroup;
+import io.netty.channel.socket.nio.NioChannelOption;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
@@ -75,7 +76,9 @@ public class NettyServer {
              * “指定要应用到新创建的ServerChannel 的ChannelConfig 的Channel- Option 。这些选项将会通过bind() 方法设置到Channel 。在bind() 方法被调用之后，设置或者改变ChannelOption 都不会有任何的效果。所支持的ChannelOption 取决于所使用的Channel 类型”
              *
              * */
-            serverBootstrap.option(ChannelOption.SO_KEEPALIVE, true);
+            serverBootstrap.childOption(ChannelOption.SO_KEEPALIVE, true);
+            //serverBootstrap.option(NioChannelOption.SO_KEEPALIVE, true);//直接定位，较优
+
             /**
              * ChannelOption.SO_BACKLOG对应的是tcp/ip协议listen函数中的backlog参数，函数listen(int socketfd,int backlog)用来初始化服务端可连接队列,
              *
@@ -88,7 +91,8 @@ public class NettyServer {
              *
              */
             serverBootstrap.childOption(ChannelOption.TCP_NODELAY, true);
-            serverBootstrap.option(ChannelOption.SO_BACKLOG, 100).handler(new LoggingHandler(LogLevel.INFO));
+            serverBootstrap.childOption(ChannelOption.SO_BACKLOG, 100).handler(new LoggingHandler(LogLevel.INFO));
+
             // 异步地绑定服务器,调用 sync()方法阻塞等待直到绑定完成;连接到远程节点,并返回 ChannelFuture
             // bind():“绑定Channel 并返回一个ChannelFuture,其将会在绑定操作完成后接收到通知，在那之后必须调用Channel.connect() 方法来建立连接”
             ChannelFuture channelFuture = serverBootstrap.bind(port).sync();
