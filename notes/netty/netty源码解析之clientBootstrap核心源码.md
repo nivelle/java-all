@@ -284,6 +284,9 @@ protected MultithreadEventExecutorGroup(int nThreads, Executor executor,
 
 #### Handler的添加过程
 
+- ChannelInitializer 调用initChannel()将自定义的Handler添加到ChannelPipeline中
+
+- 然后调用ctxPipeline.pipeline().remove(this)将自己（channelInitializer）移除
 ````
    public final void channelRegistered(ChannelHandlerContext ctx) throws Exception {
         // Normally this method will never be called as handlerAdded(...) should call initChannel(...) and remove
@@ -302,13 +305,75 @@ protected MultithreadEventExecutorGroup(int nThreads, Executor executor,
     }
 ````
 
+### 客户端发起请求
 
+````
 
+ private ChannelFuture doResolveAndConnect(final SocketAddress remoteAddress, final SocketAddress localAddress) {
+        final ChannelFuture regFuture = initAndRegister();
+        final Channel channel = regFuture.channel();
 
+        if (regFuture.isDone()) {
+            if (!regFuture.isSuccess()) {
+                return regFuture;
+            }
+            return doResolveAndConnect0(channel, remoteAddress, localAddress, channel.newPromise());
+        } else {
+            // Registration future is almost always fulfilled already, but just in case it's not.
+            final PendingRegistrationPromise promise = new PendingRegistrationPromise(channel);
+            regFuture.addListener(new ChannelFutureListener() {
+                @Override
+                public void operationComplete(ChannelFuture future) throws Exception {
+                    // Directly obtain the cause and do a null check so we only need one volatile read in case of a
+                    // failure.
+                    Throwable cause = future.cause();
+                    if (cause != null) {
+                        // Registration on the EventLoop failed so fail the ChannelPromise directly to not cause an
+                        // IllegalStateException once we try to access the EventLoop of the Channel.
+                        promise.setFailure(cause);
+                    } else {
+                        // Registration was successful, so set the correct executor to use.
+                        // See https://github.com/netty/netty/issues/2586
+                        promise.registered();
+                        doResolveAndConnect0(channel, remoteAddress, localAddress, promise);
+                    }
+                }
+            });
+            return promise;
+        }
+    }
+````
 
+````
+public ChannelFuture connect(
+            final SocketAddress remoteAddress, final SocketAddress localAddress, final ChannelPromise promise) {
 
+        if (remoteAddress == null) {
+            throw new NullPointerException("remoteAddress");
+        }
+        if (isNotValidPromise(promise, false)) {
+            // cancelled
+            return promise;
+        }
+        //从tail 开始，找到第一个 outBound 为 true的 AbstractChannelHandlerContext
+        final AbstractChannelHandlerContext next = findContextOutbound(MASK_CONNECT);
+        EventExecutor executor = next.executor();
+        if (executor.inEventLoop()) {
+            next.invokeConnect(remoteAddress, localAddress, promise);
+        } else {
+            safeExecute(executor, new Runnable() {
+                @Override
+                public void run() {
+                    next.invokeConnect(remoteAddress, localAddress, promise);
+                }
+            }, promise, null);
+        }
+        return promise;
+    }
 
+````
 
+[![gAF0oQ.png](https://z3.ax1x.com/2021/04/30/gAF0oQ.png)](https://imgtu.com/i/gAF0oQ)
 
 
 

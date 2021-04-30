@@ -1,4 +1,4 @@
-package com.nivelle.rpc.netty.base.server;
+package com.nivelle.rpc.netty.base;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelFuture;

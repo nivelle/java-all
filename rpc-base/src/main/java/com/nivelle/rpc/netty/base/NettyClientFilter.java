@@ -1,4 +1,4 @@
-package com.nivelle.rpc.netty.base.client;
+package com.nivelle.rpc.netty.base;
 
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
