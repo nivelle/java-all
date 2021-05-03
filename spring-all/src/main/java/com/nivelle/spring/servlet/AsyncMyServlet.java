@@ -9,20 +9,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
- * TODO:DOCUMENT ME!
- *
  * @author fuxinzhong
  * @date 2021/05/03
  */
 @WebServlet(urlPatterns = "/myAsyncMyServlet", asyncSupported = true)
 public class AsyncMyServlet extends HttpServlet {
-    private final static int AVALLABLE_PROCESS = Runtime.getRuntime().availableProcessors();
-    private final static ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(AVALLABLE_PROCESS * 2, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<>(5), new ThreadPoolExecutor.CallerRunsPolicy());
+    ThreadPoolExecutor executor = new ThreadPoolExecutor(5, 10, 200, TimeUnit.MILLISECONDS, new ArrayBlockingQueue(5));
 
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) {
@@ -50,7 +47,7 @@ public class AsyncMyServlet extends HttpServlet {
                 System.out.println("onStartAsync");
             }
         });
-        threadPoolExecutor.execute(() -> {
+        executor.execute(() -> {
             try {
                 Thread.sleep(3000);
                 response.setContentType("text/html");
