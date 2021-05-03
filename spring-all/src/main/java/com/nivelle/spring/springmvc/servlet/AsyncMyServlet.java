@@ -1,4 +1,4 @@
-package com.nivelle.spring.servlet;
+package com.nivelle.spring.springmvc.servlet;
 
 import javax.servlet.AsyncContext;
 import javax.servlet.AsyncEvent;
@@ -24,7 +24,9 @@ public class AsyncMyServlet extends HttpServlet {
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) {
         System.out.println("begin servlet.....");
+        //开启异步执行流程
         final AsyncContext asyncContext = request.startAsync();
+        //设置一个监听器
         asyncContext.addListener(new AsyncListener() {
             @Override
             public void onComplete(AsyncEvent asyncEvent) throws IOException {
@@ -47,6 +49,7 @@ public class AsyncMyServlet extends HttpServlet {
                 System.out.println("onStartAsync");
             }
         });
+        //用户线程执行逻辑
         executor.execute(() -> {
             try {
                 Thread.sleep(3000);

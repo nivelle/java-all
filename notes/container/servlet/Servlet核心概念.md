@@ -18,3 +18,29 @@ Servlet 是运行在Servlet容器内的。Servlet容器可以嵌入宿主Server�
 [![gmufPI.md.png](https://z3.ax1x.com/2021/05/03/gmufPI.md.png)](https://imgtu.com/i/gmufPI)
 
 具体处理请求响应的逻辑不再是Servlet 调用线程来做了，Servlet 开启异步处理后会立刻释放Servlet容器线程,具体对请求进行处理与响应的是业务线程池中的线程。
+
+#### servlet 同步阻塞模型
+
+[![gm70tP.png](https://z3.ax1x.com/2021/05/03/gm70tP.png)](https://imgtu.com/i/gm70tP)
+
+- 从ServletInputStream 中读取请求体内容（请求头内容不在ServletInputStream中）
+
+#### servlet 异步非阻塞模型
+
+[![gmqgne.png](https://z3.ax1x.com/2021/05/03/gmqgne.png)](https://imgtu.com/i/gmqgne)
+
+- 基于内核的能力，servlet3.1允许我们在ServletInputStream的上通过函数setReadListener注册一个监听器，该监听器在发现内核有数据时才会进行回调处理函数
+
+- onDataAvailable()使用容器线程来执行，通过inputStream.isReady()发现数据准备好后，就使用容器线程来读取数据
+
+- onAllDataRead()默认使用容器线程，也可以切换成用户线程来实现
+
+##### servlet 异步请求流程
+
+1. servlet 容器接收请求后会从容器线程池获取一个线程来执行具体Servlet的service方法，service方法内调用StartAsync开启异步处理，然后通过setReadListener注册一个readListener到ServletInputStream,最好释放容器线程
+
+2. 当内核发现TCP 接收缓存有数据时，会回调注册的onDataAvailable()方法，这时使用的是容器线程，但是可以选择是否在方法内开启异步线程来对就绪线程进行读取，以便及时释放容器线程。
+
+3. 当发现http的请求体已经读取完毕，会调用 onAllDataRead()方法，这个方法内使用业务线程池对请求进行处理，并把结果写会请求方
+
+4. 

@@ -1,4 +1,4 @@
-package com.nivelle.spring.servlet;
+package com.nivelle.spring.springmvc.servlet;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
