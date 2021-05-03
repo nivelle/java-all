@@ -44,12 +44,12 @@ public class ContainerBootstrapApplication extends SpringBootServletInitializer 
             //如果虚拟机的名称为 xxx 则 该虚拟机为目标虚拟机，获取该虚拟机的 pid
             //然后加载 agent.jar 发送给该虚拟机
             System.out.println("vm displayName:" + vmd.displayName());
-            if (vmd.displayName().endsWith("com.nivelle.container.ContainerBootstrapApplication")) {
-                System.out.println("vmd is:" + vmd.id());
-                VirtualMachine virtualMachine = VirtualMachine.attach(vmd.id());
-                virtualMachine.loadAgent("/Users/nivellefu/IdeaProjects/java-guides/java-agent/target/java-agent-1.0-SNAPSHOT.jar");
-                virtualMachine.detach();
-            }
+//            if (vmd.displayName().endsWith("com.nivelle.container.ContainerBootstrapApplication")) {
+//                System.out.println("vmd is:" + vmd.id());
+//                VirtualMachine virtualMachine = VirtualMachine.attach(vmd.id());
+//                virtualMachine.loadAgent("/Users/nivellefu/IdeaProjects/java-guides/java-agent/target/java-agent-1.0-SNAPSHOT.jar");
+//                virtualMachine.detach();
+//            }
         }
 
         SpringApplication.run(ContainerBootstrapApplication.class, args);
