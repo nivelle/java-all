@@ -31,7 +31,7 @@
 
 - 内核会一直监听这些套接字上的连接请求或数据请求。一旦有请求到达，就会交给 Redis 线程处理，这就实现了一个 Redis 线程处理多个 IO 流的效果。
 
-[![yaetYR.jpg](https://s3.ax1x.com/2021/02/08/yaetYR.jpg)](https://imgchr.com/i/yaetYR)
+[![yaetYR.md.jpg](https://z3.ax1x.com/2021/02/08/yaetYR.md.jpg)](https://imgtu.com/i/yaetYR)
 
 1. 多个FD就是多个套接字
 
