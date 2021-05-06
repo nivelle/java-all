@@ -31,12 +31,10 @@ typedef struct redisDb {
     dict *expires;
 
     // 实现列表阻塞原语，如 BLPOP
-    // 在列表类型一章有详细的讨论
     dict *blocking_keys;
     dict *ready_keys;
 
     // 用于实现 WATCH 命令
-    // 在事务章节有详细的讨论
     dict *watched_keys;
 
 } redisDb;
