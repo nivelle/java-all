@@ -20,7 +20,7 @@ Codis支持水平扩容/缩容，扩容可以直接界面的 "Auto Rebalance" �
 
 ### 相对于twemproxy的优劣？
 codis和twemproxy最大的区别有两个：一个是codis支持动态水平扩展，对client完全透明不影响服务的情况下可以完成增减redis实例的操作；一个是codis是用go语言写的并支持多线程而twemproxy用C并只用单线程。
-后者又意味着：codis在多核机器上的性能会好于twemproxy；codis的最坏响应时间可能会因为GC的STW而变大，不过go1.5发布后会显著降低STW的时间；如果只用一个CPU的话go语言的性能不如C，因此在一些短连接而非长连接的场景中，整个系统的瓶颈可能变成accept新tcp连接的速度，这时codis的性能可能会差于twemproxy。
+后者又意味着: codis在多核机器上的性能会好于twemproxy；codis的最坏响应时间可能会因为GC的STW而变大，不过go1.5发布后会显著降低STW的时间；如果只用一个CPU的话go语言的性能不如C，因此在一些短连接而非长连接的场景中，整个系统的瓶颈可能变成accept新tcp连接的速度，这时codis的性能可能会差于twemproxy。
 
 ### 相对于redis cluster的优劣？
 redis cluster基于smart client和无中心的设计，client必须按key的哈希将请求直接发送到对应的节点。这意味着：使用官方cluster必须要等对应语言的redis driver对cluster支持的开发和不断成熟；client不能直接像单机一样使用pipeline来提高效率，想同时执行多个请求来提速必须在client端自行实现异步逻辑。
