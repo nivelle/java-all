@@ -76,26 +76,30 @@ compression.type
 
 - 如果是多线程异步处理消费消息，Consumer 程序不要开启自动提交位移，而是要应用程序手动提交位移。
 
+----
+
 ### 无消息丢失配置最佳实践
 
 1. 不要使用 producer.send(msg),而要使用 producer.send(msg,callback). 一定要使用带有回调通知的send方法
 
-2. 设置 acks = all : acks 是Producer 的一个参数，代表了你对"已提交"消息的定义。如果设置成 all,则表明所有副本broker 都要接收到消息，该消息才算是"已提交" 。这是最高等级的已提交
+2. 设置 **acks = all** : acks 是Producer 的一个参数，代表了你对"已提交"消息的定义。如果设置成 all,则表明所有副本broker 都要接收到消息，该消息才算是"已提交" 。这是最高等级的已提交
 
-3. 设置 reties 为一个较大的只:这里的reties同样是producer的参数，对应前面提到的producr自动重试。当出现网络的瞬时抖动时，消息发送可能会失败，此时配置了retiescl>0
+3. 设置 **reties** 为一个较大的只:这里的reties同样是producer的参数，对应前面提到的producer自动重试。当出现网络的瞬时抖动时，消息发送可能会失败，此时配置了retiescl>0
    的producer能够自动重试发送，避免消息丢失。
 
-4. 设置 unclean.leader.election.enable=false: 这是broker端的参数，它控制的是哪些Broker有资格竞选分区的Leader。
+4. 设置 **unclean.leader.election.enable=false**: 这是broker端的参数，它控制的是哪些Broker有资格竞选分区的Leader。
    如果一个broker落后原先的Leader太多，那么一旦成为新的leader，必然会造成消息的丢失。故一般都将该参数设置成false,即不允许这种情况发送。
 
-5. 设置 replication.factor>=3 :broker 端的参数，这里的意思是将消息多保存几份，毕竟目前防止消息丢失的主要机制就是冗余。
+5. 设置 **replication.factor>=3** :broker 端的参数，这里的意思是将消息多保存几份，毕竟目前防止消息丢失的主要机制就是冗余。
 
-6. 设置 min.insync.replicas>1 : 依然是broker端参数，控制的是消息至少要被写入到多少个副本才算是"已提交"。 设置成大于1可以提升消息持久性。在实际环境不要使用默认值1
+6. 设置 **min.insync.replicas>1** : 依然是broker端参数，控制的是消息至少要被写入到多少个副本才算是"已提交"。 设置成大于1可以提升消息持久性。在实际环境不要使用默认值1
 
-7. 确保 replication.factor > min.insync.replication
+7. 确保 **replication.factor > min.insync.replication**
    如果两者相等，那么只要有一个副本挂机，整个分区就无法工作了，我们不仅要改善消息的持久性，防止消息丢失，还要在不降低可用性的基础上完成。推荐设置replication.factor=min.sync.replicas+1.
 
-8. 确保消息消费完成再提交. consumer 端 有个参数 enable.auto.commit ,最好把它设置成false,并采用手动提交位移的方式。这对于单Consumer 多线程处理的场景而言是至关重要的。
+8. 确保消息消费完成再提交. consumer 端 有个参数 **enable.auto.commit** ,最好把它设置成false,并采用手动提交位移的方式。这对于单Consumer 多线程处理的场景而言是至关重要的。
+
+---
 
 ### 拦截器
 
