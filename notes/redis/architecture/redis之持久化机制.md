@@ -105,8 +105,11 @@ No | 将aof_buf缓冲区中的所有内容写入到AOF文件,但并不对AOF文�
 
 这三种情况下的 SAVE 操作都会引起 Redis 主进程阻塞。
 
-模式| WRITE 是否阻塞？|SAVE 是否阻塞|停机时丢失的数据量 ---|--- AOF_FSYNC_NO| 阻塞 | 阻塞 | 操作系统最后一次对 AOF 文件触发 SAVE 操作之后的数据。 AOF_FSYNC_EVERYSEC
-| 阻塞 | 不阻塞 | 一般情况下不超过 2 秒钟的数据。 AOF_FSYNC_ALWAYS | 阻塞 |阻塞 | 最多只丢失一个命令的数据。
+模式| WRITE 是否阻塞|SAVE 是否阻塞|停机时丢失的数据量 
+---|--- | ---|--- 
+AOF_FSYNC_NO| 阻塞 | 阻塞 | 操作系统最后一次对 AOF 文件触发 SAVE 操作之后的数据。
+AOF_FSYNC_EVERYSEC | 阻塞 | 不阻塞 | 一般情况下不超过 2 秒钟的数据。
+AOF_FSYNC_ALWAYS | 阻塞 |阻塞 | 最多只丢失一个命令的数据。
 
 ---------------
 
