@@ -69,9 +69,9 @@ public class MakeSqlString {
 
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < 64; i++) {
-            StringBuilder stringBuilder2 = new StringBuilder("select user_name,count(*) as total  from nd_company_reading_");
+            StringBuilder stringBuilder2 = new StringBuilder("select id,user_name,create_time,update_time from nd_user_");
             stringBuilder2.append(i);
-            stringBuilder2.append(" where company_id ='101209' and process>=85  and update_time >='2020-04-16 00:00:00' and update_time<='2021-04-20 23:59:59' group by user_name ");
+            stringBuilder2.append(" where create_time = '2020-12-11 05:59:02' or create_time = '2020-12-11 05:59:00'");
             stringBuilder2.append(" union all ");
             stringBuilder.append(stringBuilder2);
             stringBuilder.append("\n");
