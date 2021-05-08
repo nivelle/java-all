@@ -16,7 +16,7 @@ consumer group 是Kafka 提供的可扩展且具有容错性的消费者机制�
 
 - 如果所有实例都属于同一个group，那么它实现的就是消息队列模型；如果所有实例分别属于不同的group,那么它实现的就是发布/订阅模型
 
-- 在Rebalance过程中，所有consumer实例都会停止消费，等待Rebalacne完成
+- 在 rebalance 过程中，所有consumer实例都会停止消费，等待 rebalance 完成
 
 ### 位移主题
 
