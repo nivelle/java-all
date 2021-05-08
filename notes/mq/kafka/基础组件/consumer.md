@@ -20,7 +20,7 @@ consumer group 是Kafka 提供的可扩展且具有容错性的消费者机制�
 
 ### 位移主题
 
-- 新版本 consumer group 奖位移保存在broker端的内部主题中，内部主题__consumer_offsets
+- 新版本 consumer group 将位移保存在broker端的内部主题中，内部主题 **__consumer_offsets**
 
 #### 消费者组的 rebalance 的触发条件有3个
 
@@ -40,12 +40,12 @@ consumer group 是Kafka 提供的可扩展且具有容错性的消费者机制�
 
 #### rebalance 的避免
 
-- session.timeout.ms : 默认值是10秒，如果coordinator在10秒内没有收到group 下某个consumer实例的心跳，它就会认为这个实例已经挂掉，需要rebalance
+- **session.timeout.ms**:默认值是10秒，如果 coordinator 在10秒内没有收到group 下某个consumer实例的心跳，它就会认为这个实例已经挂掉，需要rebalance
 
-- heartbeat.interval.ms:consumer实例控制发送心跳请求的频率，值越小，频率越快。 coordinator 通知各个consumer开启rebalance的方法就是将REBALANCE_NEEDED
+- **heartbeat.interval.ms**:consumer实例控制发送心跳请求的频率，值越小，频率越快。 coordinator 通知各个consumer开启 rebalance 的方法就是将 REBALANCE_NEEDED
   标志封装进心跳请求的响应体中
 
-- max.poll.interval.ms: 限定了consumer端两次调用poll方法的最大时间间隔。默认值：5分钟 表示你的consumer程序如果在5分钟内无法消费完poll方法返回的消息。那么consumer会主动发起"
+- **max.poll.interval.ms**: 限定了consumer端两次调用poll方法的最大时间间隔。默认值：5分钟 表示你的consumer程序如果在5分钟内无法消费完poll方法返回的消息。那么consumer会主动发起"
   离开组”的请求，coordinator也会开启新的一轮rebalance
 
 ### 位移提交
@@ -66,7 +66,7 @@ consumer group 是Kafka 提供的可扩展且具有容错性的消费者机制�
 
 ##### 自动提交
 
-- kafka consumer 在后台自动为你提交位移,开启自动提交位移 enable.auto.commit = true;
+- kafka consumer 在后台自动为你提交位移,开启自动提交位移 **enable.auto.commit = true**;
 
 - auto.commit.interval.ms 默认是5，表明kafka每5秒就会自动提交一次位移,至少5秒可能多余5秒
 
