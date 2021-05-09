@@ -18,6 +18,30 @@ consumer group 是Kafka 提供的可扩展且具有容错性的消费者机制�
 
 - 在 rebalance 过程中，所有consumer实例都会停止消费，等待 rebalance 完成
 
+
+#### 消费者组的优势
+
+##### 高性能: 对应同一个主题的多个分区
+
+##### 消费模式灵活: 广播、单播
+
+-  广播模式
+
+[![gJBRqs.md.jpg](https://z3.ax1x.com/2021/05/09/gJBRqs.md.jpg)](https://imgtu.com/i/gJBRqs)
+
+-  单播模式
+[![gJBRqs.md.jpg](https://z3.ax1x.com/2021/05/09/gJBRqs.md.jpg)](https://imgtu.com/i/gJBRqs)
+
+##### 故障容灾
+
+消费组会对其成员进行管理，在有消费者加入或者退出后，消费者成员列表发生变化，消费组就会执行再平衡的操作。
+
+[![gJB7zF.md.jpg](https://z3.ax1x.com/2021/05/09/gJB7zF.md.jpg)](https://imgtu.com/i/gJB7zF)
+
+
+------
+
+
 ### 位移主题
 
 - 新版本 consumer group 将位移保存在broker端的内部主题中，内部主题 **__consumer_offsets**
@@ -68,7 +92,7 @@ consumer group 是Kafka 提供的可扩展且具有容错性的消费者机制�
 
 - kafka consumer 在后台自动为你提交位移,开启自动提交位移 **enable.auto.commit = true**;
 
-- auto.commit.interval.ms 默认是5，表明kafka每5秒就会自动提交一次位移,至少5秒可能多余5秒
+- **auto.commit.interval.ms** 默认是5，表明kafka每5秒就会自动提交一次位移,至少5秒可能多余5秒
 
 - 可能会出现重复消费，提交后积累一定消息后发生rebalance,之后从上次提交的位移处开始消费，导致这段时间积累的数据重新提交。可通过auto.commit.interval.ms
   来提高提交频率，单仅仅缩小了重复消费的事件窗口，不可能完全消除。
@@ -93,11 +117,11 @@ consumer group 是Kafka 提供的可扩展且具有容错性的消费者机制�
 
 #### 解决方案
 
-1. 增加期望的事件间隔： max.poll.interval.ms 参数值
+1. 增加期望的事件间隔： **max.poll.interval.ms**参数值
 
-2. 减少poll方法一次性返回的消息数量，即减少max.poll.records参数值
+2. 减少poll方法一次性返回的消息数量，即减少**max.poll.records**参数值
 
-3. 缩短单挑消息处理的时间
+3. 缩短单条消息处理的时间
 
 4. 下游系统使用多线程来加速消费
 
@@ -122,7 +146,7 @@ v0.10.1.0版本开始，kafkaConsumer就变成了双线程设计：**用户主�
 
 ````
 
-[![rIu3Mq.jpg](https://s3.ax1x.com/2020/12/27/rIu3Mq.jpg)](https://imgchr.com/i/rIu3Mq)
+[![rIu3Mq.md.jpg](https://z3.ax1x.com/2020/12/27/rIu3Mq.md.jpg)](https://imgtu.com/i/rIu3Mq)
 
 ### 消费者创建TCP连接
 
