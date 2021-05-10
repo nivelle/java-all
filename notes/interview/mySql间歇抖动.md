@@ -23,7 +23,7 @@
 4. 怎么让MySQL不抖？
 
 ````
-设置合理参数配配置，尤其是设置 好innodb_io_capacity 的值，并且平时要多关注脏页比例，不要让它经常接近 75%
+设置合理参数配配置，尤其是设置好 innodb_io_capacity 的值，并且平时要多关注脏页比例，不要让它经常接近 75%
 
 ````
 
@@ -33,7 +33,7 @@
 
 当内存数据页跟磁盘数据页内容不一致的时候，我们称这个内存页为“脏页”。
 
-按照这个定义感觉脏页是不可避免的，写的时候总会先写内存再写磁盘和有没有用WAL没啥关系？
+按照这个定义感觉脏页是不可避免的，写的时候总会先写内存再写磁盘和有没有用WAL没啥关系/
 
 
 ````
@@ -71,11 +71,14 @@
 ````
 写redolog是顺序写的，先写redolog等合适的时候再写磁盘，间接的将随机写变成了顺序写，性能确实会提高不少。
 
-
 ````
 
 ### 如果redo log 设置得太小,redo log写满.那么会涉及到以下几点:
 
-1.把相对应的数据页中的脏页持久化到磁盘,checkpoint往前推 2.由于redo log还记录了undo的变化,undo log buffer也要持久化进undo log
-3.当innodb_flush_log_at_trx_commit设置为非1,还要把内存里的redo log持久化到磁盘上 4.redo log还记录了change buffer的改变,那么还要把change buffer
-purge到idb
+1.把相对应的数据页中的脏页持久化到磁盘,checkpoint往前推 
+
+2.由于redo log还记录了undo的变化,undo log buffer也要持久化进undo log
+
+3.当innodb_flush_log_at_trx_commit设置为非1,还要把内存里的redo log持久化到磁盘上
+
+4.redo log还记录了change buffer的改变,那么还要把change buffer purge到idb
