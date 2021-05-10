@@ -104,7 +104,7 @@ mysql> alter table SUser add index index2(email(6));
 
 ##### 更新过程
 
-- 对于普通索引的更新，如果目标页不在缓存中，mySQL 做了一个优化，会把更新操作暂时放在一个缓存中 change buffer，等待下次访问这个数据页或者定时任务merge这个change buffer到磁盘。
+- 对于普通索引的更新，如果目标页不在缓存中，mySQL 做了一个优化，会把更新操作暂时放在一个缓存中 change buffer，**等待下次访问这个数据页或者定时任务merge**这个change buffer到磁盘。
 
 - 因此对于写多读少的非唯一索引，优化效果更加明显。
 
@@ -114,7 +114,7 @@ mysql> alter table SUser add index index2(email(6));
 
 - 采样统计：InnoDB 默认会选择 N 个数据页，统计这些页面上的不同值，得到一个平均值，然后乘以这个索引的页面数，就得到了这个索引的基数。
 
-- 在 MySQL 中，有两种存储索引统计的方式，可以通过设置参数 innodb_stats_persistent 的值来选择：
+- 在 MySQL 中，有两种存储索引统计的方式，可以通过设置参数 **innodb_stats_persistent** 的值来选择：
 
 1. 设置为 on 的时候，表示统计信息会持久化存储。这时，默认的 N 是 20，M 是 10。
 
