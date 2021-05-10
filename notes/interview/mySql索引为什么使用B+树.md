@@ -71,7 +71,7 @@ AVL树是带有平衡条件的二叉查找树，一般是用平衡因子差值�
 
 - 所有关键字都在叶子节点出现，叶子节点构成一个有序列表，而且叶子节点本身按照关键字的大小从小到大顺序链接
 
-[![s0DzRO.md.jpg](https://s3.ax1x.com/2021/01/15/s0DzRO.md.jpg)](https://imgchr.com/i/s0DzRO)
+[![s0DzRO.md.jpg](https://z3.ax1x.com/2021/01/15/s0DzRO.md.jpg)](https://imgtu.com/i/s0DzRO)
 
 ### 数据库索引为什么不适合二叉树
 
