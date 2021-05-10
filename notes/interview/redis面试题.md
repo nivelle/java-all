@@ -1,15 +1,14 @@
-### 缓存和数据库不一致
+## 缓存和数据库不一致
 
-[![yLwjEj.md.jpg](https://s3.ax1x.com/2021/02/23/yLwjEj.md.jpg)](https://imgchr.com/i/yLwjEj)
-
+[![yLwjEj.md.jpg](https://z3.ax1x.com/2021/02/23/yLwjEj.md.jpg)](https://imgtu.com/i/yLwjEj)
 
 -----
 
-[![yL292j.md.jpg](https://s3.ax1x.com/2021/02/23/yL292j.md.jpg)](https://imgchr.com/i/yL292j)
+## 常见缓存问题
 
+[![yL292j.md.jpg](https://z3.ax1x.com/2021/02/23/yL292j.md.jpg)](https://imgtu.com/i/yL292j)
 
 ### 缓存雪崩
-
 
 - 第一个原因:缓存中有大量数据同时过期，导致大量请求无法得到处理
 
@@ -123,9 +122,13 @@
 
 #### Redis 分布式锁可靠性的问题。
 
+##### 单节点模式
+
 使用单个 Redis 节点（只有一个master）使用分布锁，如果实例宕机，那么无法进行锁操作了。那么采用主从集群模式部署是否可以保证锁的可靠性？
 
 答案是也很难保证。如果在 master 上加锁成功，此时 master 宕机，由于主从复制是异步的，加锁操作的命令还未同步到 slave，此时主从切换，新 master 节点依旧会丢失该锁，对业务来说相当于锁失效了。
+
+##### 多节点模式
 
 所以 Redis 作者才提出基于多个 Redis 节点（master节点）的 Redlock 算法，但这个算法涉及的细节很多，作者在提出这个算法时，业界的分布式系统专家还与 Redis 作者发生过一场争论，来评估这个算法的可靠性，争论的细节都是关于异常情况可能导致 Redlock 失效的场景，例如加锁过程中客户端发生了阻塞、机器时钟发生跳跃等等。
 
