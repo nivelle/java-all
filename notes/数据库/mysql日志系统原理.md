@@ -1,34 +1,33 @@
 ### mysql 逻辑架构
 
-[![sfBoMd.md.png](https://s3.ax1x.com/2021/01/20/sfBoMd.md.png)](https://imgchr.com/i/sfBoMd)
-
+[![sfBoMd.md.png](https://z3.ax1x.com/2021/01/20/sfBoMd.md.png)](https://imgtu.com/i/sfBoMd)
 ### 性能配置
 
-- –skip-grant-tables :跳过权限验证
+- **–skip-grant-tables**:跳过权限验证
 
 - 增删改数据（DML),修改表结构的操作（DDL)
 
 - set global slow_query_log = on; //开启慢查询日志
 
-- 如果你的 MySQL 现在出现了性能瓶颈，而且瓶颈在 IO 上，可以通过哪些方法来提升性能呢？
+#### 如果你的 MySQL 现在出现了性能瓶颈，而且瓶颈在 IO 上，可以通过哪些方法来提升性能呢？
 
-1. 设置 binlog_group_commit_sync_delay 和 binlog_group_commit_sync_no_delay_count 参数,减少 binlog
+1. 设置 **binlog_group_commit_sync_delay** 和 **binlog_group_commit_sync_no_delay_count** 参数,减少 binlog
    的写盘次数。这个方法是基于“额外的故意等待”来实现的，因此可能会增加语句的响应时间，但没有丢失数据的风险。
 
-2. 将 sync_binlog 设置为大于 1 的值（比较常见是 100~1000）。这样做的风险是，主机掉电时会丢 binlog 日志。
+2. 将 **sync_binlog** 设置为大于 1 的值（比较常见是 100~1000）。这样做的风险是，主机掉电时会丢 binlog 日志。此时数据还在系统缓存
 
-3. 将 innodb_flush_log_at_trx_commit 设置为 2。这样做的风险是，主机掉电的时候会丢数据。
+3. 将 **innodb_flush_log_at_trx_commit** 设置为 2。这样做的风险是，主机掉电的时候会丢数据。每一秒才能刷一次盘
 
 ---
 
 ### mysql 日志
 
-- redo log(重做日志)
+#### redo log(重做日志)
 
 1. redo log 是 InnoDB 存储引擎层的日志,**记录的是这个页做了什么改动**;
 
-2. 在一条更新语句进行执行的时候，InnoDB引擎会把更新记录写到redo log日志中，然后更新内存，此时算是语句执行完了, 然后在空闲的时候或者是按照设定的更新策略将redo log中的内容更新到磁盘中，这里涉及到WAL即 **
-   Write Ahead Logging**技术，他的关键点是先写日志，再写磁盘。
+2. 在一条更新语句进行执行的时候，InnoDB引擎会把更新记录写到redo log日志中，然后更新内存，此时算是语句执行完了, 然后在空闲的时候或者是按照设定的更新策略将redo log中的内容更新到磁盘中，这里涉及到WAL即 
+   **Write Ahead Logging**技术，他的关键点是先写日志，再写磁盘。
 
 3. redo log日志的大小是固定的，即记录满了以后就从头循环写;记录满时要停止数据库更新操作,转而将日志刷到磁盘;
 
@@ -37,20 +36,27 @@
 5. 插入数据的过程中，生成的日志都得先保存起来，但又不能在还没 commit 的时候就直接写到 redo log 文件里;所以提供了一块内存：redo log buffer 用来先存redo
    log日志，真正执行commit语句的时候，才写入到日志文件。
 
-- binlog(归档日志)。
+#### binlog(归档日志)。
 
 1. binlog是MySQL Server层记录的日志,属于逻辑日志
 
 2. 是以二进制的形式记录的是这个**语句的原始逻辑**，依靠binlog是没有crash-safe能力的
 
-3. Binlog有两种模式，statement 格式的话是记sql语句， row格式会记录行的内容，记两条，更新前和更新后都有
+3. Binlog有两种模式，**statement** 格式的话是记sql语句， **row**格式会记录行的内容，记两条，更新前和更新后都有
 
-- undoLog
+#### binlog事务完整性判断：
 
-[![sBHSns.png](https://s3.ax1x.com/2021/01/16/sBHSns.png)](https://imgchr.com/i/sBHSns)
+- statement 格式的 binlog，最后会有 COMMIT；
 
-1. 回滚指针将数据行的所有快照记录都通过链表的结构串联了起来，每个快照的记录都保存了当时的 db_trx_id，也是那个时间点操作这个数据的事务 ID。 这样如果我们想要找历史快照，就可以通过遍历回滚指针的方式进行查找
+- row 格式的 binlog，最后会有一个 XID event。
 
+#### undoLog
+
+[![sBHSns.md.png](https://z3.ax1x.com/2021/01/16/sBHSns.md.png)](https://imgtu.com/i/sBHSns)
+
+1. 隐藏列回滚指针列将数据行的所有快照记录都通过链表的结构串联了起来，每个快照的记录都保存了当时的 **db_trx_id**，也是那个时间点操作这个数据的事务 ID。 这样如果我们想要找历史快照，就可以通过遍历回滚指针的方式进行查找
+
+##### redoLog 和 bingLog
 redoLog | bingLog
 ---|---
 属于innoDB层面 | 属于MySQL Server层面的，这样在数据库用别的存储引擎时可以达到一致性的要求
@@ -60,16 +66,20 @@ redoLog | bingLog
 
 ---
 
+##### redoLog 和 undoLog
+
 redoLog | undoLog
 ---|---
 用来恢复提交后的物理数据页(恢复数据页,且只能恢复到最后一次提交的位置) | 记录事务开始前的状态,用来回滚行记录到某个版本;undo log一般是逻辑日志，根据每行记录进行记录。
 确保事务的持久性。防止在发生故障的时间点，尚有脏页未写入磁盘,在重启mysql服务的时候,根据redo log进行重做,从而达到事务的持久性这一特性。| 保存了事务发生之前的数据的一个版本，可以用于回滚，同时可以提供多版本并发控制下的读（MVCC），也即非锁定读
 
+---
+
 ### 一条更新语句的执行过程(二阶段提交)
 
 1. binlog（归档日志）和 redo log（重做日志）配合崩溃恢复的时候，使用两阶段提交，防止数据完整性。
 
-[![yYr2fP.jpg](https://s3.ax1x.com/2021/02/06/yYr2fP.jpg)](https://imgchr.com/i/yYr2fP)
+[![yYr2fP.md.jpg](https://z3.ax1x.com/2021/02/06/yYr2fP.md.jpg)](https://imgtu.com/i/yYr2fP)
 
 ````
 update T set c=c+1 where ID=2;
@@ -97,9 +107,9 @@ update T set c=c+1 where ID=2;
 
 - 如果 redo log 里面的事务只有完整的 prepare，则判断对应的事务 binlog 是否存在并完整：
 
-    1. 如果是，则提交事务
+  1. 如果是，则提交事务
 
-    2. 否则，回滚事务
+  2. 否则，回滚事务
 
 ### change buffer、redo log 和 buffer pool 的关系
 
@@ -109,17 +119,17 @@ update T set c=c+1 where ID=2;
 
 - 在崩溃恢复场景中，InnoDB 如果判断到一个数据页可能在崩溃恢复的时候丢失了更新，就会将它读到内存，然后让 redo log 更新内存内容。更新完成后，内存页变成脏页，就回到了第一种情况的状态。
 
-- change buffer用的是buffer pool里的内存，change buffer的大小，可以通过参数**innodb_change_buffer_max_size**来动态设置。这个参数设置为50的时候，表示change
+- change buffer用的是**buffer pool**里的内存，change buffer的大小，可以通过参数**innodb_change_buffer_max_size**来动态设置。这个参数设置为50的时候，表示change
   buffer的大小最多只能占用buffer pool的50%。
 
-#### redo log 主要节省的是随机写磁盘的 IO 消耗（转成顺序写），而 change buffer 主要节省的则是随机读磁盘的 IO 消耗。
+- **redo log 主要节省的是随机写磁盘的 IO 消耗（转成顺序写），而 change buffer 主要节省的则是随机读磁盘的 IO 消耗**。
 
 ````
 mysql> insert into t(id,k) values(id1,k1),(id2,k2);
 
 ````
 
-[![ytpBPH.png](https://s3.ax1x.com/2021/02/06/ytpBPH.png)](https://imgchr.com/i/ytpBPH)
+[![ytpBPH.md.png](https://z3.ax1x.com/2021/02/06/ytpBPH.md.png)](https://imgtu.com/i/ytpBPH)
 
 1. Page 1 在内存中，直接更新内存;
 
@@ -135,15 +145,12 @@ select * from t where k in (k1, k2)。
 
 2. 要读 Page 2 的时候，需要把 Page 2 从磁盘读入内存中，然后应用 change buffer 里面的操作日志，生成一个正确的版本并返回结果
 
-[![ytPbLt.md.png](https://s3.ax1x.com/2021/02/06/ytPbLt.md.png)](https://imgchr.com/i/ytPbLt)
+[![ytPbLt.md.png](https://z3.ax1x.com/2021/02/06/ytPbLt.md.png)](https://imgtu.com/i/ytPbLt)
 
-#### binlog事务完整性判断：
 
-- statement 格式的 binlog，最后会有 COMMIT；
+--------
 
-- row 格式的 binlog，最后会有一个 XID event。
-
-#### 慢日志
+### 慢日志
 
 - SHOW VARIABLES LIKE 'slow_query%';
 
@@ -156,39 +163,36 @@ select * from t where k in (k1, k2)。
 +---------------------+--------------------------------------+
 ````
 
-- set global slow_query_log = on; //开启慢日志记录
+- **set global slow_query_log = on**; //开启慢日志记录
 
-- set long_query_time=0，将慢查询日志的时间阈值设置为 0 //设置慢日志阀值
+- **set long_query_time=0**，将慢查询日志的时间阈值设置为 0 //设置慢日志阀值
 
 ### 数据库存储结构
 
-[![sD9oRA.md.jpg](https://s3.ax1x.com/2021/01/16/sD9oRA.md.jpg)](https://imgchr.com/i/sD9oRA)
+[![sD9oRA.jpg](https://z3.ax1x.com/2021/01/16/sD9oRA.jpg)](https://imgtu.com/i/sD9oRA)
 
-- 区（Extent）是比页大一级的存储结构，在 InnoDB 存储引擎中，一个区会分配 64 个连续的页。因为 InnoDB 中的页大小默认是 16KB，所以一个区的大小是 64*16KB=1MB
+- 区（Extent）是比页大一级的存储结构，在 InnoDB 存储引擎中，**一个区会分配 64 个连续的页**。因为 InnoDB 中的页大小默认是 16KB，所以一个区的大小是 64*16KB=1MB
 
 - 段（Segment）由一个或多个区组成，区在文件系统是一个连续分配的空间（在 InnoDB 中是连续的 64
   个页），不过在段中不要求区与区之间是相邻的。段是数据库中的分配单位，不同类型的数据库对象以不同的段形式存在。当我们创建数据表、索引的时候，就会相应创建对应的段，比如创建一张表时会创建一个表段，创建一个索引时会创建一个索引段
 
-- 表空间（Tablespace）是一个逻辑容器，表空间存储的对象是段，在一个表空间中可以有一个或多个段，但是一个段只能属于一个表空间。数据库由一个或多个表空间组成，表空间从管理上可以划分为系统表空间、用户表空间、撤销表空间、临时表空间等
+- 表空间（Tablespace）是一个逻辑容器，表空间存储的对象是段，在一个表空间中可以有一个或多个段，但是一个段只能属于一个表空间。数据库由一个或多个表空间组成，表空间从管理上可以划分为**系统表空间、用户表空间、撤销表空间、临时表空间**等
 
-页（Page）如果按类型划分的话，常见的有数据页（保存 B+ 树节点）、系统页、Undo
-页和事务数据页等。数据页是我们最常使用的页；在数据库中，不论读一行，还是读多行，都是将这些行所在的页进行加载。也就是说，数据库管理存储空间的基本单位是页（Page），InnoDB默认是16K
+- 页（Page）如果按类型划分的话，常见的有数据页（保存 B+ 树节点）、系统页、Undo 页和事务数据页等。数据页是我们最常使用的页；在数据库中，不论读一行，还是读多行，都是将这些行所在的页进行加载。
+  也就是说，数据库管理存储空间的基本单位是页（Page），InnoDB默认是16K
 
-[![sDCKQ1.md.jpg](https://s3.ax1x.com/2021/01/16/sDCKQ1.md.jpg)](https://imgchr.com/i/sDCKQ1)
+[![sDCKQ1.md.jpg](https://z3.ax1x.com/2021/01/16/sDCKQ1.md.jpg)](https://imgtu.com/i/sDCKQ1)
 
 - 第一部分: 文件通用部分，也就是文件头和文件尾。它们类似集装箱，将页的内容进行封装，通过文件头和文件尾校验的方式来确保页的传输是完整的；文件头中有两个字段，分别是 FIL_PAGE_PREV 和
   FIL_PAGE_NEXT，它们的作用相当于指针，分别指向上一个数据页和下一个数据页。连接起来的页相当于一个双向的链表
 
 - 第二部分: 记录部分，页的主要作用是存储记录，所以“最小和最大记录”和“用户记录”部分占了页结构的主要空间。另外空闲空间是个灵活的部分，当有新的记录插入时，会从空闲空间中进行分配用于存储新记录
 
--
-
-第三部分：这部分重点指的是页目录，它起到了记录的索引作用，因为在页中，记录是以单向链表的形式进行存储的。单向链表的特点就是插入、删除非常方便，但是检索效率不高，最差的情况下需要遍历链表上的所有节点才能完成检索，因此在页目录中提供了二分查找的方式，用来提高记录的检索效率
+- 第三部分：这部分重点指的是页目录，它起到了记录的索引作用，因为在页中，记录是以单向链表的形式进行存储的。单向链表的特点就是插入、删除非常方便，但是检索效率不高，最差的情况下需要遍历链表上的所有节点才能完成检索，因此在页目录中提供了二分查找的方式，用来提高记录的检索效率
 
 #### B+ 树的索引的记录检索
 
-如果通过 B+ 树的索引查询行记录，首先是从 B+
-树的根开始，逐层检索，直到找到叶子节点，也就是找到对应的数据页为止，将数据页加载到内存中，页目录中的槽（slot）采用二分查找的方式先找到一个粗略的记录分组，然后再在分组中通过链表遍历的方式查找记录
+如果通过 B+ 树的索引查询行记录，首先是从 B+ 树的根开始，逐层检索，直到找到叶子节点，也就是找到对应的数据页为止，将数据页加载到内存中，页目录中的槽（slot）采用二分查找的方式先找到一个粗略的记录分组，然后再在分组中通过链表遍历的方式查找记录
 
 ### 脏页(刷脏页导致数据库抖动)
 
@@ -202,15 +206,16 @@ select * from t where k in (k1, k2)。
 
 #### 控制刷脏页的速度，会参考哪些因素呢？
 
-- innodb_io_capacity 这个参数了，它会告诉 InnoDB 你的磁盘能力
+- **innodb_io_capacity** 这个参数了，它会告诉 InnoDB 你的磁盘能力
+
+- innodb_io_capacity参数默认是200，单位是页。该参数设置的大小取决于硬盘的IOPS，即每秒的输入输出量（或读写次数）
 
 1. 脏页比例;
 
-````
-参数 innodb_max_dirty_pages_pct 是脏页比例上限，默认值是 75%;InnoDB 会根据当前的脏页比例（假设为 M），算出一个范围在 0 到 100 之间的数字
+- **innodb_max_dirty_pages_pct**是脏页比例上限，默认值是 75%;InnoDB 会根据当前的脏页比例（假设为 M），算出一个范围在 0 到 100 之间的数字
 
 InnoDB 每次写入的日志都有一个序号，当前写入的序号跟 checkpoint 对应的序号之间的差值，我们假设为 N。
-````
+
 
 2. redo log 写盘速度。
 
@@ -228,7 +233,9 @@ InnoDB 每次写入的日志都有一个序号，当前写入的序号跟 checkp
 系统给 binlog cache 分配了一片内存，每个线程一个，参数 binlog_cache_size 用于控制单个线程内 binlog cache 所占内存的大小。如果超过了这个参数规定的大小，就要暂存到磁盘。
 ````
 
-[![6iHDwd.md.png](https://s3.ax1x.com/2021/03/01/6iHDwd.md.png)](https://imgtu.com/i/6iHDwd)
+[![6ib1c8.png](https://z3.ax1x.com/2021/03/01/6ib1c8.png)](https://imgtu.com/i/6ib1c8)
+
+## 日志写入机制
 
 #### write和fsync的时机，是由sync_binlog参数控制的
 
@@ -244,32 +251,32 @@ InnoDB 每次写入的日志都有一个序号，当前写入的序号跟 checkp
 
 -----
 
-### redo log的写入机制
+#### redo log的写入机制
 
-[![6ib1c8.md.png](https://s3.ax1x.com/2021/03/01/6ib1c8.md.png)](https://imgtu.com/i/6ib1c8)
+[![6ib1c8.md.png](https://z3.ax1x.com/2021/03/01/6ib1c8.md.png)](https://imgtu.com/i/6ib1c8)
 
 #### 为了控制 redo log 的写入策略，InnoDB 提供了 innodb_flush_log_at_trx_commit 参数，它有三种可能取值：
 
-1. 设置为0的时候，表示每次事务提交时都只是把redo log 留在redo log buffer中
+-  设置为0的时候，表示每次事务提交时都只是把redo log 留在redo log buffer中
 
-2. 设置为1的时候，表示每次事务提交时都将redo log 直接持久化到磁盘
+- 设置为1的时候，表示每次事务提交时都将redo log 直接持久化到磁盘
 
-3. 设置为2的时候，表示每次事务提交时都只是把redo log写到page cache
+- 设置为2的时候，表示每次事务提交时都只是把redo log写到page cache
 
 ````
 InnoDB 有一个后台线程，每隔 1 秒，就会把 redo log buffer 中的日志，调用 write 写到文件系统的 page cache，然后调用 fsync 持久化到磁盘。
 
 ````
 
-##### 未提交的事务redo log 三种情况也会被持久化到磁盘
+#### 未提交的事务redo log 三种情况也会被持久化到磁盘
 
 - 后台线程每一秒的轮询操作，会将一个没有提交的事务的redo log 写入到磁盘中
 
-- redo log buffer占用的空间即将达到innodb_log_buffer_size一半的时候，后台线程会主动写盘
+- redo log buffer占用的空间即将达到**innodb_log_buffer_size**一半的时候，后台线程会主动写盘
 
 - 并行的事务提交的时候，顺带将这个事务的 redo log buffer 持久化到磁盘。
 
-#### "双1"配置
+### "双1"配置
 
 - 每秒一次后台轮询刷盘，再加上崩溃恢复这个逻辑，InnoDB 就认为 redo log 在 commit 的时候就不需要 fsync 了，只会 write 到文件系统的 page cache 中就够了
 
@@ -306,7 +313,7 @@ commit 阶段
 将 redo log 中处于 prepare 状态的事务在引擎层提交，commit 阶段不用刷盘
 ````
 
-- sync_binlog 和 innodb_flush_log_at_trx_commit 都设置成 1
+- **sync_binlog 和 innodb_flush_log_at_trx_commit** 都设置成 1
 
 - 一个事务完整提交前，需要等待两次刷盘，一次是 redo log（prepare 阶段），一次是 binlog
 
@@ -322,9 +329,11 @@ commit 阶段
 
 - binlog_group_commit_sync_no_delay_count 参数，表示累积多少次以后才调用 fsync。
 
-##### WAL 机制主要得益于两个方面：redo log 和 binlog 都是顺序写，磁盘的顺序写比随机写速度要快；组提交机制，可以大幅度降低磁盘的 IOPS 消耗。
+----
 
-### 如果你的 MySQL 现在出现了性能瓶颈，而且瓶颈在 IO 上，可以通过哪些方法来提升性能呢？针对这个问题，可以考虑以下三种方法：
+### WAL 机制主要得益于两个方面：redo log 和 binlog 都是顺序写，磁盘的顺序写比随机写速度要快；组提交机制，可以大幅度降低磁盘的 IOPS 消耗。
+
+#### 如果你的 MySQL 现在出现了性能瓶颈，而且瓶颈在 IO 上，可以通过哪些方法来提升性能呢？针对这个问题，可以考虑以下三种方法：
 
 - 设置 binlog_group_commit_sync_delay 和 binlog_group_commit_sync_no_delay_count 参数，减少 binlog
   的写盘次数。这个方法是基于“额外的故意等待”来实现的，因此可能会增加语句的响应时间，但没有丢失数据的风险。
