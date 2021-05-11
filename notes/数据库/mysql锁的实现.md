@@ -37,9 +37,9 @@ IX      互斥      互斥
 
 ```
 
-(3) 记录锁(Record Locks):针对单个行记录添加锁
+#### 记录锁(Record Locks):针对单个行记录添加锁
 
-(4) 间隙锁(Gap Locks):锁住一个范围，也就是索引之间的空隙。  ( gap lock:innodb_locks_unsafe_for_binlog = disable)
+#### 间隙锁(Gap Locks):锁住一个范围，也就是索引之间的空隙。  ( gap lock:**innodb_locks_unsafe_for_binlog = disable**)
 
 - 间隙锁的主要目的，就是为了防止其他事务在间隔中插入数据，以导致“幻读”。
 
@@ -47,13 +47,15 @@ IX      互斥      互斥
 
 - between,>,<以及for update,lock in share mode 造成间隙锁则可能会阻塞update事务
 
-(5)临键锁(Next-key Locks): 帮我们锁住一个范围，同时锁定记录本身，相当于间隙锁+记录锁，可以解决幻读问题
+#### 临键锁(Next-key Locks): 帮我们锁住一个范围，同时锁定记录本身，相当于间隙锁+记录锁，可以解决幻读问题
 
-(6)插入意向锁(Insert Intention Locks) 也是一种间隙锁，与间隙锁是互斥的。
+#### 插入意向锁(Insert Intention Locks) 也是一种间隙锁，与间隙锁是互斥的。
 
-(7)自增锁(Auto-inc Locks)
+#### 自增锁(Auto-inc Locks)
 
-#### 范围划分
+----
+
+### 范围划分
 
 (1) 全局锁
 
