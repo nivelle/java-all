@@ -10,11 +10,11 @@
 
 #### 互斥
 
-管程解决互斥问题的思路很简单，就是将共享变量及其对共享变量的操作统一封装起来
+- 管程解决互斥问题的思路很简单，就是将共享变量及其对共享变量的操作统一封装起来
 
 #### 同步
 
-wait()、notify()、notifyAll() 实现条件等待队列
+- wait()、notify()、notifyAll() 实现条件等待队列
 
 ### synchronized 和 lock 的区别
 
@@ -36,14 +36,16 @@ wait()、notify()、notifyAll() 实现条件等待队列
 #### synchronized实现原理：
 
 1. 对象监视器锁（monitorenter/monitorexit）被占用时就获取了锁
+   
 2. 两个指令的执行是JVM通过调用操作系统的互斥原语mutex来实现，被阻塞的线程会被挂起、等待重新调度，会导致“用户态和内核态”两个态之间来回切换，对性能有较大影响。
-3. 对象头里面Mark Word 就是synchronized所使用的锁
+   
+3. 对象头里面 Mark Word 就是synchronized所使用的锁
 
 ![synchronized底层实现](https://i.loli.net/2020/04/11/K1AgkXVqjBusywp.jpg)
 
 ### 各种锁的特点
 
-- 自旋锁：
+#### 自旋锁：
 
 （1）前提：线程的阻塞和唤醒需要CPU从用户态转为核心态，频繁的阻塞和唤醒对CPU来说是一件负担很重的工作，势必会给系统的并发性能带来很大的压力。
 同时我们发现在许多应用上面，对象锁的锁状态只会持续很短一段时间，为了这一段很短的时间频繁地阻塞和唤醒线程是非常不值得的
@@ -52,7 +54,7 @@ wait()、notify()、notifyAll() 实现条件等待队列
 
 （3）场景：自旋锁适用于锁保护的临界区很小的情况，临界区很小的话，锁占用的时间就很短。
 
-- 偏向锁 (偏向锁主要用来优化同一线程多次申请同一个锁的竞争)
+#### 偏向锁 (偏向锁主要用来优化同一线程多次申请同一个锁的竞争)
 
 （1）前提：在大多数情况下，锁不仅不存在多线程竞争，而且总是由同一线程多次获得，为了让线程获得锁的代价更低，引进了偏向锁。
 
@@ -92,13 +94,13 @@ Lock所实现的锁我们称之为 “重量级锁”。
 
 ![锁升级过程.png](https://i.loli.net/2020/04/11/vwiacrWs65eLd3m.png)
 
-### 其他
+### java对象头
 
 - Mark Word用于存储对象自身的运行时数据，如：哈希码（HashCode）、GC分代年龄、锁状态标志、线程持有的锁、偏向线程 ID、偏向时间戳等。
 
   ![MarkWord.jpg](https://i.loli.net/2020/04/11/TMvoOelwNzFu519.jpg)
 
-- 对象头的MarkWord中的Lock Word指向Lock Record的起始地址,同时Lock Record中有一个Owner字段存放拥有该锁的线程的唯一标识（或者object mark word），表示该锁被这个线程占用
+- 对象头的MarkWord中的Lock Word指向 Lock Record的起始地址,同时Lock Record中有一个Owner字段存放拥有该锁的线程的唯一标识（或者object mark word），表示该锁被这个线程占用
 
 - CAS是靠硬件实现的，JVM只是封装了汇编调用，那些AtomicInteger类便是使用了这些封装后的接口。
 

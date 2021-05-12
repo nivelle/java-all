@@ -11,11 +11,9 @@ synchronized 没有办法解决。原因是 synchronized 申请资源的时候�
 ````
 
 // 支持中断的API:能够响应中断
-void lockInterruptibly() 
-  throws InterruptedException;
+void lockInterruptibly() throws InterruptedException;
 // 支持超时的API:如果线程在一段时间之内没有获取到锁，不是进入阻塞状态，而是返回一个错误，那这个线程也有机会释放曾经持有的锁
-boolean tryLock(long time, TimeUnit unit) 
-  throws InterruptedException;
+boolean tryLock(long time, TimeUnit unit) throws InterruptedException;
 // 支持非阻塞获取锁的API:非阻塞地获取锁。如果尝试获取锁失败，并不进入阻塞状态，而是直接返回，那这个线程也有机会释放曾经持有的锁
 boolean tryLock();
 

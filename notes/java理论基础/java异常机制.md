@@ -21,6 +21,7 @@
 #### 常见非受检异常
 
 - NullPointerException
+  
 - ArrayIndexOutBoundException
 
 ````
@@ -28,14 +29,16 @@
 2. 是IndexOutOfBoundsException的子类
 ````
 
+
 - ClassCastException
+  
 - IndexOutOfBoundsException
 
 ````
 Thrown to indicate that an index of some sort (such as to an array, to a string, or to a vector) is out of range.
 ````
 
-- ArrayStoreException
+- ArrayStoreException //数组类型元素错误
 
 ````
 Thrown to indicate that an attempt has been made to store the wrong type of object into an array of objects.
