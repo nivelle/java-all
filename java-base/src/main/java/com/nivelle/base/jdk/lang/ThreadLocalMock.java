@@ -33,17 +33,6 @@ public class ThreadLocalMock {
          */
         ThreadLocal threadLocal1 = ThreadLocal.withInitial(() -> 0);
         ThreadLocal threadLocal2 = ThreadLocal.withInitial(() -> "one");
-//        new Thread(() -> {
-//            threadLocal1.set(1);//此动作的线程是thread1
-//            System.out.println(Thread.currentThread().getName() + ":" + threadLocal1.get());
-//        }, "thread1").start();
-//        new Thread(() -> {
-//            threadLocal1.set(2);
-//            threadLocal2.set("two");
-//            System.out.println(Thread.currentThread().getName() + ":" + threadLocal1.get());
-//            System.out.println(Thread.currentThread().getName() + ":" + threadLocal2.get());
-//
-//        }, "thread2").start();
         new Thread(() -> {
             //获取当前线程的ThreadLocalMap ,将 threadLocal作为key , 3作为value 设置到thread的成员变量里
             threadLocal1.set(3);
@@ -62,22 +51,20 @@ public class ThreadLocalMock {
     /**
      * Thread 类依赖了 ThreadLocal 类的内部静态类:ThreadLocalMap,（一个Thread只对应一个 ThreadLocalMap）ThreadLocalMap 通过Thread.currentThread获取当前使用它的线程;
      *
-     * 实现原理:每个Thread 维护一个 ThreadLocalMap 映射表，这个映射表的 key 是 ThreadLocal实例本身，
-     * value 是真正需要存储的 Object。(ThreadLocalMap 的key是弱引用的 ThreadLocal,可以对应多个)
+     * 实现原理:每个Thread 维护一个 ThreadLocalMap 映射表，这个映射表的 key 是 ThreadLocal实例本身，value 是真正需要存储的 Object。(ThreadLocalMap 的key是弱引用的 ThreadLocal,可以对应多个)
      */
 
     /**
-     * ThreadLocalMap使用ThreadLocal的弱引用作为key,如果一个ThreadLocal没有外部强引用来引用它,
-     * 那么系统 GC 的时候，这个ThreadLocal势必会被回收，这样一来，ThreadLocalMap中就会出现key为null的Entry,
+     * 使用弱应用的风险:ThreadLocalMap使用ThreadLocal的弱引用作为key,如果一个ThreadLocal没有外部强引用来引用它,那么系统 GC 的时候，这个ThreadLocal势必会被回收，这样一来，ThreadLocalMap中就会出现key为null的Entry,
      * 也就没有办法访问这些key为null的Entry的value，如果当前线程再迟迟不结束的话,这些key为null的Entry的value就会一直存在一条强引用链:
      * Thread Ref -> Thread -> ThreadLocalMap -> Entry -> value永远无法回收，造成内存泄漏;
      *
      * 当把 threadLocal 实例置为null以后，没有任何强引用指向 ThreadLocal 实例，所以 ThreadLocal 将会被gc回收
      */
 
+
     /**
-     * Entry继承WeakReference,使用弱引用，可以将ThreadLocal对象的生命周期和线程生命周期解绑,持有对ThreadLocal的弱引用,
-     * 可以使得ThreadLocal在没有其他强引用的时候被回收掉，这样可以避免因为线程得不到销毁导致ThreadLocal对象无法被回收。
+     *  使用弱应用的目的:Entry继承WeakReference,使用弱引用，可以将ThreadLocal对象的生命周期和线程生命周期解绑,持有对ThreadLocal的弱引用,可以使得ThreadLocal在没有其他强引用的时候被回收掉，这样可以避免因为线程得不到销毁导致ThreadLocal对象无法被回收。
      */
 
     private static final ThreadLocal<User> THREAD_LOCAL = new ThreadLocal<>();

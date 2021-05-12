@@ -31,7 +31,7 @@ public class EnumMock {
 
 
         /**
-         * 1. 枚举类型实际上会被编译成一个对应的类，这个类继承了 Enum 类，Enum 有name和ordinal两个实例变量，
+         * 1. 枚举类型实际上会被编译成一个对应的类，这个类继承了 Enum 类，Enum 有 name 和 ordinal 两个实例变量，
          * 在构造方法中需要传递,name(),toString(),ordinal().compareTo(), equlas()方法都是由Enum类根据其实例变量name和ordinal实现的。
          *
          * 2. values()和valueOf()是编译器给每个枚举类型自动添加的方法

@@ -45,9 +45,10 @@ public class StringMock {
         if (a == b) {
             /**
              * 1. 创建 a 变量时，调用 new Sting() 会在堆内存中创建一个 String 对象，String 对象中的 char 数组将会引用常量池中字符串。在调用 intern 方法之后，会去常量池中查找是否有等于该字符串对象的引用，有就返回引用。
-             * 2. 创建 b 变量时，调用 new Sting() 会在堆内存中创建一个 String 对象，String 对象中的 char 数组将会引用常量池中字符串。在调用 intern 方法之后，会去常量池中查找是否有等于该字符串对象的引用，有就返回引用。而在堆内存中的两个对象，由于没有引用指向它，将会被垃圾回收。所以 a 和 b 引用的是同一个对象。
+             * 2. 创建 b 变量时，调用 new Sting() 会在堆内存中创建一个 String 对象，String 对象中的 char 数组将会引用常量池中字符串。在调用 intern 方法之后，会去常量池中查找是否有等于该字符串对象的引用，有就返回引用。
+             *    而在堆内存中的两个对象，由于没有引用指向它，将会被垃圾回收。所以 a 和 b 引用的是同一个对象。
              */
-            System.err.println("a==b is true");
+            System.out.println("a==b is true");
         }
 
         /**
@@ -72,7 +73,7 @@ public class StringMock {
 
 
         /**
-         * 空构造函数也就是字符串数组="";
+         * 空参数构造函数相当于字符串数组=""赋值;
          */
         String string4 = new String();
         System.out.println("空构造函数：" + string4.equals(""));
@@ -84,7 +85,7 @@ public class StringMock {
          */
         System.out.println("字符串string1的hash码:" + string1.hashCode());
         System.out.println("字符串string2的hash码:" + string2.hashCode());
-        System.out.println("字符串string4的hash码:" + string4.hashCode());
+        System.out.println("空字符串string4的hash码等于0:" + string4.hashCode());
 
         /**
          * 字符转字节编码数组
@@ -103,13 +104,13 @@ public class StringMock {
          */
         System.out.println("指定位置的字符:" + string1.codePointAt(1));
         /**
-         * 忽略大小写等于比较
-         * **默认都是转化为大写字母比较**
+         * 忽略大小写等于比较，实现上：默认都是转化为大写字母比较**
          */
         System.out.println("字符串忽略大小写相等判断:" + string1.equalsIgnoreCase(string2));
 
         /**
          * The comparison is based on the Unicode value of each character in the strings
+         * 字符串比较默认基于 字符集
          */
         String compare1 = "A";
         String compare2 = "C";
@@ -132,8 +133,8 @@ public class StringMock {
         /**
          * 字符串拼接,需要经过两次字符串复制:
          * 1. char buf[] = Arrays.copyOf(value, len + otherLen); =>buf[] 字符数组包括 string2字符串+加上新字符串的长度
-         *           2.str.getChars(buf, len);=> "love jessy!".getChars(buf,len);
-         *           3.System.arraycopy(value, 0, dst, dstBegin, value.length); =>love jessy! 这个字符串调用复制函数
+         * 2. str.getChars(buf, len);=> "love jessy!".getChars(buf,len);
+         * 3. System.arraycopy(value, 0, dst, dstBegin, value.length); =>love jessy! 这个字符串调用复制函数
          */
         System.out.println("拼接字符串:" + string2.concat(" love jessy!"));
 
@@ -248,7 +249,22 @@ public class StringMock {
         System.out.println("s0==s3:" + (s0 == s3));
         System.out.println("s1==s3:" + (s1 == s3));
         System.out.println("s2==s3:" + (s2 == s3));
-
+        /**
+         * java字符串String的最大长度，要分两个阶段，编译阶段及运行时阶段
+         *
+         * 编译阶段：
+         *
+         * 在我们使用字符串字面量直接定义String的时候，会把字符串在常量池中存储一份。常量池中的每一项常量都是一个表，都有自己对应的类型。
+         * String类型，有一张固定长度的CONSTANT_String_info表用来存储文字字符串值，注意：该表只存储文字字符串值，不存储符号引用。
+         *
+         * JVM的常量池最多可放65535个项。第0项不用。最后一项最多只能是65534(下标值)。而每一项中，若是放一个UTF-8的常量串，其长度最长是：65535个字节(不是字符)。
+         *
+         *
+         *
+         * 运行时阶段：
+         *
+         * String内部是以char数组的形式存储，数组的长度是int类型，那么String允许的最大长度就是Integer.MAX_VALUE了,2147483647；又由于java中的字符是以16位存储的，因此大概需要4GB的内存才能存储最大长度的字符串。
+         */
         Integer maxLength = maxStringLenth();
         System.err.println("java运行时字符串最大长度:" + maxLength);
         String maxString = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" +
@@ -286,7 +302,7 @@ public class StringMock {
     private static void stringInit() {
         String s1 = "abc";
         String s3 = new String("abc");
-        //创建了两个对象，一个存放在字符串池中，一个存在与堆区中；
+        //创建了两个对象，一个存放在字符串池中，一个存在于堆中；
         //还有一个对象引用s3存放在栈中
         //字符串池中已经存在“abc”对象，所以只在堆中创建了一个对象
         String s4 = new String("abc");
@@ -307,7 +323,7 @@ public class StringMock {
 
     public static Integer maxStringLenth() {
         //
-        System.err.println(Integer.MAX_VALUE);
+        System.err.println("字符串运行时限制于字符串数组最大元素数量， 2<sup>31</sup>-1:"+Integer.MAX_VALUE);
         return Integer.MAX_VALUE;
     }
 

@@ -41,8 +41,7 @@ public class SystemMock {
          *
          * 功能：数组向上转型和截断数组
          *
-         * 2. (Object)newType == (Object)Object[].class
-         * 判断newType是否是Object数组
+         * 2. (Object)newType == (Object)Object[].class //判断newType是否是Object数组
          *
          * 3. 为什么要加(Object)呢？
          * 因为要用使用==去比较它们的内存地址，从而判断它们是不是同一类型，而使用==，就要向上强转为Object，不然编辑器不让通过，不能比较. 例如：SystemArrayCopy1
@@ -71,8 +70,7 @@ public class SystemMock {
          * 因为我这个方法就是要返回T[]，这是方法编写的本意
          *
          * 8. 作用
-         * 把源数组中元素的类型向上转型
-         * 截断数组，当给定长度小于给定数组时，就可以实现截断的效果
+         * 把源数组中元素的类型向上转型截断数组，当给定长度小于给定数组时，就可以实现截断的效果
          *
          * 如：ArrayList底层数组的类型转换使用的这个方法（ArrayList参数为集合的构造函数中）
          *
