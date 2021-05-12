@@ -131,9 +131,9 @@
 
 （1).java对象来说，基本数据类型，普通对象
 
-(2).普通对象--都是堆上分配内存，其他地方使用它的引用（比如局部变量表中）；
+ (2).普通对:都是堆上分配内存，其他地方使用它的引用（比如局部变量表中）；
 
-(3).基本类型数据（byte,short,int,long,float,double,char,boolean）如果在方法内声明，则在栈分配，其他情况，堆上分配；
+ (3).基本类型数据（byte,short,int,long,float,double,char,boolean）如果在方法内声明，则在栈分配，其他情况，堆上分配；
 
 ##### 堆大小参数
 
@@ -149,17 +149,20 @@
 
 - 它不是虚拟机运行时数据区的一部分，也不是java虚拟机规范中定义的内存区域；如果使用了nio,这块区域会被频繁使用；
 
-- 使用时，分配内存，然后在堆中的directByteBuffer对象直接引用来操作
+- 使用时，分配内存，然后在堆中的**directByteBuffer**对象直接引用来操作
 
-- 这块内存不受java堆大小限制，但受本季总内存的限制，可以通过-XX:MaxDirectMemorySize来设置（默认与堆内存最大值一样），所以也会出现OOM
+- 这块内存不受java堆大小限制，但受本机总内存的限制，可以通过 **-XX:MaxDirectMemorySize**来设置（默认与堆内存最大值一样），所以也会出现OOM
 
 - 直接内存主要是通过 DirectByteBuffer 申请的内存，可以使用参数MaxDirectMemorySize 来限制它的大小
 
 - 其他堆外内存，主要是指使用了Unsafe或者其他JNI手段直接申请的内存
 
+
+-----
+
 #### 操作数栈执行细节
 
-[add(int a,int b)执行细节](/Users/nivellefu/IdeaProjects/java-guides/java-base/src/main/java/com/nivelle/base/jdk/jvm/StackFrameDemo.java)
+[add(int a,int b)执行细节](/java-base/src/main/java/com/nivelle/base/jvm/StackFrameDemo.java)
 
 ````
 /**
@@ -179,28 +182,30 @@ public class StackFrame {
 }
 ````
 
-[![rN5ARs.png](https://s3.ax1x.com/2020/12/19/rN5ARs.png)](https://imgchr.com/i/rN5ARs)
+[![rN5ARs.md.png](https://z3.ax1x.com/2020/12/19/rN5ARs.md.png)](https://imgtu.com/i/rN5ARs)
+
+---
 
 ### 压缩指针
 
 ````
-在 Java 虚拟机中，每个 Java 对象都有一个对象头（object header），这个由标记字段和类型指针所构成。其中，标记字段用以存储 Java 虚拟机有关该对象的运行数据，如哈希码、GC 信息以及锁信息，而类型指针则指向该对象的类。
+在 Java 虚拟机中，每个 Java 对象都有一个对象头（object header），这个由标记字段和类型指针所构成。
+其中，标记字段用以存储 Java 虚拟机有关该对象的运行数据，如哈希码、GC 信息以及锁信息，而类型指针则指向该对象的类。
 
 ````
 
-- 在 64 位的 Java 虚拟机中，对象头的标记字段占 64 位，而类型指针又占了 64 位
-- 64 位 Java 虚拟机引入了压缩指针的概念（对应虚拟机选项 **-XX:+UseCompressedOops**，默认开启），将堆中原本 64 位的 Java 对象指针压缩成 32 位的。
+- 在 64 位的 Java 虚拟机中，对象头的标记字段占 64 位，而类型指针又占了 64 位 ；64 位 Java 虚拟机引入了压缩指针的概念（对应虚拟机选项 **-XX:+UseCompressedOops**，默认开启），将堆中原本 64 位的 Java 对象指针压缩成 32 位的。
 - 默认情况下，Java 虚拟机堆中对象的起始地址需要对齐至 8 的倍数。如果一个对象用不到 8N 个字节，那么空白的那部分空间就浪费掉了。这些浪费掉的空间我们称之为对象间的填充（padding）
-- 在默认情况下，Java 虚拟机中的 32 位压缩指针可以寻址到 2 的 35 次方个字节，也就是 32GB 的地址空间（超过 32GB 则会关闭压缩指针）
+- 默认情况下，Java 虚拟机中的 32 位压缩指针可以寻址到 2 的 35 次方个字节，也就是 32GB 的地址空间（超过 32GB 则会关闭压缩指针）
 - 就算是关闭了压缩指针，Java 虚拟机还是会进行内存对齐。此外，内存对齐不仅存在于对象与对象之间，也存在于对象中的字段之间。比如说，Java 虚拟机要求 long 字段、double 字段，以及非压缩指针状态下的引用字段地址为 8
   的倍数
-- 字段内存对齐的其中一个原因，是让字段只出现在同一 CPU 的缓存行中
+- 字段内存对齐的其中一个原因，是让**字段只出现在同一 CPU 的缓存行**中
 
 ### 字段重排列
 
 - 字段重排列，顾名思义，就是 Java 虚拟机重新分配字段的先后顺序，以达到内存对齐的目的。
 
-- Java 8 还引入了一个新的注释 @Contended，用来解决对象字段之间的虚共享（false sharing）问题。这个注释也会影响到字段的排列。
+- Java 8 还引入了一个新的注释 **@Contended**，用来解决对象字段之间的虚共享（false sharing）问题。这个注释也会影响到字段的排列。
 
 #### Java 虚拟机中有三种排列方法,但都会遵循如下两个规则:
 
