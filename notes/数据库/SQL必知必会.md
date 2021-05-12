@@ -80,8 +80,7 @@ select count(*),gender from students group by gender;//分组计数,分组内数
 |       18 | girl   |
 +----------+--------+
 
- select gender,cls_id, count(*) from students group by gender, cls_id;//多个字段分组
- //组合分组字段如果能分在一个分组就按一个组,否则就新建一个分组
+ select gender,cls_id, count(*) from students group by gender, cls_id;//多个字段分组,组合分组字段如果能分在一个分组就按一个组,否则就新建一个分组
 +--------+--------+----------+
 | gender | cls_id | count(*) |
 +--------+--------+----------+
