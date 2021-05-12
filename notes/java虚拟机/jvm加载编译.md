@@ -7,9 +7,7 @@
 - 方便引用，配置path时，就是通过引用JAVA_HOME路径来实现的，这样避免了写很长一串的路径（比如在我的电脑中，path原路径是”C:\Program
   Files\Java\jdk1.8.0_131\bin”，通过指定JAVA_HOME，现在设定的path路径变成了”%JAVA_HOME%\bin”，更加简洁）
 
--
-
-更加安全，当JDK改变时，仅需要改变JAVA_HOME的路径即可，path和CLASSPATH由于引用了JAVA_HOME，其所对应的路径也会更改。如果不引用JAVA_HOME，则JDK路径改变时，需要手动去设定PATH和CLASSPATH的路径，一旦路径错误，则程序会崩溃。
+- 更加安全，当JDK改变时，仅需要改变JAVA_HOME的路径即可，path和CLASSPATH由于引用了JAVA_HOME，其所对应的路径也会更改。如果不引用JAVA_HOME，则JDK路径改变时，需要手动去设定PATH和CLASSPATH的路径，一旦路径错误，则程序会崩溃。
 
 - 第三方软件（如tomcat，eclipse）都是引用约定好的JAVA_HOME变量，如果不指定JAVA_HOME，则将无法使用第三方软件。
 
