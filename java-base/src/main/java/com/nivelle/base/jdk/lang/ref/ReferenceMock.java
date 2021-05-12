@@ -16,12 +16,17 @@ public class ReferenceMock {
 
     /**
      * 1. Referent: 被引用对象
-     * <p>
+     *
      * 2. RefernceQueue: 如果Reference在构造方法加入ReferenceQueue参数, Reference 在它的Referent被GC的时,会将这个Reference加入ReferenceQueue
+     *
      * - ReferenceQueue对象本身保存了一个Reference类型的head节点，Reference封装了next字段，这样就是可以组成一个单向链表。同时ReferenceQueue提供了两个静态字段NULL，ENQUEUED
+     *
      * - NULL是当我们构造Reference实例时queue传入null时，会默认使用NULL，这样在enqueue时判断queue是否为NULL,如果为NULL直接返回，入队失败。
+     *
      * - ENQUEUED的作用是防止重复入队，reference后会把其queue字段赋值为ENQUEUED,当再次入队时会直接返回失败
-     * - 除了幻象引用（因为 get 永远返回 null），如果对象还没有被销毁，都可以通过 get 方法获取原有对象。这意味着，利用软引用和弱引用，我们可以将访问到的对象，重新指向强引用，也就是人为的改变了对象的可达性状态
+     *
+     * - 除了幻象引用（因为 get 永远返回 null），如果对象还没有被销毁，都可以通过 get 方法获取原有对象。
+     * 这意味着，利用软引用和弱引用，我们可以将访问到的对象，重新指向强引用，也就是人为的改变了对象的可达性状态
      */
     public static void main(String[] args) {
 
