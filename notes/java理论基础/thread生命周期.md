@@ -107,17 +107,17 @@ NEW 状态的线程，不会被操作系统调度，因此不会执行。Java �
 
 - 平时所谓的 Java 在调用阻塞式 API 时，线程会阻塞，指的是操作系统线程的状态，并不是 Java 线程的状态
 
-#### 在操作系统层面，Java 线程中的 BLOCKED、WAITING、TIMED_WAITING 是一种状态，也即休眠，只要java线程处于这三种状态之一，那么这个线程就永远没有CPU使用权
+- 在操作系统层面，Java 线程中的 BLOCKED、WAITING、TIMED_WAITING 是一种状态，也即休眠，只要java线程处于这三种状态之一，那么这个线程就永远没有CPU使用权
 
 ### 双队列
 
-- 不管是synchronized锁还是基于AQS的锁，内部都是分成两个队列，一个是**同步队列（AQS的队列**，一个是**等待队列（Condition的队列）**；
+- 不管是synchronized锁还是基于AQS的锁，内部都是分成两个队列，一个是**同步队列（AQS的队列)**，一个是**等待队列（Condition的队列）**；
 
 - 对于内部调用了object.wait()/wait(timeout)或者condition.await()/await(timeout)方法，线程都是先进入等待队列，被notify()/signal()或者超时后，才会进入同步队列；
 
 ### synchronized
 
-#### 明确声明，BLOCKED状态只有线程处于synchronized的同步队列的时候才会有这个状态，其它任何情况都跟这个状态无关 ;==
+#### 明确声明，BLOCKED状态只有线程处于synchronized的同步队列的时候才会有这个状态，其它任何情况都跟这个状态无关 ;
 
 （1）对于synchronized，线程执行synchronized的时候，如果立即获得了锁（没有进入同步队列），线程处于RUNNABLE状态；
 
