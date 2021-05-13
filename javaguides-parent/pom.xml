@@ -29,6 +29,7 @@
         <module>../java-base</module>
         <module>../java-agent</module>
         <module>../springboot-starter</module>
+        <module>../leetcode</module>
     </modules>
 
     <dependencyManagement>
