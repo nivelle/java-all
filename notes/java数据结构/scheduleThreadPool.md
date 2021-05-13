@@ -577,4 +577,14 @@ private Runnable getTask() {
 
 - 在getTask里 decrementWorkerCount（）和 compareAndDecrementWorkerCount（）里是正常处理的回收操作
 
+### 任务提交优先级/执行优先级
+
+#### 提交优先级
+
+- 核心线程 -> 阻塞队列->非核心线程池
+
+#### 执行优先级
+
+- 核心线程->非核心线程—>阻塞队列
+
 来自: [彤哥读源码](https://mp.weixin.qq.com/s?__biz=Mzg2ODA0ODM0Nw==&mid=2247483746&idx=1&sn=a6b5bea0cb52f23e93dd223970b2f6f9&scene=21#wechat_redirect)
