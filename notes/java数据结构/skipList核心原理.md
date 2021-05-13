@@ -1,6 +1,6 @@
 ### 跳表
 
-[![sg9mIP.md.png](https://s3.ax1x.com/2021/01/19/sg9mIP.md.png)](https://imgchr.com/i/sg9mIP)
+[![sg9mIP.md.png](https://z3.ax1x.com/2021/01/19/sg9mIP.md.png)](https://imgtu.com/i/sg9mIP)
 
 （1）跳表是可以实现二分查找的有序链表；
 
