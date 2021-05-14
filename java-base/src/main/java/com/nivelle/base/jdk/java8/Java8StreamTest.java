@@ -388,7 +388,7 @@ public class Java8StreamTest {
 
         IntSummaryStatistics ageSummary = persons.stream().collect(Collectors.summarizingInt(p -> p.getAge()));
 
-        System.out.print(ageSummary);
+        System.out.print("IntSummaryStatistics:" + ageSummary);
 
         System.out.println();
 

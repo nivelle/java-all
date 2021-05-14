@@ -76,8 +76,7 @@
 10. -XX:ReservedCodeCacheSize=32m Solaris 64-bit, amd64, -server x86: 48m, 1.5.0_06之前, Solaris 64-bit amd64: 1024m, 其他默认
     32m 设置代码缓存的最大值，编译时用
 
-11. -XX:SurvivorRatio=8 其他默认 8 Eden与Survivor的占用比例。例如8表示，一个survivor区占用 1/8
-    的Eden内存，即1/10的新生代内存，为什么不是1/9？因为我们的新生代有2个survivor，即S0和S1。所以survivor总共是占用新生代内存的 2/10，Eden与新生代的占比则为 8/10
+11. -XX:SurvivorRatio=8 其他默认 8 Eden与Survivor的占用比例。例如8表示，一个survivor区占用 1/8 的Eden内存，即1/10的新生代内存，为什么不是1/9？因为我们的新生代有2个survivor，即S0和S1。所以survivor总共是占用新生代内存的 2/10，Eden与新生代的占比则为 8/10
 
 12. -XX:TargetSurvivorRatio=50 50 实际使用的survivor空间大小占比。默认是50%，最高90%(会导致晋级)
 

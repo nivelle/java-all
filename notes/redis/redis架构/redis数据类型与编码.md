@@ -1,8 +1,12 @@
-[![yN6Eo4.jpg](https://s3.ax1x.com/2021/02/07/yN6Eo4.jpg)](https://imgchr.com/i/yN6Eo4)
+![redis数据类型的底层实现.jpg](https://i.loli.net/2021/05/14/dH3zLlnAsOqcJXQ.jpg)
 
 ### 对象的类型和编码
 
-redis将键和值都封装成了了对象 redisObject，对象中有当前存储的数据(键或者值)的类型，编码，以及存储他们用到的数据结构的指针。比如一个字符串键，redis会创建两个对象，一个是用作字符串键的键，另一个对象是用作字符串键的值。
+- redis将键和值都封装成了了对象 redisObject，对象中有当前存储的数据(键或者值)的类型，编码，以及存储他们用到的数据结构的指针。
+
+```
+比如一个字符串键，redis会创建两个对象，一个是用作字符串键的键，另一个对象是用作字符串键的值。
+```
 
 #### redis对象数据结构
 
@@ -22,7 +26,7 @@ typedef struct redisObject {
 
 ##### type 类型
 
-记录当前对象的类型:
+- 记录当前对象的类型:
 
 1. REDIS_STRING //字符串对象
 2. REDIS_LIST //列表对象
@@ -30,12 +34,11 @@ typedef struct redisObject {
 4. REDIS_SET //集合对象
 5. REDIS_ZSET //有序集合对象
 
-对于redis保存的键值对来讲，键总是一个字符串对象，而值则可能是字符串对象，列表对象等其中的任意一个。
+- 对于redis保存的键值对来讲，键总是一个字符串对象，而值则可能是字符串对象，列表对象等其中的任意一个。
 
-- 当我们称呼一个数据库键为 “字符串键”时，我们指的是“这个数据键所对应的值是字符串对象”
-- 当称呼一个键为 “列表键”时，我们值的是“这个数据库键所对应的值为列表对象”
+- 当我们称呼一个数据库键为 “字符串键”时，我们指的是“这个数据键所对应的值是字符串对象”;当称呼一个键为 “列表键”时，我们值的是“这个数据库键所对应的值为列表对象”
 
-对一个数据库键执行 TYPE 命令时， 命令返回的结果为数据库键对应的值对象的类型， 而不是键对象的类型
+- 对一个数据库键执行 TYPE 命令时， 命令返回的结果为数据库键对应的值对象的类型， 而不是键对象的类型
 
 ````
 
@@ -52,9 +55,9 @@ encoding代表了存储当前值所使用的数据结构。encoding翻译是编�
 
 - 每种类型的对象都至少使用了两种不同的编码
 
-[![DFrbkT.png](https://s3.ax1x.com/2020/11/15/DFrbkT.png)](https://imgchr.com/i/DFrbkT)
+[![DFrbkT.png](https://i.loli.net/2021/05/14/ugYctw4N5dRzXMJ.png)](https://i.loli.net/2021/05/14/ugYctw4N5dRzXMJ.png)
 
-使用 OBJECT ENCODING 命令可以查看一个数据库键的值对象的编码
+- 使用 OBJECT ENCODING 命令可以查看一个数据库键的值对象的编码
 
 ````
 127.0.0.1:6379> set test "1233"
@@ -70,35 +73,34 @@ OK
 127.0.0.1:6379> object encoding test
 "raw"
 
-
 ````
 
-[![yN2eYQ.md.png](https://s3.ax1x.com/2021/02/07/yN2eYQ.md.png)](https://imgchr.com/i/yN2eYQ)
+![encoding编码.png](https://i.loli.net/2021/05/14/oGLih1rTkjnOV2H.png)
 
 ----------------
 
 ### 字符串对象
 
-- 字符串对象的编码是 int 、 raw 或者 embstr 。
+- 字符串对象的编码是 **int 、 raw 或者 embstr** 。
 
 1. 如果一个字符串对象保存的是整数值， 并且这个整数值可以用 long 类型来表示， 那么字符串对象会将整数值保存在字符串对象结构的 ptr 属性里面（将 void* 转换成 long ）， 并将字符串对象的编码设置为 int 。
 
-2. 如果字符串对象保存的是一个字符串值， 并且这个字符串值的长度大于 39 字节， 那么字符串对象将使用一个简单动态字符串（SDS）来保存这个字符串值， 并将对象的编码设置为 raw 。
+2. 如果字符串对象保存的是一个字符串值， 并且这个字符串值的长度**大于 39 字节**， 那么字符串对象将使用一个简单动态字符串（SDS）来保存这个字符串值， 并将对象的编码设置为 raw 。
 
-   [![yNRJDP.md.png](https://s3.ax1x.com/2021/02/07/yNRJDP.md.png)](https://imgchr.com/i/yNRJDP)
+![string类型raw实现.png](https://i.loli.net/2021/05/14/wNXphUqTcM1fQvB.png)
 
 3. embstr 编码是专门用于保存短字符串的一种优化编码方式， 这种编码和 raw 编码一样， 都使用 redisObject 结构和 sdshdr 结构来表示字符串对象， 但 raw 编码会调用两次内存分配函数来分别创建
    redisObject 结构和 sdshdr 结构， 而 embstr 编码则通过调用一次内存分配函数来分配一块连续的空间， 空间中依次包含 redisObject 和 sdshdr 两个结构
 
-[![yNW9qP.png](https://s3.ax1x.com/2021/02/07/yNW9qP.png)](https://imgchr.com/i/yNW9qP)
+![string类型之embstr.png](https://i.loli.net/2021/05/14/1owU4bjmrXRn6Ge.png)
 
-- embstr 编码的字符串对象在执行命令时， 产生的效果和 raw 编码的字符串对象执行命令时产生的效果是相同的， 但使用 embstr 编码的字符串对象来保存短字符串值有以下好处：
+- embstr 编码的字符串对象在执行命令时,产生的效果和 raw 编码的字符串对象执行命令时产生的效果是相同的,但使用 embstr 编码的字符串对象来保存短字符串值有以下好处：
 
-（1）. embstr 编码将创建字符串对象所需的内存分配次数从 raw 编码的两次降低为一次。
+（1).embstr 编码将创建字符串对象所需的内存分配次数从 raw 编码的两次降低为一次。
 
-（2）. 释放 embstr 编码的字符串对象只需要调用一次内存释放函数， 而释放 raw 编码的字符串对象需要调用两次内存释放函数
+（2).释放 embstr 编码的字符串对象只需要调用一次内存释放函数， 而释放 raw 编码的字符串对象需要调用两次内存释放函数
 
-（3）. 因为 embstr 编码的字符串对象的所有数据都保存在一块连续的内存里面， 所以这种编码的字符串对象比起 raw 编码的字符串对象能够更好地利用缓存带来的优势
+（3).因为 embstr 编码的字符串对象的所有数据都保存在一块连续的内存里面， 所以这种编码的字符串对象比起 raw 编码的字符串对象能够更好地利用缓存带来的优势
 
 4. 可以用 long double 类型表示的浮点数在 Redis 中也是作为字符串值来保存的： 如果我们要保存一个浮点数到字符串对象里面， 那么程序会先将这个浮点数转换成字符串值， 然后再保存起转换所得的字符串
 
@@ -112,11 +114,11 @@ OK
 
 #### 字符串编码总结
 
-[![yNWbyn.png](https://s3.ax1x.com/2021/02/07/yNWbyn.png)](https://imgchr.com/i/yNWbyn)
+![字符串对象保存值类型编码.png](https://i.loli.net/2021/05/14/yKBYQNlbHiEDRp8.png)
 
 #### string 字符串命令实现
 
-[![yNfR1J.png](https://s3.ax1x.com/2021/02/07/yNfR1J.png)](https://imgchr.com/i/yNfR1J)
+![字符串指令底层实现.png](https://i.loli.net/2021/05/14/trYBZ2cTL4359iX.png)
 
 ------------------
 
@@ -138,21 +140,21 @@ OK
 
 ````
 
-[![yNfq9e.png](https://s3.ax1x.com/2021/02/07/yNfq9e.png)](https://imgchr.com/i/yNfq9e)
+[![yNfq9e.md.png](https://z3.ax1x.com/2021/02/07/yNfq9e.md.png)](https://imgtu.com/i/yNfq9e)
 
 #### 使用linkedlist编码实现
 
-[![yNhC4S.md.png](https://s3.ax1x.com/2021/02/07/yNhC4S.md.png)](https://imgchr.com/i/yNhC4S)
+![list对象双向列表实现.png](https://i.loli.net/2021/05/14/ch1mNMTC4Gx2V3L.png)
 
-### 最新列表底层实现:quicklist编码实现
+#### 最新列表底层实现:quicklist编码实现
 
 - 考虑到链表的附加空间相对太高，prev 和 next 指针就要占去 16 个字节 (64bit 系统的指针是 8 个字节)，另外每个节点的内存都是单独分配，会加剧内存的碎片化，影响内存管理效率。
 
-[![DFx8G8.png](https://s3.ax1x.com/2020/11/16/DFx8G8.png)](https://imgchr.com/i/DFx8G8)
+![list列表quicklist实现.png](https://i.loli.net/2021/05/14/4RDJ6tAcXxhmPBw.png)
 
 - 压缩深度
 
-(1). quickList 默认的压缩深度是0，也就是不压缩，压缩的深度实际由配置参数：list-compress-depth决定
+(1). quickList 默认的压缩深度是0,也就是不压缩,压缩的深度实际由配置参数: **list-compress-depth**决定
 
 (2). 为了支持快速的 push/pop 操作，quicklist 的首尾两个 ziplist 不压缩，此时深度就是 1。
 
@@ -160,9 +162,9 @@ OK
 
 - ziplist长度
 
-(1). quickList内部默认单个ziplist长度为8k字节，超出这个字节，就会新起一个ziplist ；
+(1). quickList内部默认单个ziplist长度为**8k字节**，超出这个字节，就会新起一个ziplist ；
 
-(2). ziplist的长度由参数配置 list-max-ziplist-size 决定
+(2). ziplist的长度由参数配置 **list-max-ziplist-size** 决定
 
 #### 列表命令的实现
 
@@ -172,7 +174,7 @@ OK
 
 ### hash对象
 
-- 哈希对象的编码可以是ziplist或者hashtable.
+- 哈希对象的编码可以是**ziplist或者hashtable**.
 
 - ziplist编码的哈希对象使用压缩列表作为底层实现,每当有新的键值对要加入到哈希对象时,程序会先将保存了建的压缩列表节点推入到压缩列表表尾,然后再将保存了值的压缩列表节点推入到压缩列表表尾:
 
