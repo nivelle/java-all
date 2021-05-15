@@ -1,14 +1,13 @@
 ### 指标找工具
 
-[![sHq57D.png](https://s3.ax1x.com/2021/01/24/sHq57D.png)](https://imgchr.com/i/sHq57D)
+![指标工具.png](https://i.loli.net/2021/05/15/TA6ZkVJNcUtr54v.png)
 
 ### 工具找指标
 
-[![sHLpNQ.png](https://s3.ax1x.com/2021/01/24/sHLpNQ.png)](https://imgchr.com/i/sHLpNQ)
-
+![工具找指标.png](https://i.loli.net/2021/05/15/xX8UpiLZwtfTPu6.png)
 #### 分析套路
 
-[![sHLvx1.png](https://s3.ax1x.com/2021/01/24/sHLvx1.png)](https://imgchr.com/i/sHLvx1)
+![分析讨论.png](https://i.loli.net/2021/05/15/3UrkNhs6vcgqEzW.png)
 
 #### uptime
 
@@ -158,35 +157,4 @@ CPU 使用率描述了非空闲时间占总 CPU 时间的百分比，根据 CPU 
 [![sHh6fK.png](https://s3.ax1x.com/2021/01/24/sHh6fK.png)](https://imgchr.com/i/sHh6fK)
 
 由于 CPU 发展的速度远快于内存的发展，CPU 的处理速度就比内存的访问速度快得多。这样，CPU 在访问内存的时候，免不了要等待内存的响应。为了协调这两者巨大的性能差距，CPU 缓存（通常是多级缓存）就出现了。
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

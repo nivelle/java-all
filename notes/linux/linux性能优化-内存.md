@@ -1,18 +1,15 @@
 ### 内存结构
 
-[![sjOwSU.md.png](https://s3.ax1x.com/2021/01/26/sjOwSU.md.png)](https://imgchr.com/i/sjOwSU)
-
+![linux内存性能指标.png](https://i.loli.net/2021/05/15/31MzCaFs2NmZRny.png)
 #### 指标找工具
 
-[![sjORfK.md.png](https://s3.ax1x.com/2021/01/26/sjORfK.md.png)](https://imgchr.com/i/sjORfK)
-
+![指标找工具内存.png](https://i.loli.net/2021/05/15/vH3nexuKP9MYGJA.png)
 #### 工具找指标
 
-[![sjO46e.md.png](https://s3.ax1x.com/2021/01/26/sjO46e.md.png)](https://imgchr.com/i/sjO46e)
-
+![内存工具找指标.png](https://i.loli.net/2021/05/15/MOY7wPbpEAhXWct.png)
 #### 排查流程
 
-[![sjO7TI.png](https://s3.ax1x.com/2021/01/26/sjO7TI.png)](https://imgchr.com/i/sjO7TI)
+![内存问题查找流程.png](https://i.loli.net/2021/05/15/3qYGvtpBTuP8IzJ.png)
 
 ### 内存映射
 
@@ -26,8 +23,7 @@
 
 #### 虚拟内存空间分布
 
-[![sbfwt0.png](https://s3.ax1x.com/2021/01/24/sbfwt0.png)](https://imgchr.com/i/sbfwt0)
-
+![虚拟内存空间分布.png](https://i.loli.net/2021/05/15/BLwV1AzHc64mqnr.png)
 1. 只读段，包括代码和常量等。
 
 2. 数据段，包括全局变量等。
@@ -216,13 +212,4 @@ procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----
 - 堆内存由应用程序自己来分配和管理。除非程序退出，这些堆内存并不会被系统自动释放，而是需要应用程序明确调用库函数 free() 来释放它们。如果应用程序没有正确释放堆内存，就会造成内存泄漏
 
 - 内存映射段，包括动态链接库和共享内存，其中共享内存由程序动态分配和管理。所以，如果程序在分配后忘了回收，就会导致跟堆内存类似的泄漏问题
-
-
-
-
-
-
-
-
-
 

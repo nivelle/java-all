@@ -1,6 +1,6 @@
 #### 优化点思维导图
 
-[![sIjA91.jpg](https://s3.ax1x.com/2021/01/22/sIjA91.jpg)](https://imgchr.com/i/sIjA91)
+![优化点思维导图.jpg](https://i.loli.net/2021/05/15/pRlBwmeoZQFbNcs.jpg)
 
 #### 性能分析工具
 

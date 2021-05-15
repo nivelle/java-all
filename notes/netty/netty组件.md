@@ -83,10 +83,3 @@ ChannelHandler本身并没有提供很多方法,因为这个接口有许多的�
 
 保存ChannelHandler的List，用于处理或拦截Channel的入站事件和出站操作。
 ChannelPipeline实现了一种高级形式的拦截过滤器模式，使用户可以完全控制事件的处理方式，以及Channel中各个的ChannelHandler如何相互交互。
-
-
-
-
-
-
-

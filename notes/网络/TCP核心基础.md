@@ -1,6 +1,6 @@
 ### socket
 
-[![rILkaF.png](https://s3.ax1x.com/2020/12/28/rILkaF.png)](https://imgchr.com/i/rILkaF)
+![socket模型.png](https://i.loli.net/2021/05/15/WmeNOnD4iVfYlQc.png)
 
 建立连接后，数据的传输就不再是单向的，而是双向的，这也是TCP的一个显著特性。
 
@@ -150,7 +150,7 @@ read 函数要求操作系统内核从套接字描述字socketfd读取多少个�
 
 ### 四次挥手： TIME_WAIT 详解
 
-[![rordj1.png](https://s3.ax1x.com/2020/12/28/rordj1.png)](https://imgchr.com/i/rordj1)
+![四次挥手.png](https://i.loli.net/2021/05/15/bD9Jtj1LKFdB4SZ.png)
 
 - TIME_WAIT 停留持续时间是固定的，是最长分节生命期MSL(maximum segment lifetime)的两倍，2MSL. TCP_TIME_WAIT_LEN 值为60秒，linux
   系统停留在TIME_WAIT的时间为固定的60s
