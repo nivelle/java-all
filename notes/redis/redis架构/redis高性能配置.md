@@ -64,19 +64,19 @@ FLUSHDB ASYNC
 FLUSHALL AYSNC
 ````
 
-##### 惰性删除
+##### 惰性删除(lazy-free)
 
 - lazy-free是4.0新增的功能，但是默认是关闭的，需要手动开启。
 
 - 手动开启lazy-free时，有4个选项可以控制，分别对应不同场景下，要不要开启异步释放内存机制：
 
-a) lazyfree-lazy-expire:key在过期删除时尝试异步释放内存
+a) **lazyfree-lazy-expire**:key在过期删除时尝试异步释放内存
 
-b) lazyfree-lazy-eviction:内存达到**maxmemory**并设置了淘汰策略时尝试异步释放内存
+b) **lazyfree-lazy-eviction**:内存达到**maxmemory**并设置了淘汰策略时尝试异步释放内存
 
-c) lazyfree-lazy-server-del:执行RENAME/MOVE等命令或需要覆盖一个key时，删除旧key尝试异步释放内存
+c) **lazyfree-lazy-server-del**:执行RENAME/MOVE等命令或需要覆盖一个key时，删除旧key尝试异步释放内存
 
-d) replica-lazy-flush:主从全量同步，从库清空数据库时异步释放内存
+d) **replica-lazy-flush**:主从全量同步，从库清空数据库时异步释放内存
 
 - 即使开启了lazy-free，**如果直接使用DEL命令还是会同步删除key，只有使用UNLINK命令才会可能异步删除key**。
 
@@ -84,13 +84,11 @@ d) replica-lazy-flush:主从全量同步，从库清空数据库时异步释放�
 
 ##### 开启lazy-free后，Redis在释放一个key的内存时，首先会评估代价，如果释放内存的代价很小，那么就直接在主线程中操作了，没必要放到异步线程中执行（不同线程传递数据也会有性能消耗）。
 
-````
+##### 什么情况才会真正异步释放内存？这和key的类型、编码方式、元素数量都有关系（详细可参考源码中的lazyfreeGetFreeEffort函数）：
 
-什么情况才会真正异步释放内存？这和key的类型、编码方式、元素数量都有关系（详细可参考源码中的lazyfreeGetFreeEffort函数）：
-
-a) 当Hash/Set底层采用哈希表存储（非ziplist/int编码存储）时,并且元素数量超过64个
-b) 当ZSet底层采用跳表存储（非ziplist编码存储）时，并且元素数量超过64个
-c) 当List链表节点数量超过64个（也就是quickList，不是元素数量，而是链表节点的数量，List的实现是在每个节点包含了若干个元素的数据，这些元素采用ziplist存储）
+- 当Hash/Set底层采用哈希表存储（非ziplist/int编码存储）时,并且元素数量超过64个
+- 当ZSet底层采用跳表存储（非ziplist编码存储）时，并且元素数量超过64个
+- 当List链表节点数量超过64个（也就是quickList，不是元素数量，而是链表节点的数量，List的实现是在每个节点包含了若干个元素的数据，这些元素采用ziplist存储）
 
 只有以上这些情况，在删除key释放内存时，才会真正放到异步线程中执行，其他情况一律还是在主线程操作。
 
@@ -99,9 +97,7 @@ c) 当List链表节点数量超过64个（也就是quickList，不是元素数�
 可见，即使开启了lazy-free，String类型的bigkey，在删除时依旧有阻塞主线程的风险。所以，即便Redis提供了lazy-free，我建议还是尽量不要在Redis中存储bigkey。
 
 Redis在设计评估释放内存的代价时，不是看key的内存占用有多少，而是关注释放内存时的工作量有多大。
-从上面分析基本能看出，如果需要释放的内存是连续的，Redis作者认为释放内存的代价比较低，就放在主线程做。如果释放的内存不连续（大量指针类型的数据），这个代价就比较高，所以才会放在异步线程中去执行。
-
-````
+从上面分析基本能看出，**如果需要释放的内存是连续的**，Redis作者认为释放内存的代价比较低，就放在主线程做。**如果释放的内存不连续（大量指针类型的数据），这个代价就比较高**，所以才会放在异步线程中去执行。
 
 --------
 
