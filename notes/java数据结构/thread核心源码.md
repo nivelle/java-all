@@ -914,7 +914,7 @@ public class Thread implements Runnable {
         }
 
         // Get a snapshot of the list of all threads
-        Thread[] threads = getThreads();
+        Thread`[`] threads = getThreads();
         StackTraceElement[][] traces = dumpThreads(threads);
         Map<Thread, StackTraceElement[]> m = new HashMap<>(threads.length);
         for (int i = 0; i < threads.length; i++) {

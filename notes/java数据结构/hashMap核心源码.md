@@ -199,7 +199,7 @@ final float loadFactor;
 
 #### JDK1.7 扩容采取的是头插法，数据会倒置，会产生环形链表或者丢失值;但是1.8采用了尾插法，避免了环形链表，但是还是可能丢失值
 
-[![D1uz24.png](https://s3.ax1x.com/2020/11/21/D1uz24.png)](https://imgchr.com/i/D1uz24)
+![hashmap rsize.png](https://i.loli.net/2021/05/15/6VMWsShDEplafOv.png)
 
 ```
    final HashMap.Node<K,V>[] resize() {

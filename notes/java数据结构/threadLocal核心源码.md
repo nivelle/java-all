@@ -98,8 +98,7 @@ static class Entry extends WeakReference<ThreadLocal<?>> {
 
 #### 重点: 由于ThreadLocalMap使用线性探测法来解决散列冲突，所以实际上Entry[]数组在程序逻辑上是作为一个环形存在的。
 
-[![DVRtVe.png](https://s3.ax1x.com/2020/11/17/DVRtVe.png)](https://imgchr.com/i/DVRtVe)
-
+![threadlocal.png](https://i.loli.net/2021/05/15/PBQpk7GToM136xS.png)
 - threadLocal hash运算
 
 ````
@@ -413,14 +412,3 @@ private void remove(ThreadLocal<?> key) {
    
 3. 显示地调用remove,或者调用ThreadLocal的get和set方法都有很高的概率会顺便清理掉无效对象，断开value强引用，从而大对象被收集器回收
 ````
-
-
-
-
-
-
-
-
-
-
-

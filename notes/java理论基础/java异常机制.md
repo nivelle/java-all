@@ -47,8 +47,7 @@ Thrown to indicate that an attempt has been made to store the wrong type of obje
 
 ### java异常
 
-[![6lXKeO.md.png](https://s3.ax1x.com/2021/03/08/6lXKeO.md.png)](https://imgtu.com/i/6lXKeO)
-
+![java异常概念.png](https://i.loli.net/2021/05/15/oy9ijltuameDTGQ.png)
 - 所有的异常都是 Throwable 类或其子类的实例; Throwable 有两大子类
 
 - 第一个是Error ，涵盖程序不应捕获的异常；当程序触发Error时，它的执行状态已经无法恢复，需要中止线程甚至中止虚拟机
