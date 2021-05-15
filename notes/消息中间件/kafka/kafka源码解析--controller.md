@@ -1,6 +1,6 @@
 ### 控制器
 
-[![sYTTKO.md.jpg](https://s3.ax1x.com/2021/01/12/sYTTKO.md.jpg)](https://imgchr.com/i/sYTTKO)
+[![sYTTKO.md.jpg](./images/kafkacontroller源码.jpg)](./images/kafkacontroller源码.jpg)
 
 #### 集群元数据
 
