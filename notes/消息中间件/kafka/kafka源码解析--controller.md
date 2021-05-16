@@ -1,12 +1,11 @@
 ### 控制器
 
-[![sYTTKO.md.jpg](./images/kafkacontroller源码.jpg)](./images/kafkacontroller源码.jpg)
-
+![kafkacontroller源码.jpg](https://i.loli.net/2021/05/16/BdHrIFjW7aKXQAS.jpg)
 #### 集群元数据
 
 - Controller承载了Zookeeper上的所有元数据
 
-[![sY7KLF.jpg](https://s3.ax1x.com/2021/01/12/sY7KLF.jpg)](https://imgchr.com/i/sY7KLF)
+![集群元数据.jpg](https://i.loli.net/2021/05/16/YQEZsT3wdGqv6eu.jpg)
 
 #### ControllerContext 是Controller的数据容器类
 
@@ -65,8 +64,7 @@ controller会给集群中所有Broker(包括它自己所在的Broker)机器发�
 
 #### ControllerEventManger
 
-[![sdISHS.md.jpg](https://s3.ax1x.com/2021/01/14/sdISHS.md.jpg)](https://imgchr.com/i/sdISHS)
-
+![controllerEventManger.jpg](https://i.loli.net/2021/05/16/xYm6grFztvGohUj.jpg)
 ### Controller选举
 
 - Controller 依赖 ZooKeeper 实现 Controller 选举，主要是借助于 /controller 临时节点和 ZooKeeper 的监听器机制。

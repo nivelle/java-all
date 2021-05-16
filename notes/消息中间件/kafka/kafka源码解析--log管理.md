@@ -187,8 +187,7 @@ private def deleteSegments(deletable: Iterable[LogSegment]): Int = {
 
 ### 关键位移值管理
 
-[![sQ2wqg.jpg](https://s3.ax1x.com/2021/01/09/sQ2wqg.jpg)](https://imgchr.com/i/sQ2wqg)
-
+![leo&iso.jpg](https://i.loli.net/2021/05/16/6G1fONgthKoRUn3.jpg)
 #### LEO : 下一条待插入消息，也就是 LEO是空位，还没有消息，对应的对象是-> nextOffsetMetadata
 
 ##### LEO 更新时机
@@ -222,8 +221,7 @@ private def deleteSegments(deletable: Iterable[LogSegment]): Int = {
 
 - append
 
-[![sQ4uHU.jpg](https://s3.ax1x.com/2021/01/09/sQ4uHU.jpg)](https://imgchr.com/i/sQ4uHU)
-
+![日志写底层方法append.jpg](https://i.loli.net/2021/05/16/jeFD3CnyUwT2lzo.jpg)
 ````
 private def append(records: MemoryRecords,
 origin: AppendOrigin,

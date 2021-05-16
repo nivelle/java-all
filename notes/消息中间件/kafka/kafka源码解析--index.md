@@ -1,7 +1,5 @@
 ## 索引
-
-[![slFPyt.jpg](https://s3.ax1x.com/2021/01/10/slFPyt.jpg)](https://imgchr.com/i/slFPyt)
-
+![kafka索引.jpg](https://i.loli.net/2021/05/16/9ig3WjURmVDkqSf.jpg)
 - 索引的底层实现原理：内存映射文件，Java中的MappedByteBuffer,在linux 中，这段映射的内存区域实际上就是内核的页缓存（page Cache）
 
 - 每当consumer需要从主题分区的某个位置开始读取消息时，kafka就会用到OffsetIndex直接定未物理文件位置，避免从头读取消息而引入昂贵的I/O操作
@@ -95,7 +93,7 @@ def append(offset: Long, position: Int): Unit = {
 
 ````
 
-[![slcADe.jpg](https://s3.ax1x.com/2021/01/10/slcADe.jpg)](https://imgchr.com/i/slcADe)
+![kafka索引写.jpg](https://i.loli.net/2021/05/16/qIYOQT6px35LGgh.jpg)
 
 #### 查找索引项
 
@@ -149,34 +147,4 @@ def maybeAppend(timestamp: Long, offset: Long, skipFullCheck: Boolean = false): 
 
 ````
 
-[![s1BO1S.jpg](https://s3.ax1x.com/2021/01/10/s1BO1S.jpg)](https://imgchr.com/i/s1BO1S)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+![位移索引&时间索引.jpg](https://i.loli.net/2021/05/16/7FzEctJPYOhlQiG.jpg)

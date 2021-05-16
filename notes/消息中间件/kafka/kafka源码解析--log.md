@@ -1,7 +1,6 @@
 ### 日志
 
-[![sV7blT.jpg](https://s3.ax1x.com/2021/01/06/sV7blT.jpg)](https://imgchr.com/i/sV7blT)
-
+![kafka日志结构.jpg](https://i.loli.net/2021/05/16/cWKbIlAQz61BJpx.jpg)
 1. 一个分区对于一个Log对象，在物理磁盘上对于一个子目录，每个子目录下存在多组日志段，也就是多组.log、.index、timeindex文件组合，文件名因为日志段起始位移不同而不同
 
 #### 日志涉及到的类和对象

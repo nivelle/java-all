@@ -1,6 +1,6 @@
 ### 集群节点定义
 
-[![ydCn3D.md.jpg](https://s3.ax1x.com/2021/02/09/ydCn3D.md.jpg)](https://imgchr.com/i/ydCn3D)
+![redis主从同步和读写分离.jpg](https://i.loli.net/2021/05/16/tViYLjdpmagXSK7.jpg)
 
 - Redis集群是Redis提供的分布式数据库方案,集群通过分片来进行数据共享,并提供复制和故障转移功能.
 

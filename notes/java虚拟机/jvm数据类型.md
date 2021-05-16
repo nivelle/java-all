@@ -34,8 +34,7 @@
 
 - 对于 byte、char 以及 short 这三种类型的字段或者数组单元，它们在堆上占用的空间分别为1字节、2字节、2字节，也就是说,跟这些类型的值域相吻合
 
-[![yU0lHH.png](https://s3.ax1x.com/2021/02/08/yU0lHH.png)](https://imgchr.com/i/yU0lHH)
-
+![java基本类型jvm.png](https://i.loli.net/2021/05/16/LU7Nqx4RpHIbK5O.png)
 - 从前面的基本类型转换至后面的基本类型，无需强制转换。另外一点值得注意的是，尽管他们的默认值看起来不一样，但在内存中都是 0。
 
 - 在这些基本类型中，boolean 和 char 是唯二的无符号类型。在不考虑违反规范的情况下，boolean 类型的取值范围是 0 或者 1。char 类型的取值范围则是[0, 65535]
