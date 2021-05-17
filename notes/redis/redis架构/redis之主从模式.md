@@ -8,21 +8,19 @@
 
 - 一个Redis集群通常由多个节点(node)组成,在刚开始的时候,每个节点都是相互独立的,它们都处在一个只包含自己的集群中,要组建一个真正的可工作的集群,我们必须将各个独立的节点连接起来,构成一个包含多个节点的集群.
 
-- 连接各个节点的工作可以使用CLUSTER_MEET命令来完成,该命令的格式如下:
+- 连接各个节点的工作可以使用**CLUSTER_MEET**命令来完成,该命令的格式如下:
 
 ```
-
 CLUSTER MEET<IP><PORT>
-
 ```
 
 - 向一个节点node 发送cluster meet命令,可以让node节点与ip和port所指定的节点进行握手,握手成功,node节点就会将ip和port指定的节点添加到node节点节点当前所在的集群中.
 
 #### 启动节点
 
-- 一个节点就是一个运行在集群模式下的Redis服务器,Redis服务器在启动时会根据cluster-enabled配置选项是否为yes来决定是否开启服务器的集群模式.
+- 一个节点就是一个运行在集群模式下的Redis服务器,Redis服务器在启动时会根据**cluster-enabled**配置选项是否为yes来决定是否开启服务器的集群模式.
 
-- 节点会继续使用所在单机模式中使用的服务器组件:
+##### 节点会继续使用所在单机模式中使用的服务器组件:
 
 1.节点会继续使用文件事件处理器来处理命令请求和返回命令回复
 
@@ -42,7 +40,7 @@ CLUSTER MEET<IP><PORT>
 
 #### 集群同步
 
-- redis中,用户可以通过执行replicaof(redis 5.0之前使用slaveof)命令,让一个服务去复制(replicate)另一个服务器,我们称呼被复制的服务器为主服务器(master)
+- redis中,用户可以通过执行 replicaof(redis 5.0之前使用slaveof)命令,让一个服务去复制(replicate)另一个服务器,我们称呼被复制的服务器为主服务器(master)
   ,而对主服务器进行复制的服务器被称为从服务器(slave)
 
 [![ydPNIx.md.jpg](https://z3.ax1x.com/2021/02/09/ydPNIx.md.jpg)](https://imgtu.com/i/ydPNIx)
@@ -50,28 +48,25 @@ CLUSTER MEET<IP><PORT>
 - 第一阶段: 主从库间建立连接、协商同步的过程,主要是为全量复制做准备。在这一步,从库和主库建立起连接,并告诉主库即将进行同步,主库确认回复后,主从库间就可以开始同步了。
 
 
-  1. 从库给主库发送 psync 命令,表示要进行数据同步,主库根据这个命令的参数来启动复制。psync 命令包含了主库的 runID 和复制进度 offset 两个参数
+  1. 从库给主库发送 **psync** 命令,表示要进行数据同步,主库根据这个命令的参数来启动复制。psync 命令包含了主库的 runID 和复制进度 offset 两个参数
 
     (1). runID,是每个 Redis 实例启动时都会自动生成的一个随机 ID,用来唯一标记这个实例。当从库和主库第一次复制时,因为不知道主库的 runID,所以将 runID 设为"?"
 
     (2). offset,此时设为 -1,表示第一次复制。
 
-  2. 主库收到 psync 命令后,会用 FULLRESYNC 响应命令带上两个参数：主库 runID 和主库目前的复制进度 offset,返回给从库。从库收到响应后,会记录下这两个参数。
+  2. 主库收到 psync 命令后,会用 **FULLRESYNC** 响应命令带上两个参数：主库 runID 和主库目前的复制进度 offset,返回给从库。从库收到响应后,会记录下这两个参数。
 
   3. FULLRESYNC 响应表示第一次复制采用的全量复制，也就是说，主库会把当前所有的数据都复制给从库
 
 
 - 第二阶段：主库将所有数据同步给从库。从库收到数据后，在本地完成数据加载。这个过程依赖于内存快照生成的 RDB 文件。
 
-````
 
-1. 主库执行 bgsave 命令，生成 RDB 文件，接着将文件发给从库。从库接收到 RDB 文件后，会先清空当前数据库，然后加载 RDB 文件。这是因为从库在通过 replicaof 命令开始和主库同步前，可能保存了其他数据。为了避免之前数据的影响，从库需要先把当前数据库清空。
+  1. 主库执行 bgsave 命令，生成 RDB 文件，接着将文件发给从库。从库接收到 RDB 文件后，会先清空当前数据库，然后加载 RDB 文件。这是因为从库在通过 replicaof 命令开始和主库同步前，可能保存了其他数据。为了避免之前数据的影响，从库需要先把当前数据库清空。
 
-2. 在主库将数据同步给从库的过程中，主库不会被阻塞，仍然可以正常接收请求。否则，Redis 的服务就被中断了。但是，这些请求中的写操作并没有记录到刚刚生成的 RDB 文件中。为了保证主从库的数据一致性，主库会在内存中用专门的 replication buffer，记录 RDB 文件生成后收到的所有写操作。
+  2. 在主库将数据同步给从库的过程中，主库不会被阻塞，仍然可以正常接收请求。否则，Redis 的服务就被中断了。但是，这些请求中的写操作并没有记录到刚刚生成的 RDB 文件中。为了保证主从库的数据一致性，主库会在内存中用专门的 replication buffer，记录 RDB 文件生成后收到的所有写操作。
 
-````
-
-- 第三阶段：主库会把第二阶段执行过程中新收到的写命令，再发送给从库。具体的操作是，当主库完成 RDB 文件发送后，就会把此时 replication buffer
+- 第三阶段：主库会把第二阶段执行过程中新收到的写命令，再发送给从库。具体的操作是，当主库完成 RDB 文件发送后，就会把此时 **replication buffer**
   中的修改操作发给从库，从库再重新执行这些操作。这样一来，主从库就实现同步了。
 
 #### 主从级联模式分担全量复制时的主库压力
@@ -92,13 +87,14 @@ CLUSTER MEET<IP><PORT>
 
 [![ydkoOe.md.jpg](https://z3.ax1x.com/2021/02/09/ydkoOe.md.jpg)](https://imgtu.com/i/ydkoOe)
 
-1. 主库的所有写命令除了传播给从库之外，都会在这个**repl_backlog_buffer**中记录一份，缓存起来，只有预先缓存了这些命令，当从库断连后，从库重新发送psync $master_runid
+1. 主库的所有写命令除了传播给从库之外，都会在这个**repl_backlog_buffer**中记录一份，缓存起来，只有预先缓存了这些命令，当从库断连后，从库重新发送: psync $master_runid
    $offset，主库才能通过$offset在repl_backlog_buffer中找到从库断开的位置，只发送$offset之后的增量数据给从库即可。
 
 ````
 1. repl_backlog_buffer 是一个环形缓冲区，主库会记录自己写到的位置，从库则会记录自己已经读到的位置。
 
-2. 当主从库断连后，replication buffer丢失，repl_backlog_buffer仍然存在，主库会把断连期间收到的写操作命令，写入 repl_backlog_buffer 这个缓冲区。当主从库重新建立连接后，主库只用把repl_backlog_buffer中位于 master_repl_offset 和 slave_repl_offset 之间的命令操作通过replication buffer同步给从库就行。replication buffer其实就相当于一个发送缓冲区，用于缓存将要发给从库的命令，而repl_backlog_buffer相当于一个备份，当主从库断开连接，replication buffer丢失后，主库仍然可以将需要发送给从库的名录记录到repl_back_log中，用于后续同步
+2. 当主从库断连后，replication buffer丢失, repl_backlog_buffer仍然存在，主库会把断连期间收到的写操作命令，写入 repl_backlog_buffer 这个缓冲区。当主从库重新建立连接后，主库只用把repl_backlog_buffer中位于 master_repl_offset 和 slave_repl_offset 之间的命令操作通过replication buffer同步给从库就行。
+   replication buffer其实就相当于一个发送缓冲区，用于缓存将要发给从库的命令，而repl_backlog_buffer相当于一个备份，当主从库断开连接，replication buffer丢失后，主库仍然可以将需要发送给从库的名录记录到repl_back_log中，用于后续同步
 ````
 
 2. 主从库的连接恢复之后，从库首先会给主库发送 psync 命令，并把自己当前的 slave_repl_offset 发给主库，主库会判断自己的 master_repl_offset 和 slave_repl_offset 之间的差距
@@ -106,24 +102,23 @@ CLUSTER MEET<IP><PORT>
 - 因为 repl_backlog_buffer 是一个环形缓冲区，所以在缓冲区写满后，主库会继续写入，此时，就会覆盖掉之前写入的操作。如果从库的读取速度比较慢，就有可能导致从库还未读取的操作被主库新写的操作覆盖了，这会导致主从库间的数据不一致。
 
 ````
-缓冲空间的计算公式是：缓冲空间大小 = 主库写入命令速度 * 操作大小 - 主从库间网络传输命令速度 * 操作大小。在实际应用中，考虑到可能存在一些突发的请求压力，我们通常需要把这个缓冲空间扩大一倍，即 repl_backlog_size = 缓冲空间大小 * 2，这也就是 repl_backlog_size 的最终值。
+缓冲空间的计算公式是：缓冲空间大小 = 主库写入命令速度 * 操作大小 - 主从库间网络传输命令速度 * 操作大小。
+在实际应用中，考虑到可能存在一些突发的请求压力，我们通常需要把这个缓冲空间扩大一倍，即 repl_backlog_size = 缓冲空间大小 * 2，这也就是 repl_backlog_size 的最终值。
 
 ````
 
 ##### repl_backlog_buffer
 
-````
 它是为了从库断开之后，如何找到主从差异数据而设计的环形缓冲区，从而避免全量同步带来的性能开销。如果从库断开时间太久，repl_backlog_buffer环形缓冲区被主库的写命令覆盖了，那么从库连上主库后只能乖乖地进行一次全量同步，所以repl_backlog_buffer配置尽量大一些，可以降低主从断开后全量同步的概率。
 而在repl_backlog_buffer中找主从差异的数据后，如何发给从库呢？这就用到了replication buffer。
-````
+
 
 ##### replication buffer
 
-````
 Redis和客户端通信也好，和从库通信也好，Redis都需要给分配一个 内存buffer进行数据交互，客户端是一个client，从库也是一个client，
 我们每个client连上Redis后，Redis都会分配一个client buffer，所有数据交互都是通过这个buffer进行的:Redis先把数据写到这个buffer中，然后再把buffer中的数据发到client socket中再通过网络发送出去，这样就完成了数据交互。
 所以主从在增量同步时，从库作为一个client，也会分配一个buffer，只不过这个buffer专门用来传播用户的写命令到从库，保证主从数据一致，我们通常把它叫做replication buffer
-````
+
 
 - 如果主从在传播命令时，因为某些原因从库处理得非常慢，那么主库上的这个buffer就会持续增长，消耗大量的内存资源，甚至OOM。
 
