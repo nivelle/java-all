@@ -32,6 +32,7 @@ public class HashMapMock {
         hashMap.put("1", "nivelle");
         hashMap.put("2", "jessy");
         System.out.println("无参初始化HashMap" + hashMap);
+
         HashMap hashMapInit = new HashMap(4);
         System.out.println("获取不存在的key对应的值：" + hashMap.get("3"));
         System.out.println(hashMapInit);
@@ -59,7 +60,7 @@ public class HashMapMock {
          *
          * 1. 集合元素的的hashCode之和，这个方法继承之AbstractMap
          *
-         * 2. 集合元素的hashCode的具体求发是k的hashCode 异或 v的hashCode
+         * 2. 集合元素的hashCode的具体算法是 k的hashCode异或操作v的hashCode
          */
         int hash = hashMap2.hashCode();
         System.out.println("hashMap的hashCode:" + hash);

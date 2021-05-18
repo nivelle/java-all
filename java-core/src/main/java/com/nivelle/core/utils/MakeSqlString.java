@@ -67,9 +67,9 @@ public class MakeSqlString {
 
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < 64; i++) {
-            StringBuilder stringBuilder2 = new StringBuilder("select id,user_name,create_time,update_time from nd_user_");
+            StringBuilder stringBuilder2 = new StringBuilder("select user_name,process from nd_read_process_");
             stringBuilder2.append(i);
-            stringBuilder2.append(" where create_time = '2020-12-11 05:59:01' or create_time = '2020-12-11 05:59:02' or create_time = '2020-12-11 05:59:00' or create_time = '2020-12-11 05:59:03'");
+            stringBuilder2.append(" where book_id = '11803818' ");
             stringBuilder2.append(" union all ");
             stringBuilder.append(stringBuilder2);
             stringBuilder.append("\n");

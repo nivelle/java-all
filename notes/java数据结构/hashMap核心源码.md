@@ -1,4 +1,4 @@
-#### 属性
+### 属性
 
 ````
 
@@ -54,7 +54,7 @@ transient int size;
 transient int modCount;
 
 /**
- * 当桶的使用数量达到多少时进行扩容，threshold = capacity * loadFactor
+ * 当桶的使用数量达到多少时进行扩容，threshold = capacity * loadFactor;扩容门槛
  */
 int threshold;
 
@@ -65,27 +65,29 @@ final float loadFactor;
 
 ````
 
-#### put 方法底层逻辑
+----------
 
-（1）计算key的hash值;
+### put 方法底层逻辑
 
-（2）如果桶（数组）数量为0，则初始化桶;
+- （1）计算key的hash值;
 
-（3）如果key所在的桶没有元素,则直接插入;
+- （2）如果桶（数组）数量为0，则初始化桶;
 
-（4）如果key所在的桶中的第一个元素的key与待插入的key相同，说明找到了元素，转后续流程（9）处理；
+- （3）如果key所在的桶没有元素,则直接插入;
 
-（5）如果第一个元素是树节点，则调用树节点的putTreeVal()寻找元素或插入树节点；
+- （4）如果key所在的桶中的第一个元素的key与待插入的key相同，说明找到了元素，转后续流程（9）处理;
 
-（6）如果不是以上三种情况，则遍历桶对应的链表查找key是否存在于链表中；
+- （5）如果第一个元素是树节点，则调用树节点的putTreeVal()寻找元素或插入树节点;
 
-（7）如果找到了对应key的元素，则转后续流程（9）处理；
+- （6）如果不是以上三种情况，则遍历桶对应的链表查找key是否存在于链表中;
 
-（8）如果没找到对应key的元素，则在链表最后插入一个新节点并判断是否需要树化；【尾查法】
+- （7）如果找到了对应key的元素，则转后续流程（9）处理;
 
-（9）如果找到了对应key的元素，则判断是否需要替换旧值，并直接返回旧值；
+- （8）如果没找到对应key的元素，则在链表最后插入一个新节点并判断是否需要树化；【尾插法】
 
-（10）如果插入了元素，则数量加1并判断是否需要扩容;
+- （9）如果找到了对应key的元素，则判断是否需要替换旧值，并直接返回旧值;
+
+- （10）如果插入了元素，则数量加1并判断是否需要扩容;
 
 ```
     /*
@@ -117,20 +119,19 @@ final float loadFactor;
         if ((p = tab[i = (n - 1) & hash]) == null) {
             //新建一个节点放在桶中
             tab[i] = newNode(hash, key, value, null);
-        } else {
-            // 如果桶中已经有元素存在了
-            // 暂时存指定位置某个node(最后一个)
+        } else { //如果桶中已经有元素存在了
+            // 用于保存找到的待插入节点或者新构建的节点(确定位置)
             Node<K, V> e;
             K k;
             //如果桶中第一个元素的key与待插入元素的key相同,保存到e中用于后续修改value值
             if (p.hash == hash && ((k = p.key) == key || (key != null && key.equals(k)))) {
-                e = p;
-                //如果第一个元素是树节点,则调用树节点的putTreeVal插入元素
-            } else if (p instanceof TreeNode) {
+                e = p;              
+            } else if (p instanceof TreeNode) { //如果第一个元素是树节点,则调用树节点的putTreeVal插入元素
                 e = ((TreeNode<K, V>) p).putTreeVal(this, tab, hash, key, value);
             } else {
                 // 遍历这个桶对应的链表，binCount用于存储链表中元素的个数,直到插入尾部结束
                 for (int binCount = 0; ; ++binCount) {
+                    //这里桶首位元素不为null,然后依次遍历后续元素
                     //如果链表遍历完了都没有找到相同key的元素，说明该key对应的元素不存在，则在链表最后插入一个新节点(尾插法)
                     //这个地方开始 e元素开始从首个元素开始后移
                     if ((e = p.next) == null) {
@@ -181,23 +182,23 @@ final float loadFactor;
 
 ---
 
-#### 扩容方法
+### 扩容方法
 
-（1）如果使用是默认构造方法，则第一次插入元素时初始化为默认值,容量为16，扩容门槛为12；
+-  (1) 如果使用是默认构造方法，则第一次插入元素时初始化为默认值,容量为16，扩容门槛为12;
 
-（2）如果使用的是非默认构造方法则第一次插入元素时初始化容量等于扩容门槛,扩容门槛在构造方法里等于传入容量向上最近的2的n次方；
+- （2）如果使用的是非默认构造方法则第一次插入元素时初始化容量小于等于扩容门槛（扩容门槛:在构造方法里等于传入容量向上最近的2的n次方）
 
-（3）如果旧容量大于0，则新容量等于旧容量的2倍，但不超过最大容量:2的30次方，新扩容门槛为旧扩容门槛的2倍；
+- （3）如果旧容量大于0，则新容量等于旧容量的2倍，但不超过最大容量:2的30次方，**新扩容门槛为旧扩容门槛的2倍**;
 
-（4）创建一个新容量的桶；
+- （4）创建一个新容量的桶；
 
-（5）搬移元素，原链表分化成两个链表，低位链表存储在原来桶的位置，高位链表搬移到原来桶的位置加旧容量的位置；
+- （5）搬移元素，原链表分化成两个链表，低位链表存储在原来桶的位置，高位链表搬移到原来桶的位置加旧容量的位置；
 
 #### 优化点:
 
-#### 容量变为原来的二倍后,二进制位就多了一位,这一位可能是0可能是1(0就是原位置,1就是原来的位置+原来的数组长度[oldCap])
+#### 容量变为原来的二倍后,二进制位就多了一位,原位置hash和容量再取余后可能是(0:就是原位置,1:就是原来的位置+原来的数组长度[oldCap])
 
-#### JDK1.7 扩容采取的是头插法，数据会倒置，会产生环形链表或者丢失值;但是1.8采用了尾插法，避免了环形链表，但是还是可能丢失值
+#### JDK1.7 扩容采取的是头插法,数据会倒置[后插入的认为是会被很快访问到的],会产生环形链表或者丢失值;但是1.8采用了尾插法，避免了环形链表，但是还是可能丢失值
 
 ![hashmap rsize.png](https://i.loli.net/2021/05/15/6VMWsShDEplafOv.png)
 
@@ -222,14 +223,15 @@ final float loadFactor;
                 //返回旧的Node数组
                 return oldTab;
             }else if ((newCap = oldCap << 1) < MAXIMUM_CAPACITY && oldCap >= DEFAULT_INITIAL_CAPACITY){
-                // 新数组容量（就数组容量2倍）小于最大容量,而且旧的容量大于等于默认初始化容量(16)则扩容门槛也扩大为原来2倍
+                // 设置新数组容量（旧数组容量2倍）小于最大容量,而且旧的容量大于等于默认初始化容量(16)则扩容门槛也扩大为原来2倍
                 newThr = oldThr << 1; // double threshold
             }
         }
        
-        //使用非默认构造方法创建的map，第一次插入元素会走到这里,设置初始容量的时候初始化了扩容门槛(非默认方法没有设置容量,只设置了扩容门槛)
+        // 使用非默认构造方法创建的 map，第一次插入元素会走到这里,设置初始容量的时候初始化了扩容门槛
+        // (非默认构造方法没有设置容量,只设置了扩容门槛= 初始数量向上最近的2的n次方)
         else if (oldCap==0 && oldThr > 0) // initial capacity was placed in threshold                                                                      
-            newCap = oldThr;// 如果旧容量为0且旧扩容门槛大于0，则把新容量赋值为旧门槛     
+            newCap = oldThr;// 如果旧容量为0且旧扩容门槛大于0，则把新容量赋值为初始化后的扩容门槛(也即初始化数量向上2的n次方)    
         else { // zero initial threshold signifies using defaults
             //默认构造方法创建的map,第一次插入会走到这里
             //如果旧容量旧扩容门槛都是0，说明还未初始化过，则初始化容量为默认容量，扩容门槛为默认容量*默认装载因子          
@@ -237,6 +239,7 @@ final float loadFactor;
             newThr = (int)(DEFAULT_LOAD_FACTOR * DEFAULT_INITIAL_CAPACITY);
         }
         // 如果新扩容门槛为0,则计算为容量*装载因子,但不能超过最大容量
+        // 此时初始化时仅仅设置了扩容门槛的情形此时重新设置新的扩容门槛为 容量*装载因子
         if (newThr == 0) {
             float ft = (float)newCap * loadFactor;
             newThr = (newCap < MAXIMUM_CAPACITY && ft < (float)MAXIMUM_CAPACITY ?(int)ft : Integer.MAX_VALUE);
@@ -246,7 +249,7 @@ final float loadFactor;
         // 新建一个新容量的数组
         @SuppressWarnings({"rawtypes","unchecked"})
         HashMap.Node<K,V>[] newTab = (HashMap.Node<K,V>[])new HashMap.Node[newCap];
-        // 把桶赋值为新数组
+        // 把桶赋值为新数组，新数据目前仅仅是个空数组
         table = newTab;
         // 如果旧数组不为空,则迁移数据
         if (oldTab != null) {
@@ -265,7 +268,7 @@ final float loadFactor;
                          //如果第一个元素是树节点,则把这颗树打散成两颗树插入到新桶中去(如果桶中节点小于6个则反树化)                     
                         ((HashMap.TreeNode<K,V>)e).split(this, newTab, j, oldCap);
                     }else { // preserve order
-                        //如果这个链表不止一个元素且不是一颗树则分化成两个链表插入到新的桶中去
+                        //如果这个链表不止一个元素且不是一颗树,则分化成两个链表插入到新的桶中去
                         HashMap.Node<K,V> loHead = null;
                         HashMap.Node<K,V> loTail = null;
 
@@ -275,7 +278,7 @@ final float loadFactor;
                         do {
                             next = e.next;
                             //(e.hash & oldCap) == 0 的元素放在低位链表中(扩展位位0)
-                            if ((e.hash & oldCap) == 0) {
+                            if ((e.hash & oldCap) == 0) {//尾插法
                                 if (loTail == null)
                                     loHead = e;
                                 else
@@ -311,13 +314,18 @@ final float loadFactor;
     
 ```
 
-#### 红黑树节点扩容 // 把一颗树打成两颗树插入到新桶
+-----
+
+#### 红黑树节点扩容 
+
+- 一个桶位置的红黑数结构分化成两颗树插入到新桶
+
+-  //扩容方法调用: split(this, newTab, j, oldCap)
 
 ```
-//split(this, newTab, j, oldCap)
 final void split(HashMap<K,V> map, Node<K,V>[] tab, int index, int bit) {
             TreeNode<K,V> b = this;
-            // Relink into lo and hi lists, preserving order
+            // Relink into lo and hi lists, preserving【保留】 order
             TreeNode<K,V> loHead = null, loTail = null;
             TreeNode<K,V> hiHead = null, hiTail = null;
             int lc = 0, hc = 0;
@@ -349,7 +357,8 @@ final void split(HashMap<K,V> map, Node<K,V>[] tab, int index, int bit) {
             }
 
             if (loHead != null) {
-                //如果 lXXX 树的数量小于 6，就把 lXXX 树的枝枝叶叶都置为空，变成一个单节点 然后让这个桶中，要还原索引位置开始往后的结点都变成还原成链表的 lXXX 节点 这一段元素以后就是一个链表结构
+                //如果 lXXX 树的数量小于 6，就把 lXXX 树的枝枝叶叶都置为空，变成一个单节点 
+                //然后让这个桶中，要还原索引位置开始往后的结点都变成还原成链表的 lXXX 节点 这一段元素以后就是一个链表结构
                 if (lc <= UNTREEIFY_THRESHOLD)
                     tab[index] = loHead.untreeify(map);
                 else {
@@ -372,17 +381,19 @@ final void split(HashMap<K,V> map, Node<K,V>[] tab, int index, int bit) {
         }
 ```
 
+------
+
 ### 树结构添加数据
 
-（1）寻找根节点；
+- （1）寻找根节点；
 
-（2）从根节点开始查找；
+- （2）从根节点开始查找；
 
-（3）比较hash值及key值,如果都相同,直接返回，在putVal()方法中决定是否要替换value值；
+- （3）比较hash值及key值,如果都相同,直接返回，在putVal()方法中决定是否要替换value值；
 
-（4）根据hash值及key值确定在树的左子树还是右子树查找,找到了直接返回;
+- （4）根据hash值及key值确定在树的左子树还是右子树查找,找到了直接返回;
 
-（5）如果最后没有找到则在树的相应位置插入元素,并做平衡;
+- （5）如果最后没有找到则在树的相应位置插入元素,并做平衡;
 
 ```
 
@@ -411,12 +422,13 @@ final TreeNode<K,V> putTreeVal(HashMap<K,V> map, Node<K,V>[] tab,int h, K k, V v
                 int ph; //遍历的当前节点的hash只
                 K pk;//遍历的当前节点的key值
                 
-                if ((ph = p.hash) > h)// 当前hash比目标hash大,说明目标在左边                                    
+                if ((ph = p.hash) > h)// 当前hash比目标hash小,说明目标在左边                                    
                     dir = -1;
                 else if (ph < h){//当前hash比目标hash大,说明目标在右边
                     dir = 1;
                 }
-                //hash值相等，key相等说明找到了;回到putVal()中判断是否需要修改其value值
+                //hash值相等，key相等说明找到了
+                //回到putVal()中判断是否需要修改其value值
                 else if ((pk = p.key) == k || (k != null && k.equals(pk))){
                     return p;
                 }
@@ -463,7 +475,13 @@ final TreeNode<K,V> putTreeVal(HashMap<K,V> map, Node<K,V>[] tab,int h, K k, V v
 
 ```
 
-### 链表变树方法 treeifyBin()
+----
+
+#### 链表变树方法 treeifyBin()
+
+- 数组桶数目大于等于64，而且指定桶位置元素个数(产生hash冲突个数的元素个数大于等于8)则进行树化
+
+- 当指定桶位置元素个数因为扩容或者移除小于等于6的时候，进行列表化
 
 ```
 final void treeifyBin(Node<K,V>[] tab, int hash) {
@@ -502,7 +520,9 @@ final void treeifyBin(Node<K,V>[] tab, int hash) {
     
 ```
 
-### TreeNode.treeify() 方法
+----
+
+#### TreeNode.treeify() 方法
 
 ```
 final void treeify(Node<K,V>[] tab) {
@@ -562,16 +582,17 @@ final void treeify(Node<K,V>[] tab) {
         }
         
 ```        
+-------
 
 ### get(Object key) 方法
 
-（1）计算key的hash值；
+- （1）计算key的hash值；
 
-（2）找到key所在的桶及其第一个元素；
+- （2）找到key所在的桶及其第一个元素；
 
-（3）如果第一个元素的key等于待查找的key，直接返回；
+- （3）如果第一个元素的key等于待查找的key，直接返回；
 
-（4）如果第一个元素是树节点就按树的方式来查找，否则按链表方式查找；
+- （4）如果第一个元素是树节点就按树的方式来查找，否则按链表方式查找；
 
 ```
 public V get(Object key) {
@@ -614,7 +635,7 @@ final Node<K,V> getNode(int hash, Object key) {
     
 ```
 
-##### getTreeNode - > find // 树类型的hashMap 查找
+#### getTreeNode - > find // 树类型的hashMap 查找
 
 ```
 
@@ -657,18 +678,19 @@ final TreeNode<K,V> find(int h, Object k, Class<?> kc) {
             return null;
         }
 ````
+-----------
 
 #### remove(Object key)方法
 
-（1）先查找元素所在的节点；
+- （1）先查找元素所在的节点；
 
-（2）如果找到的节点是树节点，则按树的移除节点处理；
+- （2）如果找到的节点是树节点，则按树的移除节点处理；
 
-（3）如果找到的节点是桶中的第一个节点，则把第二个节点移到第一的位置；
+- （3）如果找到的节点是桶中的第一个节点，则把第二个节点移到第一的位置；
 
-（4）否则按链表删除节点处理；
+- （4）否则按链表删除节点处理；
 
-（5）修改size，调用移除节点后置处理等；
+- （5）修改size，调用移除节点后置处理等；
 
 ```
 public V remove(Object key) {
@@ -695,6 +717,7 @@ final Node<K,V> removeNode(int hash, Object key, Object value,boolean matchValue
             V v;
             if (p.hash == hash &&((k = p.key) == key || (key != null && key.equals(k)))){
               // 如果第一个元素正好就是要找的元素，赋值给node变量后续删除使用
+              // node用于保存待删除的元素
               node = p；
             }
             //否则开始遍历查找节点
@@ -856,22 +879,25 @@ final Node<K,V> removeNode(int hash, Object key, Object value,boolean matchValue
 
 ```
 
+---------
 ## 总结
 
-（1）HashMap是一种散列表，采用（数组 + 链表 + 红黑树）的存储结构；
+- （1）HashMap是一种散列表，采用（数组 + 链表 + 红黑树）的存储结构；
 
-（2）HashMap的默认初始容量为16（1<<4），默认装载因子为0.75f，容量总是2的n次方；
+- （2）HashMap的默认初始容量为16（1<<4），默认装载因子为0.75f，容量总是2的n次方；
 
-（3）HashMap扩容时每次容量变为原来的两倍；
+- （3）HashMap扩容时每次容量变为原来的两倍；
 
-（4）当桶的数量小于64时不会进行树化，只会扩容；
+- （4）当桶的数量小于64时不会进行树化，只会扩容；
 
-（5）当桶的数量大于64且单个桶中元素的数量大于8时，进行树化；
+- （5）当桶的数量大于64且单个桶中元素的数量大于8时，进行树化；
 
-（6）当单个桶中元素数量小于6时，进行反树化；
+- （6）当单个桶中元素数量小于6时，进行反树化；
 
-（7）HashMap是非线程安全的容器；
+- （7）HashMap是非线程安全的容器；
 
-（8）HashMap查找添加元素的时间复杂度都为O(1)；
+- （8）HashMap查找添加元素的时间复杂度都为O(1)；
+
+-----------
 
 来自: [彤哥读源码](https://mp.weixin.qq.com/s?__biz=Mzg2ODA0ODM0Nw==&mid=2247483711&idx=3&sn=f0743c914e26695eb9c0d4cb0cab5e99&scene=21#wechat_redirect)

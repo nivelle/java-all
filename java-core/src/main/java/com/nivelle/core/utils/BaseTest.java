@@ -22,6 +22,12 @@ public class BaseTest {
             hashMapTest1();
         }).start();
         hashMapTest1();
+        int a = 2;
+        if ((a = 1) == 1) {
+            System.out.println("先赋值再比较:" + a);
+        } else {
+            System.out.println("a:=" + a);
+        }
     }
 
 
