@@ -1,34 +1,29 @@
 ### 重点概念
 
-- Condition的队列和AQS的队列不完全一样:
+#### Condition的队列和AQS的队列不完全一样:
 
-```
-AQS的队列头节点是不存在任何值的(thread=null),是一个虚节点;
+- AQS的队列头节点是不存在任何值的(thread=null),是一个虚节点;
 
-Condition的队列头节点是存储着实实在在的元素值的,是真实节点
+- Condition的队列头节点是存储着实实在在的元素值的,是真实节点
 
-```
+#### 各种等待状态(waitStatus)的变化
 
-- 各种等待状态(waitStatus)的变化
+- 在条件队列中，新建节点的初始等待状态是CONDITION（-2）
 
-```
-1. 在条件队列中，新建节点的初始等待状态是CONDITION（-2）
+- **移到AQS的队列中时等待状态会更改为0 (AQS队列节点的初始等待状态为0)**
 
-2. 移到AQS的队列中时等待状态会更改为0(AQS队列节点的初始等待状态为0)
+- **在AQS队列中如果需要阻塞,会把它上一个节点的等待状态设置为 SIGNAL(-1)**
 
-3. 在AQS队列中如果需要阻塞,会把它上一个节点的等待状态设置为 SIGNAL(-1)
+- 不管在Condition队列还是AQS队列中，已取消的节点的等待状态都会设置为 CANCELLED（1）
 
-4. 不管在Condition队列还是AQS队列中，已取消的节点的等待状态都会设置为 CANCELLED（1）
 
-```
+#### AQS 中的下一个节点是next,上一个节点prev;Condition中下一个节点是nextWaiter没有上一个节点
 
-- AQS 中的下一个节点是next,上一个节点prev;Condition中下一个节点是nextWaiter没有上一个节点
+##### 构造条件锁
 
-### 构造条件锁
+##### ReentrantLock.newCondition()
 
-#### ReentrantLock.newCondition()
-
-```
+```java
 public Condition newCondition() {
         return sync.newCondition();
 }
@@ -36,7 +31,7 @@ public Condition newCondition() {
 
 #### ReentrantLock.Sync.newCondition()
 
-````
+````java
 final ConditionObject newCondition() {
      return new ConditionObject();
 }
@@ -44,7 +39,7 @@ final ConditionObject newCondition() {
 
 #### AbstractQueuedSynchronizer.ConditionObject.ConditionObject()
 
-````
+````java
 public ConditionObject() {}
 
 ````
@@ -53,7 +48,7 @@ public ConditionObject() {}
 
 - 条件锁中也维护了一个队列,为了和AQS的队列区分,我这里称为条件队列,firstWaiter是队列的头节点,lastWaiter是队列的尾节点
 
-```
+```java
 /** First node of condition queue. */
 private transient Node firstWaiter;
 
@@ -71,11 +66,11 @@ private static final int THROW_IE    = -1;
 
 ```
 
-### condition.await()方法
+#### condition.await()方法
 
 - AbstractQueuedSynchronizer.ConditionObject.await()
 
-```
+```java
 public final void await() throws InterruptedException {
             // 如果线程中断了，抛出异常
             if (Thread.interrupted()){
@@ -83,7 +78,8 @@ public final void await() throws InterruptedException {
             }
             // 添加新节点到Condition队列中,并返回该节点
             Node node = addConditionWaiter();            
-            // 完全释放当前线程获取的锁;因为锁是可重入的,所以这里要把所获取的锁都释放,同时唤醒同步队列中等待获取的线程
+            // 完全释放当前线程获取的锁;
+           // 因为锁是可重入的,所以这里要把所获取的锁都释放,同时唤醒同步队列中等待获取的线程
             int savedState = fullyRelease(node);
             int interruptMode = 0;            
             // 是否在同步队列中
@@ -118,7 +114,7 @@ public final void await() throws InterruptedException {
 
 - AbstractQueuedSynchronizer.ConditionObject.addConditionWaiter
 
-````
+````java
 private Node addConditionWaiter() {
             Node t = lastWaiter;     
             // 如果条件队列的尾节点已取消,从头节点开始清除所有已取消的节点(If lastWaiter is cancelled, clean out.)
@@ -149,7 +145,7 @@ private Node addConditionWaiter() {
 
 - AbstractQueuedSynchronizer.ConditionObject.unlinkCancelledWaiters
 
-````
+````java
 private void unlinkCancelledWaiters() {
             // 条件队列头节点
             Node t = firstWaiter;
@@ -188,7 +184,7 @@ private void unlinkCancelledWaiters() {
 
 - AbstractQueuedSynchronizer.fullyRelease
 
-````
+````java
 final int fullyRelease(Node node) {
         boolean failed = true;
         try {
@@ -215,7 +211,7 @@ final int fullyRelease(Node node) {
 
 - AbstractQueuedLongSynchronizer.release
 
-````
+````java
 public final boolean release(long arg) {
         // 释放成功
         if (tryRelease(arg)) {
@@ -236,7 +232,7 @@ public final boolean release(long arg) {
 
 - ReentrantLock.tryRelease
 
-````
+````java
 protected final boolean tryRelease(int releases) {
              int c = getState() - releases;
              //判断当前线程是否是锁的持有者
@@ -258,7 +254,7 @@ protected final boolean tryRelease(int releases) {
 
 - AbstractQueuedLongSynchronizer.isOnSyncQueue
 
-````
+````java
 final boolean isOnSyncQueue(Node node) {
         //如果节点的状态等于条件状态或者前继节点为空也就是头节点，则不在同步队列中
         if (node.waitStatus == Node.CONDITION || node.prev == null){
@@ -284,7 +280,7 @@ final boolean isOnSyncQueue(Node node) {
 
 - AbstractQueuedLongSynchronizer.findNodeFromTail
 
-````
+````java
 private boolean findNodeFromTail(Node node) {
         Node t = tail;
         for (;;) {
@@ -299,7 +295,7 @@ private boolean findNodeFromTail(Node node) {
 
 #### 检查中断状态
 
-````
+````java
 private int checkInterruptWhileWaiting(Node node) {
     // checkInterruptWhileWaiting()：判断在阻塞过程中是否被中断。如果返回THROW_IE，则表示线程在调用signal()之前中断的；
     // 如果返回 REINTERRUPT, 则表明线程在调用signal()之后中断；如果返回0则表示没有被中断。   
@@ -309,7 +305,7 @@ private int checkInterruptWhileWaiting(Node node) {
 
 #### 设置等待条件状态
 
-````
+````java
 final boolean transferAfterCancelledWait(Node node) {
         if (compareAndSetWaitStatus(node, Node.CONDITION, 0)) {
             //设置到同步队列而且是取消状态
@@ -321,7 +317,7 @@ final boolean transferAfterCancelledWait(Node node) {
 
 #### 是否抛出中断异常
 
-````
+````java
 private void reportInterruptAfterWait(int interruptMode)
             throws InterruptedException {
             if (interruptMode == THROW_IE)
@@ -335,7 +331,7 @@ private void reportInterruptAfterWait(int interruptMode)
 
 - AbstractQueuedSynchronizer.ConditionObject.signal
 
-```
+```java
 public final void signal() {
             //如果不是当前线程占有着锁，调用这个方法跑出异常
             //说明signal()也要在获取锁之后执行
@@ -355,7 +351,7 @@ public final void signal() {
 
 - AbstractQueuedSynchronizer.ConditionObject.doSignal
 
-````
+````java
 private void doSignal(Node first) {
             do {
                 // 移到条件队列的头节点往后一位
@@ -373,7 +369,7 @@ private void doSignal(Node first) {
 
 - AbstractQueuedSynchronizer.transferForSignal
 
-````
+````java
 final boolean transferForSignal(Node node) {
         // 把节点状态改为0,也就是说即将移到AQS队列中
         // 如果失败了，说明节点已经被改成取消状态了,返回false，通过上面的循环可知会寻找下一个可用节点

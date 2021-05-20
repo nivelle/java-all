@@ -1,6 +1,6 @@
 ### 属性
 
-````
+````java
 
 /**
  * 默认的初始容量为16
@@ -89,7 +89,8 @@ final float loadFactor;
 
 - （10）如果插入了元素，则数量加1并判断是否需要扩容;
 
-```
+----
+```java
     /*
      *
      * @param hash         hash for key
@@ -202,7 +203,7 @@ final float loadFactor;
 
 ![hashmap rsize.png](https://i.loli.net/2021/05/15/6VMWsShDEplafOv.png)
 
-```
+```java
    final HashMap.Node<K,V>[] resize() {
         // 旧数组
         HashMap.Node<K,V>[] oldTab = table;
@@ -320,9 +321,9 @@ final float loadFactor;
 
 - 一个桶位置的红黑数结构分化成两颗树插入到新桶
 
--  //扩容方法调用: split(this, newTab, j, oldCap)
+- 扩容方法调用: split(this, newTab, j, oldCap)
 
-```
+```java
 final void split(HashMap<K,V> map, Node<K,V>[] tab, int index, int bit) {
             TreeNode<K,V> b = this;
             // Relink into lo and hi lists, preserving【保留】 order
@@ -395,8 +396,7 @@ final void split(HashMap<K,V> map, Node<K,V>[] tab, int index, int bit) {
 
 - （5）如果最后没有找到则在树的相应位置插入元素,并做平衡;
 
-```
-
+```java
     /*
      * 红黑树 结构的HashMap 的put操作
      *
@@ -408,7 +408,6 @@ final void split(HashMap<K,V> map, Node<K,V>[] tab, int index, int bit) {
      * @return  如果存在指定key则返回旧值 如果不存在则返回null
      *
      */
-
 final TreeNode<K,V> putTreeVal(HashMap<K,V> map, Node<K,V>[] tab,int h, K k, V v) {
             //key的真实类型或者为null
             Class<?> kc = null;
@@ -483,7 +482,7 @@ final TreeNode<K,V> putTreeVal(HashMap<K,V> map, Node<K,V>[] tab,int h, K k, V v
 
 - 当指定桶位置元素个数因为扩容或者移除小于等于6的时候，进行列表化
 
-```
+```java
 final void treeifyBin(Node<K,V>[] tab, int hash) {
         int n; //数组长度
         int index;
@@ -524,7 +523,7 @@ final void treeifyBin(Node<K,V>[] tab, int hash) {
 
 #### TreeNode.treeify() 方法
 
-```
+```java
 final void treeify(Node<K,V>[] tab) {
             TreeNode<K,V> root = null;
             //this 为节点树化后的链表头
@@ -594,7 +593,7 @@ final void treeify(Node<K,V>[] tab) {
 
 - （4）如果第一个元素是树节点就按树的方式来查找，否则按链表方式查找；
 
-```
+```java
 public V get(Object key) {
         Node<K,V> e;
         return (e = getNode(hash(key), key)) == null ? null : e.value;
@@ -603,8 +602,7 @@ public V get(Object key) {
 
 #### 真正的查找方法
 
-```
-
+```java
 final Node<K,V> getNode(int hash, Object key) {
         Node<K,V>[] tab; 
         Node<K,V> first;
@@ -637,8 +635,7 @@ final Node<K,V> getNode(int hash, Object key) {
 
 #### getTreeNode - > find // 树类型的hashMap 查找
 
-```
-
+```java
 final TreeNode<K,V> getTreeNode(int h, Object k) {
             return ((parent != null) ? root() : this).find(h, k, null);
         }
@@ -646,7 +643,7 @@ final TreeNode<K,V> getTreeNode(int h, Object k) {
 
 ##### 树节点查找
 
-````                
+```` java             
 final TreeNode<K,V> find(int h, Object k, Class<?> kc) {
             TreeNode<K,V> p = this; // 桶的首节点｜parent节点
             do {
@@ -692,7 +689,7 @@ final TreeNode<K,V> find(int h, Object k, Class<?> kc) {
 
 - （5）修改size，调用移除节点后置处理等；
 
-```
+```java
 public V remove(Object key) {
         Node<K,V> e;
         return (e = removeNode(hash(key), key, null, false, true)) == null ?
@@ -703,7 +700,7 @@ public V remove(Object key) {
 
 #### 真正删除操作
 
-````
+````java
 final Node<K,V> removeNode(int hash, Object key, Object value,boolean matchValue, boolean movable) {
         Node<K,V>[] tab; 
         Node<K,V> p; 
@@ -763,7 +760,7 @@ final Node<K,V> removeNode(int hash, Object key, Object value,boolean matchValue
 
 ### TreeNode.removeTreeNode(HashMap<K,V> map, Node<K,V>[] tab,boolean movable) //树节点的删除
 
-```
+```java
  final void removeTreeNode(HashMap<K,V> map, Node<K,V>[] tab,boolean movable) {
             int n;
             // 如果桶的数量为0直接返回

@@ -1,6 +1,6 @@
 ### 反射方法
 
-``````
+``````java
 - public Object invoke(Object obj, Object... args) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException
 
   - if (!override)
@@ -30,7 +30,7 @@
 
 ##### 子类:DelegatingMethodAccessorImpl
 
-```
+```java
           public Object invoke(Object var1, Object[] var2) throws IllegalArgumentException, InvocationTargetException {
                   return this.delegate.invoke(var1, var2);
               }
@@ -39,7 +39,7 @@
 
 ##### 子类:NativeMethodAccessorImpl
 
-```
+```java
   public Object invoke(Object var1, Object[] var2) throws IllegalArgumentException, InvocationTargetException {
                     
                      if (++this.numInvocations > ReflectionFactory.inflationThreshold() && !ReflectUtil.isVMAnonymousClass(this.method.getDeclaringClass())) {

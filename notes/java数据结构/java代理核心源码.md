@@ -1,39 +1,40 @@
-## public class Proxy implements java.io.Serializable
+### public class Proxy implements java.io.Serializable
 
-## 静态方法创建代理对象
+##### 静态方法创建代理对象
 
-```
+```java
 public static Object newProxyInstance(ClassLoader loader,Class<?>[] interfaces,InvocationHandler h) throws IllegalArgumentException
     {
-        ## 验证传入的InvocationHandler(调用处理器)是否为空
+        //验证传入的InvocationHandler(调用处理器)是否为空
         Objects.requireNonNull(h);
-        ## 克隆代理类实现的接口
+        //克隆代理类实现的接口
         final Class<?>[] intfs = interfaces.clone();
-        ## 获得安全管理器
+        // 获得安全管理器
         final SecurityManager sm = System.getSecurityManager();
-        ## 检查创建代理类所需的权限
+        // 检查创建代理类所需的权限
         if (sm != null) {
             checkProxyAccess(Reflection.getCallerClass(), loader, intfs);
         }
 
-        /*
+        /**
+         * 
          * Look up or generate the designated proxy class.
-         * ##通过类加载器和接口列表查找或者生成特定的代理类（如果缓存中存在，则直接获取） 
          */
+        //通过类加载器和接口列表查找或者生成特定的代理类（如果缓存中存在，则直接获取） 
         Class<?> cl = getProxyClass0(loader, intfs);
-
-        /*
+        /**
+         * 
          * Invoke its constructor with the designated invocation handler.
          */
         try {
-            ## 权限校验
+            //权限校验
             if (sm != null) {
                 checkNewProxyPermission(Reflection.getCallerClass(), cl);
             }
-            ## 获取参数类型是 InvocationHandler.class 的代理类构造函数
+            //获取参数类型是 InvocationHandler.class 的代理类构造函数
             final Constructor<?> cons = cl.getConstructor(constructorParams);
             final InvocationHandler ih = h;
-            ## 如果代理类是不可访问的, 就使用特权将它的构造器设置为可访问
+            //如果代理类是不可访问的, 就使用特权将它的构造器设置为可访问
             if (!Modifier.isPublic(cl.getModifiers())) {
                 AccessController.doPrivileged(new PrivilegedAction<Void>() {
                     public Void run() {
@@ -42,7 +43,7 @@ public static Object newProxyInstance(ClassLoader loader,Class<?>[] interfaces,I
                     }
                 });
             }
-            ## 传入InvocationHandler实例去构造一个代理类的实例,所有代理类都继承自Proxy,而Proxy构造方法需要InvocationHandler实例作为参数
+            //传入InvocationHandler实例去构造一个代理类的实例,所有代理类都继承自Proxy,而Proxy构造方法需要InvocationHandler实例作为参数
             return cons.newInstance(new Object[]{h});
         } catch (IllegalAccessException|InstantiationException e) {
             throw new InternalError(e.toString(), e);
@@ -60,9 +61,9 @@ public static Object newProxyInstance(ClassLoader loader,Class<?>[] interfaces,I
     
 ```
 
-### 查找或则生成代理类
+##### 查找或生成代理类
 
-```
+```java
 private static Class<?> getProxyClass0(ClassLoader loader,Class<?>... interfaces) {
         if (interfaces.length > 65535) {
             throw new IllegalArgumentException("interface limit exceeded");
@@ -71,20 +72,20 @@ private static Class<?> getProxyClass0(ClassLoader loader,Class<?>... interfaces
         // If the proxy class defined by the given loader implementing
         // the given interfaces exists, this will simply return the cached copy;
         // otherwise, it will create the proxy class via the ProxyClassFactory
-        ## 如果由实现给定接口的代理类存在，简单地返回缓存的副本否则将通过ProxyClassFactory创建代理类
+        //如果由实现给定接口的代理类存在，简单地返回缓存的副本否则将通过ProxyClassFactory创建代理类
         return proxyClassCache.get(loader, interfaces);
     }
 
 ```
 
-### 代理类创建工厂
+##### 代理类创建工厂类
 
-```
+```java
 private static final class ProxyClassFactory implements BiFunction<ClassLoader, Class<?>[], Class<?>>{
         // prefix for all proxy class names(代理类名称前缀)
         private static final String proxyClassNamePrefix = "$Proxy";
         // next number to use for generation of unique proxy class names
-        ## 用原子类来生成代理类的序号, 保证序号唯一
+        //用原子类来生成代理类的序号, 保证序号唯一
         private static final AtomicLong nextUniqueNumber = new AtomicLong();
 
         @Override
@@ -101,7 +102,7 @@ private static final class ProxyClassFactory implements BiFunction<ClassLoader, 
                     interfaceClass = Class.forName(intf.getName(), false, loader);
                 } catch (ClassNotFoundException e) {
                 }
-                ## intf 是否可以由指定的类加载进行加载,如果不能加载则抛出异常
+                //intf 是否可以由指定的类加载进行加载,如果不能加载则抛出异常
                 if (interfaceClass != intf) {
                     throw new IllegalArgumentException(intf + " is not visible from class loader");
                 }
@@ -109,7 +110,7 @@ private static final class ProxyClassFactory implements BiFunction<ClassLoader, 
                  * Verify that the Class object actually represents an
                  * interface.
                  */
-                 ## intf是否是一个接口,如果不是接口则抛出异常。
+                 //intf是否是一个接口,如果不是接口则抛出异常。
                 if (!interfaceClass.isInterface()) {
                     throw new IllegalArgumentException(
                         interfaceClass.getName() + " is not an interface");
@@ -117,14 +118,14 @@ private static final class ProxyClassFactory implements BiFunction<ClassLoader, 
                 /*
                  * Verify that this interface is not a duplicate.
                  */
-                ## intf在数组中是否有重复,如果重复抛出异常
+                //intf在数组中是否有重复,如果重复抛出异常
                 if (interfaceSet.put(interfaceClass, Boolean.TRUE) != null) {
                     throw new IllegalArgumentException("repeated interface: " + interfaceClass.getName());
                 }
             }
             // package to define proxy class in 生成代理类的包名
             String proxyPkg = null;     
-            ## 代理类的访问标志, 默认是 public final
+            //代理类的访问标志, 默认是 public final
             int accessFlags = Modifier.PUBLIC | Modifier.FINAL;
 
             /*
@@ -132,13 +133,13 @@ private static final class ProxyClassFactory implements BiFunction<ClassLoader, 
              * proxy class will be defined in the same package.  Verify that
              * all non-public proxy interfaces are in the same package.
              */
-             ## 验证所有非公共代理接口都在同一个包中
+             //验证所有非公共代理接口都在同一个包中
             for (Class<?> intf : interfaces) {
-                ## 获取接口的访问标志
+                //获取接口的访问标志
                 int flags = intf.getModifiers();
-                ## 如果接口的访问标志不是public, 那么生成代理类的包名和接口包名相同
+                //如果接口的访问标志不是public, 那么生成代理类的包名和接口包名相同
                 if (!Modifier.isPublic(flags)) {
-                    ## 生成的代理类的访问标志设置为final
+                    // 生成的代理类的访问标志设置为final
                     accessFlags = Modifier.FINAL;
                     String name = intf.getName();
                     int n = name.lastIndexOf('.');
@@ -153,7 +154,7 @@ private static final class ProxyClassFactory implements BiFunction<ClassLoader, 
 
             if (proxyPkg == null) {
                 // if no non-public proxy interfaces, use com.sun.proxy package
-                ## package 如果没有非公共代理接口,那生成的代理类都放到默认的包下: com.sun.proxy
+                //package 如果没有非公共代理接口,那生成的代理类都放到默认的包下: com.sun.proxy
                 proxyPkg = ReflectUtil.PROXY_PACKAGE + ".";
             }
 
@@ -161,16 +162,16 @@ private static final class ProxyClassFactory implements BiFunction<ClassLoader, 
              * Choose a name for the proxy class to generate.
              */
             long num = nextUniqueNumber.getAndIncrement();
-            ## 生成代理类的全限定名, 包名+前缀+序号, 例如：com.sun.proxy.$Proxy0
+            //生成代理类的全限定名, 包名+前缀+序号, 例如：com.sun.proxy.$Proxy0
             String proxyName = proxyPkg + proxyClassNamePrefix + num;
 
             /*
              * Generate the specified proxy class.
              */
-             ## 这里是核心, 用 ProxyGenerator 来生成字节码, 该类放在sun.misc包下
+             //这里是核心, 用 ProxyGenerator 来生成字节码, 该类放在sun.misc包下
             byte[] proxyClassFile = ProxyGenerator.generateProxyClass(proxyName, interfaces, accessFlags);
             try {
-                ## 根据二进制文件生成相应的Class实例
+                //根据二进制文件生成相应的Class实例
                 return defineClass0(loader, proxyName,proxyClassFile, 0, proxyClassFile.length);
             } catch (ClassFormatError e) {
                 /*
@@ -187,9 +188,11 @@ private static final class ProxyClassFactory implements BiFunction<ClassLoader, 
 
 ```
 
-### ProxyGenerator.generateProxyClass //生成代理类核心代码,并写入磁盘
+##### ProxyGenerator.generateProxyClass 
 
-```
+- 生成代理类核心代码,并写入磁盘
+
+```java
 @param var0 : 代理类名
 @param var1 : 代理类接口数组
 @param var2 : 访问限制 public 或则 final
@@ -229,11 +232,11 @@ public static byte[] generateProxyClass(final String var0, Class<?>[] var1, int 
 
 ```
 
-### ProxyGenerator.generateClassFile
+##### ProxyGenerator.generateClassFile
 
-### 生成代理类字节码文件,并返回字节码数组
+- 生成代理类字节码文件,并返回字节码数组
 
-```
+```java
 private byte[] generateClassFile() {
         //1、将所有的方法组装成ProxyMethod对象
         //首先为代理类生成toString, hashCode, equals等代理方法
@@ -368,9 +371,9 @@ generateClassFile
 
 ```
 
-### 代理类字节码文件分析
+##### 代理类字节码文件分析
 
-```
+```java
 package com.sun.proxy;
 
 import com.doubibi.framework.util.proxy.HelloService;
@@ -488,8 +491,5 @@ public final class $Proxy0 extends Proxy
     }
   }
 }
-
- $Proxy0
-
 
 ```
