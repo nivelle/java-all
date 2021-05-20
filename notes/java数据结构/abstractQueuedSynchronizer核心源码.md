@@ -154,9 +154,9 @@ static final class NonfairSync extends Sync
 static final class FairSync extends Sync 
 ```
 
-#### 公平锁实现
+### 公平锁实现
 
-- ReentrantLock.lock()
+##### ReentrantLock.lock()
 
 ```java
 public void lock() {
@@ -165,7 +165,7 @@ public void lock() {
 }
 ```
 
-- FairSync.lock()//静态内部类,公平锁的实现
+##### FairSync.lock()//静态内部类,公平锁的实现
 
 ```JAVA
 final void lock() {
@@ -184,7 +184,9 @@ public final void acquire(int arg) {
     }
 ```
 
-- ReentrantLock.FairSync.tryAcquire() //公平锁抽象类FairSync尝试使用cas获取锁
+##### ReentrantLock.FairSync.tryAcquire() 
+
+- 公平锁抽象类FairSync尝试使用cas获取锁
 
 ```java
 protected final boolean tryAcquire(int acquires) {
@@ -221,7 +223,9 @@ protected final boolean tryAcquire(int acquires) {
 }
 ```
 
-- AbstractQueuedSynchronizer.addWaiter()//调用这个方法，说明上面tryAcquire(int acquires)尝试获取锁方法失败了,可能已经有别的线程占有了锁；加入等待队列
+##### AbstractQueuedSynchronizer.addWaiter()
+
+- 调用这个方法，说明上面tryAcquire(int acquires)尝试获取锁方法失败了,可能已经有别的线程占有了锁；加入等待队列
 
 ```java
 private Node addWaiter(Node mode) {//mode= Node.EXCLUSIVE
@@ -248,7 +252,9 @@ private Node addWaiter(Node mode) {//mode= Node.EXCLUSIVE
 
 ```
 
-- AbstractQueuedSynchronizer.enq() //循环尝试加入到尾巴节点，直到成功;尾巴节点为null或者多个节点争着加入到CLH同步队列
+##### AbstractQueuedSynchronizer.enq() 
+
+- 循环尝试加入到尾巴节点，直到成功;尾巴节点为null或者多个节点争着加入到CLH同步队列
 
 ```JAVA
 private Node enq(final Node node) {
@@ -258,7 +264,7 @@ private Node enq(final Node node) {
             // 如果尾节点为null,说明还未初始化
             if (t == null) {
                 //头节点理论上代表获取锁的线程,它不属于队列。所以head节点的thread=null,状态初始为0,
-               // 然后有后继节点尝试获取锁的时候则被设置为-1(-1 代表后记节点需要被唤醒;shouldParkAfterFailedAcquire()方法里)
+                //然后有后继节点尝试获取锁的时候则被设置为-1(-1 代表后记节点需要被唤醒;shouldParkAfterFailedAcquire()方法里)
                 //初始化头节点和尾节点(new Node()方法可见,head 是不包含线程的假节点),第一次进入这个方法的时候初始化了等待队列，第二次自旋循环才能跳出
                 //没有获得锁的线程，在队列为空的时候首先初始化队列,head=tail
                 if (compareAndSetHead(new Node())){
@@ -279,7 +285,9 @@ private Node enq(final Node node) {
 
 ```
 
-- AbstractQueuedSynchronizer.acquireQueued() //调用上面的 addWaiter()方法[包括enq()方法]成功使得新节点已经成功入队,下面这个方法是尝试让当前节点来获取锁的(arg=1)
+##### AbstractQueuedSynchronizer.acquireQueued() 
+
+- 调用上面的 addWaiter()方法**包括enq()方法**成功使得新节点已经成功入队,下面这个方法是尝试让当前节点来获取锁的(arg=1)
 
 ```java
 final boolean acquireQueued(final Node node, int arg) {
@@ -318,10 +326,13 @@ final boolean acquireQueued(final Node node, int arg) {
     
 ```
 
-- AbstractQueuedSynchronizer.shouldParkAfterFailedAcquire()
+##### AbstractQueuedSynchronizer.shouldParkAfterFailedAcquire()
 
-```
-//这个方法在 acquireQueued 方法循环里使用第一次调用如果前置节点不为SIGNAL（-1）则会把它设置为-1,会把前一个节点的等待状态设置为SIGNAL,并返回false, 第二次调用才会返回true
+- 非head的下一个节点,继续阻塞
+
+- 这个方法在 acquireQueued 方法循环里使用第一次调用,如果前置节点不为SIGNAL（-1）则会把它设置为-1,会把前一个节点的等待状态设置为SIGNAL,并返回false, 第二次调用才会返回true
+
+```java
 private static boolean shouldParkAfterFailedAcquire(Node pred, Node node) {
         //上一个节点的等待状态,注意Node的waitStatus字段我们在上面创建Node的时候并没有指定,也就是说使用的是默认值        
         // static final int CANCELLED =  1;            
@@ -360,9 +371,11 @@ private static boolean shouldParkAfterFailedAcquire(Node pred, Node node) {
     } 
 ```
 
-- AbstractQueuedSynchronizer.parkAndCheckInterrupt() //阻塞当前线程,直到锁释放唤醒该阻塞线程
+##### AbstractQueuedSynchronizer.parkAndCheckInterrupt() 
+  
+- 阻塞当前线程,直到锁释放唤醒该阻塞线程
 
-```
+```java
 private final boolean parkAndCheckInterrupt() {
         // 阻塞当前线程，底层调用的是Unsafe的park()方法
         LockSupport.park(this);
@@ -371,19 +384,24 @@ private final boolean parkAndCheckInterrupt() {
     }   
 ```
 
-#### 非公平锁实现
 
-- ReentrantLock.lock()
+-------------------
 
-```
+### 非公平锁实现
+
+##### ReentrantLock.lock()
+
+```java
 public void lock() {
         sync.lock();
     }
 ```
 
-- ReentrantLock.NonfairSync.lock() 这个方法在公平锁模式下直接调用的 acquire(1)
+##### ReentrantLock.NonfairSync.lock()
 
-````
+- 这个方法在公平锁模式下直接调用的 acquire(1)
+
+````java
 final void lock() {
     if (compareAndSetState(0, 1)){ //直接尝试CAS更新状态变量
          setExclusiveOwnerThread(Thread.currentThread()); //如果更新成功，说明获取到锁，把当前线程设为独占线程
@@ -393,17 +411,17 @@ final void lock() {
 }
 ````
 
-- ReentrantLock.NonfairSync.tryAcquire()
+##### ReentrantLock.NonfairSync.tryAcquire()
 
-```
+```java
 protected final boolean tryAcquire(int acquires) {
       return nonfairTryAcquire(acquires);
 }
 ```
 
-- ReentrantLock.Sync.nonfairTryAcquire()
+##### ReentrantLock.Sync.nonfairTryAcquire()
 
-```
+```java
 final boolean nonfairTryAcquire(int acquires) {
             final Thread current = Thread.currentThread();
             int c = getState();
@@ -425,20 +443,21 @@ final boolean nonfairTryAcquire(int acquires) {
 }
 
 ```
+------------
 
-#### 尝试获取锁
+### 尝试获取锁
 
-- ReentrantLock.tryLock()
+##### ReentrantLock.tryLock()
 
-```
+```java
 public boolean tryLock(long timeout, TimeUnit unit) throws InterruptedException {
         return sync.tryAcquireNanos(1, unit.toNanos(timeout));
  }
 ```
 
-- abstractQueuedSynchronizer.tryAcquireNanos()
+##### abstractQueuedSynchronizer.tryAcquireNanos()
 
-````
+````java
 public final boolean tryAcquireNanos(int arg, long nanosTimeout) throws InterruptedException {
     // 如果线程中断了，抛出异常
     if (Thread.interrupted()){
@@ -449,9 +468,9 @@ public final boolean tryAcquireNanos(int arg, long nanosTimeout) throws Interrup
 }
 ````
 
-- AbstractQueuedSynchronizer.doAcquireNanos()
+##### AbstractQueuedSynchronizer.doAcquireNanos()
 
-````
+````java
 private boolean doAcquireNanos(int arg, long nanosTimeout) throws InterruptedException {
         // 如果时间已经到期了，直接返回false
         if (nanosTimeout <= 0L){
@@ -492,11 +511,12 @@ private boolean doAcquireNanos(int arg, long nanosTimeout) throws InterruptedExc
 
 ````
 
-#### 释放锁
+-----
+### 释放锁
 
-- java.util.concurrent.locks.ReentrantLock.unlock()
+##### java.util.concurrent.locks.ReentrantLock.unlock()
 
-```
+```java
 
 public void unlock() {
         sync.release(1);
@@ -504,9 +524,9 @@ public void unlock() {
 
 ```
 
-- java.util.concurrent.locks.AbstractQueuedSynchronizer.release
+##### java.util.concurrent.locks.AbstractQueuedSynchronizer.release
 
-````
+````java
 public final boolean release(int arg) {
         //调用AQS实现类的tryRelease()方法释放锁
         if (tryRelease(arg)) {
@@ -522,9 +542,9 @@ public final boolean release(int arg) {
 }
 ````
 
-- java.util.concurrent.locks.ReentrantLock.Sync.tryRelease
+##### java.util.concurrent.locks.ReentrantLock.Sync.tryRelease
 
-````
+````java
 protected final boolean tryRelease(int releases) {
             // 如果当前线程不是占有着锁的线程，抛出异常
             int c = getState() - releases;
@@ -544,7 +564,7 @@ protected final boolean tryRelease(int releases) {
 }
 ````
 
-#### 释放锁后唤醒后继节点
+##### 释放锁后唤醒后继节点
 
 ````
 private void unparkSuccessor(Node node) {
@@ -583,17 +603,18 @@ private void unparkSuccessor(Node node) {
 }
     
 ````
+------
 
-#### 核心属性
+### 核心属性
 
 ```
 private final Sync sync;
 
 ```
 
-### 核心方法:ReentrantLock 实现了Lock接口，Lock接口里面定义了java中锁应该实现的几个方法
+##### 核心方法:ReentrantLock 实现了Lock接口，Lock接口里面定义了java中锁应该实现的几个方法
 
-```
+```java
 1. void lock();//获取锁
                   
 2. void lockInterruptibly() throws InterruptedException;//获取锁（可中断）
@@ -608,10 +629,9 @@ private final Sync sync;
 
 ```
 
-### 公平锁
+##### 公平锁 tryAcquire
 
-```
-
+```java
 static final class FairSync extends Sync {
 
         // 调用的sync属性的lock()方法,这里的sync是公平锁
@@ -643,9 +663,9 @@ static final class FairSync extends Sync {
 
 ```
 
-#### 非公平锁
+##### 非公平锁 tryAcquire
 
-```
+```java
 static final class NonfairSync extends Sync {
         private static final long serialVersionUID = 7316153563782823691L;
 
@@ -667,8 +687,8 @@ static final class NonfairSync extends Sync {
     }
 
 ```
-
-### 核心内部类
+----
+##### 核心内部类
 
 ```
 // 抽象类Sync实现了AQS的部分方
@@ -681,5 +701,3 @@ static final class NonfairSync extends Sync
 static final class FairSync extends Sync
 
 ```
-
-来自: [彤哥读源码](https://mp.weixin.qq.com/s?__biz=Mzg2ODA0ODM0Nw==&mid=2247483746&idx=1&sn=a6b5bea0cb52f23e93dd223970b2f6f9&scene=21#wechat_redirect)
