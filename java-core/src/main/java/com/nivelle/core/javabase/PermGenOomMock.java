@@ -1,4 +1,4 @@
-package com.nivelle.core.javacore;
+package com.nivelle.core.javabase;
 
 import java.io.File;
 import java.net.URL;

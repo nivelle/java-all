@@ -235,7 +235,7 @@ public class CopyOnWriterArrayListMock {
          *
          * （5）CopyOnWriteArrayList只保证最终一致性，不保证实时一致性；
          *
-         *  (6) 读操作基于原理的Array ,写操作基于新的Array进行
+         *  (6) 读操作基于原来的Array,写操作基于新的Array进行
          *
          *  (8) CopyOnWriteArrayList 迭代器是只读的，不支持增删改。因为迭代器遍历的仅仅是一个快照，而对快照进行增删改是没有意义的
          */

@@ -1,4 +1,4 @@
-package com.nivelle.core.javacore;
+package com.nivelle.core.javabase;
 
 /**
  * finall不会被执行的特例

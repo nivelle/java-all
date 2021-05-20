@@ -2,25 +2,25 @@
 
 #### 核心类
 
-```
+```java
 static final class Node {
         //标识一个节点是等待中的共享模式
         static final Node SHARED = new Node();
         //标识一个节点是等待中的互斥模式
         static final Node EXCLUSIVE = null;
         /** waitStatus value to indicate thread has cancelled */
-        //等待状态标识,线程已经取消
+        //等待状态标识:线程已经取消
         static final int CANCELLED =  1;
         /** waitStatus value to indicate successor's thread needs unparking */
-        //等待状态标识,后继节点需要唤醒时，当前节点状态为-1
+        //等待状态标识:后继节点需要唤醒时，当前节点状态为-1
         static final int SIGNAL    = -1;
         /** waitStatus value to indicate thread is waiting on condition */
-        //等待状态标识,一个线程在等待一个条件
+        //等待状态标识:一个线程在等待一个条件
         static final int CONDITION = -2;
         /**
          * waitStatus value to indicate the next acquireShared should unconditionally【无条件】 propagate【传播】
          */
-        //等待标识,后面的共享锁需要无条件传播（共享锁需要连续唤醒读的线程）
+        //等待标识:后面的共享锁需要无条件传播（共享锁需要连续唤醒读的线程）
         static final int PROPAGATE = -3;
         
         // waitStatus = 0 //None of the above
@@ -101,7 +101,7 @@ static final class Node {
 
 2. **这几个变量的修改是直接使用的Unsafe这个类来操作的**
 
-```
+```java
 //队列的头节点，transient和volatile修饰
 private transient volatile Node head;
 
@@ -115,7 +115,9 @@ private volatile int state;
 
 #### 抽象方法
 
-````
+- 模版方法设计模式
+
+````java
     //互斥模式下使用:尝试获取锁
     protected boolean tryAcquire(int arg) {
         throw new UnsupportedOperationException();
@@ -143,7 +145,7 @@ private volatile int state;
 
 #### 静态抽象内部类
 
-```
+```java
 //同步锁实现,静态抽象内部类,实现了公平锁和非公平锁的共有逻辑
 abstract static class Sync extends AbstractQueuedSynchronizer
 //非公平锁
@@ -156,21 +158,23 @@ static final class FairSync extends Sync
 
 - ReentrantLock.lock()
 
-```
+```java
 public void lock() {
-     sync.lock();//调用静态抽象内部类的lock方法，抽象方法
+     //调用静态抽象内部类的lock方法，抽象方法
+     sync.lock();
 }
 ```
 
 - FairSync.lock()//静态内部类,公平锁的实现
 
-```
+```JAVA
 final void lock() {
      //这里的sync是公平锁，所以是FairSync的实例
      acquire(1);
 }
 
-// AbstractQueuedSynchronizer.acquire() //这是AQS抽象类的核心方法,尝试获取锁,如果获取失败就排队
+// AbstractQueuedSynchronizer.acquire() 
+// 这是AQS抽象类的核心方法,尝试获取锁,如果获取失败就排队
 public final void acquire(int arg) {
          //首先尝试获取锁,获取失败就放到等待队列
         // addWaiter()这里传入的节点模式为独占模式;arg默认为1  与操作 前面获取成功则不需要再检查后面的入队方法
@@ -182,7 +186,7 @@ public final void acquire(int arg) {
 
 - ReentrantLock.FairSync.tryAcquire() //公平锁抽象类FairSync尝试使用cas获取锁
 
-```
+```java
 protected final boolean tryAcquire(int acquires) {
             //获取当前线程
             final Thread current = Thread.currentThread();
@@ -192,7 +196,8 @@ protected final boolean tryAcquire(int acquires) {
             if (c == 0) {
                 // 如果没有其它线程在排队,那么当前线程尝试更新state的值为1;如果成功了,则说明当前线程获取了锁【非公平锁则不用!hasQueuedPredecessors()】
                 // hasQueuedPredecessors:判断当前线程是否位于 CLH 同步队列中的第一个。如果是则返回flase,否则返回true
-                // 判断当前节点在等待队列中是否有前驱节点的判断,如果有前驱节点说明有线程比当前线程更早的请求资源,根据公平性,当前线程请求资源失败。如果当前节点没有前驱节点的话,才有做后面的逻辑判断的必要性
+                // 判断当前节点在等待队列中是否有前驱节点的判断,如果有前驱节点说明有线程比当前线程更早的请求资源,根据公平性,当前线程请求资源失败。
+                // 如果当前节点没有前驱节点的话,才有做后面的逻辑判断的必要性
                 if (!hasQueuedPredecessors() && compareAndSetState(0, acquires)) {
                     //当前线程获取了锁，把自己设置到exclusiveOwnerThread变量中
                     setExclusiveOwnerThread(current);
@@ -216,9 +221,9 @@ protected final boolean tryAcquire(int acquires) {
 }
 ```
 
-- AbstractQueuedSynchronizer.addWaiter()//调用这个方法，说明上面tryAcquire(int acquires)尝试获取锁方法失败了,可能已经有别的线程占有了锁
+- AbstractQueuedSynchronizer.addWaiter()//调用这个方法，说明上面tryAcquire(int acquires)尝试获取锁方法失败了,可能已经有别的线程占有了锁；加入等待队列
 
-```
+```java
 private Node addWaiter(Node mode) {//mode= Node.EXCLUSIVE
         //新建一个节点,初始化的waitStatus是默认值0, 在下一个节点进来 队列的时候 在acquireQueued 方法里面修改状态, 同时阻塞下一个进来排队的线程。
         Node node = new Node(Thread.currentThread(), mode);
@@ -235,23 +240,25 @@ private Node addWaiter(Node mode) {//mode= Node.EXCLUSIVE
                 return node;
             }
         }
-        //如果上面创建尾节点失败,或者尾节点为null,则调用enq()方法；多个节点竞争加入到队列里面的情形
+        //如果上面创建尾节点失败,或者尾节点为null,则调用enq()方法；
+        //对应多个节点竞争加入到队列里面的情形
         enq(node);
         return node;
 }
 
 ```
 
--- AbstractQueuedSynchronizer.enq() //循环尝试加入到尾巴节点，直到成功;尾巴节点为null或者多个节点争着加入到CLH同步队列
+- AbstractQueuedSynchronizer.enq() //循环尝试加入到尾巴节点，直到成功;尾巴节点为null或者多个节点争着加入到CLH同步队列
 
-```
+```JAVA
 private Node enq(final Node node) {
         //自旋,不断尝试
         for (;;) {
             Node t = tail;
             // 如果尾节点为null,说明还未初始化
             if (t == null) {
-                //头节点理论上代表获取锁的线程,它不属于队列。所以head节点的thread=null,状态初始为0,然后有后继节点尝试获取锁的时候则被设置为-1(-1 代表后记节点需要被唤醒;shouldParkAfterFailedAcquire()方法里)
+                //头节点理论上代表获取锁的线程,它不属于队列。所以head节点的thread=null,状态初始为0,
+               // 然后有后继节点尝试获取锁的时候则被设置为-1(-1 代表后记节点需要被唤醒;shouldParkAfterFailedAcquire()方法里)
                 //初始化头节点和尾节点(new Node()方法可见,head 是不包含线程的假节点),第一次进入这个方法的时候初始化了等待队列，第二次自旋循环才能跳出
                 //没有获得锁的线程，在队列为空的时候首先初始化队列,head=tail
                 if (compareAndSetHead(new Node())){
@@ -274,7 +281,7 @@ private Node enq(final Node node) {
 
 - AbstractQueuedSynchronizer.acquireQueued() //调用上面的 addWaiter()方法[包括enq()方法]成功使得新节点已经成功入队,下面这个方法是尝试让当前节点来获取锁的(arg=1)
 
-```
+```java
 final boolean acquireQueued(final Node node, int arg) {
         // 失败标识
         boolean failed = true;

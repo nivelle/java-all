@@ -1,4 +1,4 @@
-package com.nivelle.core.javacore;
+package com.nivelle.core.javabase;
 
 import com.nivelle.core.pojo.Parent;
 import com.nivelle.core.pojo.Son;
