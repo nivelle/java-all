@@ -1,16 +1,15 @@
 package com.nivelle.core.utils;
 
-import cn.hutool.core.collection.CollUtil;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
 import com.google.common.collect.Maps;
 import org.assertj.core.util.Lists;
 import org.springframework.util.CollectionUtils;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 /**
@@ -23,7 +22,7 @@ public class ParseData {
 
 
     public static void main(String[] args) {
-        List<UserData> list = getUsers("/Users/nivellefu/IdeaProjects/java-guides/java-core/src/main/resources/nd_data2B.txt");
+        List<UserData> list = getUsers("/Users/nivellefu/IdeaProjects/java-guides/java-core/src/main/resources/nd_data1B.txt");
         List<String> bookList = getBooks();
         System.out.println("list size:" + list.size());
         System.out.println("bookList size:" + bookList.size());
@@ -40,33 +39,52 @@ public class ParseData {
                 Map<String, List<UserData>> bookMap = userData1.stream().collect(Collectors.groupingBy(UserData::getBookId));
                 result.put("阅读书籍数", bookMap.size());
                 Iterator<String> iterator1 = bookMap.keySet().iterator();
-                AtomicInteger largeFiveCount = new AtomicInteger(0);
-                AtomicInteger intBookListCount = new AtomicInteger(0);
+                int largeFiveCount = 0;
+                int largeFiveCount1 = 0;
+                int intBookListCount = 0;
                 while (iterator1.hasNext()) {
                     String bookId = iterator1.next();
                     List<UserData> bookData = bookMap.get(bookId);
                     IntSummaryStatistics ageSummary = bookData.stream().collect(Collectors.summarizingInt(p -> Integer.parseInt(p.getReadTimes())));
                     long readTimes = ageSummary.getSum();
                     if (readTimes >= 5) {
-                        largeFiveCount.incrementAndGet();
+                        largeFiveCount += 1;
+                    }
+                    if (readTimes >= 5 && bookList.contains(bookId)) {
+                        largeFiveCount1 += 1;
                     }
                     if (bookList.contains(bookId)) {
-                        intBookListCount.incrementAndGet();
+                        intBookListCount += 1;
                     }
                 }
                 result.put("大于5本数", largeFiveCount);
-                BigDecimal rate = new BigDecimal(String.valueOf(intBookListCount)).divide(new BigDecimal(String.valueOf(bookList.size()))).setScale(4, BigDecimal.ROUND_HALF_UP);
-                result.put("重合率", rate);
+                if (bookMap.size() > 0) {
+                    BigDecimal rate = new BigDecimal(String.valueOf(intBookListCount)).divide(new BigDecimal(String.valueOf(bookMap.size())),4, BigDecimal.ROUND_HALF_UP);
+                    result.put("阅读书籍数的重合率", rate);
+                } else {
+                    result.put("阅读书籍数的重合率", 0);
+
+                }
+
+                if (largeFiveCount > 0) {
+                    BigDecimal rate2 = new BigDecimal(String.valueOf(largeFiveCount1)).divide(new BigDecimal(String.valueOf(largeFiveCount)),4, BigDecimal.ROUND_HALF_UP);
+                    result.put("大于5分钟的书籍重合率", rate2);
+
+                } else {
+                    result.put("大于5分钟的书籍重合率", 0);
+
+                }
+
             } else {
-                result.put("readBookCount", "0");
+                result.put("阅读书籍数", "0");
             }
             resultList.add(result);
         }
         System.out.println("结果：" + GsonUtils.toJson(resultList));
 
 
-        ExcelWriter writer = ExcelUtil.getWriter("/Users/nivellefu/IdeaProjects/java-guides/java-core/src/main/resources/nd_data2BResult.xlsx");
-        writer.merge(4, "1期A测试");
+        ExcelWriter writer = ExcelUtil.getWriter("/Users/nivellefu/IdeaProjects/java-guides/java-core/src/main/resources/nd_data1BResult.xlsx");
+        writer.merge(5, "2期A测试");
         writer.write(resultList, true);
         writer.close();
 
