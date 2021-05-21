@@ -65,16 +65,16 @@ public class MakeSqlString {
 //            System.out.println(stringBuilder2.toString());
 //        }
 
-        StringBuilder stringBuilder = new StringBuilder();
-        for (int i = 0; i < 64; i++) {
-            StringBuilder stringBuilder2 = new StringBuilder("select user_name,process from nd_read_process_");
-            stringBuilder2.append(i);
-            stringBuilder2.append(" where book_id = '11803818' ");
-            stringBuilder2.append(" union all ");
-            stringBuilder.append(stringBuilder2);
-            stringBuilder.append("\n");
-        }
-        System.out.println(stringBuilder.toString());
+//        StringBuilder stringBuilder = new StringBuilder();
+//        for (int i = 0; i < 64; i++) {
+//            StringBuilder stringBuilder2 = new StringBuilder("select user_name,process from nd_read_process_");
+//            stringBuilder2.append(i);
+//            stringBuilder2.append(" where book_id = '11803818' ");
+//            stringBuilder2.append(" union all ");
+//            stringBuilder.append(stringBuilder2);
+//            stringBuilder.append("\n");
+//        }
+//        System.out.println(stringBuilder.toString());
 
 
 //        for (int i = 0; i < 64; i++) {
@@ -98,7 +98,18 @@ public class MakeSqlString {
 //            stringBuilder2.append(" ADD INDEX idx_name (`user_name`);");
 //            System.out.println(stringBuilder2.toString());
 //        }
-
+        StringBuilder stringBuilder2 = new StringBuilder();
+        for (int i = 41; i <= 100; i++) {
+            stringBuilder2.append("inspur"+i);
+            stringBuilder2.append(",");
+            stringBuilder2.append("用户"+i);
+            stringBuilder2.append(",");
+            stringBuilder2.append("120000000"+i);
+            stringBuilder2.append(",");
+            stringBuilder2.append("1");
+            stringBuilder2.append("\n");
+        }
+        System.out.println(stringBuilder2.toString());
 
     }
 }

@@ -386,8 +386,7 @@ final boolean transferForSignal(Node node) {
             LockSupport.unpark(node.thread);
         }
         //如果更新上一个节点的等待状态为SIGNAL成功了，则返回true,这时上面的的循环不成立了，退出循环，也即只通知了一个节点
-        // 、
-        v此时当前节点还时阻塞状态,也就是调用个signal()的时候并不会真正唤醒一个节点只是把节点从条件队列移到了AQS队列
+        //v此时当前节点还时阻塞状态,也就是调用个signal()的时候并不会真正唤醒一个节点只是把节点从条件队列移到了AQS队列
         return true;
 }
 ````
