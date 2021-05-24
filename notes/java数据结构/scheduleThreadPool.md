@@ -520,15 +520,15 @@ final void tryTerminate() {
 
 #### 一个worker里面可以在执行完一个任务后置为空(task=null),然后再添加一个未执行的任
 
-** 如果发生了以下四件事中的任意一件，那么Worker需要被回收:**
+##### **如果发生了以下四件事中的任意一件，那么Worker需要被回收:**
 
-- 1. Worker个数比线程池最大大小要大
+- Worker个数比线程池最大大小要大
 
-- 2. 线程池处于STOP状态
+- 线程池处于STOP状态
 
-- 3. 线程池处于SHUTDOWN状态并且阻塞队列为空
+- 线程池处于SHUTDOWN状态并且阻塞队列为空
 
-- 4. 使用超时时间从阻塞队列里拿数据,并且超时之后没有拿到数据(allowCoreThreadTimeOut || workerCount > corePoolSize)
+- 使用超时时间从阻塞队列里拿数据,并且超时之后没有拿到数据(allowCoreThreadTimeOut || workerCount > corePoolSize)
 
 #### getTask() 获取未执行的任务
 
@@ -541,7 +541,8 @@ private Runnable getTask() {
             int c = ctl.get();
             // 获取线程池状态
             int rs = runStateOf(c);
-            // 如果线程池是 SHUTDOWN 状态并且阻塞队列为空的话，worker数量减一，直接返回null (SHUTDOWN状态还会处理阻塞队列任务，但是阻塞队列为空的话就结束了),如果线程池是STOP状态的话,worker数量减1,直接返回null(STOP状态不处理阻塞队列任务)
+            // 如果线程池是 SHUTDOWN 状态并且阻塞队列为空的话，worker数量减一，直接返回null (SHUTDOWN状态还会处理阻塞队列任务，但是阻塞队列为空的话就结束了),
+            // 如果线程池是STOP状态的话,worker数量减1,直接返回null(STOP状态不处理阻塞队列任务)
             // 开始回收闲置Worker（控制变量-1）
             // Check if queue empty only if necessary.
             if (rs >= SHUTDOWN && (rs >= STOP || workQueue.isEmpty())) {
@@ -594,7 +595,7 @@ private Runnable getTask() {
 
 #### 提交优先级
 
-- 核心线程 -> 阻塞队列->非核心线程池
+- 核心线程 -> 阻塞队列->非核心线程
 
 #### 执行优先级
 
