@@ -17,7 +17,7 @@
     
       - ma = acquireMethodAccessor();
       
-    - return ma.invoke(obj, args);
+     return ma.invoke(obj, args);
     
       - Object invoke(Object var1, Object[] var2) throws IllegalArgumentException, InvocationTargetException;
 ``````
@@ -27,7 +27,7 @@
 - 接口:MethodAccessor
 
 - 抽象类:MethodAccessorImpl
-
+  DelegatingMethodAccessorImpl
 ##### 子类:DelegatingMethodAccessorImpl
 
 ```java
