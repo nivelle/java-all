@@ -93,14 +93,19 @@ public interface ScheduledExecutorService extends ExecutorService {
 
     // 高3位用来表示线程池状态
     // -1 << 29 = 11111111111111111111111111111111 << 29 = 11100000000000000000000000000000(前3位为111)
+    // 可以接受新的任务，也可以处理阻塞队列里的任务
     private static final int RUNNING = -1 << COUNT_BITS;
     // 0 << 29 = 00000000000000000000000000000000 << 29 = 00000000000000000000000000000000(前3位为000)
+    //不接受新的任务,但是可以处理阻塞队列里的任务
     private static final int SHUTDOWN = 0 << COUNT_BITS;
     // 1 << 29 = 00000000000000000000000000000001 << 29 = 00100000000000000000000000000000(前3位为001)
+    // 不接受新的任务,不处理阻塞队列里的任务，中断正在处理的任务
     private static final int STOP = 1 << COUNT_BITS;
     // 2 << 29 = 00000000000000000000000000000010 << 29 = 01000000000000000000000000000000(前3位为010)
+    // 过渡状态,也就是说所有的任务都执行完了，当前线程池已经没有有效的线程，这个时候线程池的状态将会TIDYING，并且将要调用terminated方法
     private static final int TIDYING = 2 << COUNT_BITS;
     // 3 << 29 = 00000000000000000000000000000011 << 29 = 01100000000000000000000000000000(前3位为011)
+    // 终止状态。terminated方法调用完成以后的状态
     private static final int TERMINATED = 3 << COUNT_BITS;
 
     //得到状态，CAPACITY 的非操作得到的二进制位11100000000000000000000000000000，然后做在一个与操作，相当于直接取前3位的的值
@@ -119,10 +124,10 @@ public interface ScheduledExecutorService extends ExecutorService {
     }
     
 ```
+-----
+### 内部类: Worker（包装了任务和线程）
 
-#### 内部类: Worker（包装了任务和线程）
-
-```
+```java
 private final class Worker extends AbstractQueuedSynchronizer implements Runnable {
         //真正工作的线程
         final Thread thread;
@@ -133,24 +138,22 @@ private final class Worker extends AbstractQueuedSynchronizer implements Runnabl
         //构造方法
         Worker(Runnable firstTask) {
             //把状态位设置成-1，这样任何线程都不能得到Worker的锁，除非调用了unlock方法。
-            //这个unlock方法会在runWorker方法中一开始就调用,这是为了确保Worker构造出来之后,没有任何线程能够得到它的锁,除非调用了runWorker之后,其他线程才能获得Worker的锁
+            //这个unlock方法会在runWorker方法中一开始就调用,这是为了确保Worker构造出来之后,没有任何线程能够得到它的锁,
+            //除非调用了runWorker之后,其他线程才能获得Worker的锁
             //防止它在执行前被中断,至于中断时是怎么判断的
             setState(-1); // inhibit【抑制】 interrupts until runWorker
             this.firstTask = firstTask;
             //这里把 Worker本身作为Runnable传给线程(worker就是线程要执行的任务)
-            //worker 重写了Runable的run方法,也就是用的是worker的runWorker方法
+            //worker 重写了 Runnable 的run方法,也就是用的是worker的runWorker方法,worker也是个runnable
             this.thread = getThreadFactory().newThread(this);
         }
         /** Delegates main run loop to outer runWorker  */
         public void run() {
             runWorker(this);
         }
-
         // Lock methods
-        //
         // The value 0 represents the unlocked state.
         // The value 1 represents the locked state.
-
         protected boolean isHeldExclusively() {
             return getState() != 0;
         }
@@ -187,27 +190,12 @@ private final class Worker extends AbstractQueuedSynchronizer implements Runnabl
 
 ```
 
-#### 线程池状态
-
-```
-    //可以接受新的任务，也可以处理阻塞队列里的任务
-    private static final int RUNNING    = -1 << COUNT_BITS;
-    // 不接受新的任务,但是可以处理阻塞队列里的任务
-    private static final int SHUTDOWN   =  0 << COUNT_BITS;
-    // 不接受新的任务,不处理阻塞队列里的任务，中断正在处理的任务
-    private static final int STOP       =  1 << COUNT_BITS;
-    // 过渡状态,也就是说所有的任务都执行完了，当前线程池已经没有有效的线程，这个时候线程池的状态将会TIDYING，并且将要调用terminated方法
-    private static final int TIDYING    =  2 << COUNT_BITS;
-    // 终止状态。terminated方法调用完成以后的状态
-    private static final int TERMINATED =  3 << COUNT_BITS;
-
-```
-
+----
 ### 核心方法
 
 #### ThreadPoolExecutor.execute(Runnable command) 任务提交
 
-```
+```java
 //提交任务,任务并非立即执行
 public void execute(Runnable command) {
         //任务不能为空
@@ -225,7 +213,8 @@ public void execute(Runnable command) {
             //重新获取控制变量
             c = ctl.get();
         }
-        //如果达到了核心数量且线程池是运行状态,任务入队列(线程池的线程大小比核心线程大小要大,并且线程池还在RUNNING状态,阻塞队列也没满的情况,加到阻塞队列里)
+        //如果达到了核心数量且线程池是运行状态
+        //任务入队列(线程池的线程大小比核心线程大小要大,并且线程池还在RUNNING状态,阻塞队列也没满的情况,加到阻塞队列里)
         if (isRunning(c) && workQueue.offer(command)) {
             // 获取控制变量（线程数）
             int recheck = ctl.get();
@@ -233,13 +222,15 @@ public void execute(Runnable command) {
             if (! isRunning(recheck) && remove(command)){
                 reject(command);
             }
-            //容错检查工作线程数量是否为0，如果为0就创建一个(这个时候可能突然线程池关闭了，所以再做一层判断)
+            //容错检查工作线程数量是否为0,如果为0就创建一个
+           // 这个时候可能突然线程池关闭了,所以再做一层判断
             else if (workerCountOf(recheck) == 0){
                 //创建一个线程
                 addWorker(null, false);
             }
         }
-        //任务入队列失败，尝试创建非核心工作线程。如果创建失败则执行拒绝策略 (看第二个参数：true 是加核心线程，false和非核心工作线程)
+        //任务入队列失败，尝试创建非核心工作线程。
+        //如果创建失败则执行拒绝策略 (看第二个参数：true 是加核心线程，false和非核心工作线程)
         else if (!addWorker(command, false)){
             reject(command);//有两次会执行决绝策略
         }
@@ -247,11 +238,15 @@ public void execute(Runnable command) {
  
 ```   
 
-#### 这个方法主要用来创建一个工作线程,并启动之,其中会做线程池状态、工作线程数量等各种检测。
+-----
 
-#### 第二个参数为true表示创建核心线程,false表示创建非核心线程
+####  addWorker(Runnable firstTask, boolean core)
 
-```  
+- 这个方法主要用来创建一个工作线程,并启动之,其中会做线程池状态、工作线程数量等各种检测。
+
+- 第二个参数为true表示创建核心线程,false表示创建非核心线程
+
+```java
 private boolean addWorker(Runnable firstTask, boolean core) {
         retry:
         for (;;) {
@@ -288,8 +283,8 @@ private boolean addWorker(Runnable firstTask, boolean core) {
                     continue retry;
                 }
             }
-        }
-        ## 走到这一步说明cas操作成功了，线程池线程数量+1(addWorker调用前提是已经判定能添加)
+        }//retry 循环结束
+        /**走到这一步说明cas操作成功了，线程池线程数量+1(addWorker调用前提是已经判定能添加)**/
         
         //任务是否成功启动标识
         boolean workerStarted = false;
@@ -323,7 +318,7 @@ private boolean addWorker(Runnable firstTask, boolean core) {
                         }
                         //worker添加到线程池的 workers 属性中，是个HashSet
                         workers.add(w);
-                        // 得到目前线程池中的线程个数
+                        // 得到目前线程池中的任务个数
                         int s = workers.size();
                         // 如果线程池中的线程个数超过了线程池中的最大线程数时，更新一下这个最大线程数
                         if (s > largestPoolSize){
@@ -360,14 +355,14 @@ private boolean addWorker(Runnable firstTask, boolean core) {
 
 - worker 里面 的 run()方法调用的真正逻辑
 
-````   
+````java  
 //private final class Worker extends AbstractQueuedSynchronizer implements Runnable
 public void run() {
    runWorker(this);//入参是当前Worker实例本身
 }      
 ````
 
-```
+```java
 final void runWorker(Worker w) {
          // 得到当前线程
         Thread wt = Thread.currentThread();
@@ -436,7 +431,9 @@ final void runWorker(Worker w) {
 
 #### processWorkerExit(Worker w,Boolean completeAbruptly)
 
-``` 
+- 每次执行任务之后都要检查是否需要回收不需要的Worker
+
+```java
 private void processWorkerExit(Worker w, boolean completedAbruptly) {
         // 如果Worker非正常结束流程调用processWorkerExit方法，worker数量减一。
         // 如果是正常结束的话，在getTask方法里worker数量已经减一了
@@ -480,10 +477,10 @@ private void processWorkerExit(Worker w, boolean completedAbruptly) {
         }
     }  
 ```
+---------
+##### 在回收Worker的时候线程池会尝试结束自己的运行，tryTerminate方法
 
-## 在回收Worker的时候线程池会尝试结束自己的运行，tryTerminate方法
-
-```
+```java
 final void tryTerminate() {
         for (;;) {
             int c = ctl.get();
@@ -525,21 +522,17 @@ final void tryTerminate() {
 
 ** 如果发生了以下四件事中的任意一件，那么Worker需要被回收:**
 
--
-    1. Worker个数比线程池最大大小要大
+- 1. Worker个数比线程池最大大小要大
 
--
-    2. 线程池处于STOP状态
+- 2. 线程池处于STOP状态
 
--
-    3. 线程池处于SHUTDOWN状态并且阻塞队列为空
+- 3. 线程池处于SHUTDOWN状态并且阻塞队列为空
 
--
-    4. 使用超时时间从阻塞队列里拿数据,并且超时之后没有拿到数据(allowCoreThreadTimeOut || workerCount > corePoolSize)
+- 4. 使用超时时间从阻塞队列里拿数据,并且超时之后没有拿到数据(allowCoreThreadTimeOut || workerCount > corePoolSize)
 
 #### getTask() 获取未执行的任务
 
-```
+```java
 private Runnable getTask() {
         // 如果使用超时时间并且也没有拿到任务的标识
         boolean timedOut = false; // Did the last poll() time out?
@@ -596,6 +589,7 @@ private Runnable getTask() {
 
 - 在getTask里 decrementWorkerCount（）和 compareAndDecrementWorkerCount（）里是正常处理的回收操作
 
+----------
 ### 任务提交优先级/执行优先级
 
 #### 提交优先级
@@ -605,5 +599,3 @@ private Runnable getTask() {
 #### 执行优先级
 
 - 核心线程->非核心线程—>阻塞队列
-
-来自: [彤哥读源码](https://mp.weixin.qq.com/s?__biz=Mzg2ODA0ODM0Nw==&mid=2247483746&idx=1&sn=a6b5bea0cb52f23e93dd223970b2f6f9&scene=21#wechat_redirect)

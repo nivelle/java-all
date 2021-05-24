@@ -22,12 +22,11 @@
       - Object invoke(Object var1, Object[] var2) throws IllegalArgumentException, InvocationTargetException;
 ``````
 
-#### 子类实现(每个Method对象包含一个root对象，root对象里持有一个MethodAccessor对象。我们获得的Method独享相当于一个root对象的镜像，所有这类Method共享root里的MethodAccessor对象,这个对象由ReflectionFactory方法生成,ReflectionFactory对象在Method类中是static final的由native方法实例化)
+#### 子类实现(每个Method对象包含一个root对象，root对象里持有一个MethodAccessor对象。我们获得的Method对象相当于一个root对象的镜像，所有这类Method共享root里的MethodAccessor对象,这个对象由ReflectionFactory方法生成,ReflectionFactory对象在Method类中是static final的由native方法实例化)
 
 - 接口:MethodAccessor
 
-- 抽象类:MethodAccessorImpl
-  DelegatingMethodAccessorImpl
+- 抽象类:MethodAccessorImpl DelegatingMethodAccessorImpl
 ##### 子类:DelegatingMethodAccessorImpl
 
 ```java
@@ -52,7 +51,7 @@
                      //MethodAccessorGenerator使用了asm字节码动态加载技术
                     
                      //否则使用nativeMethodAccessorImpl的invoke方法，执行效率比动态字节码高
-                     (少了C++代码和java代码的转换,但是生成动态字节码也比较耗时,所以要设置Dsun.reflect.inflationThreshold=15来设置阀值，调用超过15次再使用动态字节码技术)
+                     //(少了C++代码和java代码的转换,但是生成动态字节码也比较耗时,所以要设置**Dsun.reflect.inflationThreshold=15**来设置阀值，调用超过15次再使用动态字节码技术)
                      return invoke0(this.method, var1, var2);
          }
           
@@ -66,12 +65,8 @@
 
 ### 方法句柄
 
-```
-JSR-292是JVM为动态类型支持而出现的规范,在JAVA7中实现了这个规则,这个包的主要作用就在之前只能依赖符号引用来确定目标方法的基础上,增加了一种动态确定目标方法的机制,也就是方法句柄MethodHandler。
-
-这有点类似于C++中的函数指针。从功能上讲,方法句柄类似于反射中的Method类,但两者之间有区别,方法句柄是轻量级的,我们从Method和MethodHandler的实现上可以看出来,Method的invoke方法会涉及到JAVA的安全访问检查,而方法句柄的所有invoke方法都是native方法,其性能优于反射.
-
-```
+##### JSR-292是JVM为动态类型支持而出现的规范,在JAVA7中实现了这个规则,这个包的主要作用就在之前只能依赖符号引用来确定目标方法的基础上,增加了一种动态确定目标方法的机制,也就是方法句柄MethodHandler。
+##### 这有点类似于C++中的函数指针。从功能上讲,方法句柄类似于反射中的Method类,但两者之间有区别,方法句柄是轻量级的,我们从Method和MethodHandler的实现上可以看出来,Method的invoke方法会涉及到JAVA的安全访问检查,而方法句柄的所有invoke方法都是native方法,其性能优于反射.
 
 - invokeVirtual:根据虚方法表调用虚方法（动态分派）
 
