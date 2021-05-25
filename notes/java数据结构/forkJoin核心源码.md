@@ -21,7 +21,7 @@ static final int SMASK       = 0x0000ffff;//后十六位的task标签
 
 ### 标记当前task的completion状态,同时根据情况唤醒等待该task的线程.
 
-```
+```java
 private int setCompletion(int completion) {
     for (int s;;) {
         //开启一个循环,如果当前task的status已经是各种完成(小于0),则直接返回status,这个status可能是某一次循环前被其他线程完成.
@@ -46,7 +46,7 @@ private int setCompletion(int completion) {
 
 ### 运行ForkJoinTask的核心方法
 
-```
+```java
  final int doExec() {
         int s; boolean completed;
         //仅未完成的任务会运行,其他情况会忽略
@@ -69,7 +69,7 @@ private int setCompletion(int completion) {
 
 ### 处理异常流程
 
-```
+```java
  //记录异常并且在符合条件时传播异常行为
  private int setExceptionalCompletion(Throwable ex) {
         //首先记录异常信息到结果
@@ -86,7 +86,7 @@ private int setCompletion(int completion) {
 
 ### 记录异常完成
 
-```
+```java
 final int recordExceptionalCompletion(Throwable ex) {
         int s;
         if ((s = status) >= 0) {
@@ -126,7 +126,7 @@ final int recordExceptionalCompletion(Throwable ex) {
 
 ### 内部等待任务完成,直到完成或超时
 
-```
+```java
 final void internalWait(long timeout) {
         int s;
         //status小于0代表已完成,直接忽略wait.未完成,则试着加上SIGNAL的标记,令完成任务的线程唤醒这个等待.
@@ -150,7 +150,7 @@ final void internalWait(long timeout) {
 
 ### externalAwaitDone
 
-```
+```java
 //外部线程等待一个common池中的任务完成.
 private int externalAwaitDone() {
     int s = ((this instanceof CountedCompleter) ? 

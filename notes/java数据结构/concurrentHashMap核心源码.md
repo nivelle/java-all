@@ -47,7 +47,7 @@ public ConcurrentHashMap(int initialCapacity) {
 
 （8）如果元素不存在，整个Map的元素个数加1，并检查是否需要扩容；
 
-```
+```java
 final V putVal(K key, V value, boolean onlyIfAbsent) {
         if (key == null || value == null) {
            throw new NullPointerException();##key 和 value 都不能为null
@@ -144,7 +144,7 @@ final V putVal(K key, V value, boolean onlyIfAbsent) {
 
 （5）其它线程添加元素后如果发现存在扩容，也会加入的扩容行列中来；
 
-```
+```java
 @param check if <0, don't check resize, if <= 1 only check if uncontended
 private final void addCount(long x, int check) {
         CounterCell[] as;
@@ -210,7 +210,7 @@ private final void addCount(long x, int check) {
 
 （3）扩容门槛写死的是桶数组大小的0.75倍，桶数组大小即map的容量，也就是最多存储多少个元素。
 
-```
+```java
 
 private final Node<K,V>[] initTable() {
         Node<K,V>[] tab; ##基础数组
@@ -248,7 +248,7 @@ private final Node<K,V>[] initTable() {
 
 ## 协助扩容（迁移元素）
 
-```
+```java
 ### 协助扩容
 final Node<K,V>[] helpTransfer(Node<K,V>[] tab, Node<K,V> f) {
         Node<K,V>[] nextTab; ##迁移用的新数组
@@ -442,7 +442,7 @@ private final void transfer(Node<K,V>[] tab, Node<K,V>[] nextTab) {
 
 ## 删除元素
 
-```
+```java
 final V replaceNode(Object key, V value, Object cv) {
         int hash = spread(key.hashCode());
         for (Node<K,V>[] tab = table;;) {
@@ -517,7 +517,7 @@ final V replaceNode(Object key, V value, Object cv) {
 
 ## 获取元素
 
-```
+```java
 public V get(Object key) {
         Node<K,V>[] tab; Node<K,V> e, p; int n, eh; K ek;
         int h = spread(key.hashCode());

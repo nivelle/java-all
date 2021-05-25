@@ -27,7 +27,7 @@ public class TreeMap<K,V> extends AbstractMap<K,V> implements NavigableMap<K,V>,
 
 ## get
 
-```
+```java
 public V get(Object key) {
     // 根据key查找元素
     Entry<K,V> p = getEntry(key);
@@ -96,7 +96,7 @@ final Entry<K,V> getEntryUsingComparator(Object key) {
 
 ![JJvsC4.png](https://s1.ax1x.com/2020/04/21/JJvsC4.png)
 
-```
+```java
 //以p为支点进行左旋，假设p为图中的x
 private void rotateLeft(Entry<K,V> p) {
         if (p != null) {
@@ -134,7 +134,7 @@ private void rotateLeft(Entry<K,V> p) {
 
 ![JYSjVx.png](https://s1.ax1x.com/2020/04/21/JYSjVx.png)
 
-```
+```java
 // 以p为支点进行右旋，假设p为图中的y
 private void rotateRight(Entry<K,V> p) {
         if (p != null) {
@@ -184,7 +184,7 @@ c = currentNode;
 
 [![JGBcYn.png](https://s1.ax1x.com/2020/04/21/JGBcYn.png)](https://imgchr.com/i/JGBcYn)
 
-```
+```java
   public V put(K key, V value) {
          Entry<K,V> t = root;
          if (t == null) {
@@ -284,7 +284,7 @@ c = currentNode;
    2）父节点为红色，叔叔节点为黑色，且当前节点是其父节点的左节点         | （1）将父节点作为新的当前节点；（2）以新当节点为支点进行右旋；
    3）父节点为红色，叔叔节点为黑色，且当前节点是其父节点的右节点        | （1）将父节点设为黑色；（2）将祖父节点设为红色；（3）以祖父节点为支点进行左旋，进入下一次循环判断；
 
-```
+```java
 private void fixAfterInsertion(Entry<K,V> x) {
         // 插入的节点为红节点，x为当前节点
         x.color = RED;
@@ -346,7 +346,7 @@ private void fixAfterInsertion(Entry<K,V> x) {
 
 ## 删除指定节点
 
-```
+```java
 public V remove(Object key) {
         // 获取节点
         Entry<K,V> p = getEntry(key);
@@ -376,7 +376,7 @@ public V remove(Object key) {
 
 （6）如果没有替代元素，则以删除的位置的元素作为当前节点进入再平衡，平衡之后再删除这个节点。
 
-```
+```java
 private void deleteEntry(Entry<K,V> p) {
         modCount++;
         size--;
@@ -458,8 +458,7 @@ private void deleteEntry(Entry<K,V> p) {
 3）x是黑+黑节点，x的兄弟是黑节点，且兄弟节点的左子节点为黑色，右子节点为红色    | （1）将兄弟节点的右子节点设为黑色；（2）将兄弟节点设为红色；（3）以兄弟节点为支点进行左旋；（4）重新设置x的兄弟节点，进入下一步；
 3）x是黑+黑节点，x的兄弟是黑节点，且兄弟节点的左子节点为红色，右子节点任意颜色    |  （1）将兄弟节点的颜色设为父节点的颜色；（2）将父节点设为黑色；（3）将兄弟节点的左子节点设为黑色；（4）以父节点为支点进行右旋；（5）将root作为新的当前节点（退出循环）；
 
-```
-
+```java
  private void fixAfterDeletion(Entry<K,V> x) {
        // 只有当前节点不是根节点且当前节点是黑色时才进入循环
         while (x != root && colorOf(x) == BLACK) {
@@ -531,47 +530,3 @@ private void deleteEntry(Entry<K,V> p) {
 
 
 ```
-
-来自:[彤哥读源码](https://mp.weixin.qq.com/s?__biz=Mzg2ODA0ODM0Nw==&mid=2247483734&idx=4&sn=d2a8b4ae9d80d6381986de44338c1776&scene=21#wechat_redirect)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

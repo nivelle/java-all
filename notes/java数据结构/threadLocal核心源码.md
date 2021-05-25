@@ -4,7 +4,7 @@
 
 ##### ThreadLocalMap提供了一种为ThreadLocal定制的高效实现,并且自带一种基于弱引用的垃圾清理机制。
 
-````
+````java
 static class Entry extends WeakReference<ThreadLocal<?>> {
             //这里是实际的保存的值
             Object value;
@@ -30,7 +30,7 @@ static class Entry extends WeakReference<ThreadLocal<?>> {
 
 #### 成员变量
 
-````
+````java
          /**
          * The initial capacity -- MUST be a power of two.//初始容量，必须为2的幂
          *
@@ -99,9 +99,10 @@ static class Entry extends WeakReference<ThreadLocal<?>> {
 #### 重点: 由于ThreadLocalMap使用线性探测法来解决散列冲突，所以实际上Entry[]数组在程序逻辑上是作为一个环形存在的。
 
 ![threadlocal.png](https://i.loli.net/2021/05/15/PBQpk7GToM136xS.png)
+
 - threadLocal hash运算
 
-````
+````java
 
  /**
      * The difference between successively generated hash codes - turns
@@ -127,7 +128,7 @@ static class Entry extends WeakReference<ThreadLocal<?>> {
 
 ### getEntry(ThreadLocal<?> key)
 
-````
+````java
 private Entry getEntry(ThreadLocal<?> key) {
             //根据key这个ThreadLocal的ID来获取索引，也即哈希值
             int i = key.threadLocalHashCode & (table.length - 1);
@@ -145,8 +146,7 @@ private Entry getEntry(ThreadLocal<?> key) {
 
 #### Entry getEntryAfterMiss(ThreadLocal<?> key, int i, Entry e)  从下一个位槽查找threadLocal
 
-````
-
+````java
  private Entry getEntryAfterMiss(ThreadLocal<?> key, int i, Entry e) {
             Entry[] tab = table;
             int len = tab.length;
@@ -174,8 +174,7 @@ private Entry getEntry(ThreadLocal<?> key) {
 
 2. 在过程中还会对非空的entry作rehash
 
-````
-
+````java
 private int expungeStaleEntry(int staleSlot) {
             Entry[] tab = table;
             int len = tab.length;
@@ -220,7 +219,7 @@ private int expungeStaleEntry(int staleSlot) {
 
 ### private void set(ThreadLocal<?> key, Object value)
 
-````
+````java
 private void set(ThreadLocal<?> key, Object value) {
 
             // We don't use a fast path as with get() because it is at
@@ -259,7 +258,7 @@ private void set(ThreadLocal<?> key, Object value) {
 
 #### private void replaceStaleEntry(ThreadLocal<?> key, Object value,int staleSlot) //替换失效的 sloat
 
-````
+````java
 
 private void replaceStaleEntry(ThreadLocal<?> key, Object value,int staleSlot) {
             Entry[] tab = table;
@@ -330,7 +329,7 @@ private void replaceStaleEntry(ThreadLocal<?> key, Object value,int staleSlot) {
 
 #### boolean cleanSomeSlots(int i, int n)
 
-````
+````java
 /**
  * 启发式地清理slot,
  * i对应entry是非无效（指向的ThreadLocal没被回收，或者entry本身为空）
@@ -365,7 +364,7 @@ private boolean cleanSomeSlots(int i, int n) {
 
 #### rehash()
 
-````
+````java
 private void rehash() {
             // 做一次全量清理
             expungeStaleEntries();
@@ -383,7 +382,7 @@ private void rehash() {
 
 ### remove(ThreadLocal<?> key)
 
-````
+````java
 private void remove(ThreadLocal<?> key) {
             Entry[] tab = table;
             int len = tab.length;

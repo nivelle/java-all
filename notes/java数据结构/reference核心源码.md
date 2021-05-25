@@ -91,7 +91,7 @@ softReferences will always be kept for at least one GC after their last access�
 
 ##### 初始化Reference在被加载的时候就会触发static里的代码执行, 就会创建Reference Handler线程并启动.
 
-```
+```java
  static {
         //当前线程的线程组
         ThreadGroup tg = Thread.currentThread().getThreadGroup();
@@ -125,7 +125,7 @@ softReferences will always be kept for at least one GC after their last access�
 
 #### 启动后的Reference Handler线程的任务
 
-```
+```java
 private static class ReferenceHandler extends Thread {
 
         //采用反射的方式触发类的加载
@@ -166,7 +166,7 @@ private static class ReferenceHandler extends Thread {
 
 3. 然后Reference-handler thread不断的读取pending中的reference，把它加入到对应的 ReferenceQueue 中
 
-```
+```java
 static boolean tryHandlePending(boolean waitForNotify) {
         Reference<Object> r;
         Cleaner c;
@@ -221,7 +221,7 @@ static boolean tryHandlePending(boolean waitForNotify) {
 
 ##### enqueue 入队操作
 
-```
+```java
 boolean enqueue(Reference<? extends T> r) {
         synchronized (lock) {
             // Check that since getting the lock this reference hasn't already been
@@ -249,7 +249,7 @@ boolean enqueue(Reference<? extends T> r) {
 
 ##### remove 移除操作
 
-```
+```java
 public Reference<? extends T> remove(long timeout)throws IllegalArgumentException, InterruptedException
         {
         if (timeout < 0) {
@@ -281,7 +281,7 @@ public Reference<? extends T> remove(long timeout)throws IllegalArgumentExceptio
 
 ##### reallyPoll 出队相关操作
 
-```
+```java
 private Reference<? extends T> reallyPoll() {
         //获取头元素 
         Reference<? extends T> r = head;

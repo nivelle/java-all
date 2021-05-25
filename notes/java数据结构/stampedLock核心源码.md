@@ -2,7 +2,7 @@
 
 #### WNode
 
-````
+````java
  //队列中的节点,类似于AQS队列中的节点,可以看到它组成了一个双向链表,内部维护着阻塞的线程。
  static final class WNode {
         //前一个节点
@@ -24,7 +24,7 @@
 
 #### 主要属性
 
-````
+````java
 //读线程的个数占有低7位
 private static final int LG_READERS = 7;
 // 读线程个数每次增加的单位
@@ -52,7 +52,7 @@ private transient volatile long state;
 
 #### writeLock()
 
-````
+````java
 
 public long writeLock() {
         long s, next; 
@@ -71,7 +71,7 @@ state的高24位存储的是版本号，低8位存储的是是否有加锁，第
 
 #### acquireRead(boolean interruptible, long deadline)
 
-````
+````java
   private long acquireWrite(boolean interruptible, long deadline) {
         // node为新增节点,p为尾节点
         WNode node = null, p;
@@ -218,7 +218,7 @@ state的高24位存储的是版本号，低8位存储的是是否有加锁，第
 
 #### unlockWrite 写锁释放
 
-````
+````java
 public void unlockWrite(long stamp) {
         WNode h;
         // 检查版本号是否正确
@@ -240,7 +240,7 @@ public void unlockWrite(long stamp) {
 
 #### release
 
-````
+````java
 private void release(WNode h) {
         if (h != null) {
             WNode q; Thread w;
@@ -271,7 +271,7 @@ private void release(WNode h) {
 
 #### readLock() 获取读锁
 
-````
+````java
 public long readLock() {
         long s = state, next;  // bypass acquireRead on common uncontended case
         //没有写锁占着,并且读锁被获取的次数未达到最大值
@@ -284,7 +284,7 @@ public long readLock() {
 
 #### acquireRead(boolean interruptible, long deadline)
 
-````
+````java
     private long acquireRead(boolean interruptible, long deadline) {
         // node 为新增节点，p为尾节点
         WNode node = null, p;
@@ -514,7 +514,7 @@ public long readLock() {
 
 #### unlockRead(long stamp) //释放读锁
 
-````
+````java
 public void unlockRead(long stamp) {
         long s, m; WNode h;
         //检查版本号
@@ -541,7 +541,7 @@ public void unlockRead(long stamp) {
 
 #### release(WNode h)
 
-````
+````java
 
 private void release(WNode h) {
         if (h != null) {
@@ -567,7 +567,7 @@ private void release(WNode h) {
 
 #### tryOptimisticRead()方法 乐观读锁
 
-````
+````java
 public long tryOptimisticRead() {
         long s;
         return (((s = state) & WBIT) == 0L) ? (s & SBITS) : 0L;
@@ -579,7 +579,7 @@ public long tryOptimisticRead() {
 
 #### validate()方法
 
-````
+````java
 public boolean validate(long stamp) {
     // 强制加入内存屏障，刷新数据
     U.loadFence();
