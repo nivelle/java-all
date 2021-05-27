@@ -1,4 +1,11 @@
-package com.nivelle.core.jdk.lang;
+package com.nivelle.core.jdk.concurrent;
+
+/**
+ * TODO:DOCUMENT ME!
+ *
+ * @author fuxinzhong
+ * @date 2021/05/27
+ */
 
 import com.alibaba.ttl.TransmittableThreadLocal;
 import com.alibaba.ttl.threadpool.TtlExecutors;
@@ -16,7 +23,7 @@ import java.util.concurrent.TimeUnit;
  * @author fuxinzhong
  * @date 2021/04/21
  */
-public class InheritableThreadLocalMock {
+public  class InheritableThreadLocalMock {
     private static final ThreadLocal<Person> THREAD_LOCAL_0 = new ThreadLocal<>();
     private static final ExecutorService THREAD_POOL_0 = Executors.newFixedThreadPool(1);
 
