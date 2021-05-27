@@ -12,7 +12,7 @@
 
 ### SpringServletContainerInitializer 它是Spring提供的ServletContainerInitializer的实现类
 
-```
+```java
 public void onStartup(@Nullable Set<Class<?>> webAppInitializerClasses, ServletContext servletContext)throws ServletException {
 
 		List<WebApplicationInitializer> initializers = new LinkedList<>();
@@ -66,7 +66,7 @@ public void onStartup(@Nullable Set<Class<?>> webAppInitializerClasses, ServletC
 
 **所有这些bean最终都会以 ServletContextInitializer 形式在随后Servlet容器启动阶段ServletContext创建后应用于初始化ServletContext**
 
-```
+```java
 //selfInitialize()方法,在具体的内置Servlet容器启动过程中Servlet上下文创建之后,Spring EmbeddedWebApplicationContext 使用 bean 容器中定义的ServletContextInitializer对Servlet上下文进行初始化
 
 public class ServletWebServerApplicationContext extends GenericWebApplicationContext implements ConfigurableWebServerApplicationContext

@@ -2,7 +2,7 @@
 
 #### Socket NIO 发生时从Poller到SocketProcessor的调用链
 
-```
+```java
 NioEndpoint$Poller.run()
 	=> processkey()
 		=> NioEndpoint父类 AbstractEndpoint.processSocket()
@@ -11,7 +11,7 @@ NioEndpoint$Poller.run()
 
 #### AbstractEndpoint.processSocket
 
-```
+```java
 public boolean processSocket(SocketWrapperBase<S> socketWrapper, SocketEvent event, boolean dispatch) {
         try {
             if (socketWrapper == null) {
@@ -670,7 +670,7 @@ public SocketState service(SocketWrapperBase<?> socketWrapper)throws IOException
 
 #### public class CoyoteAdapter implements Adapter（connector 和 container的适配器）
 
-```
+```java
 public void service(org.apache.coyote.Request req, org.apache.coyote.Response res)throws Exception {
 
         Request request = (Request) req.getNote(ADAPTER_NOTES);

@@ -2,7 +2,7 @@
 
 - allocate() //获取Servlet 实例，这里会对应 Spring Web 的 DispatcherServlet
 
-```
+```java
 public Servlet allocate() throws ServletException {
 
         // If we are currently unloading this servlet, throw an exception
@@ -100,7 +100,7 @@ public Servlet allocate() throws ServletException {
 
 #### ApplicationFilterChain
 
-```
+```java
 public final class ApplicationFilterChain implements FilterChain {
 
     // Used to enforce requirements of SRV.8.2 / SRV.14.2.5.1
