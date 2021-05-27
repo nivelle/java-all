@@ -2,7 +2,7 @@
 
 TaskExecutor 接口与java.util.concurrent.Executor是等价的
 
-````
+````java
 public interface TaskExecutor{
    void executoe(Runable task);
 }
@@ -10,7 +10,7 @@ public interface TaskExecutor{
 
 ### @Async 注解的实现
 
-````
+````java
 public Object invoke(final MethodInvocation invocation) throws Throwable {
         //被代理的目标对象
 		Class<?> targetClass = (invocation.getThis() != null ? AopUtils.getTargetClass(invocation.getThis()) : null);
@@ -47,7 +47,7 @@ public Object invoke(final MethodInvocation invocation) throws Throwable {
 
 #### determineAsyncExecutor 判断使用什么执行器
 
-````
+````java
 
 protected AsyncTaskExecutor determineAsyncExecutor(Method method) {
         //获取方法对应的执行器
@@ -81,7 +81,7 @@ protected AsyncTaskExecutor determineAsyncExecutor(Method method) {
 
 #### 提交任务
 
-````
+````java
 protected Object doSubmit(Callable<Object> task, AsyncTaskExecutor executor, Class<?> returnType) {
         //判断返回方法返回值是否是CompletableFuture类型或者其子类型
 		if (CompletableFuture.class.isAssignableFrom(returnType)) {

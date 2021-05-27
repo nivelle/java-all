@@ -88,7 +88,7 @@ private void selfInitialize(ServletContext servletContext) throws ServletExcepti
 
 - 在主线程中,SpringBoot启动过程交给内置Tomcat Servlet 容器一个ServletContextInitializer
 
-```
+```java
 SpringApplication.run()
  => refreshContext()
   => EmbeddedWebApplicationContext.refresh()
@@ -100,7 +100,7 @@ SpringApplication.run()
 
 - 在内置Tomcat Servlet容器启动线程中，ServletContext创建之后调用该ServletContextInitializer
 
-```
+```java
 StandartContext.startInternal()
  => TomcatStarter.onStartup()
    => EmbeddedWebApplicationContext.selfInitialize()
@@ -116,7 +116,7 @@ onStartup)会逐一调用这些ServletContextInitializer的方法onStartUp的方
 
 #### class TomcatStarter implements ServletContainerInitializer
 
-```
+```java
 public void onStartup(Set<Class<?>> classes, ServletContext servletContext) throws ServletException {
 		try {
 		   //Servlet 容器启动时回会用该方法，该方法会逐一调用每个 ServletContextInitializer 的方法

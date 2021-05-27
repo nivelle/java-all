@@ -1,6 +1,6 @@
 ### springMVC 基于 DeferredResult 的异步处理
 
-````
+````java
 public class SpringMVCServlet {
     ThreadPoolExecutor executor = new ThreadPoolExecutor(5, 10, 200, TimeUnit.MILLISECONDS, new ArrayBlockingQueue(5));
 
@@ -31,7 +31,7 @@ public class SpringMVCServlet {
 
 ### springMVC 基于 Callable 的异步处理
 
-````
+````java
 public class SpringMVCServlet2 {
     ThreadPoolExecutor executor = new ThreadPoolExecutor(5, 10, 200, TimeUnit.MILLISECONDS, new ArrayBlockingQueue(5));
 
@@ -56,7 +56,7 @@ public class SpringMVCServlet2 {
 
 4. 这种方式下异步执行默认使用内部的SimpleAsyncTaskExecutor，对每个请求都会开启一个线程，并没有很好地服用线程，可以使用自定义的线程池来执行异步处理。
 
-````
+````java
   @Override
     public void configureAsyncSupport(AsyncSupportConfigurer configurer) {
         ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
