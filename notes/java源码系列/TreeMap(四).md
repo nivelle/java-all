@@ -243,11 +243,3 @@ static <K,V> TreeMap.Entry<K,V> successor(Entry<K,V> t) {
 所以，死读书不如无书，学习的过程也是一个不断重塑知识的过程。
 
 ---
-
-**现在公众号文章没办法留言了，如果有什么疑问或者建议请直接在公众号给我留言。**
-
----
-
-欢迎关注我的公众号“彤哥读源码”，查看更多源码系列文章, 与彤哥一起畅游源码的海洋。
-
-![qrcode](https://gitee.com/alan-tang-tt/yuan/raw/master/死磕%20java集合系列/resource/qrcode_ss.jpg)
