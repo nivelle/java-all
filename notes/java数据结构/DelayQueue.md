@@ -1,30 +1,23 @@
-🖕欢迎关注我的公众号“彤哥读源码”，查看更多源码系列文章, 与彤哥一起畅游源码的海洋。 
-
-（手机横屏看源码更方便）
-
----
-
 ## 问题
+- （1）DelayQueue是阻塞队列吗？
 
-（1）DelayQueue是阻塞队列吗？
+- （2）DelayQueue的实现方式？
 
-（2）DelayQueue的实现方式？
-
-（3）DelayQueue主要用于什么场景？
+- （3）DelayQueue主要用于什么场景？
 
 ## 简介
 
-DelayQueue是java并发包下的延时阻塞队列，常用于实现定时任务。
+- DelayQueue是java并发包下的 _**延时阻塞队列,常用于实现定时任务。**_
 
 ## 继承体系
 
 ![qrcode](https://gitee.com/alan-tang-tt/yuan/raw/master/死磕%20java集合系列/resource/DelayQueue.png)
 
-从继承体系可以看到，DelayQueue实现了BlockingQueue，所以它是一个阻塞队列。
+- 从继承体系可以看到，DelayQueue实现了BlockingQueue，所以它是一个阻塞队列。
 
-另外，DelayQueue还组合了一个叫做Delayed的接口，DelayQueue中存储的所有元素必须实现Delayed接口。
+- DelayQueue还组合了一个叫做Delayed的接口，DelayQueue中存储的所有元素必须实现Delayed接口。
 
-那么，Delayed是什么呢？
+### 那么，Delayed是什么呢？
 
 ```java
 public interface Delayed extends Comparable<Delayed> {
@@ -33,7 +26,7 @@ public interface Delayed extends Comparable<Delayed> {
 }
 ```
 
-Delayed是一个继承自Comparable的接口，并且定义了一个getDelay()方法，用于表示还有多少时间到期，到期了应返回小于等于0的数值。
+- Delayed是一个继承自Comparable的接口，并且定义了一个getDelay()方法，用于表示还有多少时间到期，到期了应返回小于等于0的数值。
 
 ## 源码分析
 
@@ -50,11 +43,9 @@ private Thread leader = null;
 private final Condition available = lock.newCondition();
 ```
 
-从属性我们可以知道，延时队列主要使用优先级队列来实现，并辅以重入锁和条件来控制并发安全。
+- 从属性我们可以知道,延时队列主要使用优先级队列来实现，并辅以重入锁和条件来控制并发安全。
 
-因为优先级队列是无界的，所以这里只需要一个条件就可以了。
-
-还记得优先级队列吗？点击链接直达【[死磕 java集合之PriorityQueue源码分析](https://mp.weixin.qq.com/s/kGKS7WXWbf-ME1_Hr3Fpgw)】
+- 因为优先级队列是无界的，所以这里只需要一个条件就可以了。
 
 ### 主要构造方法
 
@@ -101,21 +92,21 @@ public boolean offer(E e) {
 }
 ```
 
-入队方法比较简单：
+#### 入队方法比较简单：
 
-（1）加锁；
+- （1）加锁；
 
-（2）添加元素到优先级队列中；
+- （2）添加元素到优先级队列中；
 
-（3）如果添加的元素是堆顶元素，就把leader置为空，并唤醒等待在条件available上的线程；
+- （3）如果添加的元素是堆顶元素，就把leader置为空，并唤醒等待在条件available上的线程；
 
-（4）解锁；
+- （4）解锁；
 
 ### 出队
 
-因为DelayQueue是阻塞队列，所以它的出队有四个不同的方法，有抛出异常的，有阻塞的，有不阻塞的，有超时的。
+- 因为DelayQueue是阻塞队列，所以它的出队有四个不同的方法，有抛出异常的，有阻塞的，有不阻塞的，有超时的。
 
-我们这里主要分析两个，poll()和take()方法。
+- 我们这里主要分析两个，poll()和take()方法。
 
 ```java
 public E poll() {
@@ -133,15 +124,17 @@ public E poll() {
 }
 ```
 
-poll()方法比较简单：
+#### poll()方法比较简单：
 
-（1）加锁；
+- （1）加锁；
 
-（2）检查第一个元素，如果为空或者还没到期，就返回null；
+- （2）检查第一个元素，如果为空或者还没到期，就返回null；
 
-（3）如果第一个元素到期了就调用poll()弹出第一个元素；
+- （3）如果第一个元素到期了就调用poll()弹出第一个元素；
 
-（4）解锁。
+- （4）解锁。
+
+-------------
 
 ```java
 public E take() throws InterruptedException {
@@ -160,9 +153,7 @@ public E take() throws InterruptedException {
                 // 如果小于0说明已到期，直接调用poll()方法弹出堆顶元素
                 if (delay <= 0)
                     return q.poll();
-                
-                // 如果delay大于0 ，则下面要阻塞了
-                
+                // 如果delay大于0 ，则下面要阻塞了         
                 // 将first置为空方便gc，因为有可能其它元素弹出了这个元素
                 // 这里还持有着引用不会被清理
                 first = null; // don't retain ref while waiting
@@ -174,14 +165,12 @@ public E take() throws InterruptedException {
                     Thread thisThread = Thread.currentThread();
                     leader = thisThread;
                     try {
-                        // 等待delay时间后自动醒过来
-                        // 醒过来后把leader置空并重新进入循环判断堆顶元素是否到期
-                        // 这里即使醒过来后也不一定能获取到元素
-                        // 因为有可能其它线程先一步获取了锁并弹出了堆顶元素
-                        // 条件锁的唤醒分成两步，先从Condition的队列里出队
-                        // 再入队到AQS的队列中，当其它线程调用LockSupport.unpark(t)的时候才会真正唤醒
-                        // 关于AQS我们后面会讲的^^
-                        available.awaitNanos(delay);
+        /**
+         *  等待delay时间后自 动醒过来,醒过来后把leader置空并重新进入循环判断堆顶元素是否到期这里即使醒过来后也不一定能获取到元素因为有可能其它线程先一步获取了锁并弹出了堆顶元素
+         *
+         *  条件锁的唤醒分成两步：1. 先从Condition的队列里出队 2. 再入队到AQS的队列中, 当其它线程调用LockSupport.unpark(t)的时候才会真正唤醒
+         */
+                         available.awaitNanos(delay);
                     } finally {
                         // 如果leader还是当前线程就把它置为空，让其它线程有机会获取元素
                         if (leader == thisThread)
@@ -201,21 +190,23 @@ public E take() throws InterruptedException {
 }
 ```
 
-take()方法稍微要复杂一些：
+#### take()方法稍微要复杂一些：
 
-（1）加锁；
+- （1）加锁；
 
-（2）判断堆顶元素是否为空，为空的话直接阻塞等待；
+- （2）判断堆顶元素是否为空，为空的话直接阻塞等待；
 
-（3）判断堆顶元素是否到期，到期了直接poll()出元素；
+- （3）判断堆顶元素是否到期，到期了直接poll()出元素；
 
-（4）没到期，再判断前面是否有其它线程在等待，有则直接等待；
+- （4）没到期，再判断前面是否有其它线程在等待，有则直接等待；
 
-（5）前面没有其它线程在等待，则把自己当作第一个线程等待delay时间后唤醒，再尝试获取元素；
+- （5）前面没有其它线程在等待，则把自己当作第一个线程等待delay时间后唤醒，再尝试获取元素；
 
-（6）获取到元素之后再唤醒下一个等待的线程；
+- （6）获取到元素之后再唤醒下一个等待的线程；
 
-（7）解锁；
+- （7）解锁；
+
+-----
 
 ## 使用方法
 
@@ -275,24 +266,20 @@ class Message implements Delayed {
 
 是不是很简单，越早到期的元素越先出队。
 
+-----
 ## 总结
 
-（1）DelayQueue是阻塞队列；
+- （1）DelayQueue是阻塞队列；
 
-（2）DelayQueue内部存储结构使用优先级队列；
+- （2）DelayQueue内部存储结构使用优先级队列；
 
-（3）DelayQueue使用重入锁和条件来控制并发安全；
+- （3）DelayQueue使用重入锁和条件来控制并发安全；
 
-（4）DelayQueue常用于定时任务；
+- （4）DelayQueue常用于定时任务；
 
 ## 彩蛋
 
 java中的线程池实现定时任务是直接用的DelayQueue吗？
 
-当然不是，ScheduledThreadPoolExecutor中使用的是它自己定义的内部类DelayedWorkQueue，其实里面的实现逻辑基本都是一样的，只不过DelayedWorkQueue里面没有使用现在的PriorityQueue，而是使用数组又实现了一遍优先级队列，本质上没有什么区别。
+ScheduledThreadPoolExecutor中使用的是它自己定义的内部类DelayedWorkQueue，其实里面的实现逻辑基本都是一样的，只不过DelayedWorkQueue里面没有使用现在的PriorityQueue，而是使用数组又实现了一遍优先级队列，本质上没有什么区别。
 
----
-
-欢迎关注我的公众号“彤哥读源码”，查看更多源码系列文章, 与彤哥一起畅游源码的海洋。
-
-![qrcode](https://gitee.com/alan-tang-tt/yuan/raw/master/死磕%20java集合系列/resource/qrcode_ss.jpg)

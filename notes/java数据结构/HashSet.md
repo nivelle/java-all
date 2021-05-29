@@ -1,8 +1,3 @@
-🖕欢迎关注我的公众号“彤哥读源码”，查看更多源码系列文章, 与彤哥一起畅游源码的海洋。 
-
-（手机横屏看源码更方便）
-
----
 
 ## 问题
 
@@ -335,9 +330,4 @@ fail-fast机制是java集合中的一种错误机制。
 
 细心的同学可能会发现，像ArrayList、HashMap中都有一个属性叫`modCount`，每次对集合的修改这个值都会加1，在遍历前记录这个值到`expectedModCount`中，遍历中检查两者是否一致，如果出现不一致就说明有修改，则抛出ConcurrentModificationException异常。
 
----
-
-欢迎关注我的公众号“彤哥读源码”，查看更多源码系列文章, 与彤哥一起畅游源码的海洋。
-
-![qrcode](https://gitee.com/alan-tang-tt/yuan/raw/master/死磕%20java集合系列/resource/qrcode_ss.jpg)
 
