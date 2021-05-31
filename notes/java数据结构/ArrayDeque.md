@@ -1,30 +1,24 @@
-🖕欢迎关注我的公众号“彤哥读源码”，查看更多源码系列文章, 与彤哥一起畅游源码的海洋。 
+### 问题
 
-（手机横屏看源码更方便）
+- （1）什么是双端队列？
 
----
+- （2）ArrayDeque是怎么实现双端队列的？
 
-## 问题
+- （3）ArrayDeque是线程安全的吗？
 
-（1）什么是双端队列？
+- （4）ArrayDeque是有界的吗？
 
-（2）ArrayDeque是怎么实现双端队列的？
+### 简介
 
-（3）ArrayDeque是线程安全的吗？
+- 双端队列是一种特殊的队列，它的两端都可以进出元素，故而得名双端队列。
 
-（4）ArrayDeque是有界的吗？
+- ArrayDeque是一种以数组方式实现的双端队列，它是非线程安全的。
 
-## 简介
-
-双端队列是一种特殊的队列，它的两端都可以进出元素，故而得名双端队列。
-
-ArrayDeque是一种以数组方式实现的双端队列，它是非线程安全的。
-
-## 继承体系
+### 继承体系
 
 ![qrcode](https://gitee.com/alan-tang-tt/yuan/raw/master/死磕%20java集合系列/resource/ArrayDeque.png)
 
-通过继承体系可以看，ArrayDeque实现了Deque接口，Deque接口继承自Queue接口，它是对Queue的一种增强。
+- 通过继承体系可以看，ArrayDeque实现了Deque接口，Deque接口继承自Queue接口，它是对Queue的一种增强。
 
 ```java
 
@@ -95,17 +89,17 @@ public interface Deque<E> extends Queue<E> {
 }
 ```
 
-Deque中新增了以下几类方法：
+#### Deque中新增了以下几类方法：
 
-（1）*First，表示从队列头操作元素；
+- （1）First，表示从队列头操作元素；
 
-（2）*Last，表示从队列尾操作元素；
+- （2）Last，表示从队列尾操作元素；
 
-（3）push(e)，pop()，以栈的方式操作元素的方法；
+- （3）push(e)，pop()，以栈的方式操作元素的方法；
 
-## 源码分析
+### 源码分析
 
-### 主要属性
+#### 主要属性
 
 ```java
 // 存储元素的数组
@@ -118,7 +112,7 @@ transient int tail;
 private static final int MIN_INITIAL_CAPACITY = 8;
 ```
 
-从属性我们可以看到，ArrayDeque使用数组存储元素，并使用头尾指针标识队列的头和尾，其最小容量是8。
+- 从属性我们可以看到，ArrayDeque使用数组存储元素，并使用头尾指针标识队列的头和尾，其最小容量是8。
 
 ### 主要构造方法
 
@@ -162,11 +156,11 @@ private static int calculateSize(int numElements) {
 }
 ```
 
-通过构造方法，我们知道默认初始容量是16，最小容量是8。
+- 通过构造方法，我们知道默认初始容量是16，最小容量是8。
 
 ### 入队
 
-入队有很多方法，我们这里主要分析两个，addFirst(e)和addLast(e)。
+- 入队有很多方法，我们这里主要分析两个，addFirst(e)和addLast(e)。
 
 ```java
 // 从队列头入队
@@ -198,13 +192,13 @@ public void addLast(E e) {
 }
 ```
 
-（1）入队有两种方式，从队列头或者从队列尾；
+- （1）入队有两种方式，从队列头或者从队列尾；
 
-（2）如果容量不够了，直接扩大为两倍；
+- （2）如果容量不够了，直接扩大为两倍；
 
-（3）通过取模的方式让头尾指针在数组范围内循环；
+- （3）通过取模的方式让头尾指针在数组范围内循环；
 
-（4）x & (len - 1) = x % len，使用&的方式更快； 
+- （4）x & (len - 1) = x % len，使用&的方式更快； 
 
 ### 扩容
 
@@ -236,7 +230,7 @@ private void doubleCapacity() {
 }
 ```
 
-扩容这里迁移元素可能有点绕，请看下面这张图来理解。
+- 扩容这里迁移元素可能有点绕，请看下面这张图来理解。
 
 ![qrcode](https://gitee.com/alan-tang-tt/yuan/raw/master/死磕%20java集合系列/resource/array-deque1.png)
 
@@ -280,15 +274,16 @@ public E pollLast() {
 }
 ```
 
-（1）出队有两种方式，从队列头或者从队列尾；
+- （1）出队有两种方式，从队列头或者从队列尾；
 
-（2）通过取模的方式让头尾指针在数组范围内循环；
+- （2）通过取模的方式让头尾指针在数组范围内循环；
 
-（3）出队之后没有缩容哈哈^^
+- （3）出队之后没有缩容哈哈
 
-## 栈
+---
+### 栈
 
-前面我们介绍Deque的时候说过，Deque可以直接作为栈来使用，那么ArrayDeque是怎么实现的呢？
+- 前面我们介绍Deque的时候说过，Deque可以直接作为栈来使用，那么ArrayDeque是怎么实现的呢？
 
 ```java
 public void push(E e) {
@@ -300,22 +295,17 @@ public E pop() {
 }
 ```
 
-是不是很简单，入栈出栈只要都操作队列头就可以了。
+- 是不是很简单，入栈出栈只要都操作队列头就可以了。
+
+----
 
 ## 总结
 
-（1）ArrayDeque是采用数组方式实现的双端队列；
+- （1）ArrayDeque是采用数组方式实现的双端队列；
 
-（2）ArrayDeque的出队入队是通过头尾指针循环利用数组实现的；
+- （2）ArrayDeque的出队入队是通过头尾指针循环利用数组实现的；
 
-（3）ArrayDeque容量不足时是会扩容的，每次扩容容量增加一倍；
+- （3）ArrayDeque容量不足时是会扩容的，每次扩容容量增加一倍；
 
-（4）ArrayDeque可以直接作为栈使用；
+- （4）ArrayDeque可以直接作为栈使用；
 
-## 彩蛋
-
----
-
-欢迎关注我的公众号“彤哥读源码”，查看更多源码系列文章, 与彤哥一起畅游源码的海洋。
-
-![qrcode](https://gitee.com/alan-tang-tt/yuan/raw/master/死磕%20java集合系列/resource/qrcode_ss.jpg)

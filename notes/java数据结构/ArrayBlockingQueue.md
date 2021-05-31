@@ -1,26 +1,20 @@
-🖕欢迎关注我的公众号“彤哥读源码”，查看更多源码系列文章, 与彤哥一起畅游源码的海洋。 
+### 问题
 
-（手机横屏看源码更方便）
+- （1）ArrayBlockingQueue的实现方式？
 
----
+- （2）ArrayBlockingQueue是否需要扩容？
 
-## 问题
+- （3）ArrayBlockingQueue有什么缺点？
 
-（1）ArrayBlockingQueue的实现方式？
+### 简介
 
-（2）ArrayBlockingQueue是否需要扩容？
+- ArrayBlockingQueue是java并发包下一个以数组实现的阻塞队列，它是线程安全的，至于是否需要扩容，请看下面的分析。
 
-（3）ArrayBlockingQueue有什么缺点？
+### 队列
 
-## 简介
+- 队列，是一种线性表，它的特点是先进先出，又叫FIFO，就像我们平常排队一样，先到先得，即先进入队列的人先出队。
 
-ArrayBlockingQueue是java并发包下一个以数组实现的阻塞队列，它是线程安全的，至于是否需要扩容，请看下面的分析。
-
-## 队列
-
-队列，是一种线性表，它的特点是先进先出，又叫FIFO，就像我们平常排队一样，先到先得，即先进入队列的人先出队。
-
-## 源码分析
+### 源码分析
 
 ### 主要属性
 
@@ -47,14 +41,15 @@ private final Condition notEmpty;
 private final Condition notFull;
 ```
 
-通过属性我们可以得出以下几个重要信息：
+#### 通过属性我们可以得出以下几个重要信息：
 
-（1）利用数组存储元素；
+- （1）利用数组存储元素；
 
-（2）通过放指针和取指针来标记下一次操作的位置；
+- （2）通过放指针和取指针来标记下一次操作的位置；
 
-（3）利用重入锁来保证并发安全；
+- （3）利用重入锁来保证并发安全；
 
+----
 ### 主要构造方法
 
 ```java
@@ -74,15 +69,15 @@ public ArrayBlockingQueue(int capacity, boolean fair) {
 }
 ```
 
-通过构造方法我们可以得出以下两个结论：
+#### 通过构造方法我们可以得出以下两个结论：
 
-（1）ArrayBlockingQueue初始化时必须传入容量，也就是数组的大小；
+- （1）ArrayBlockingQueue初始化时必须传入容量，也就是数组的大小；
 
-（2）可以通过构造方法控制重入锁的类型是公平锁还是非公平锁；
+- （2）可以通过构造方法控制重入锁的类型是公平锁还是非公平锁；
 
 ### 入队
 
-入队有四个方法，它们分别是add(E e)、offer(E e)、put(E e)、offer(E e, long timeout, TimeUnit unit)，它们有什么区别呢？
+- 入队有四个方法，它们分别是add(E e)、offer(E e)、put(E e)、offer(E e, long timeout, TimeUnit unit)，它们有什么区别呢？
 
 ```java
 public boolean add(E e) {
@@ -182,19 +177,21 @@ private void enqueue(E x) {
 }
 ```
 
-（1）add(e)时如果队列满了则抛出异常；
+- （1）add(e)时如果队列满了则抛出异常；
 
-（2）offer(e)时如果队列满了则返回false；
+- （2）offer(e)时如果队列满了则返回false；
 
-（3）put(e)时如果队列满了则使用notFull等待；
+- （3）put(e)时如果队列满了则使用notFull等待；
 
-（4）offer(e, timeout, unit)时如果队列满了则等待一段时间后如果队列依然满就返回false；
+- （4）offer(e, timeout, unit)时如果队列满了则等待一段时间后如果队列依然满就返回false；
 
-（5）利用放指针循环使用数组来存储元素；
+- （5）利用放指针循环使用数组来存储元素；
+
+---
 
 ### 出队
 
-出队有四个方法，它们分别是remove()、poll()、take()、poll(long timeout, TimeUnit unit)，它们有什么区别呢？
+- 出队有四个方法，它们分别是remove()、poll()、take()、poll(long timeout, TimeUnit unit)，它们有什么区别呢？
 
 ```java
 public E remove() {
@@ -275,16 +272,17 @@ private E dequeue() {
 }
 ```
 
-（1）remove()时如果队列为空则抛出异常；
+- （1）remove()时如果队列为空则抛出异常；
 
-（2）poll()时如果队列为空则返回null；
+- （2）poll()时如果队列为空则返回null；
 
-（3）take()时如果队列为空则阻塞等待在条件notEmpty上；
+- （3）take()时如果队列为空则阻塞等待在条件notEmpty上；
 
-（4）poll(timeout, unit)时如果队列为空则阻塞等待一段时间后如果还为空就返回null；
+- （4）poll(timeout, unit)时如果队列为空则阻塞等待一段时间后如果还为空就返回null；
 
-（5）利用取指针循环从数组中取元素；
+- （5）利用取指针循环从数组中取元素；
 
+---
 ## 总结
 
 （1）ArrayBlockingQueue不需要扩容，因为是初始化时指定容量，并循环利用数组；
@@ -314,9 +312,3 @@ a）队列长度固定且必须在初始化时指定，所以使用之前一定�
 b）如果消费速度跟不上入队速度，则会导致提供者线程一直阻塞，且越阻塞越多，非常危险；
 
 c）只使用了一个锁来控制入队出队，效率较低，那是不是可以借助分段的思想把入队出队分裂成两个锁呢？且听下回分解。
-
----
-
-欢迎关注我的公众号“彤哥读源码”，查看更多源码系列文章, 与彤哥一起畅游源码的海洋。
-
-![qrcode](https://gitee.com/alan-tang-tt/yuan/raw/master/死磕%20java集合系列/resource/qrcode_ss.jpg)
