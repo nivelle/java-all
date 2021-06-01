@@ -196,14 +196,13 @@ public class SchedulingConfiguration {
 						throw new IllegalArgumentException(
 						"Invalid fixedDelayString value \"" + fixedDelayString + "\" - cannot parse into long");
 					}
-	                 ## 包装成为一个 FixedDelayTask    
+					//包装成为一个 FixedDelayTask    
 					tasks.add(this.registrar.scheduleFixedDelayTask(
 						new FixedDelayTask(runnable, fixedDelay, initialDelay)));
 				}
 			}
 
-			// Check fixed rate            
-            //检查这是否是一个固定周期执行类型的注解    
+			// Check fixed rate//检查这是否是一个固定周期执行类型的注解    
 			long fixedRate = scheduled.fixedRate();
 			if (fixedRate >= 0) {
 				Assert.isTrue(!processedSchedule, errorMessage);
@@ -243,13 +242,16 @@ public class SchedulingConfiguration {
 
 ```
 
-#### 经过ScheduledAnnotationBeanPostProcessor以上这些处理，每个bean中所包含的@Scheduled注解都被发现了，这样的每条信息最终对应生成一个ScheduledTask,该ScheduledTask会被 ScheduledTaskRegistrar registrar 登记调度。
+-  经过ScheduledAnnotationBeanPostProcessor以上这些处理，每个bean中所包含的@Scheduled注解都被发现了，这样的每条信息最终对应生成一个ScheduledTask,该ScheduledTask会被 ScheduledTaskRegistrar registrar 登记调度。
 
-#### 这意味着该ScheduledTask从此刻起在程序运行期间就会按照@Scheduled注解所设定的时间点被执行。
+-  这意味着该ScheduledTask从此刻起在程序运行期间就会按照@Scheduled注解所设定的时间点被执行。
 
-### 备注1: 从上面的代码可以看出,如果多个定时任务定义的是同一个时间,那么也是顺序执行的，会根据程序加载Scheduled方法的先后来执行。
+-  备注1: 从上面的代码可以看出,如果多个定时任务定义的是同一个时间,那么也是顺序执行的，会根据程序加载Scheduled方法的先后来执行。
 
-### 备注2: 但是如果某个定时任务执行未完成此任务一直无法执行完成，无法设置下次任务执行时间，之后会导致此任务后面的所有定时任务无法继续执行，也就会出现所有的定时任务“失效”现象
+-  备注2: 但是如果某个定时任务执行未完成此任务一直无法执行完成，无法设置下次任务执行时间，之后会导致此任务后面的所有定时任务无法继续执行，也就会出现所有的定时任务“失效”现象
+
+
+-----
 
 ### 定时任务处理
 
@@ -281,7 +283,7 @@ public class SchedulingConfiguration {
           }
 ```     
 
-##### triggerTime:触发时间计算
+#### triggerTime:触发时间计算
 
 ```java
       long triggerTime(long delay) {
@@ -290,7 +292,7 @@ public class SchedulingConfiguration {
      
 ```
 
-##### delayedExecute(t);延时执行
+#### delayedExecute(t);延时执行
 
 ```java
 ScheduledThreadPoolExecutor.delayedExecute(RunnableScheduledFuture task)
@@ -314,7 +316,7 @@ ScheduledThreadPoolExecutor.delayedExecute(RunnableScheduledFuture task)
         
 ```
 
-##### ensurePrestart() 保证有足够的线程执行任务
+#### ensurePrestart() 保证有足够的线程执行任务
 
 ```java
        void ensurePrestart() {
@@ -328,7 +330,7 @@ ScheduledThreadPoolExecutor.delayedExecute(RunnableScheduledFuture task)
           }
 ```     
 
-##### ScheduledThreadPoolExecutor.ScheduledFutureTask
+#### ScheduledThreadPoolExecutor.ScheduledFutureTask
 
 ```java
       public void run() {
@@ -350,7 +352,7 @@ ScheduledThreadPoolExecutor.delayedExecute(RunnableScheduledFuture task)
               }
  ```    
 
-##### ScheduledFutureTask.reExecutePeriodic
+#### ScheduledFutureTask.reExecutePeriodic
 
 ```java
        void reExecutePeriodic(RunnableScheduledFuture<?> task) {
