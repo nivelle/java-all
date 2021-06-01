@@ -1,6 +1,6 @@
 ### springBoot 启动
 
-```
+```java
 /Library/Java/JavaVirtualMachines/jdk1.8.0_191.jdk/Contents/Home/bin/java 
 
 -XX:TieredStopAtLevel=1  //使用C1进行编译
@@ -71,7 +71,8 @@ seconds (JVM running for 2.61)
 
 ### springBoot 详细启动
 
-```
+```java
+
 SLF4J: Class path contains multiple SLF4J bindings.
 SLF4J: Found binding in [jar:file:/Users/nivellefu/.m2/repository/ch/qos/logback/logback-classic/1.2.3/logback-classic-1.2.3.jar!/org/slf4j/impl/StaticLoggerBinder.class]
 SLF4J: Found binding in [jar:file:/Users/nivellefu/.m2/repository/org/slf4j/slf4j-log4j12/1.7.30/slf4j-log4j12-1.7.30.jar!/org/slf4j/impl/StaticLoggerBinder.class]

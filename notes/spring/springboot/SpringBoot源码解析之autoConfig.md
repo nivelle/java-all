@@ -14,6 +14,7 @@
 
 #### 2. 自动配置注解
 
+````java
 - @SpringBootApplication
 
     - @EnableAutoConfiguration
@@ -65,6 +66,8 @@
                 - return new AutoConfigurationEntry(configurations, exclusions);
 
         - return StringUtils.toStringArray(autoConfigurationEntry.getConfigurations());
+````
+
 
 #### 3. 应用启动时 ConfigurationClassPostProcessor 的注册 [SpringBoot run()方法prepareContext创建BeanDefinitionReader时构造ConfigurationClassPostProcessor注册](./SpringBoot源码解析之run()方法.md)
 
@@ -78,7 +81,7 @@
    ，直到参数指定的或者容器中所有的这些BeanDefinitionRegistryPostProcessor的该方法都被执行完，然后执行所有的BeanFactoryPostProcessor的方法postProcessBeanFactory()
    直到参数指定的或者容器中所有的这些BeanFactoryPostProcessor的该方法都被执行完。
 
-
+   
 - AbstractApplicationContext.refresh()
 
     - invokeBeanFactoryPostProcessors()

@@ -12,7 +12,7 @@ private boolean allowBeanDefinitionOverriding;
 
 #### 构造函数
 
-````
+````java
 public SpringApplication(Class<?>... primarySources) {
 		//调用下面构造方法
         this((ResourceLoader)null, primarySources);
@@ -55,7 +55,7 @@ public SpringApplication(Class<?>... primarySources) {
 
 #### deduceFromClasspath() 判断是不是Web应用
 
-````
+````java
 static WebApplicationType deduceFromClasspath() {
         if (ClassUtils.isPresent("org.springframework.web.reactive.DispatcherHandler", (ClassLoader)null) && 
             !ClassUtils.isPresent("org.springframework.web.servlet.DispatcherServlet", (ClassLoader)null) && 
@@ -79,7 +79,7 @@ static WebApplicationType deduceFromClasspath() {
 
 #### getSpringFactoriesInstances
 
-````
+````java
 private <T> Collection<T> getSpringFactoriesInstances(Class<T> type) {
 		return getSpringFactoriesInstances(type, new Class<?>[] {});
 	}
@@ -99,7 +99,7 @@ private <T> Collection<T> getSpringFactoriesInstances(Class<T> type) {
 
 #### loadFactoryNames //把类路径下所有META‐INF/spring.factories中的配置都存储起来
 
-````
+````java
 public static List<String> loadFactoryNames(Class<?> factoryType, @Nullable ClassLoader classLoader) {
              String factoryTypeName = factoryType.getName();
              return (List)loadSpringFactories(classLoader).getOrDefault(factoryTypeName, Collections.emptyList());
@@ -107,7 +107,7 @@ public static List<String> loadFactoryNames(Class<?> factoryType, @Nullable Clas
 
 ````
 
-````
+````java
 private static Map<String, List<String>> loadSpringFactories(@Nullable ClassLoader classLoader) {
         MultiValueMap<String, String> result = (MultiValueMap)cache.get(classLoader);
         if (result != null) {
@@ -147,7 +147,7 @@ private static Map<String, List<String>> loadSpringFactories(@Nullable ClassLoad
 
 #### createSpringFactoriesInstances 通过反射创建实例
 
-````
+````java
 private <T> List<T> createSpringFactoriesInstances(Class<T> type, Class<?>[] parameterTypes,
 			ClassLoader classLoader, Object[] args, Set<String> names) {
 		List<T> instances = new ArrayList<>(names.size());
@@ -170,7 +170,7 @@ private <T> List<T> createSpringFactoriesInstances(Class<T> type, Class<?>[] par
 
 #### 环境配置，命令行参数的解析
 
-````
+````java
 
 protected void configurePropertySources(ConfigurableEnvironment environment, String[] args) {
         //从上面创建的ConfigurableEnvironment实例中获取MutablePropertySources实例

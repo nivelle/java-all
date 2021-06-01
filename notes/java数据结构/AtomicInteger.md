@@ -1,32 +1,24 @@
-🖕欢迎关注我的公众号“彤哥读源码”，查看更多源码系列文章, 与彤哥一起畅游源码的海洋。 
+### 问题
 
-（手机横屏看源码更方便）
+- （1）什么是原子操作？
 
----
+- （2）原子操作和数据库的ACID有啥关系？
 
-## 问题
+- （3）AtomicInteger是怎么实现原子操作的？
 
-（1）什么是原子操作？
+- （4）AtomicInteger是有什么缺点？
 
-（2）原子操作和数据库的ACID有啥关系？
+### 简介
 
-（3）AtomicInteger是怎么实现原子操作的？
+- AtomicInteger是java并发包下面提供的原子类，主要操作的是int类型的整型，通过调用底层Unsafe的CAS等方法实现原子操作。
 
-（4）AtomicInteger是有什么缺点？
+### 原子操作
 
-## 简介
+- 原子操作是指不会被线程调度机制打断的操作，这种操作一旦开始，就一直运行到结束，中间不会有任何线程上下文切换。
 
-AtomicInteger是java并发包下面提供的原子类，主要操作的是int类型的整型，通过调用底层Unsafe的CAS等方法实现原子操作。
+- 原子操作可以是一个步骤，也可以是多个操作步骤，但是其顺序不可以被打乱，也不可以被切割而只执行其中的一部分，将整个操作视作一个整体是原子性的核心特征。
 
-还记得Unsafe吗？点击链接直达【[死磕 java魔法类之Unsafe解析](https://mp.weixin.qq.com/s/0s-u-MysppIaIHVrshp9fA)】
-
-## 原子操作
-
-原子操作是指不会被线程调度机制打断的操作，这种操作一旦开始，就一直运行到结束，中间不会有任何线程上下文切换。
-
-原子操作可以是一个步骤，也可以是多个操作步骤，但是其顺序不可以被打乱，也不可以被切割而只执行其中的一部分，将整个操作视作一个整体是原子性的核心特征。
-
-我们这里说的原子操作与数据库ACID中的原子性，笔者认为最大区别在于，数据库中的原子性主要运用在事务中，一个事务之内的所有更新操作要么都成功，要么都失败，事务是有回滚机制的，而我们这里说的原子操作是没有回滚的，这是最大的区别。
+- 我们这里说的原子操作与数据库ACID中的原子性，笔者认为最大区别在于，数据库中的原子性主要运用在事务中，一个事务之内的所有更新操作要么都成功，要么都失败，事务是有回滚机制的，而我们这里说的原子操作是没有回滚的，这是最大的区别。
 
 ## 源码分析
 
@@ -48,9 +40,9 @@ static {
 private volatile int value;
 ```
 
-（1）使用int类型的value存储值，且使用volatile修饰，volatile主要是保证可见性，即一个线程修改对另一个线程立即可见，主要的实现原理是内存屏障，这里不展开来讲，有兴趣的可以自行查阅相关资料。
+- （1）使用int类型的value存储值，且使用volatile修饰，volatile主要是保证可见性，即一个线程修改对另一个线程立即可见，主要的实现原理是内存屏障，这里不展开来讲，有兴趣的可以自行查阅相关资料。
 
-（2）调用Unsafe的objectFieldOffset()方法获取value字段在类中的偏移量，用于后面CAS操作时使用。
+- （2）调用Unsafe的objectFieldOffset()方法获取value字段在类中的偏移量，用于后面CAS操作时使用。
 
 ### compareAndSet()方法
 
@@ -62,17 +54,17 @@ public final boolean compareAndSet(int expect, int update) {
 public final native boolean compareAndSwapInt(Object var1, long var2, int var4, int var5);
 ```
 
-调用Unsafe.compareAndSwapInt()方法实现，这个方法有四个参数：
+#### 调用Unsafe.compareAndSwapInt()方法实现，这个方法有四个参数：
 
-（1）操作的对象；
+- （1）操作的对象；
 
-（2）对象中字段的偏移量；
+- （2）对象中字段的偏移量；
 
-（3）原来的值，即期望的值；
+- （3）原来的值，即期望的值；
 
-（4）要修改的值；
+- （4）要修改的值；
 
-可以看到，这是一个native方法，底层是使用C/C++写的，主要是调用CPU的CAS指令来实现，它能够保证只有当对应偏移量处的字段值是期望值时才更新，即类似下面这样的两步操作：
+#### 可以看到，这是一个native方法，底层是使用C/C++写的，主要是调用CPU的CAS指令来实现，它能够保证只有当对应偏移量处的字段值是期望值时才更新，即类似下面这样的两步操作：
 
 ```java
 if(value == expect) {
@@ -80,7 +72,7 @@ if(value == expect) {
 }
 ```
 
-通过CPU的CAS指令可以保证这两步操作是一个整体，也就不会出现多线程环境中可能比较的时候value值是a，而到真正赋值的时候value值可能已经变成b了的问题。
+- 通过CPU的CAS指令可以保证这两步操作是一个整体，也就不会出现多线程环境中可能比较的时候value值是a，而到真正赋值的时候value值可能已经变成b了的问题。
 
 ### getAndIncrement()方法
 
@@ -100,15 +92,15 @@ public final int getAndAddInt(Object var1, long var2, int var4) {
 }
 ```
 
-getAndIncrement()方法底层是调用的Unsafe的getAndAddInt()方法，这个方法有三个参数：
+#### getAndIncrement()方法底层是调用的Unsafe的getAndAddInt()方法，这个方法有三个参数：
 
-（1）操作的对象；
+- （1）操作的对象；
 
-（2）对象中字段的偏移量；
+- （2）对象中字段的偏移量；
 
-（3）要增加的值；
+- （3）要增加的值；
 
-查看Unsafe的getAndAddInt()方法的源码，可以看到它是先获取当前的值，然后再调用compareAndSwapInt()尝试更新对应偏移量处的值，如果成功了就跳出循环，如果不成功就再重新尝试，直到成功为止，这可不就是（CAS+自旋）的乐观锁机制么^^
+查看Unsafe的getAndAddInt()方法的源码，可以看到它是先获取当前的值，然后再调用compareAndSwapInt()尝试更新对应偏移量处的值，如果成功了就跳出循环，如果不成功就再重新尝试，直到成功为止，这可不就是（CAS+自旋）的乐观锁机制么
 
 AtomicInteger中的其它方法几乎都是类似的，最终会调用到Unsafe的compareAndSwapInt()来保证对value值更新的原子性。
 
@@ -204,14 +196,10 @@ public class AtomicIntegerTest {
 
 这里总是会打印出100000。
 
+- （2）说了那么多，你知道AtomicInteger有什么缺点吗？
 
-（2）说了那么多，你知道AtomicInteger有什么缺点吗？
-
-当然就是著名的ABA问题啦，我们下章接着聊^^
+当然就是著名的ABA问题啦，我们下章接着聊
 
 
 ---
 
-欢迎关注我的公众号“彤哥读源码”，查看更多源码系列文章, 与彤哥一起畅游源码的海洋。
-
-![qrcode](https://gitee.com/alan-tang-tt/yuan/raw/master/死磕%20java集合系列/resource/qrcode_ss.jpg)

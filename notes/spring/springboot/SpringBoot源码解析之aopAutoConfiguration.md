@@ -1,6 +1,6 @@
 ### springBoot aop自动注解
 
-````
+````java
 package org.springframework.boot.autoconfigure.aop;
 /**
  * org.springframework.boot.autoconfigure.EnableAutoConfiguration
@@ -55,7 +55,7 @@ public class AopAutoConfiguration {
 
 - bean角色：ROLE_INFRASTRUCTURE (基础设施)
 
-````
+````java
 class AspectJAutoProxyRegistrar implements ImportBeanDefinitionRegistrar {
 
 	/**
@@ -86,7 +86,7 @@ class AspectJAutoProxyRegistrar implements ImportBeanDefinitionRegistrar {
 
 #### AnnotationAwareAspectJAutoProxyCreator //创建代理类
 
-````
+````java
 
 @SuppressWarnings("serial")
 public class AnnotationAwareAspectJAutoProxyCreator extends AspectJAwareAdvisorAutoProxyCreator {
