@@ -1,6 +1,6 @@
-### @EnableScheduling
+## @EnableScheduling
 
-#### 概述
+### 概述
 
 - 注解@EnableScheduling 导入SchedulingConfiguration;
 
@@ -52,7 +52,9 @@ public class SchedulingConfiguration {
 
 --- 
 
-#### 作为一个BeanPostProcessor  的定时任务ScheduledAnnotationBeanPostProcessor 实现会针对每个bean的创建,在bean生命周期方法#postProcessAfterInitialization中，扫描该bean中使用了注解@Scheduled的方法.
+### 扫描定时任务: 作为一个BeanPostProcessor -> ScheduledAnnotationBeanPostProcessor
+
+- 针对每个bean的创建,在bean生命周期方法#postProcessAfterInitialization中，扫描该bean中使用了注解@Scheduled的方法.
 
 ```java
 	@Override
@@ -60,29 +62,29 @@ public class SchedulingConfiguration {
 		if (bean instanceof AopInfrastructureBean || bean instanceof TaskScheduler ||
 				bean instanceof ScheduledExecutorService) {
 			  // Ignore AOP infrastructure such as scoped proxies.
-			 //忽略AOP,TaskSchedule基础类
+			 //  忽略AOP,TaskSchedule基础类
 			return bean;
 		}
-        // 获取指定实例的类信息
+               // 获取指定实例的类信息
 		Class<?> targetClass = AopProxyUtils.ultimateTargetClass(bean);
-        //this.nonAnnotatedClasses 是一个缓存，用于记录处理过程中所发现的不包含任何被@Scheduled注解的方法的类
+                 //this.nonAnnotatedClasses 是一个缓存，用于记录处理过程中所发现的不包含任何被@Scheduled注解的方法的类
 		if (!this.nonAnnotatedClasses.contains(targetClass)) {
-         // 获取类  targetClass 上所有使用注解  @Scheduled 的方法
-          // 注意 : 某个方法上可能同时使用多个注解  @Scheduled ,所以以下 annotatedMethods 的每个 Entry 是 一个方法对应一个 @Scheduled 集合
+                        // 获取类  targetClass 上所有使用注解  @Scheduled 的方法
+                       // 注意 : 某个方法上可能同时使用多个注解  @Scheduled ,所以以下 annotatedMethods 的每个 Entry 是 一个方法对应一个 @Scheduled 集合
 			Map<Method, Set<Scheduled>> annotatedMethods = MethodIntrospector.selectMethods(targetClass,(MethodIntrospector.MetadataLookup<Set<Scheduled>>) method -> {
 						Set<Scheduled> scheduledMethods = AnnotatedElementUtils.getMergedRepeatableAnnotations(method, Scheduled.class, Schedules.class);
 						return (!scheduledMethods.isEmpty() ? scheduledMethods : null);
 					});
 			if (annotatedMethods.isEmpty()) {
-                 //如果当前类 targetClass 不包含任何使用注解  @Scheduled 的方法，将其添加到 this.nonAnnotatedClasses
+                            //如果当前类 targetClass 不包含任何使用注解  @Scheduled 的方法，将其添加到 this.nonAnnotatedClasses
 				this.nonAnnotatedClasses.add(targetClass);
 				if (logger.isTraceEnabled()) {
 					logger.trace("No @Scheduled annotations found on bean class: " + targetClass);
 				}
 			}
 			else {
-               // 当前类 targetClass 上找到了使用注解 @Scheduled 的方法，记录在  annotatedMethods 中，
-               // 现在将它们逐个处理，使用的处理为方法 processScheduled             
+                        // 当前类 targetClass 上找到了使用注解 @Scheduled 的方法，记录在  annotatedMethods 中，
+                        // 现在将它们逐个处理，使用的处理为方法 processScheduled             
 				annotatedMethods.forEach((method, scheduledMethods) ->
 				        //挨个处理定时任务方法
 						scheduledMethods.forEach(scheduled -> processScheduled(scheduled, method, bean)));
@@ -96,11 +98,11 @@ public class SchedulingConfiguration {
 
 ```
 
-#### processScheduled()
+#### processScheduled() 
 
-rocessScheduled处理方法上的每个@Scheduled注解，生成一个ScheduledTask并登记到this.scheduledTasks。
+- processScheduled 处理方法上的每个@Scheduled注解，生成一个ScheduledTask并登记到this.scheduledTasks。
 
-this.scheduledTasks 数据结构为Map: key:是一个对象,其类就是含有方法使用了注解@Scheduled的类; value:
+- this.scheduledTasks 数据结构为Map, key:是一个对象,其类就是含有方法使用了注解@Scheduled的类; value:
 是一个ScheduledTask集合,方法上的每个注解@Scheduled对应一个ScheduledTask;
 
 ```java
@@ -113,16 +115,16 @@ this.scheduledTasks 数据结构为Map: key:是一个对象,其类就是含有�
 	 */
 	protected void processScheduled(Scheduled scheduled, Method method, Object bean) {
 		try {
-            //将使用了@Scheduled注解的方法包装成一个 Runnable 对象,随后构建 ScheduledTask 对象时会用得到
+                       //将使用了@Scheduled注解的方法包装成一个 Runnable 对象,随后构建 ScheduledTask 对象时会用得到
 			Runnable runnable = createRunnable(bean, method);
-            //用于记录当前 @Scheduled 注解是否已经被处理，初始化为 false  
+                      //用于记录当前 @Scheduled 注解是否已经被处理，初始化为 false  
 			boolean processedSchedule = false;
 			String errorMessage ="Exactly one of the 'cron', 'fixedDelay(String)', or 'fixedRate(String)' attributes is required";
-            //用于保存针对当前 @Scheduled  注解生成的 ScheduledTask,该方法完成时，该集合内元素数量通常为 1
+                      //用于保存针对当前 @Scheduled  注解生成的 ScheduledTask,该方法完成时，该集合内元素数量通常为 1
 			Set<ScheduledTask> tasks = new LinkedHashSet<>(4);
 			// Determine initial delay
             
-            //确定 initial delay 属性:基于注解属性 initialDelay 或者  initialDelayString 分析得到,二者只能使用其中之一
+                      //确定 initial delay 属性:基于注解属性 initialDelay 或者  initialDelayString 分析得到,二者只能使用其中之一
 			long initialDelay = scheduled.initialDelay();
 			String initialDelayString = scheduled.initialDelayString();
 			
@@ -141,7 +143,8 @@ this.scheduledTasks 数据结构为Map: key:是一个对象,其类就是含有�
 				}
 			}
 			// Check cron expression
-            //检查这是否是一个 cron 表达式类型的注解  
+            
+                       //检查这是否是一个 cron 表达式类型的注解  
 			String cron = scheduled.cron();
 			if (StringUtils.hasText(cron)) {
 				String zone = scheduled.zone();
@@ -160,7 +163,7 @@ this.scheduledTasks 数据结构为Map: key:是一个对象,其类就是含有�
 						else {
 							timeZone = TimeZone.getDefault();
 						}
-	                     //包装成为一个 CronTask,并提交给 线程池
+	                                        //包装成为一个 CronTask,并提交给 线程池
 						tasks.add(this.registrar.scheduleCronTask(new CronTask(runnable, new CronTrigger(cron, timeZone))));
 					}
 				}
@@ -170,7 +173,7 @@ this.scheduledTasks 数据结构为Map: key:是一个对象,其类就是含有�
 				initialDelay = 0;
 			}
 			// Check fixed delay
-            //检查这是否是一个固定延迟类型的注解    
+                        //检查这是否是一个固定延迟类型的注解    
 			long fixedDelay = scheduled.fixedDelay();
 			if (fixedDelay >= 0) {
 				Assert.isTrue(!processedSchedule, errorMessage);

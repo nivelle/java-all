@@ -1,4 +1,4 @@
-package com.nivelle.core.jdk.concurrent;
+package com.nivelle.spring.springcore.schedule;
 
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
