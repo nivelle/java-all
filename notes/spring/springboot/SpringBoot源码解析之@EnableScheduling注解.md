@@ -221,14 +221,38 @@ public class SchedulingConfiguration {
 
 -  这意味着该ScheduledTask从此刻起在程序运行期间就会按照@Scheduled注解所设定的时间点被执行。
 
--  备注1: 从上面的代码可以看出,如果多个定时任务定义的是同一个时间,那么也是顺序执行的，会根据程序加载Scheduled方法的先后来执行。
+-  **备注1:** 从上面的代码可以看出,如果多个定时任务定义的是同一个时间,那么也是顺序执行的，会根据程序加载Scheduled方法的先后来执行。
 
--  备注2: 但是如果某个定时任务执行未完成此任务一直无法执行完成，无法设置下次任务执行时间，之后会导致此任务后面的所有定时任务无法继续执行，也就会出现所有的定时任务“失效”现象
+-  **备注2:** 但是如果某个定时任务执行未完成此任务一直无法执行完成，无法设置下次任务执行时间，之后会导致此任务后面的所有定时任务无法继续执行，也就会出现所有的定时任务“失效”现象
 
 
 -----
 
 ### 定时任务处理
+
+根据这些属性的不同，都加入到ScheduledTaskRegistrar来管理定时任务
+
+- cron expression
+- fixedDelay
+- fixedRate
+
+#### scheduleCronTask
+
+````java
+public ScheduledFuture<?> schedule(Runnable command,
+        long delay,
+        TimeUnit unit) {
+        if (command == null || unit == null)
+        throw new NullPointerException();
+        RunnableScheduledFuture<?> t = decorateTask(command,
+        new ScheduledFutureTask<Void>(command, null,
+        triggerTime(delay, unit)));
+        delayedExecute(t);
+        return t;
+        }
+````
+
+#### scheduleAtFixedRate 
 
 - command: 任务
 
@@ -256,7 +280,31 @@ public class SchedulingConfiguration {
               delayedExecute(t);
               return t;
           }
-```     
+```  
+#### scheduleWithFixedDelay
+
+````java
+   public ScheduledFuture<?> scheduleWithFixedDelay(Runnable command,
+                                                     long initialDelay,
+                                                     long delay,
+                                                     TimeUnit unit) {
+        if (command == null || unit == null)
+            throw new NullPointerException();
+        if (delay <= 0)
+            throw new IllegalArgumentException();
+        ScheduledFutureTask<Void> sft =
+            new ScheduledFutureTask<Void>(command,
+                                          null,
+                                          triggerTime(initialDelay, unit),
+                                          unit.toNanos(-delay));
+        RunnableScheduledFuture<Void> t = decorateTask(command, sft);
+        sft.outerTask = t;
+        delayedExecute(t);
+        return t;
+    }
+````
+
+-------------
 
 #### triggerTime:触发时间计算
 
