@@ -232,9 +232,42 @@ public class SchedulingConfiguration {
 
 根据这些属性的不同，都加入到ScheduledTaskRegistrar来管理定时任务
 
-- cron expression
-- fixedDelay
-- fixedRate
+#### TaskScheduler 作为注册器当中的任务管理器
+
+#### ScheduledExecutorService localExecutor 作为注册器的线程池来执行定时任务
+
+- ScheduledExecutorService作为接口直接继承了jdk的线程池ExecutorService接口。可见，spring的定时任务线程池是完全基于jdk的线程池的实现的。
+
+- corePoolSize为1，这代表着这个线程池的工作线程在一般情况下只有一条。
+````java
+protected void scheduleTasks() {
+		if (this.taskScheduler == null) {
+			this.localExecutor = Executors.newSingleThreadScheduledExecutor();
+			this.taskScheduler = new ConcurrentTaskScheduler(this.localExecutor);
+		}
+		if (this.triggerTasks != null) {
+			for (TriggerTask task : this.triggerTasks) {
+				addScheduledTask(scheduleTriggerTask(task));
+			}
+		}
+		if (this.cronTasks != null) {
+			for (CronTask task : this.cronTasks) {
+				addScheduledTask(scheduleCronTask(task));
+			}
+		}
+		if (this.fixedRateTasks != null) {
+			for (IntervalTask task : this.fixedRateTasks) {
+				addScheduledTask(scheduleFixedRateTask(task));
+			}
+		}
+		if (this.fixedDelayTasks != null) {
+			for (IntervalTask task : this.fixedDelayTasks) {
+				addScheduledTask(scheduleFixedDelayTask(task));
+			}
+		}
+	}
+
+````
 
 #### scheduleCronTask
 
