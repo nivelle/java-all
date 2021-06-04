@@ -105,11 +105,11 @@ public class UnsafeClassMock {
          *
          * 包括线程挂起、恢复、锁机制
          */
-        boolean monitorEnter = unsafe.tryMonitorEnter(user);
-        System.out.println("获取对象锁,monitorEnter:" + monitorEnter);
-        boolean monitorEnter2 = unsafe.tryMonitorEnter(user);
-        System.out.println("获取对象锁,monitorEnter2:" + monitorEnter2);
-        System.out.println("当前锁:" + Thread.currentThread().getName());
+//        boolean monitorEnter = unsafe.tryMonitorEnter(user);
+//        System.out.println("获取对象锁,monitorEnter:" + monitorEnter);
+//        boolean monitorEnter2 = unsafe.tryMonitorEnter(user);
+//        System.out.println("获取对象锁,monitorEnter2:" + monitorEnter2);
+//        System.out.println("当前锁:" + Thread.currentThread().getName());
         Thread.sleep(1000);
         /**
          * public native void park(boolean isAbsolute, long time); // 第一个参数是是否是绝对时间，第二个参数是等待时间值。如果isAbsolute是true则会实现ms定时。如果isAbsolute是false则会实现ns定时。

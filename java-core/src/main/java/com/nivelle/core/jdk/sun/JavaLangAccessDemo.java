@@ -1,5 +1,6 @@
 package com.nivelle.core.jdk.sun;
 
+import com.nivelle.core.pojo.User;
 import sun.misc.JavaLangAccess;
 import sun.misc.SharedSecrets;
 
@@ -18,12 +19,15 @@ public class JavaLangAccessDemo {
     public static void main(String[] args) {
 
         JavaLangAccess access = SharedSecrets.getJavaLangAccess();
-        Throwable throwable = new Throwable();
+        Throwable throwable = new Throwable("fuck");
+
         int depth = access.getStackTraceDepth(throwable);
+        System.out.println(depth);
         //输出JVM栈帧中的所有类实例
         for (int i = 0; i < depth; i++) {
-            StackTraceElement frame = access.getStackTraceElement(throwable, i);
-            System.err.println(frame);
+            System.out.println(i);
+            StackTraceElement frame = access.getStackTraceElement(throwable, 0);
+            System.out.println("StackTraceElement is"+frame);
         }
     }
 }
