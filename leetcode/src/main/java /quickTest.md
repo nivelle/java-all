@@ -1,7 +1,7 @@
 - ~~leetcode-206-反转链表~~
 - ~~leetcode-215-数组中的第K个最大元素~~
-- leetcode-3-无重复字符的最长字串
-- leetcode-92-反转链表
+- ~~leetcode-3-无重复字符的最长字串~~
+- ~~leetcode-92-反转链表~~
 - leetcode-136-只出现一次的数字
 - leetcode-20-有效的括号
 - leetcode-151-翻转字符串里的单词
