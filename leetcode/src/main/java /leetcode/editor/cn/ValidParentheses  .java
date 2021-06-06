@@ -55,10 +55,33 @@
 // 👍 2440 👎 0
 
 
+import java.util.Stack;
+
 //leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
     public boolean isValid(String s) {
-
+        if (s.length() == 0 || s == null) return true;
+        Stack<Character> stack = new Stack<>();
+        char[] charArray = s.toCharArray();
+        for (int i = 0; i < charArray.length; i++) {
+            if (charArray[i] == '(') {
+                stack.push(')');
+            } else if (charArray[i] == '[') {
+                stack.push(']');
+            } else if (charArray[i] == '{') {
+                stack.push('}');
+            } else {
+                //没有左半边的符号
+                if (stack.isEmpty()) {
+                    return false;
+                }
+                //弹出
+                if (stack.pop() != charArray[i]) {
+                    return false;
+                }
+            }
+        }
+        return stack.isEmpty();
     }
 }
 //leetcode submit region end(Prohibit modification and deletion)
