@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.nivelle</groupId>
-    <artifactId>javaguides-parent</artifactId>
+    <artifactId>guides-parent</artifactId>
     <version>1.0.1</version>
     <name>java-guides</name>
     <packaging>pom</packaging>
