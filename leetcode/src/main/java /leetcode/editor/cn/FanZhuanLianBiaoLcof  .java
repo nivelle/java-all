@@ -30,6 +30,10 @@
  * ListNode(int x) { val = x; }
  * }
  */
+
+/**
+ * 反转链表
+ */
 class Solution {
     public ListNode reverseList(ListNode head) {
 

@@ -52,6 +52,10 @@ import java.util.HashMap;
 //每次通过end将窗口向右滑动，如果遇到和窗口内元素重复的元素就让start向前移动
 
 //leetcode submit region begin(Prohibit modification and deletion)
+
+/**
+ * 无重复字符的最长字串
+ */
 class Solution {
     public int lengthOfLongestSubstring(String s) {
         if (s.length() == 0 || s == null) return 0;

@@ -44,7 +44,9 @@ package leetcode.editor.cn;//给你单链表的头节点 head ，请你反转链
 
 //leetcode submit region begin(Prohibit modification and deletion)
 
-
+/**
+ * 反转列表
+ */
 public class Solution {
     public ListNode reverseList(ListNode head) {
         ListNode prev = null;
