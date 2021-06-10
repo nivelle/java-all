@@ -64,8 +64,9 @@ class Solution {
         while (left <= right) {
             //中间位移
             int mid = (left + right) / 2;
-            //左班部分 考虑 中位移值是否大于等于 目标值
-            //右半部分 只需要考虑中位移只是否大于目标值
+            // 左边第一个： 第一个等于target的位置
+            // 右边第一个： 第一个大于target减一的位置
+            // 充分利用数组的有序性
             if (nums[mid] > target || (lower && nums[mid] >= target)) {
                 //右下标左移
                 right = mid - 1;
