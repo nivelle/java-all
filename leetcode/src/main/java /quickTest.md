@@ -3,22 +3,22 @@
 - 3 . ~~leetcode-3-无重复字符的最长字串~~
 - 4 . ~~leetcode-92-反转链表~~
 - 5 . ~~leetcode-136-只出现一次的数字~~
-- leetcode-20-有效的括号
-- leetcode-151-翻转字符串里的单词
-- leetcode-103-二叉树的锯齿形层序遍历
-- leetcode-21. 合并两个有序链表
-- leetcode-88-合并两个有序数组
-- offer-55-二叉树深度（Yes）
-- leetcode-1-两数之和
-- leetcode-15-三数之和
-- leetcode-16-最接近的三数之和
-- leetcode-34-在排序数组中查找第一个和最后一个元素（Yes）
-- Offer-09-用两个栈实现队列
-- leetcode-144-二叉树的前序遍历
-- leetcode-1464- 数组中两元素的最大乘积
-- leetcode-33-搜索旋转排序数组
-- leetcode-142-链表成环
-- Offer-42- 连续子数组的最大和
+- 6.~~leetcode-20-有效的括号~~
+- 7.~~leetcode-151-翻转字符串里的单词~~
+- 8.~~leetcode-103-二叉树的锯齿形层序遍历~~
+- 9.~~leetcode-21. 合并两个有序链表~~
+- 10.~~leetcode-88-合并两个有序数组~~
+- 11.~~offer-55-二叉树深度（Yes）~~
+- 12.~~leetcode-1-两数之和~~
+- 13.~~leetcode-15-三数之和~~
+- 14.~~leetcode-16-最接近的三数之和~~
+- 15.~~leetcode-34-在排序数组中查找第一个和最后一个元素（Yes）~~
+- 16.~~Offer-09-用两个栈实现队列~~
+- 17.~~leetcode-144-二叉树的前序遍历~~
+- 18.~~leetcode-1464- 数组中两元素的最大乘积~~
+- 19.~~leetcode-33-搜索旋转排序数组~~
+- 20.~~leetcode-142-链表成环~~
+- 21.~~Offer-42- 连续子数组的最大和~~
 - leetcode-322-零钱兑换
 - Offer-18-删除链表的节点
 - leetcode-509-斐波那契数
