@@ -32,9 +32,12 @@ class Solution {
         if (nums.length == 0 || nums == null) return 0;
         int n = nums.length;
         int[] dp = new int[n];
+        //dp 代表子数组，用来存放最大值的元素集合
         dp[0] = nums[0];
+        //res 用来记录之前和现在加上num[i]后最大值
         int res = dp[0];
         for (int i = 1; i < n; i++) {
+            //目标结果数组第i个位置的值
             dp[i] = Math.max(dp[i-1]+nums[i],nums[i]);
             //需要使用 res 记录之前和现在加上num[i]后哪个更大： -1 1 -3 4 -1 2 1 -5 4
             res = Math.max(res,dp[i]);
