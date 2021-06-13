@@ -75,6 +75,7 @@ import java.util.Stack;
  * }
  */
 class Solution {
+    //二叉树遍历
     List<Integer> res = new ArrayList<>();
 
     //前序遍历：首先访问根结点，然后遍历左子树，最后遍历右子树（根->左->右）
