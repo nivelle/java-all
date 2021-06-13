@@ -55,6 +55,10 @@ class Solution {
         return new int[]{-1, -1};
     }
 
+    /**
+     * 二分用这个模板就不会出错了。满足条件的都写l = mid或者r = mid，mid首先写成l + r >> 1，如果满足条件选择的是l = mid，那么mid那里就加个1，
+     * 写成l + r + 1 >> 1。然后就是else对应的写法l = mid对应r = mid - 1，r = mid对应l = mid + 1
+     */
     public int binarySearch(int[] nums, int target, boolean lower) {
         int left = 0;
         int right = nums.length - 1;
@@ -63,10 +67,11 @@ class Solution {
         //退出条件: 指针交汇
         while (left <= right) {
             //中间位移
-            int mid = (left + right) / 2;
+            int mid = (left + right) >> 1;
             // 左边第一个： 第一个等于target的位置
             // 右边第一个： 第一个大于target减一的位置
             // 充分利用数组的有序性
+            //
             if (nums[mid] > target || (lower && nums[mid] >= target)) {
                 //右下标左移
                 right = mid - 1;
