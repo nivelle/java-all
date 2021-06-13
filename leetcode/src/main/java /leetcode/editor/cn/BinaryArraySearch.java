@@ -1,7 +1,7 @@
 package leetcode.editor.cn;
 
 /**
- * TODO:DOCUMENT ME!
+ * 二分法查找
  *
  * @author fuxinzhong
  * @date 2021/05/13
