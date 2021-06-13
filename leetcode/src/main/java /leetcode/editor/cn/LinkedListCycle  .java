@@ -1,4 +1,4 @@
-package leetcode.editor.cn;//给定一个链表，判断链表中是否有环。
+//给定一个链表，判断链表中是否有环。 
 //
 // 如果链表中有某个节点，可以通过连续跟踪 next 指针再次到达，则链表中存在环。 为了表示给定链表中的环，我们使用整数 pos 来表示链表尾连接到链表中的
 //位置（索引从 0 开始）。 如果 pos 是 -1，则在该链表中没有环。注意：pos 不作为参数进行传递，仅仅是为了标识链表的实际情况。 
@@ -50,38 +50,38 @@ package leetcode.editor.cn;//给定一个链表，判断链表中是否有环。
 // pos 为 -1 或者链表中的一个 有效索引 。 
 // 
 // Related Topics 链表 双指针 
-// 👍 1001 👎 0
+// 👍 1090 👎 0
 
 
 //leetcode submit region begin(Prohibit modification and deletion)
 
-import java.util.List;
-
-//Definition for singly-linked list.
-//class ListNode {
-//    int val;
-//    ListNode next;
-//
-//    ListNode(int x) {
-//        val = x;
-//        next = null;
-//    }
-//}
-
-public class LinkedListCycle {
+/**
+ * Definition for singly-linked list.
+ * class ListNode {
+ * int val;
+ * ListNode next;
+ * ListNode(int x) {
+ * val = x;
+ * next = null;
+ * }
+ * }
+ */
+public class Solution {
     public boolean hasCycle(ListNode head) {
-        if (head != null && head.next != null) {
-            ListNode next = head.next;
-            ListNode nextNext = head.next.next;
-            while (nextNext != next) {
-                if (nextNext == null || nextNext.next == null) return false;
-                next = next.next;
-                nextNext = nextNext.next.next;
-            }
-            return true;
+        if (head == null || head.next == null) {
+            return false;
         }
-
-        return false;
+        ListNode slow = head;
+        ListNode fast = head.next;
+        //快慢指针：快指针先进入环，慢指针后进入，因为环，快指针会和慢指针相遇
+        while (slow != head) {
+            if (fast == null || fast.next == null) {
+                return false;
+            }
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+        return true;
     }
 }
 //leetcode submit region end(Prohibit modification and deletion)
