@@ -13,5 +13,9 @@ public class Test {
         System.out.println(s.trim());
         //String[] str = s.trim().split("//s+");
 
+        String st = "ada_%s";
+
+        System.out.println(String.format(st,"hh","dd"));
+
     }
 }
