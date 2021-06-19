@@ -54,9 +54,11 @@ class Solution {
         Queue<TreeNode> queue = new LinkedList<TreeNode>();
         queue.offer(root);
         while (!queue.isEmpty()) {
+            //一层一个Level
             List<Integer> level = new ArrayList<Integer>();
             int currentLevelSize = queue.size();
             for (int i = 1; i <= currentLevelSize; ++i) {
+                //从队列弹出元素，继续判断是否有下一层级；如果没有则queue就为空了
                 TreeNode node = queue.poll();
                 level.add(node.val);
                 if (node.left != null) {
