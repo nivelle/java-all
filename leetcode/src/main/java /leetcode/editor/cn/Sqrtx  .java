@@ -38,6 +38,7 @@ class Solution {
                 end = mid - 1;
             } else {
                 start = mid + 1;
+                //不能整除 取中间值
                 res = mid;
             }
         }
