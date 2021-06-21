@@ -34,7 +34,9 @@
  */
 class Solution {
     public List<Integer> rightSideView(TreeNode root) {
-
+       //DFS（Deep First Search）深度优先搜索。
+        
+        //BFS（Breath First Search）广度优先搜索。
     }
 }
 //leetcode submit region end(Prohibit modification and deletion)
