@@ -35,8 +35,7 @@ class Solution {
 //    }
 
 
-
-
+    //快速排序
     private static void quickSort(int[] arr, int low, int high) {
         if (low > high) return;
         int index = getIndex(arr, low, high);
@@ -47,7 +46,7 @@ class Solution {
     //目标是将比基准元素大的数据放到基准元素的右边，把比基准元素小的数据放到基准元素的左边
     //当两个指针重合时就是基准元素的位置
     private static int getIndex(int[] arr, int low, int high) {
-        //临时变量，保存基准数据
+        //临时变量,保存基准数据
         int tmp = arr[low];
         while (low < high) {
             //右指针先往左走，当右指针指向元素比基准数小时，将该元素放到左指针指向的位置（这么做是为了把该数放到基准数的左边）
@@ -60,6 +59,7 @@ class Solution {
             while (low < high && arr[low] <= tmp) {
                 low++;
             }
+            //否则头部元素大于tmp了
             arr[high] = arr[low];
         }
         //退出循环后，说明此时high==low，让基准数组赋值给当前值
@@ -68,4 +68,3 @@ class Solution {
         return low;
     }
 }
-//leetcode submit region end(Prohibit modification and deletion)
