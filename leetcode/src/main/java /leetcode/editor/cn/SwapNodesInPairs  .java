@@ -54,30 +54,43 @@
  * }
  */
 class Solution {
-    public ListNode swapPairs(ListNode head) {
+    //跌打解法
+    class Solution {
+        public ListNode swapPairs(ListNode head) {
+            // 已有的链表加一个头部 head node
+            ListNode resultHead = new ListNode();
+            resultHead.next = head;
 
-        ListNode dummy = new ListNode(0);
-        ListNode l1 = dummy;
+            // curNode 遍历链表时用
+            ListNode curNode = resultHead;
 
-        dummy.next = head;
-        ListNode l2 = head;
+            // 开始遍历链表
+            while(curNode != null && curNode.next != null && curNode.next.next != null) {
+                ListNode  f = curNode;
+                ListNode  s = curNode.next;
+                ListNode  t = s.next;
 
-        while (l2 != null && l2.next != null) {
-            ListNode start = l2.next;
-            ListNode nextStart = l2.next.next;
-            //新列表头节点下一个节点 为 老链表头节点下一个节点
-            l1.next = start;
-            //老节点 头节点后移
-            start.next = l2;
-            //老节点头节点下一个节点改为 原来 下下个节点
-            l2.next = nextStart;
-            //新链表虚拟节点指向老链表的新头节点
-            l1 = l2;
-            //老链表头节点后移¬
-            l2 = l2.next;
+                // 两两交换链表结点
+                f.next = t;
+                s.next = t.next;
+                t.next = s;
+
+                // 标杆位后移2位
+                curNode = curNode.next.next;
+            }
+            return resultHead.next;
         }
-        return dummy.next;
-
     }
+
+    //递归解法
+    public ListNode swapPairs(ListNode head) {
+        if (head == null || head.next == null) return head;
+        ListNode newHead = head.next;
+        head.next = swapPairs(newHead.next);
+        newHead.next = head;
+        return newHead;
+    }
+
+
 }
 //leetcode submit region end(Prohibit modification and deletion)
