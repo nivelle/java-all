@@ -33,6 +33,8 @@
 // 👍 257 👎 0
 
 
+import com.sun.xml.internal.fastinfoset.algorithm.ShortEncodingAlgorithm;
+
 //leetcode submit region begin(Prohibit modification and deletion)
 /*
 // Definition for a Node.
@@ -55,8 +57,37 @@ class Node {
 };
 */
 class Solution {
+    Node head;
+    Node pre;
+
     public Node treeToDoublyList(Node root) {
-        
+        if (root == null) {
+            return null;
+        }
+        dfs(root);
+        pre.right = head;
+        head.left = pre;
+        return head;
+
+    }
+
+    private void dfs(Node cur) {
+        if (cur == null) return;
+        //递归处理左子树
+        dfs(cur.left);
+        //如果前继为空，当前节点设置为头节点
+        if (pre == null) {
+            head = cur;
+        } else {
+            //否则作为前节点的右节点
+            pre.right = cur;
+        }
+        //当前节点左节点为当前节点
+        cur.left = pre;
+        //pre 节点后移
+        pre = cur;
+        //递归处理右子树
+        dfs(cur.right);
     }
 }
 //leetcode submit region end(Prohibit modification and deletion)
