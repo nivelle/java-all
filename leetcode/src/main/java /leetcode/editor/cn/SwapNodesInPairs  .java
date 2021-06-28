@@ -56,34 +56,38 @@
 class Solution {
     //跌打解法
     class Solution {
-        public ListNode swapPairs(ListNode head) {
-            // 已有的链表加一个头部 head node
-            ListNode resultHead = new ListNode();
-            resultHead.next = head;
-
-            // curNode 遍历链表时用
-            ListNode curNode = resultHead;
-
-            // 开始遍历链表
-            while(curNode != null && curNode.next != null && curNode.next.next != null) {
-                ListNode  f = curNode;
-                ListNode  s = curNode.next;
-                ListNode  t = s.next;
-
-                // 两两交换链表结点
-                f.next = t;
-                s.next = t.next;
-                t.next = s;
-
-                // 标杆位后移2位
-                curNode = curNode.next.next;
-            }
-            return resultHead.next;
+        public ListNode swapPairs(ListNode head){
+            return swapPairs1(head);
         }
     }
 
+    public ListNode swapPairs1(ListNode head) {
+        // 已有的链表加一个头部 head node
+        ListNode resultHead = new ListNode();
+        resultHead.next = head;
+
+        // curNode 遍历链表时用
+        ListNode curNode = resultHead;
+
+        // 开始遍历链表
+        while (curNode != null && curNode.next != null && curNode.next.next != null) {
+            ListNode f = curNode;
+            ListNode s = curNode.next;
+            ListNode t = s.next;
+
+            // 两两交换链表结点
+            f.next = t;
+            s.next = t.next;
+            t.next = s;
+
+            // 标杆位后移2位
+            curNode = curNode.next.next;
+        }
+        return resultHead.next;
+    }
+
     //递归解法
-    public ListNode swapPairs(ListNode head) {
+    public ListNode swapPairs2(ListNode head) {
         if (head == null || head.next == null) return head;
         ListNode newHead = head.next;
         head.next = swapPairs(newHead.next);
