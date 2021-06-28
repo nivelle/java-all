@@ -35,10 +35,10 @@
 - 36.~~leetcode-415-字符串相加~~
 - 37.~~leetcode-24-两两交换链表中的节点~~
 - 38.~~leetcode-1-两数之和~~
-- 39.leetcode-23-合并K个排序链表
-- 40.leetcode-137-只出现一次的数字
-- 41.leetcode-83-删除链表中的重复元素
-- 42.leetcode-204-计数质数
+- 39.~~leetcode-23-合并K个排序链表~~
+- 40.~~leetcode-137-只出现一次的数字~~
+- 41.~~leetcode-83-删除链表中的重复元素~~
+- 42.~~leetcode-204-计数质数~~
 - 43.leetcode-22-括号生成
 - 44.leetcode-300-最长上升子序列
 - 45.leetcode-78-子集
