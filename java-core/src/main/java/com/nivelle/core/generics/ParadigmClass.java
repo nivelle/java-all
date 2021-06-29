@@ -1,7 +1,7 @@
 package com.nivelle.core.generics;
 
 /**
- * 范型类
+ * 范型类 : 控制其属性的类型
  *
  * @author nivelle
  * @date 2019/11/12
