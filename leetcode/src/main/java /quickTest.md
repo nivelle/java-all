@@ -39,9 +39,9 @@
 - 40.~~leetcode-137-只出现一次的数字~~
 - 41.~~leetcode-83-删除链表中的重复元素~~
 - 42.~~leetcode-204-计数质数~~
-- 43.leetcode-22-括号生成
-- 44.leetcode-300-最长上升子序列
-- 45.leetcode-78-子集
+- 43.~~leetcode-22-括号生成~~
+- 44.~~leetcode-300-最长上升子序列~~
+- 45.~~leetcode-78-子集~~
 - 46.leetcode-46-全排列I
 - 47.leetcode-47-全排列II
 - 48.leetcode-39-组合总和
