@@ -64,7 +64,7 @@
 - 65.leetcode-9-回文数
 - 66.leetcode-26-删除排序数组中的重复项
 - 67.~~leetcode-50-Pow(x,b)~~
-- 70.leetcode-7-整数反转
+- 70.~~leetcode-7-整数反转~~
 - 71.~~leetcode-70-爬楼梯~~
 - 72.~~leetcode-239-滑动窗口的最大值~~
 
