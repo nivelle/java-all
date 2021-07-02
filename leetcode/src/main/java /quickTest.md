@@ -42,8 +42,8 @@
 - 43.~~leetcode-22-括号生成~~
 - 44.~~leetcode-300-最长上升子序列~~
 - 45.~~leetcode-78-子集~~
-- 46.leetcode-46-全排列I
-- 47.leetcode-47-全排列II
+- 46.~~leetcode-46-全排列I~~
+- 47.~~leetcode-47-全排列II~~
 - 48.leetcode-39-组合总和
 - 49.leetcode-40-组合总和II
 - 50.leetcode-79-单词搜索
