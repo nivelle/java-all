@@ -62,7 +62,7 @@
 - 63.leetcode-543-二叉树的直径
 - 64.leetcode-11-成最多水的容器
 - 65.leetcode-9-回文数
-- 66.leetcode-26-删除排序数组中的重复项
+- 66.~~leetcode-26-删除排序数组中的重复项~~
 - 67.~~leetcode-50-Pow(x,b)~~
 - 70.~~leetcode-7-整数反转~~
 - 71.~~leetcode-70-爬楼梯~~
