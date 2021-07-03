@@ -49,9 +49,11 @@
 class Solution {
     public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
         if (root.val > p.val && root.val > q.val) {
+            //根节点比左右节点都大
             return lowestCommonAncestor(root.left, p, q);
         }
         if (root.val < p.val && root.val < q.val) {
+            //根节点比左右节点都小
             return lowestCommonAncestor(root.right, p, q);
         }
         return root;
