@@ -51,7 +51,22 @@
 //leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
     public int maxArea(int[] height) {
+        //双指针： 两个板子之间的距离* 短扳的高度，
+        int left = 0;
+        int right = height.length - 1;
 
+        int area = 0;
+        int res = 0;
+        while (left < right) {
+            area = Math.min(height[left], height[right]) * (right - left);
+            res = Math.max(res, area);
+            if (height[left] < height[right]) {
+                left++;
+            } else {
+                right--;
+            }
+        }
+        return res;
     }
 }
 //leetcode submit region end(Prohibit modification and deletion)
