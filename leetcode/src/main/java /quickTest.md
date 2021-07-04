@@ -60,7 +60,7 @@
 - 61.leetcode-39-组合总和
 - 62.leetcode-40-组合总和II
 - 63.leetcode-79-单词搜索
-- 64.leetcode-33-搜索旋转排序数组
+- 64.~~leetcode-33-搜索旋转排序数组~~
 - 65.Offer-154-寻找旋转排序数组的最小值
 - 66.~~leetcode-35-搜索插入位置~~
 - 67.leetcode-576-另一个树的子树
