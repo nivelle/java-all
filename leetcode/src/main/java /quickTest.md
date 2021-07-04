@@ -57,7 +57,7 @@
 - 58.~~leetcode-7-整数反转~~
 - 59.~~leetcode-70-爬楼梯~~
 - 60.~~leetcode-239-滑动窗口的最大值~~
-- 61.leetcode-39-组合总和
+- 61.~~leetcode-39-组合总和~~
 - 62.leetcode-40-组合总和II
 - 63.~~leetcode-79-单词搜索~~
 - 64.~~leetcode-33-搜索旋转排序数组~~
@@ -65,6 +65,6 @@
 - 66.~~leetcode-35-搜索插入位置~~
 - 67.~~leetcode-576-另一个树的子树~~
 - 68.~~leetcode-226-翻转二叉树~~
-- 69.leetcode-543-二叉树的直径
+- 69.~~leetcode-543-二叉树的直径~~
 - 70.leetcode-11-成最多水的容器
 
