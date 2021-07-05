@@ -1,4 +1,4 @@
-### git add -u //如果创建了新文件，可以执行git add -i 命令
+#### git add -u //如果创建了新文件，可以执行git add -i 命令
 
 ````
 -n, --dry-run         dry run
@@ -17,6 +17,28 @@
     --ignore-missing      check if - even missing - files are ignored in dry run
     --chmod <(+/-)x>      override the executable bit of the listed files
 
+````
+
+#### git rm 和 git rm --cached 的区别
+
+- 删除本地及仓库中的文件
+````
+git rm file
+git commit -m "xxx"
+git push origin master
+
+````
+- 删除仓库中的文件，保留本地的文件
+
+如果使用 git rm --cached 删除了仓库中的文件，而且后续不想跟踪此文件，只需将此文件加入 .gitignore 中即可。
 
 
 ````
+git rm --cached file
+git commit -m "xxx"
+git push origin master
+````
+
+
+#### 当我们想要对上一次的提交进行修改时，我们可以使用git commit –amend命令。git commit –amend既可以对上次提交的内容进行修改，也可以修改提交说明。
+
