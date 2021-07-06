@@ -51,3 +51,10 @@ git push origin master
 - git diff --cached;//可以看到 添加到暂存区中的文件做出的修改
 
 - git diff --staged //可以看到提交暂存去和版本库中文件的差异
+
+### git cherry 查看领先提交
+
+
+### git stash //暂存工作区，不暂存checkout 到别的分支会丢失未提交
+
+### git stash pop //复原工作区
