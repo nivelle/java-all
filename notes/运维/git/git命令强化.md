@@ -49,3 +49,4 @@ git push origin master
 - 修改后的文件通过 git add 命令提交到暂存区后，再执行git diff命令将看不到该文件的修改
   
 - git diff --cached;//可以看到 添加到暂存区中的文件做出的修改
+
