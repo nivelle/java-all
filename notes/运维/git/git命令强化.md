@@ -3,7 +3,7 @@
 ````
 -n, --dry-run         dry run
     -v, --verbose         be verbose
-
+    - u  
     -i, --interactive     interactive picking
     -p, --patch           select hunks interactively
     -e, --edit            edit current diff and apply
@@ -42,3 +42,10 @@ git push origin master
 
 #### 当我们想要对上一次的提交进行修改时，我们可以使用git commit –amend命令。git commit –amend既可以对上次提交的内容进行修改，也可以修改提交说明。
 
+### git diff
+
+- 修改后的文件在执行git diff 命令时会看到修改造成的差异
+  
+- 修改后的文件通过 git add 命令提交到暂存区后，再执行git diff命令将看不到该文件的修改
+  
+- git diff --cached;//可以看到 添加到暂存区中的文件做出的修改
