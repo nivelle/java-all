@@ -50,3 +50,4 @@ git push origin master
   
 - git diff --cached;//可以看到 添加到暂存区中的文件做出的修改
 
+- git diff --staged //可以看到提交暂存去和版本库中文件的差异
