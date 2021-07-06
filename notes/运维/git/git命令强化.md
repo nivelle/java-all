@@ -60,3 +60,8 @@ git push origin master
 ### git stash pop //复原工作区
 
 ### git branch -d branchUser/branchName //删除分支
+
+
+### git reset --soft HEAD^^ //回到最近两次提交之前
+
+### git cherry-pick commitId //从众多提交中选出一个提交应用在当前工作分支中。
