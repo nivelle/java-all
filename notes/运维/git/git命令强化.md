@@ -58,3 +58,5 @@ git push origin master
 ### git stash //暂存工作区，不暂存checkout 到别的分支会丢失未提交
 
 ### git stash pop //复原工作区
+
+### git branch -d branchUser/branchName //删除分支
