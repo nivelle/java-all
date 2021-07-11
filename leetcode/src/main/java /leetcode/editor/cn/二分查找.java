@@ -10,11 +10,11 @@ public class BinaryArraySearch {
 
     public static void main(String[] args) {
         int[] a = {1, 2, 4, 4, 5};
-        int res = findIt(5, 3, a);
+        int res = findIt(5, 4, a);
         System.out.println(res);
     }
 
-    public static int findIt(int length, int value, int[] target) {
+    public static int findIt(int length, int targetValue, int[] source) {
         if (length <= 0) {
             return 1;
         }
@@ -23,10 +23,11 @@ public class BinaryArraySearch {
         int index;
         while (leftIndex <= rightIndex) {
             index = (leftIndex + rightIndex) / 2;
-            if (target[index] >= value) {
-                if (index == 0 || target[index - 1] < value) {
+            if (source[index] >= targetValue) {
+                if (index == 0 || source[index - 1] < targetValue) {
                     return index + 1;
                 } else {
+                    //右边界 更新 right = index-1
                     rightIndex = index - 1;
                 }
             }

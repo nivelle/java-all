@@ -23,7 +23,6 @@ class Solution {
 
         int carry = 0;
         StringBuilder sb = new StringBuilder();
-
         while (i >= 0 || j >= 0) {
             //charAt 得到的是 ASCII码值，减去 '0'的码值，得到的就是就是 十进制
             int n1 = i >= 0 ? num1.charAt(i) - '0' : 0;
@@ -34,12 +33,11 @@ class Solution {
             i--;
             j--;
         }
-        if (carry==1) {
+        //两个个位数的值相加，整除10之后，默认是 0 或 1
+        if (carry == 1) {
             sb.append(1);
         }
         return sb.reverse().toString();
-
-
     }
 }
 //leetcode submit region end(Prohibit modification and deletion)
