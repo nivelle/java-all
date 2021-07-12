@@ -2,6 +2,7 @@ package com.nivelle.core.jdk.util;
 
 import com.google.common.collect.Lists;
 import com.nivelle.core.pojo.MyEnum;
+import org.testng.collections.Maps;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -503,6 +504,12 @@ public class ArrayListMock {
         List<String> setToList = Lists.newArrayList(set);
         System.out.println("setToList:" + setToList);
 
+        HashMap<String, String> map = new HashMap<>();
+        map.put("1", "1");
+        map.put("2", "2");
+        map.put("4", "3");
+        List<String> list1 = Lists.newArrayList(map.keySet());
+        System.out.println("set 转 list1:" + list1);
     }
 
 
