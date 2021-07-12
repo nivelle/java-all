@@ -1,4 +1,6 @@
-package leetcode.editor.cn;//给你单链表的头节点 head ，请你反转链表，并返回反转后的链表。
+package leetcode.editor.cn;
+
+//给你单链表的头节点 head ，请你反转链表，并返回反转后的链表。
 // 
 // 
 // 
@@ -43,6 +45,8 @@ package leetcode.editor.cn;//给你单链表的头节点 head ，请你反转链
 
 
 //leetcode submit region begin(Prohibit modification and deletion)
+
+import leetcode.editor.cn.base.ListNode;
 
 /**
  * 反转列表

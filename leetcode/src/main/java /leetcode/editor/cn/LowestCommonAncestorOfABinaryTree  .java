@@ -45,7 +45,7 @@
 
 //leetcode submit region begin(Prohibit modification and deletion)
 
-import leetcode.editor.cn.TreeNode;
+import leetcode.editor.cn.base.TreeNode;
 
 /**
  * Definition for a binary tree node.

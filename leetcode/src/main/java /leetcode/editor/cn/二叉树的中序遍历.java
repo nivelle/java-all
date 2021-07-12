@@ -80,10 +80,7 @@ class Solution {
 
         return inorderTraversal2(root);
     }
-
-
     List<Integer> res = new ArrayList<Integer>();
-
     //递归方式实现
     private List<Integer> inorderTraversal1(TreeNode root) {
         if (root == null) {
@@ -92,7 +89,6 @@ class Solution {
         dfs(root);
         return res;
     }
-
     private void dfs(TreeNode root) {
         if (root == null) {
             return;
@@ -100,7 +96,6 @@ class Solution {
         dfs(root.left);
         res.add(root.val);
         dfs(root.right);
-
     }
 
     //迭代实现

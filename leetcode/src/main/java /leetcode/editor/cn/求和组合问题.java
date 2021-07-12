@@ -70,11 +70,8 @@ class Solution {
         for (int i = start; i < candidates.length; i++) {
             //对于已经排好序的数组，如果candidates[i] 已经大于了目标值，则没有必要继续往后找了
             if (target < candidates[i]) continue;
-
             //剪枝 相同数字作用是一样的
             if (i > 0 && candidates[i] == candidates[i - 1]) continue;
-
-
             path.add(candidates[i]);
             //新的目标值
             target = target - candidates[i];

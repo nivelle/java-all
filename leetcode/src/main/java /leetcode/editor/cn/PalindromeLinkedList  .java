@@ -18,7 +18,7 @@
 
 
 //leetcode submit region begin(Prohibit modification and deletion)
-import leetcode.editor.cn.ListNode;
+import leetcode.editor.cn.base.ListNode;
 
 import java.util.ArrayList;
 import java.util.List;

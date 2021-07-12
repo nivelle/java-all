@@ -43,7 +43,7 @@
 
 //leetcode submit region begin(Prohibit modification and deletion)
 
-import leetcode.editor.cn.ListNode;
+import leetcode.editor.cn.base.ListNode;
 
 /**
  * Definition for singly-linked list.

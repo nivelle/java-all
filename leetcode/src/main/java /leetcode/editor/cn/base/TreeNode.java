@@ -1,4 +1,4 @@
-package leetcode.editor.cn;
+package leetcode.editor.cn.base;
 
 public class TreeNode {
     public int val;
