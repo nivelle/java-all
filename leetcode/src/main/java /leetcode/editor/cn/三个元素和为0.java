@@ -77,7 +77,6 @@ class Solution {
                     //如果小于0 ，则需要增加值
                     left++;
                 }
-
             }
         }
         return res;
