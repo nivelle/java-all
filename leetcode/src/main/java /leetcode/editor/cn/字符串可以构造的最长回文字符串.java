@@ -23,18 +23,24 @@
 
 //leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
+    /**
+     * 时间复杂度：O(N)O(N)，其中 NN 为字符串 s 的长度。我们需要遍历每个字符一次
+     */
     public int longestPalindrome(String s) {
         int[] count = new int[128];
         int length = s.length();
-
         for (int i = 0; i < length; ++i) {
             char c = s.charAt(i);
+            //count[c] 字符c出现的次数
             count[c]++;
         }
         int ans = 0;
-        for (int v: count) {
+        for (int v : count) {
+            //字符char 可以出现的次数v
             ans += v / 2 * 2;
+            //字符v出现次数是奇数,则+1
             if (v % 2 == 1 && ans % 2 == 0) {
+                //ans 变为奇数后 就不再使用奇数字符了
                 ans++;
             }
         }
