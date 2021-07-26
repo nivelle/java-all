@@ -4,7 +4,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
 /**
- * TODO:DOCUMENT ME!
+ * 异步任务A 运行完毕之后supplyAsync -> 激活任务 B thenRun
  *
  * @author fuxinzhong
  * @date 2021/04/02

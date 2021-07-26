@@ -5,7 +5,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * TODO:DOCUMENT ME!
+ * supplyAsync-> 对 oneFuture的执行结果 应用 函数:thenApply
  *
  * @author fuxinzhong
  * @date 2021/04/03
@@ -34,13 +34,13 @@ public class CompletableFutureThenApplyMock {
         CompletableFuture twoFuture = oneFuture.thenApply(new Function<String, Object>() {
 
             @Override
-            public String apply(String s){
+            public String apply(String s) {
                 try {
-                    System.out.println("在 one future 的基础上，再次进行加工："+s);
-                }catch (Exception e){
+                    System.out.println("在 one future 的基础上，再次进行加工：" + s);
+                } catch (Exception e) {
 
                 }
-                return s+"thenApplyValue";
+                return s + "thenApplyValue";
 
             }
         });

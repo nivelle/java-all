@@ -3,7 +3,7 @@ package com.nivelle.core.jdk.asyn;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * TODO:DOCUMENT ME!
+ * 基于 CompleteFuture 来设置正常结果和异常
  *
  * @author fuxinzhong
  * @date 2021/04/05

@@ -5,7 +5,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
 /**
- * TODO:DOCUMENT ME!
+ *  supplyAsync 任务A 执行完毕之后 处理结果 -> whenComplete
  *
  * @author fuxinzhong
  * @date 2021/04/03

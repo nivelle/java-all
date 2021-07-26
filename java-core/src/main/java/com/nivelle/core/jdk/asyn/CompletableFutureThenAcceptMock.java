@@ -5,7 +5,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
- * TODO:DOCUMENT ME!
+ * supplyAsync 产生数据-> thenAccept 消费数据
  *
  * @author fuxinzhong
  * @date 2021/04/03
@@ -29,7 +29,7 @@ public class CompletableFutureThenAcceptMock {
             }
         });
         System.out.println("one exec after");
-        // System.out.println("oneFuture after value:" + oneFuture.get());
+        //System.out.println("oneFuture after value:" + oneFuture.get());
         CompletableFuture twoFuture = oneFuture.thenAccept(new Consumer<String>() {
             @Override
             public void accept(String s) {
@@ -45,6 +45,7 @@ public class CompletableFutureThenAcceptMock {
 
         System.out.println("两个关键步骤执行完成");
         Thread.sleep(8000);
+        System.out.println("消费者消费数据："+twoFuture.get());
 
     }
 }
