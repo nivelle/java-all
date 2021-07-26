@@ -4,7 +4,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
 /**
- * TODO:DOCUMENT ME!
+ * 基于 thenCombine 实现两个并发运行的CompletableFuture任务都执行完成之后，使用两者的结果作为参数再执行一个异步任务
  *
  * @author fuxinzhong
  * @date 2021/04/03

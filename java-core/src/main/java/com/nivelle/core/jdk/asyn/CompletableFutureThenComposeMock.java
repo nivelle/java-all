@@ -4,7 +4,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
 /**
- * TODO:DOCUMENT ME!
+ * 基于 thenCompose 实现一个 CompletableFuture 执行完成之后执行另外一个 CompletableFuture
  *
  * @author fuxinzhong
  * @date 2021/04/03
