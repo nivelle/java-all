@@ -32,6 +32,8 @@
 
 //leetcode submit region begin(Prohibit modification and deletion)
 
+import leetcode.editor.cn.base.ListNode;
+
 /**
  * Definition for singly-linked list.
  * public class ListNode {
@@ -45,12 +47,15 @@ class Solution {
         if (head == null) {
             return null;
         }
+        //构建一个临时指针,指向的是头节点
         ListNode dummy = new ListNode(0);
         dummy.next = head;
         ListNode cur = dummy;
-        while (cur.next.val!=val){
+        //节点值不相等，则后移
+        while (cur.next.val != val) {
             cur = cur.next;
         }
+        //若相等，则指向下下个节点
         cur.next = cur.next.next;
         return dummy.next;
     }

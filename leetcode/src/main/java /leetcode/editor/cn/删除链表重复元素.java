@@ -33,6 +33,8 @@
 
 //leetcode submit region begin(Prohibit modification and deletion)
 
+import leetcode.editor.cn.base.ListNode;
+
 /**
  * Definition for singly-linked list.
  * public class ListNode {
@@ -46,9 +48,7 @@
 class Solution {
     public ListNode deleteDuplicates(ListNode head) {
         if (head == null || head.next == null) return head;
-
         ListNode cur = head;
-
         while (cur.next != null) {
             if (cur.val == cur.next.val) {
                 cur.next = cur.next.next;
@@ -57,7 +57,6 @@ class Solution {
             }
         }
         return head;
-
     }
 }
 //leetcode submit region end(Prohibit modification and deletion)

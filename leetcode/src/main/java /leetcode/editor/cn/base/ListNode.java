@@ -1,7 +1,7 @@
 package leetcode.editor.cn.base;
 
 /**
- * TODO:DOCUMENT ME!
+ * 自定义链表节点
  *
  * @author fuxinzhong
  * @date 2021/03/27
@@ -13,7 +13,7 @@ public class ListNode {
     ListNode() {
     }
 
-    ListNode(int val) {
+    public ListNode(int val) {
         this.val = val;
     }
 
