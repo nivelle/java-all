@@ -71,14 +71,18 @@ public class Solution {
         if (head == null || head.next == null) {
             return false;
         }
+        //快慢指针
         ListNode slow = head;
         ListNode fast = head.next;
-        //快慢指针：快指针先进入环，慢指针后进入，因为环，快指针会和慢指针相遇
+        //快慢指针:快指针先进入环,慢指针后进入,因为环,快指针会和慢指针相遇
         while (slow != head) {
+            //快慢指针不想等的时候，如果fast为空或者fast.next为空，则不可能
             if (fast == null || fast.next == null) {
                 return false;
             }
+            //慢指针前进一步
             slow = slow.next;
+            //快指针前进两步
             fast = fast.next.next;
         }
         return true;

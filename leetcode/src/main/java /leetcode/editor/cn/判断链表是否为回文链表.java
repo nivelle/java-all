@@ -6,7 +6,7 @@
 //输出: false 
 //
 // 示例 2: 
-//
+//  
 // 输入: 1->2->2->1
 //输出: true
 // 
@@ -37,13 +37,17 @@ class Solution {
         public boolean isPalindrome(ListNode head) {
         List<Integer> vals = new ArrayList<Integer>();
         ListNode currentNode = head;
+        //依次将元素放入列表
         while (currentNode != null) {
             vals.add(currentNode.val);
             currentNode = currentNode.next;
         }
+        //头节点
         int front = 0;
+        //尾节点
         int back = vals.size() - 1;
         while (front < back) {
+            //如果对层节点不相等，则
             if (!vals.get(front).equals(vals.get(back))) {
                 return false;
             }
