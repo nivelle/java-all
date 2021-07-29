@@ -47,7 +47,7 @@ class Solution {
         if (head == null) {
             return null;
         }
-        //构建一个临时指针,指向的是头节点
+        //构建一个临时指针,指向的是头节点,暂存起来，删除目标值后可以通过dummy 返回指定的头
         ListNode dummy = new ListNode(0);
         dummy.next = head;
         ListNode cur = dummy;
