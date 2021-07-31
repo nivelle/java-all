@@ -56,7 +56,7 @@ public class Solution {
         ListNode prev = null;
         ListNode cur = head;
         while (cur != null) {
-            //记录原后继节点: cur.next
+            //记录原后继节点:cur.next
             ListNode temp = cur.next;
             //反转指向,指向原前继节点
             cur.next = prev;
@@ -67,6 +67,5 @@ public class Solution {
         }
         return prev;//反转后prev为调整后连表的头指针
     }
-
 }
 //leetcode submit region end(Prohibit modification and deletion)
