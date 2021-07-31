@@ -47,15 +47,21 @@ import leetcode.editor.cn.base.ListNode;
  */
 class Solution {
     public ListNode deleteDuplicates(ListNode head) {
-        if (head == null || head.next == null) return head;
+        if (head == null || head.next == null) {
+            return head;
+        }
+        //cur 首先指向头节点
         ListNode cur = head;
         while (cur.next != null) {
+            //如果当前节点的值等于下个节点的值，则当前节点的下一个节点指向下下个节点
             if (cur.val == cur.next.val) {
                 cur.next = cur.next.next;
             } else {
+                //否则当前节点后移
                 cur = cur.next;
             }
         }
+        //返回原头节点
         return head;
     }
 }

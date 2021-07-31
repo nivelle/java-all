@@ -56,11 +56,12 @@ class Solution {
         if (x < 0 || x % 10 == 0 && x != 0) {
             return false;
         }
-        //如果是回文数，将这个数反转后一定和原来的数相同
+        //如果是回文数,将这个数反转后一定和原来的数相同
         int tmp = x;
         int reverse = 0;
         while (x > 0) {
             reverse = reverse * 10 + (x % 10);
+            //下一个整数位数
             x = x / 10;
         }
         return reverse == tmp;

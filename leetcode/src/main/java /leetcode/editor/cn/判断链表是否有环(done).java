@@ -55,6 +55,8 @@
 
 //leetcode submit region begin(Prohibit modification and deletion)
 
+import leetcode.editor.cn.base.ListNode;
+
 /**
  * Definition for singly-linked list.
  * class ListNode {
@@ -75,8 +77,8 @@ public class Solution {
         ListNode slow = head;
         ListNode fast = head.next;
         //快慢指针:快指针先进入环,慢指针后进入,因为环,快指针会和慢指针相遇
-        while (slow != head) {
-            //快慢指针不想等的时候，如果fast为空或者fast.next为空，则不可能
+        while (slow != fast) {
+            //快慢指针不相等的时候，如果fast为空或者fast.next为空，则不可能为环
             if (fast == null || fast.next == null) {
                 return false;
             }
