@@ -55,21 +55,17 @@ public class Solution {
     public ListNode reverseList(ListNode head) {
         ListNode prev = null;
         ListNode cur = head;
-
         while (cur != null) {
-            //记录cur.next
+            //记录原后继节点: cur.next
             ListNode temp = cur.next;
-            //反转指向
+            //反转指向,指向原前继节点
             cur.next = prev;
             //后移prev(也就是prev指向cur的值)
             prev = cur;
-            //后移 cur
+            //后移 cur，原cur下一个节点
             cur = temp;
         }
-
         return prev;//反转后prev为调整后连表的头指针
-
-
     }
 
 }
