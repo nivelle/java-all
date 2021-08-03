@@ -17,7 +17,7 @@ import java.util.List;
  * @author fuxinzhong
  * @date 2021/05/21
  */
-public class ParseData2 {
+public class ParseJsonToExcel {
 
 
     public static void main(String[] args) {
