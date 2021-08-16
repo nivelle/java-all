@@ -2,12 +2,12 @@
 
 - 哨兵其实就是一个运行在特殊模式下的 Redis 进程,主从库实例运行的同时,它也在运行
 
-#### Sentinel是redis的高可用性解决方案:
+### sentinel 是redis的高可用性解决方案:
 
 - 由一个或多个Sentinel实例组成的Sentinel系统可以监视任意多个**主服务器**,以及这些主服务器属下的所有从服务器,
   并在被监视的主服务器进入下线状态时,自动将下线主服务器属下的某个从服务器升级为新的主服务器,然后由新的主服务器代替已经下线的主服务器继续处理命令请求.
 
-- 它的主要功能包括:
+- 它的主要功能包括:（监控、通知、选主）
   
   - 不时地监控redis是否按照预期进行良好地运行（监控）
 
@@ -24,7 +24,9 @@
 
 [![ydnRBT.md.jpg](https://z3.ax1x.com/2021/02/09/ydnRBT.md.jpg)](https://imgtu.com/i/ydnRBT)
 
-##### 选主功能的实现
+----
+
+### 选主功能的实现
 
 - 主库挂了以后,哨兵就需要从很多个从库里,按照一定的规则选择一个从库实例,把它作为新的主库。这一步完成后,现在的集群里就有了新主库。
 
@@ -58,7 +60,9 @@
   在优先级和复制进度都相同的情况下,ID 号最小的从库得分最高,会被选为新主库。
 ````
 
-##### 通知功能的实现
+---
+
+### 通知功能的实现
 
 哨兵会把新主库的连接信息发给其他从库,让它们执行 **replicaof** 命令,和新主库建立连接,并进行数据复制。同时,哨兵会把新主库的连接信息通知给客户端,让它们把请求操作发到新主库上。
 
@@ -66,7 +70,7 @@
 
 1. 如果客户端使用了读写分离,那么读请求可以在从库上正常执行,不会受到影响。但是由于此时主库已经挂了,而且哨兵还没有选出新的主库,所以在这期间写请求会失败,失败持续的时间 = 哨兵切换主从的时间 + 客户端感知到新主库 的时间。
 
-2. 哨兵检测主库多久没有响应就提升从库为新的主库,这个时间是可以配置的（down-after-milliseconds参数）。配置的时间越短,哨兵越敏感,哨兵集群认为主库在短时间内连不上就会发起主从切换,这种配置很可能因为网络拥塞但主库正常而发生不必要的切换,当然,当主库真正故障时,因为切换得及时,对业务的影响最小。如果配置的时间比较长,哨兵越保守,这种情况可以减少哨兵误判的概率,但是主库故障发生时,业务写失败的时间也会比较久,缓存写请求数据量越多
+2. 哨兵检测主库多久没有响应就提升从库为新的主库,这个时间是可以配置的（**down-after-milliseconds**参数）。配置的时间越短,哨兵越敏感,哨兵集群认为主库在短时间内连不上就会发起主从切换,这种配置很可能因为网络拥塞但主库正常而发生不必要的切换,当然,当主库真正故障时,因为切换得及时,对业务的影响最小。如果配置的时间比较长,哨兵越保守,这种情况可以减少哨兵误判的概率,但是主库故障发生时,业务写失败的时间也会比较久,缓存写请求数据量越多
 
 ````
 
@@ -101,20 +105,20 @@
 
 - 在主从集群中,主库上有一个名为“__sentinel__:hello”的频道,不同哨兵就是通过它来相互发现,实现互相通信的。
 
-[![ydb6Wn.md.jpg](https://s3.ax1x.com/2021/02/09/ydb6Wn.md.jpg)](https://imgchr.com/i/ydb6Wn)
+![哨兵通信.jpg](https://i.loli.net/2021/08/16/cj5Orf8UDdIeETo.jpg)
 
-#### 基于INFO来与从库建立连接
+#### 基于info来与从库建立连接
 
 - 哨兵向主库发送INFO命令,获取从库列表
 
-[![ydbLy6.md.jpg](https://s3.ax1x.com/2021/02/09/ydbLy6.md.jpg)](https://imgchr.com/i/ydbLy6)
+[![ydbLy6.md.jpg](https://i.loli.net/2021/08/16/YphtwKofWnv4Dsd.jpg)](https://i.loli.net/2021/08/16/YphtwKofWnv4Dsd.jpg)
 
 #### 基于pub/sub机制的客户端事件通知
 
 - 哨兵就是一个运行在特定模式下的 Redis 实例,只不过它并不服务请求操作,只是完成监控、选主和通知的任务。所以,每个哨兵实例也提供 pub/sub
   机制,客户端可以从哨兵订阅消息。哨兵提供的消息订阅频道有很多,不同频道包含了主从库切换过程中的不同关键事件。
 
-[![ydqUh9.md.jpg](https://s3.ax1x.com/2021/02/09/ydqUh9.md.jpg)](https://imgchr.com/i/ydqUh9)
+![哨兵客户端事件通知.jpg](https://i.loli.net/2021/08/16/xovTaMuO8VRhcZI.jpg)
 
 - 客户端读取哨兵的配置文件后,可以获得哨兵的地址和端口,和哨兵建立网络连接。然后,我们可以在客户端执行订阅命令,来获取不同的事件消息。
 
@@ -131,14 +135,14 @@ $ redis-sentinel /path/to/your/sentinel.conf --sentinel
 
 ```
 
+-----
+
 #### Sentinel结构
 
 ```
 struct sentinelState{
-    
     //当前纪元,用于实现故障转移
-    uint64_t current_epoch;
-    
+    uint64_t current_epoch; 
     //保存了所有被这个sentinel监视的主服务器
     //字典的键是主服务器的名字
     //字段的值是一个指向sentinelRedisInstance结构的指针
@@ -266,13 +270,11 @@ sentinel <option_name> <master_name> <option_value>
 
 - 当一个master被sentinel集群监控时,需要为它指定一个参数,这个参数制定了当需要判决master为不可用,并且进行failover时,所需要的sentinel数量,我们暂时可以称之为票数.
 
--
-不过当failover主备切换触发后,failover并不会马上进行,还需要sentinel中的大多数授权后才可以进行failover.当ODOWN时,failover被触发.一旦被触发,尝试去进行failover的sentinel会去获得大多数sentinel的授权.
+- 不过当failover主备切换触发后,failover并不会马上进行,还需要sentinel中的大多数授权后才可以进行failover.当ODOWN时,failover被触发.一旦被触发,尝试去进行failover的sentinel会去获得大多数sentinel的授权.
 
 #### 配置版本号
 
--
-当一个sentinel被授权后,它将会获得宕掉的master的一份最新配置版本号,当failover执行结束后,这个版本号将会被用于最新的配置.因为大多数sentinel都已经知道该版本号已经被要执行failover的sentinel拿走了,所以其他的sentinel都不能再去使用这个版本号.这意味着,每次failover都会附带一个独一无二逇版本号.
+- 当一个sentinel被授权后,它将会获得宕掉的master的一份最新配置版本号,当failover执行结束后,这个版本号将会被用于最新的配置.因为大多数sentinel都已经知道该版本号已经被要执行failover的sentinel拿走了,所以其他的sentinel都不能再去使用这个版本号.这意味着,每次failover都会附带一个独一无二逇版本号.
 
 - sentinel集群都遵守一个规则:如果sentinel A推荐sentinel
   B去执行failover,A会等待一段时间后,自行再次去对同一个master执行failover,这个等待时间是通过failover-timeiut配置项去配置的.从这个配置看出,sentinel集群中的sentinel不会再同一时刻并发去failover同一个master,第一个进行failover的sentinel如果失败了,另外一个将会在一定时间内进行重新failover,依次类推.
@@ -306,13 +308,10 @@ sentinel <option_name> <master_name> <option_value>
 
 #### SDOWN和ODOWN的更多细节
 
--
-sentinel对于不可用有两种不同的看法,一个叫主观不可用,一个叫客观不可用.sdown是sentinel自己主观上检测到的关于master的状态,odwon需要一定数量的sentinel达成一致意见才认为一个master客观上已经宕掉,各个sentinel之间通过命令SENTINEL
+- sentinel对于不可用有两种不同的看法,一个叫主观不可用,一个叫客观不可用.sdown是sentinel自己主观上检测到的关于master的状态,odwon需要一定数量的sentinel达成一致意见才认为一个master客观上已经宕掉,各个sentinel之间通过命令SENTINEL
 is_master_down_by_addr来获得其他sentinel对master的检测结果.
 
-- 从sentinel的角度来看,如果发生了ping心跳后,在一定时间内没有收到合法的回复,就达到了sdown的条件.这个时间在配置中通过is-master-down-after-milliseconds参数配置.
-
-当sentinel发生ping后,以下回复之一被认为是合法的,其他任何回复都是不合法的:
+- 从sentinel的角度来看,如果发生了ping心跳后,在一定时间内没有收到合法的回复,就达到了sdown的条件.这个时间在配置中通过is-master-down-after-milliseconds参数配置. 当sentinel发生ping后,以下回复之一被认为是合法的,其他任何回复都是不合法的:
 
 ```
 
