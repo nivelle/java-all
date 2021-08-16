@@ -6,7 +6,7 @@ package leetcode.editor.cn;
  * @author fuxinzhong
  * @date 2021/05/13
  */
-public class BinaryArraySearch {
+public class 二分查找 {
 
     public static void main(String[] args) {
         int[] a = {1, 2, 4, 4, 5};
