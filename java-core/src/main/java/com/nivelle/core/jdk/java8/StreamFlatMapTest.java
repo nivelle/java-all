@@ -14,10 +14,9 @@ import java.util.stream.Stream;
 public class StreamFlatMapTest {
     /**
      * 映射，可以将一个流的元素按照一定的映射规则映射到另一个流中。分为map和flatMap：
-     *
+     * <p>
      * map：接收一个函数作为参数，该函数会被应用到每个元素上，并将其映射成一个新的元素。
      * flatMap：接收一个函数作为参数，将流中的每个值都换成另一个流，然后把所有流连接成一个流。
-     *
      */
 
     public static void main(String[] args) {
@@ -30,5 +29,6 @@ public class StreamFlatMapTest {
         }).collect(Collectors.toList()); //合并Stream
         System.out.println("处理前的集合：" + list);
         System.out.println("处理后的集合：" + listNew);
+
     }
 }
