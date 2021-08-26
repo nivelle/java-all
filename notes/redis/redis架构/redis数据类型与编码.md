@@ -2,7 +2,7 @@
 
 ### 对象的类型和编码
 
-- redis将键和值都封装成了了对象 redisObject，对象中有当前存储的数据(键或者值)的类型，编码，以及存储他们用到的数据结构的指针。
+- redis将`键和值`都封装成了了对象 redisObject，对象中有当前存储的数据(键或者值)的类型，编码，以及存储他们用到的数据结构的指针。
 
 ```
 比如一个字符串键，redis会创建两个对象，一个是用作字符串键的键，另一个对象是用作字符串键的值。
@@ -13,11 +13,9 @@
 ````
 typedef struct redisObject {
     // 类型
-    unsigned type:4;
-    
+    unsigned type:4;   
     // 编码
-    unsigned encoding:4;
-    
+    unsigned encoding:4;  
     // 指向底层实现数据结构的指针
     void *ptr;
 } robj;
