@@ -55,7 +55,7 @@ encoding代表了存储当前值所使用的数据结构。encoding翻译是编�
 
 [![DFrbkT.png](https://i.loli.net/2021/05/14/ugYctw4N5dRzXMJ.png)](https://i.loli.net/2021/05/14/ugYctw4N5dRzXMJ.png)
 
-- 使用 OBJECT ENCODING 命令可以查看一个数据库键的值对象的编码
+- 使用 `OBJECT ENCODING` 命令可以查看一个数据库键的值对象的编码
 
 ````
 127.0.0.1:6379> set test "1233"
@@ -85,12 +85,12 @@ OK
 
 2. 如果字符串对象保存的是一个字符串值， 并且这个字符串值的长度**大于 39 字节**， 那么字符串对象将使用一个简单动态字符串（SDS）来保存这个字符串值， 并将对象的编码设置为 raw 。
 
-![string类型raw实现.png](https://i.loli.net/2021/05/14/wNXphUqTcM1fQvB.png)
+ ![string类型raw实现.png](https://i.loli.net/2021/05/14/wNXphUqTcM1fQvB.png)
 
 3. embstr 编码是专门用于保存短字符串的一种优化编码方式， 这种编码和 raw 编码一样， 都使用 redisObject 结构和 sdshdr 结构来表示字符串对象， 但 raw 编码会调用两次内存分配函数来分别创建
    redisObject 结构和 sdshdr 结构， 而 embstr 编码则通过调用一次内存分配函数来分配一块连续的空间， 空间中依次包含 redisObject 和 sdshdr 两个结构
 
-![string类型之embstr.png](https://i.loli.net/2021/05/14/1owU4bjmrXRn6Ge.png)
+ ![string类型之embstr.png](https://i.loli.net/2021/05/14/1owU4bjmrXRn6Ge.png)
 
 - embstr 编码的字符串对象在执行命令时,产生的效果和 raw 编码的字符串对象执行命令时产生的效果是相同的,但使用 embstr 编码的字符串对象来保存短字符串值有以下好处：
 
@@ -122,13 +122,17 @@ OK
 
 ### 列表对象
 
-- 列表对象的编码可以zipList或者linkedList.
+- 列表对象的编码可以`zipList`或者`linkedList`.
 
-1. ziplist 编码的列表对象使用压缩列表作为底层实现,每个压缩列表节点(entry)保存了一个列表元素.
+1. `ziplist` 编码的列表对象使用压缩列表作为底层实现,每个压缩列表节点(entry)保存了一个列表元素.
 
-2. linkedLis 编码的列表使用双端链表作为底层实现,每个双端链表节点都保存了一个字符串对象,而每个字符串对象都保存了一个列表元素.
+2. `linkedLis` 编码的列表使用双端链表作为底层实现,每个双端链表节点都保存了一个字符串对象,而每个字符串对象都保存了一个列表元素.
 
-- **list-max-ziplist-value** 和 **list-max-ziplist-entries**
+#### 控制对象编码的参数
+
+- **list-max-ziplist-value** 
+  
+- **list-max-ziplist-entries**
 
 #### 使用ziplist编码实现
 
@@ -144,7 +148,8 @@ OK
 
 ![list对象双向列表实现.png](https://i.loli.net/2021/05/14/ch1mNMTC4Gx2V3L.png)
 
-#### 最新列表底层实现:quicklist编码实现
+----
+### 最新列表底层实现:quicklist编码实现
 
 - 考虑到链表的附加空间相对太高，prev 和 next 指针就要占去 16 个字节 (64bit 系统的指针是 8 个字节)，另外每个节点的内存都是单独分配，会加剧内存的碎片化，影响内存管理效率。
 
@@ -154,7 +159,7 @@ OK
 
 (1). quickList 默认的压缩深度是0,也就是不压缩,压缩的深度实际由配置参数: **list-compress-depth**决定
 
-(2). 为了支持快速的 push/pop 操作，quicklist 的首尾两个 ziplist 不压缩，此时深度就是 1。
+(2). 为了支持快速的 push/pop 操作，quicklist 的首尾两个 `ziplist node` 不压缩，此时深度就是 1。
 
 (3). 如果深度为 2，就表示 quicklist 的首尾第一个 ziplist 以及首尾第二个 ziplist 都不压缩
 
