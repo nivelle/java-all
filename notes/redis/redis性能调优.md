@@ -881,7 +881,7 @@ taskset -c 0 ./redis-server
 网络中断处理程序从网卡硬件中读取数据，并把数据写入到操作系统内核维护的一块内存缓冲区。内核会通过 epoll 机制触发事件，通知 Redis 实例，Redis 实例再把数据从内核的内存缓冲区拷贝到自己的内存空间
 ````
 
-[![yRCdzQ.md.jpg](https://s3.ax1x.com/2021/02/18/yRCdzQ.md.jpg)](https://imgchr.com/i/yRCdzQ)
+![redis cpu.jpg](https://i.loli.net/2021/08/27/bpeUjwLr1vW5Dof.jpg)
 
 #### 绑核的风险和解决方案
 
