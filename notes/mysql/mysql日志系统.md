@@ -283,7 +283,7 @@ select * from t where k in (k1, k2)。
 
 - 调用 binlog 和 innodb 的 prepare() 方法
 
-  -  binlog 的 prepare() 方法什么也不做
+  - binlog 的 prepare() 方法什么也不做
 
   - innodb 的 prepare() 方法将事务状态设置为 `TRX_PREPARED`，并将 redo log 刷盘如果事务涉及到的所有存储引擎的 prepare() 方法都执行成功，则将 SQL 记录到 binlog，否则回滚
 
@@ -295,21 +295,20 @@ select * from t where k in (k1, k2)。
     - 对于 `TRX_ACTIVE` 状态的事务，会回滚
     - 对于 `TRX_PREPARED` 状态的事务，会根据 binlog 的状态决定如何处理
 
-- flush 阶段: 支持 redo log 的组提交
+- `flush 阶段`: 支持 redo log 的组提交
 
   - 将 redo log 中处于 prepare 阶段的数据刷盘
   - 将 binlog 数据写入文件，但此时只是写入文件系统的缓冲，不能保证数据库崩溃时 binlog 不丢失
 
-- sync 阶段: 支持 binlog 的组提交
+- `sync 阶段`: 支持 binlog 的组提交
 
   - 将 binlog 刷盘，若队列中有多个事务，那么仅一次 fsync 操作就可以完成二进制日志的刷盘操作，这在 MySQL 5.6 中称为 BLGC（binary log group commit）
   - 如果在这步完成后数据库崩溃，由于 binlog 中已经存在事务记录，MySQL 会通过 flush 阶段中已经刷盘的 redo log 继续进行事务的提交
 
-- commit 阶段
-
+- `commit 阶段`:
    - 将 redo log 中处于 prepare 状态的事务在引擎层提交，commit 阶段不用刷盘
    - **sync_binlog 和 innodb_flush_log_at_trx_commit** 都设置成 1
-   - 一个事务完整提交前，需要等待两次刷盘，一次是 redo log（prepare 阶段），一次是 binlog
+   - **一个事务完整提交前，需要等待两次刷盘，一次是 redo log（prepare 阶段），一次是 binlog**
 
 #### 组提交
 
