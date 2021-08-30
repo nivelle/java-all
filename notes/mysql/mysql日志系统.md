@@ -312,14 +312,15 @@ select * from t where k in (k1, k2)。
 
 #### 组提交
 
-日志逻辑序列号（log sequence number，LSN）的概念：LSN 是单调递增的，用来对应 redo log 的一个个写入点。每次写入长度为 length 的 redo log， LSN 的值就会加上 length。
+- 日志逻辑序列号（log sequence number，LSN）的概念：LSN 是单调递增的，用来对应 redo log 的一个个写入点。每次写入长度为 length 的 redo log， LSN 的值就会加上 length。
 
 ![mysql二阶段提交.png](https://i.loli.net/2021/08/30/hzjXHMuCxgiG6ry.png)
-如果你想提升 binlog 组提交的效果，可以通过设置 binlog_group_commit_sync_delay 和 binlog_group_commit_sync_no_delay_count 来实现。
 
-- binlog_group_commit_sync_delay 参数，表示延迟多少微秒后才调用 fsync;
+- 如果你想提升 binlog 组提交的效果，可以通过设置 binlog_group_commit_sync_delay 和 binlog_group_commit_sync_no_delay_count 来实现。
 
-- binlog_group_commit_sync_no_delay_count 参数，表示累积多少次以后才调用 fsync。
+  - **binlog_group_commit_sync_delay** 参数，表示延迟多少微秒后才调用 fsync;
+
+  - **binlog_group_commit_sync_no_delay_count** 参数，表示累积多少次以后才调用 fsync。
 
 ----
 
@@ -330,8 +331,8 @@ select * from t where k in (k1, k2)。
 - 设置 binlog_group_commit_sync_delay 和 binlog_group_commit_sync_no_delay_count 参数，减少 binlog
   的写盘次数。这个方法是基于“额外的故意等待”来实现的，因此可能会增加语句的响应时间，但没有丢失数据的风险。
 
-- 将 sync_binlog 设置为大于 1 的值（比较常见是 100~1000）。这样做的风险是，主机掉电时会丢 binlog 日志。
+- 将 **sync_binlog** 设置为大于 1 的值（比较常见是 100~1000）。这样做的风险是，主机掉电时会丢 binlog 日志。
 
-- 将 innodb_flush_log_at_trx_commit 设置为 2。这样做的风险是，主机掉电的时候会丢数据。
+- 将 **innodb_flush_log_at_trx_commit** 设置为 2。这样做的风险是,主机掉电的时候会丢数据。
 
 
