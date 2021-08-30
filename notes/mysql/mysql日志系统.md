@@ -100,7 +100,7 @@ update T set c=c+1 where ID=2;
 
 实际上，redo log 并没有记录数据页的完整数据，所以它并没有能力自己去更新磁盘数据页，也就不存在“数据最终落盘，是由 redo log 更新过去”的情况。
 
-- 如果是正常运行的实例的话，数据页被修改以后，跟磁盘的数据页不一致，称为脏页。最终数据落盘，就是把内存中的数据页写盘。这个过程，甚至与 redo log 毫无关系。
+- 如果是正常运行的实例的话，数据页被修改以后，跟磁盘的数据页不一致，称为`脏页`。最终数据落盘，就是把内存中的数据页写盘。这个过程，甚至与 redo log 毫无关系。
 
 - 在崩溃恢复场景中，InnoDB 如果判断到一个数据页可能在崩溃恢复的时候丢失了更新，就会将它读到内存，然后让 redo log 更新内存内容。更新完成后，内存页变成脏页，就回到了第一种情况的状态。
 
@@ -113,7 +113,7 @@ update T set c=c+1 where ID=2;
 ----
 ### 日志操作例子
 
-- 插入数据
+#### 插入数据
 
 ````
 mysql> insert into t(id,k) values(id1,k1),(id2,k2);
@@ -128,7 +128,7 @@ mysql> insert into t(id,k) values(id1,k1),(id2,k2);
 
 3. 将上述两个动作记入 redo log 中
 
-- 读取数据
+#### 读取数据
 
 ````
 select * from t where k in (k1, k2)。
@@ -173,8 +173,8 @@ select * from t where k in (k1, k2)。
 
 - 表空间（Tablespace）是一个逻辑容器，表空间存储的对象是段，在一个表空间中可以有一个或多个段，但是一个段只能属于一个表空间。数据库由一个或多个表空间组成，表空间从管理上可以划分为**系统表空间、用户表空间、撤销表空间、临时表空间**等
 
-- 页（Page）如果按类型划分的话，常见的有**数据页（保存 B+ 树节点）**、**系统页**、**Undo 页**和**事务数据页**等。数据页是我们最常使用的页；`在数据库中，不论读一行，还是读多行，都是将这些行所在的页进行加载`。
-  也就是说，`数据库管理存储空间的基本单位是页（Page），InnoDB默认是16K`
+- 页（Page）如果按类型划分的话，常见的有**数据页（保存 B+ 树节点）**、**系统页**、**Undo 页**、**事务数据页**等。数据页是我们最常使用的页；`在数据库中，不论读一行，还是读多行，都是将这些行所在的页进行加载`。
+  也就是说，**`数据库管理存储空间的基本单位是页（Page），InnoDB默认是16K`**
 
 #### 数据页的内容结构
 
@@ -247,7 +247,6 @@ select * from t where k in (k1, k2)。
 
 - 将 sync_binlog 设置为 N，对应的风险是：如果主机发生异常重启，会丢失最近 N 个事务的 binlog 日志。
 
-
 -----
 
 ### redo log的写入机制
@@ -256,11 +255,11 @@ select * from t where k in (k1, k2)。
 
 #### 为了控制 redo log 的写入策略，InnoDB 提供了 innodb_flush_log_at_trx_commit 参数，它有三种可能取值：
 
--  `设置为0的时候`，表示每次事务提交时都只是把redo log 留在redo log buffer中
+-  `设置为0的时候`，表示每次事务提交时都只是把 redo log 留在 redo log buffer中
 
--  `设置为1的时候`，表示每次事务提交时都将redo log 直接持久化到磁盘
+-  `设置为1的时候`，表示每次事务提交时都将 redo log 直接持久化到磁盘
 
--  `设置为2的时候`，表示每次事务提交时都只是把redo log写到page cache
+-  `设置为2的时候`，表示每次事务提交时都只是把 redo log写到 **page cache**
 
 **InnoDB 有一个后台线程，每隔 1 秒，就会把 redo log buffer 中的日志，调用 write 写到文件系统的 page cache，然后调用 fsync 持久化到磁盘.**
 
@@ -273,10 +272,12 @@ select * from t where k in (k1, k2)。
 - 并行的事务提交的时候，顺带将这个事务的 redo log buffer 持久化到磁盘。
 
 ----
+
 ## 数据库的"双1"配置
 
 - 每秒一次后台轮询刷盘，再加上崩溃恢复这个逻辑，InnoDB 就认为 redo log 在 commit 的时候就不需要 fsync 了，只会 write 到文件系统的 page cache 中就够了
 
+- redo log: `innodb_flush_log_at_trx_commit = 1`  和 binlog: `sync_binlog=1`
 
 ### 为了确保 redo log 与 binlog 一致，MySQL 采用 2PC 来保证事务的完整性：
 
