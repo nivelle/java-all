@@ -224,6 +224,7 @@ select * from t where k in (k1, k2)。
 
 ![redolog写盘速度.png](https://i.loli.net/2021/08/30/pjFXCdhgnw5J9DA.png)
 ----
+
 ## 日志写入机制
 
 ### binlog 写入机制
@@ -236,38 +237,32 @@ select * from t where k in (k1, k2)。
 
 [![6ib1c8.png](https://z3.ax1x.com/2021/03/01/6ib1c8.png)](https://imgtu.com/i/6ib1c8)
 
-## 日志写入机制
-
 #### write和fsync的时机，是由sync_binlog参数控制的
 
-1. sync_binlog=0 的时候，表示每次提交事务都只 write,
+1. `sync_binlog=0` 的时候，表示每次提交事务都只 write,
 
-2. sync_binlog=1 的时候，表示每次提交事务都会执行fsync;
+2. `sync_binlog=1` 的时候，表示每次提交事务都会执行fsync;
 
-3. sync_binlog=N(N>1)的时候，表示每次提交事务都write,但累积N个事务后才fsync
+3. `sync_binlog=N(N>1)` 的时候，表示每次提交事务都write,但累积N个事务后才fsync
 
-````
-将 sync_binlog 设置为 N，对应的风险是：如果主机发生异常重启，会丢失最近 N 个事务的 binlog 日志。
-````
+- 将 sync_binlog 设置为 N，对应的风险是：如果主机发生异常重启，会丢失最近 N 个事务的 binlog 日志。
+
 
 -----
 
-#### redo log的写入机制
+### redo log的写入机制
 
 [![6ib1c8.md.png](https://z3.ax1x.com/2021/03/01/6ib1c8.md.png)](https://imgtu.com/i/6ib1c8)
 
 #### 为了控制 redo log 的写入策略，InnoDB 提供了 innodb_flush_log_at_trx_commit 参数，它有三种可能取值：
 
--  设置为0的时候，表示每次事务提交时都只是把redo log 留在redo log buffer中
+-  `设置为0的时候`，表示每次事务提交时都只是把redo log 留在redo log buffer中
 
-- 设置为1的时候，表示每次事务提交时都将redo log 直接持久化到磁盘
+-  `设置为1的时候`，表示每次事务提交时都将redo log 直接持久化到磁盘
 
-- 设置为2的时候，表示每次事务提交时都只是把redo log写到page cache
+-  `设置为2的时候`，表示每次事务提交时都只是把redo log写到page cache
 
-````
-InnoDB 有一个后台线程，每隔 1 秒，就会把 redo log buffer 中的日志，调用 write 写到文件系统的 page cache，然后调用 fsync 持久化到磁盘。
-
-````
+**InnoDB 有一个后台线程，每隔 1 秒，就会把 redo log buffer 中的日志，调用 write 写到文件系统的 page cache，然后调用 fsync 持久化到磁盘.**
 
 #### 未提交的事务redo log 三种情况也会被持久化到磁盘
 
@@ -277,53 +272,49 @@ InnoDB 有一个后台线程，每隔 1 秒，就会把 redo log buffer 中的�
 
 - 并行的事务提交的时候，顺带将这个事务的 redo log buffer 持久化到磁盘。
 
-### "双1"配置
+----
+## 数据库的"双1"配置
 
 - 每秒一次后台轮询刷盘，再加上崩溃恢复这个逻辑，InnoDB 就认为 redo log 在 commit 的时候就不需要 fsync 了，只会 write 到文件系统的 page cache 中就够了
 
-````
-为了确保 redo log 与 binlog 一致，MySQL 采用 2PC 来保证事务的完整性：
 
-1. 调用 binlog 和 innodb 的 prepare() 方法
+### 为了确保 redo log 与 binlog 一致，MySQL 采用 2PC 来保证事务的完整性：
 
-(1). binlog 的 prepare() 方法什么也不做
-(2). innodb 的 preprare() 方法将事务状态设置为 TRX_PREPARED，并将 redo log 刷盘如果事务涉及到的所有存储引擎的 prepare() 方法都执行成功，则将 SQL 记录到 binlog，否则回滚
+- 调用 binlog 和 innodb 的 prepare() 方法
 
-2. 调用 commit() 方法完成事务的提交
+  -  binlog 的 prepare() 方法什么也不做
 
-(1). binlog 的 commit() 方法什么也不会做，因为第二步已经将 binlog 刷盘
+  - innodb 的 prepare() 方法将事务状态设置为 `TRX_PREPARED`，并将 redo log 刷盘如果事务涉及到的所有存储引擎的 prepare() 方法都执行成功，则将 SQL 记录到 binlog，否则回滚
 
-(2). innodb 的 commit() 方法清理 undo 信息、刷 redo log、将事务状态设置为 TRX_NOT_STARTED innodb 在恢复时，会根据事务的状态，进行不同的处理:
+- 调用 commit() 方法完成事务的提交
+  - binlog 的 commit() 方法什么也不会做，因为第二步已经将 binlog 刷盘
+  - innodb 的 commit() 方法清理 undo 信息、刷 redo log、将事务状态设置为 `TRX_NOT_STARTED `innodb 在恢复时，会根据事务的状态，进行不同的处理:
+    - 对于 `TRX_COMMITTED_IN_MEMORY` 状态的事务，会清理回滚段、然后将事务状态设置为 TRX_NOT_STARTED
+    - 对于 `TRX_NOT_STARTED` 状态的事务，会跳过，因为事务已经提交
+    - 对于 `TRX_ACTIVE` 状态的事务，会回滚
+    - 对于 `TRX_PREPARED` 状态的事务，会根据 binlog 的状态决定如何处理
 
-2.1、对于 TRX_COMMITTED_IN_MEMORY 状态的事务，会清理回滚段、然后将事务状态设置为 TRX_NOT_STARTED
-2.2、对于 TRX_NOT_STARTED 状态的事务，会跳过，因为事务已经提交
-2.3、对于 TRX_ACTIVE 状态的事务，会回滚
-2.4、对于 TRX_PREPARED 状态的事务，会根据 binlog 的状态决定如何处理
+- flush 阶段: 支持 redo log 的组提交
 
-3. flush 阶段: 支持 redo log 的组提交
+  - 将 redo log 中处于 prepare 阶段的数据刷盘
+  - 将 binlog 数据写入文件，但此时只是写入文件系统的缓冲，不能保证数据库崩溃时 binlog 不丢失
 
-(1). 将 redo log 中处于 prepare 阶段的数据刷盘
-(2). 将 binlog 数据写入文件，但此时只是写入文件系统的缓冲，不能保证数据库崩溃时 binlog 不丢失
+- sync 阶段: 支持 binlog 的组提交
 
-4. sync 阶段: 支持 binlog 的组提交
+  - 将 binlog 刷盘，若队列中有多个事务，那么仅一次 fsync 操作就可以完成二进制日志的刷盘操作，这在 MySQL 5.6 中称为 BLGC（binary log group commit）
+  - 如果在这步完成后数据库崩溃，由于 binlog 中已经存在事务记录，MySQL 会通过 flush 阶段中已经刷盘的 redo log 继续进行事务的提交
 
-将 binlog 刷盘，若队列中有多个事务，那么仅一次 fsync 操作就可以完成二进制日志的刷盘操作，这在 MySQL 5.6 中称为 BLGC（binary log group commit）
-如果在这步完成后数据库崩溃，由于 binlog 中已经存在事务记录，MySQL 会通过 flush 阶段中已经刷盘的 redo log 继续进行事务的提交
-commit 阶段
+- commit 阶段
 
-将 redo log 中处于 prepare 状态的事务在引擎层提交，commit 阶段不用刷盘
-````
-
-- **sync_binlog 和 innodb_flush_log_at_trx_commit** 都设置成 1
-
-- 一个事务完整提交前，需要等待两次刷盘，一次是 redo log（prepare 阶段），一次是 binlog
+   - 将 redo log 中处于 prepare 状态的事务在引擎层提交，commit 阶段不用刷盘
+   - **sync_binlog 和 innodb_flush_log_at_trx_commit** 都设置成 1
+   - 一个事务完整提交前，需要等待两次刷盘，一次是 redo log（prepare 阶段），一次是 binlog
 
 #### 组提交
 
 日志逻辑序列号（log sequence number，LSN）的概念：LSN 是单调递增的，用来对应 redo log 的一个个写入点。每次写入长度为 length 的 redo log， LSN 的值就会加上 length。
 
-[![6iqoR0.md.png](https://s3.ax1x.com/2021/03/01/6iqoR0.md.png)](https://imgtu.com/i/6iqoR0)
-
+![mysql二阶段提交.png](https://i.loli.net/2021/08/30/hzjXHMuCxgiG6ry.png)
 如果你想提升 binlog 组提交的效果，可以通过设置 binlog_group_commit_sync_delay 和 binlog_group_commit_sync_no_delay_count 来实现。
 
 - binlog_group_commit_sync_delay 参数，表示延迟多少微秒后才调用 fsync;
