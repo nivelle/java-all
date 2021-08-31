@@ -255,7 +255,7 @@ select * from t where k in (k1, k2)。
 
 #### 为了控制 redo log 的写入策略，InnoDB 提供了 innodb_flush_log_at_trx_commit 参数，它有三种可能取值：
 
--  `设置为0的时候`，表示每次事务提交时都只是把 redo log 留在 redo log buffer中
+-  `设置为0的时候`，表示每次事务提交时都只是把 redo log 留在 **redo log buffer**中
 
 -  `设置为1的时候`，表示每次事务提交时都将 redo log 直接持久化到磁盘
 
