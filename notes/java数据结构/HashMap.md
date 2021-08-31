@@ -25,6 +25,8 @@ HashMap继承自AbstractMap，实现了Map接口，具有Map的所有功能。
 
 数组的查询效率为O(1)，链表的查询效率是O(k)，红黑树的查询效率是O(log k)，k为桶中的元素个数，所以当元素数量非常多的时候，转化为红黑树能极大地提高效率。
 
+![hashmap结构转化.png](https://i.loli.net/2021/08/31/Xg1IsmoYOJFVqkZ.png)
+
 ## 源码解析
 
 ### 属性
