@@ -28,6 +28,8 @@ public class BaseTest {
         } else {
             System.out.println("a:=" + a);
         }
+
+        System.out.println("book_news_zyd82273".startsWith("book_news"));
     }
 
 
