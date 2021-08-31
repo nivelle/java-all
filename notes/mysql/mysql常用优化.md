@@ -24,13 +24,10 @@ select * from `demo`.`order` where id> (select id from `demo`.`order` order by o
 
 - count()是一个聚合函数，主要用来统计行数，有时也用来统计某一列的行数（不统计NULL值的行）。
 
-- COUNT() 函数在 MyISAM 和 InnoDB 存储引擎所执行的原理是不一样的：
-  
-````
-  通常在没有任何查询条件下的 COUNT(*)， MyISAM 的查询速度要明显快于 InnoDB;
-  因为 MyISAM 存储引擎记录的是整个表的行数，在COUNT(*) 查询操作时无需遍历表计算，直接获取该值即可。
+- count() 函数在 MyISAM 和 InnoDB 存储引擎所执行的原理是不一样的：
+  通常在没有任何查询条件下的 count(\*)， MyISAM 的查询速度要明显快于 InnoDB; 因为 MyISAM 存储引擎记录的是整个表的行数，在 count(\*) 查询操作时无需遍历表计算，直接获取该值即可。
   而在 InnoDB 存储引擎中就需要扫描表来统计具体的行数。而当带上 where 条件语句之后，MyISAM 跟 InnoDB 就没有区别了，它们都需要扫描表来进行行数的统计
-````
+
 #### 优化建议:
 
 - 使用近似值：可以使用 EXPLAIN 对表进行估算，要知道，执行 EXPLAIN 并不会真正去执行查询，而是返回一个估算的近似值
@@ -54,13 +51,13 @@ select * from `demo`.`order` where id> (select id from `demo`.`order` order by o
   
   ```
 
-1. IBP 默认的内存大小是 128M，我们可以通过参数 **innodb_buffer_pool_size** 来设置 IBP 的大小，IBP 设置得越大，InnoDB 表性能就越好。
+1. IBP 默认的内存大小是 128M,我们可以通过参数 **innodb_buffer_pool_size** 来设置 IBP 的大小，IBP 设置得越大，InnoDB 表性能就越好。
 
-2. 将 IBP 大小设置得过大也不好，可能会导致系统发生 SWAP 页交换。所以我们需要在 IBP 大小和其它系统服务所需内存大小之间取得平衡。
+2. 将 IBP 大小设置得过大也不好,可能会导致系统发生 SWAP 页交换。所以我们需要在 IBP 大小和其它系统服务所需内存大小之间取得平衡。
 
 3. MySQL 推荐配置 IBP 的大小为服务器物理内存的 80%。
 
-4. InnoDB_buffer_pool_size 参数同时为**数据块和索引块**做缓存.这个值设置的越高,访问表中数据需要的磁盘IO就越少
+4. Innodb_buffer_pool_size 参数同时为**数据块和索引块**做缓存.这个值设置的越高,访问表中数据需要的磁盘IO就越少
 
 #### innodb_buffer_pool_instances:默认1
 
