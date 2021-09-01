@@ -206,6 +206,7 @@ public V put(K key, V value) {
     return putVal(hash(key), key, value, false, true);
 }
 
+//HashMap 的 hash算法
 static final int hash(Object key) {
     int h;
     // 如果key为null，则hash值为0，否则调用key的hashCode()方法
@@ -213,45 +214,43 @@ static final int hash(Object key) {
     return (key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16);
 }
 
+//真正的put方法
 final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
                boolean evict) {
     Node<K, V>[] tab;
-    Node<K, V> p;
+    Node<K, V> p;//数组桶第一个元素
     int n, i;
-    // 如果桶的数量为0，则初始化
+    //如果桶的数量为0,则初始化
     if ((tab = table) == null || (n = tab.length) == 0)
         // 调用resize()初始化
         n = (tab = resize()).length;
-    // (n - 1) & hash 计算元素在哪个桶中
-    // 如果这个桶中还没有元素，则把这个元素放在桶中的第一个位置
+    //(n - 1) & hash 计算元素在哪个桶中;如果这个桶中还没有元素，则把这个元素放在桶中的第一个位置
     if ((p = tab[i = (n - 1) & hash]) == null)
         // 新建一个节点放在桶中
         tab[i] = newNode(hash, key, value, null);
     else {
-        // 如果桶中已经有元素存在了
+        // 如果桶中第一个位置已经有元素存在了
         Node<K, V> e;
         K k;
         // 如果桶中第一个元素的key与待插入元素的key相同，保存到e中用于后续修改value值
-        if (p.hash == hash &&
-                ((k = p.key) == key || (key != null && key.equals(k))))
+        if (p.hash == hash && ((k = p.key) == key || (key != null && key.equals(k))))
             e = p;
         else if (p instanceof TreeNode)
             // 如果第一个元素是树节点，则调用树节点的putTreeVal插入元素
             e = ((TreeNode<K, V>) p).putTreeVal(this, tab, hash, key, value);
         else {
-            // 遍历这个桶对应的链表，binCount用于存储链表中元素的个数
+            //遍历这个桶对应的链表,binCount表示存储链表中元素的个数
             for (int binCount = 0; ; ++binCount) {
                 // 如果链表遍历完了都没有找到相同key的元素，说明该key对应的元素不存在，则在链表最后插入一个新节点
                 if ((e = p.next) == null) {
                     p.next = newNode(hash, key, value, null);
-                    // 如果插入新节点后链表长度大于8，则判断是否需要树化，因为第一个元素没有加到binCount中，所以这里-1
+                    // 如果插入新节点后链表长度大于8，则判断是否需要树化,因为第一个元素没有加到binCount中，所以这里-1
                     if (binCount >= TREEIFY_THRESHOLD - 1) // -1 for 1st
                         treeifyBin(tab, hash);
                     break;
                 }
                 // 如果待插入的key在链表中找到了，则退出循环
-                if (e.hash == hash &&
-                        ((k = e.key) == key || (key != null && key.equals(k))))
+                if (e.hash == hash &&((k = e.key) == key || (key != null && key.equals(k))))
                     break;
                 p = e;
             }
@@ -266,12 +265,11 @@ final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
                 e.value = value;
             // 在节点被访问后做点什么事，在LinkedHashMap中用到
             afterNodeAccess(e);
-            // 返回旧值
+            // 如果存在,则返回旧值
             return oldValue;
         }
     }
-    // 到这里了说明没有找到元素
-    // 修改次数加1
+    // 到这里了说明没有找到元素,修改次数加1
     ++modCount;
     // 元素数量加1，判断是否需要扩容
     if (++size > threshold)
@@ -283,30 +281,20 @@ final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
     return null;
 }
 ```
-
-（1）计算key的hash值；
-
-（2）如果桶（数组）数量为0，则初始化桶；
-
-（3）如果key所在的桶没有元素，则直接插入；
-
-（4）如果key所在的桶中的第一个元素的key与待插入的key相同，说明找到了元素，转后续流程（9）处理；
-
-（5）如果第一个元素是树节点，则调用树节点的putTreeVal()寻找元素或插入树节点；
-
-（6）如果不是以上三种情况，则遍历桶对应的链表查找key是否存在于链表中；
-
-（7）如果找到了对应key的元素，则转后续流程（9）处理；
-
-（8）如果没找到对应key的元素，则在链表最后插入一个新节点并判断是否需要树化；
-
-（9）如果找到了对应key的元素，则判断是否需要替换旧值，并直接返回旧值；
-
-（10）如果插入了元素，则数量加1并判断是否需要扩容；
+- （1）计算key的hash值；
+- （2）如果桶（数组）数量为0，则初始化桶；
+- （3）如果key所在的桶没有元素，则直接插入；
+- （4）如果key所在的桶中的第一个元素的key与待插入的key相同，说明找到了元素，转后续流程（9）处理；
+- （5）如果第一个元素是树节点，则调用树节点的putTreeVal()寻找元素或插入树节点；
+- （6）如果不是以上三种情况，则遍历桶对应的链表查找key是否存在于链表中；
+- （7）如果找到了对应key的元素，则转后续流程（9）处理；
+- （8）如果没找到对应key的元素，则在链表最后插入一个新节点并判断是否需要树化；
+- （9）如果找到了对应key的元素，则判断是否需要替换旧值，并直接返回旧值；
+- （10）如果插入了元素，则数量加1并判断是否需要扩容；
 
 ### resize()方法
 
-扩容方法。
+- HashMap() 的扩容 & 数据迁移 
 
 ```java
 final Node<K, V>[] resize() {
@@ -322,15 +310,15 @@ final Node<K, V>[] resize() {
             // 如果旧容量达到了最大容量，则不再进行扩容
             threshold = Integer.MAX_VALUE;
             return oldTab;
-        } else if ((newCap = oldCap << 1) < MAXIMUM_CAPACITY &&
-                oldCap >= DEFAULT_INITIAL_CAPACITY)
-            // 如果旧容量的两倍小于最大容量并且旧容量大于默认初始容量（16），则容量扩大为两部，扩容门槛也扩大为两倍
+        } else if ((newCap = oldCap << 1) < MAXIMUM_CAPACITY && oldCap >= DEFAULT_INITIAL_CAPACITY)
+            //如果旧容量的两倍小于最大容量并且旧容量大于默认初始容量（16），则容量扩大为两倍，扩容门槛也扩大为两倍
+            //此处暂时:double threshold
             newThr = oldThr << 1; // double threshold
-    } else if (oldThr > 0) // initial capacity was placed in threshold
+     } else if (oldThr > 0) // initial capacity was placed in threshold
         // 使用非默认构造方法创建的map，第一次插入元素会走到这里
         // 如果旧容量为0且旧扩容门槛大于0，则把新容量赋值为旧门槛
         newCap = oldThr;
-    else {               // zero initial threshold signifies using defaults
+     else {               // zero initial threshold signifies using defaults
         // 调用默认构造方法创建的map，第一次插入元素会走到这里
         // 如果旧容量旧扩容门槛都是0，说明还未初始化过，则初始化容量为默认容量，扩容门槛为默认容量*默认装载因子
         newCap = DEFAULT_INITIAL_CAPACITY;
@@ -366,10 +354,8 @@ final Node<K, V>[] resize() {
                     // 如果第一个元素是树节点，则把这颗树打散成两颗树插入到新桶中去
                     ((TreeNode<K, V>) e).split(this, newTab, j, oldCap);
                 else { // preserve order
-                    // 如果这个链表不止一个元素且不是一颗树
-                    // 则分化成两个链表插入到新的桶中去
-                    // 比如，假如原来容量为4，3、7、11、15这四个元素都在三号桶中
-                    // 现在扩容到8，则3和11还是在三号桶，7和15要搬移到七号桶中去
+                    // 如果这个链表不止一个元素且不是一颗树,则分化成两个链表插入到新的桶中去
+                    // 比如，假如原来容量为4，3、7、11、15这四个元素都在三号桶中,现在扩容到8，则3和11还是在三号桶，7和15要搬移到七号桶中去
                     // 也就是分化成了两个链表
                     Node<K, V> loHead = null, loTail = null;
                     Node<K, V> hiHead = null, hiTail = null;
@@ -413,19 +399,19 @@ final Node<K, V>[] resize() {
 }
 ```
 
-（1）如果使用是默认构造方法，则第一次插入元素时初始化为默认值，容量为16，扩容门槛为12；
+- （1）如果使用是默认构造方法，则第一次插入元素时初始化为默认值，容量为16，扩容门槛为12；
 
-（2）如果使用的是非默认构造方法，则第一次插入元素时初始化容量等于扩容门槛，扩容门槛在构造方法里等于传入容量向上最近的2的n次方；
+- （2）如果使用的是非默认构造方法，则第一次插入元素时初始化容量等于扩容门槛，扩容门槛在构造方法里等于传入容量向上最近的2的n次方；
 
-（3）如果旧容量大于0，则新容量等于旧容量的2倍，但不超过最大容量2的30次方，新扩容门槛为旧扩容门槛的2倍；
+- （3）如果旧容量大于0，则新容量等于旧容量的2倍，但不超过最大容量2的30次方，新扩容门槛为旧扩容门槛的2倍；
 
-（4）创建一个新容量的桶；
+- （4）创建一个新容量的桶；
 
-（5）搬移元素，原链表分化成两个链表，低位链表存储在原来桶的位置，高位链表搬移到原来桶的位置加旧容量的位置；
+- （5）搬移元素，原链表分化成两个链表，低位链表存储在原来桶的位置，高位链表搬移到原来桶的位置加旧容量的位置；
 
 ### TreeNode.putTreeVal(...)方法
 
-插入元素到红黑树中的方法。
+- 插入元素到红黑树中的方法。
 
 ```java
 final TreeNode<K, V> putTreeVal(HashMap<K, V> map, Node<K, V>[] tab,
@@ -498,25 +484,25 @@ final TreeNode<K, V> putTreeVal(HashMap<K, V> map, Node<K, V>[] tab,
 }
 ```
 
-（1）寻找根节点；
+- （1）寻找根节点；
 
-（2）从根节点开始查找；
+- （2）从根节点开始查找；
 
-（3）比较hash值及key值，如果都相同，直接返回，在putVal()方法中决定是否要替换value值；
+- （3）比较hash值及key值，如果都相同，直接返回，在putVal()方法中决定是否要替换value值；
 
-（4）根据hash值及key值确定在树的左子树还是右子树查找，找到了直接返回；
+- （4）根据hash值及key值确定在树的左子树还是右子树查找，找到了直接返回；
 
-（5）如果最后没有找到则在树的相应位置插入元素，并做平衡；
+- （5）如果最后没有找到则在树的相应位置插入元素，并做平衡；
 
 ### treeifyBin()方法
 
-如果插入元素后链表的长度大于等于8则判断是否需要树化。
+- 如果插入元素后链表的长度大于等于8则判断是否需要树化。
 
 ```java
 final void treeifyBin(Node<K, V>[] tab, int hash) {
     int n, index;
     Node<K, V> e;
-    if (tab == null || (n = tab.length) < MIN_TREEIFY_CAPACITY)
+    if (tab == null || (n = tab.length) < MIN_TREEIFY_CAPACITY){
         // 如果桶数量小于64，直接扩容而不用树化
         // 因为扩容之后，链表会分化成两个链表，达到减少元素的作用
         // 当然也不一定，比如容量为4，里面存的全是除以4余数等于3的元素
@@ -542,9 +528,9 @@ final void treeifyBin(Node<K, V>[] tab, int hash) {
 }
 ```
 
-### TreeNode.treeify()方法
+#### TreeNode.treeify()方法
 
-真正树化的方法。
+- 真正树化的方法。
 
 ```java
 final void treeify(Node<K, V>[] tab) {
@@ -593,14 +579,10 @@ final void treeify(Node<K, V>[] tab) {
     moveRootToFront(tab, root);
 }
 ```
-
-（1）从链表的第一个元素开始遍历；
-
-（2）将第一个元素作为根节点；
-
-（3）其它元素依次插入到红黑树中，再做平衡；
-
-（4）将根节点移到链表第一元素的位置（因为平衡的时候根节点会改变）；
+- （1）从链表的第一个元素开始遍历；
+- （2）将第一个元素作为根节点；
+- （3）其它元素依次插入到红黑树中，再做平衡；
+- （4）将根节点移到链表第一元素的位置（因为平衡的时候根节点会改变）；
 
 ### get(Object key)方法
 
@@ -639,15 +621,12 @@ final Node<K, V> getNode(int hash, Object key) {
 }
 ```
 
-（1）计算key的hash值；
+- （1）计算key的hash值；
+- （2）找到key所在的桶及其第一个元素；
+- （3）如果第一个元素的key等于待查找的key，直接返回；
+- （4）如果第一个元素是树节点就按树的方式来查找，否则按链表方式查找；
 
-（2）找到key所在的桶及其第一个元素；
-
-（3）如果第一个元素的key等于待查找的key，直接返回；
-
-（4）如果第一个元素是树节点就按树的方式来查找，否则按链表方式查找；
-
-### TreeNode.getTreeNode(int h, Object k)方法
+#### TreeNode.getTreeNode(int h, Object k)方法
 
 ```java
 final TreeNode<K, V> getTreeNode(int h, Object k) {
@@ -692,7 +671,7 @@ final TreeNode<K, V> find(int h, Object k, Class<?> kc) {
 }
 ```
 
-经典二叉查找树的查找过程，先根据hash值比较，再根据key值比较决定是查左子树还是右子树。
+- 经典二叉查找树的查找过程，先根据hash值比较，再根据key值比较决定是查左子树还是右子树。
 
 ### remove(Object key)方法
 
@@ -757,18 +736,13 @@ final Node<K, V> removeNode(int hash, Object key, Object value,
     return null;
 }
 ```
+- （1）先查找元素所在的节点；
+- （2）如果找到的节点是树节点，则按树的移除节点处理；
+- （3）如果找到的节点是桶中的第一个节点，则把第二个节点移到第一的位置；
+- （4）否则按链表删除节点处理；
+- （5）修改size，调用移除节点后置处理等；
 
-（1）先查找元素所在的节点；
-
-（2）如果找到的节点是树节点，则按树的移除节点处理；
-
-（3）如果找到的节点是桶中的第一个节点，则把第二个节点移到第一的位置；
-
-（4）否则按链表删除节点处理；
-
-（5）修改size，调用移除节点后置处理等；
-
-### TreeNode.removeTreeNode(...)方法
+#### TreeNode.removeTreeNode(...)方法
 
 ```java
 final void removeTreeNode(HashMap<K, V> map, Node<K, V>[] tab,
@@ -890,29 +864,21 @@ final void removeTreeNode(HashMap<K, V> map, Node<K, V>[] tab,
 }
 ```
 
-（1）TreeNode本身既是链表节点也是红黑树节点；
-
-（2）先删除链表节点；
-
-（3）再删除红黑树节点并做平衡；
+- （1）TreeNode本身既是链表节点也是红黑树节点；
+- （2）先删除链表节点；
+- （3）再删除红黑树节点并做平衡；
 
 ## 总结
 
-（1）HashMap是一种散列表，采用（数组 + 链表 + 红黑树）的存储结构；
+- （1）HashMap是一种散列表，采用（数组 + 链表 + 红黑树）的存储结构；
 
-（2）HashMap的默认初始容量为16（1<<4），默认装载因子为0.75f，容量总是2的n次方；
-
-（3）HashMap扩容时每次容量变为原来的两倍；
-
-（4）当桶的数量小于64时不会进行树化，只会扩容；
-
-（5）当桶的数量大于64且单个桶中元素的数量大于8时，进行树化；
-
-（6）当单个桶中元素数量小于6时，进行反树化；
-
-（7）HashMap是非线程安全的容器；
-
-（8）HashMap查找添加元素的时间复杂度都为O(1)；
+- （2）HashMap的默认初始容量为16（1<<4），默认装载因子为0.75f，容量总是2的n次方；
+- （3）HashMap扩容时每次容量变为原来的两倍；
+- （4）当桶的数量小于64时不会进行树化，只会扩容；
+- （5）当桶的数量大于64且单个桶中元素的数量大于8时，进行树化；
+- （6）当单个桶中元素数量小于6时，进行反树化；
+- （7）HashMap是非线程安全的容器；
+- （8）HashMap查找添加元素的时间复杂度都为O(1)；
 
 ## 带详细注释的源码地址
 
@@ -924,18 +890,14 @@ _红黑树知多少？_
 
 红黑树具有以下5种性质：
 
-（1）节点是红色或黑色。
+- （1）节点是红色或黑色。
+- （2）根节点是黑色。
+- （3）每个叶节点（NIL节点，空节点）是黑色的。
+- （4）每个红色节点的两个子节点都是黑色。(从每个叶子到根的所有路径上不能有两个连续的红色节点)
+- （5）从任一节点到其每个叶子的所有路径都包含相同数目的黑色节点。
 
-（2）根节点是黑色。
+### 红黑树的时间复杂度为O(log n)，与树的高度成正比。
 
-（3）每个叶节点（NIL节点，空节点）是黑色的。
-
-（4）每个红色节点的两个子节点都是黑色。(从每个叶子到根的所有路径上不能有两个连续的红色节点)
-
-（5）从任一节点到其每个叶子的所有路径都包含相同数目的黑色节点。
-
-红黑树的时间复杂度为O(log n)，与树的高度成正比。
-
-红黑树每次的插入、删除操作都需要做平衡，平衡时有可能会改变根节点的位置，颜色转换，左旋，右旋等。
+- 红黑树每次的插入、删除操作都需要做平衡，平衡时有可能会改变根节点的位置，颜色转换，左旋，右旋等。
 
 ---
