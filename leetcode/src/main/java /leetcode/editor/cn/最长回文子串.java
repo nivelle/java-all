@@ -44,7 +44,7 @@
 
 
 //leetcode submit region begin(Prohibit modification and deletion)
-class Solution {
+class 最长回文子串 {
     public String longestPalindrome(String s) {
         int len = s.length();
         if (len < 2) {

@@ -39,7 +39,7 @@
 /**
  * 合并两个有序数组
  */
-class Solution {
+class 有序数组合并 {
     public void merge(int[] nums1, int m, int[] nums2, int n) {
         //数组下标最大值
         int i = m - 1;

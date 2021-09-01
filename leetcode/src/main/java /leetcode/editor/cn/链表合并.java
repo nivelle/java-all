@@ -60,7 +60,7 @@ import java.util.PriorityQueue;
  * ListNode(int val, ListNode next) { this.val = val; this.next = next; }
  * }
  */
-class Solution {
+class 链表合并 {
     public ListNode mergeKLists(ListNode[] lists) {
 
         if (lists == null || lists.length == 0) {

@@ -53,7 +53,7 @@
  * ListNode(int val, ListNode next) { this.val = val; this.next = next; }
  * }
  */
-class Solution {
+class 默认交换链表相邻元素 {
     //跌打解法
     class Solution {
         public ListNode swapPairs(ListNode head){

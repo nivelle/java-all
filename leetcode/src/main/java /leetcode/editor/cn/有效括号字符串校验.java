@@ -58,7 +58,7 @@
 import java.util.Stack;
 
 //leetcode submit region begin(Prohibit modification and deletion)
-class Solution {
+class 有效括号字符串校验 {
     public boolean isValid(String s) {
         if (s.length() == 0 || s == null) return true;
         Stack<Character> stack = new Stack<>();

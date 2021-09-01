@@ -34,7 +34,7 @@
 /**
  * 反转链表
  */
-class Solution {
+class 二叉树反转 {
     public ListNode reverseList(ListNode head) {
 
         if (head == null) {

@@ -60,7 +60,7 @@ public class HashMapMock {
          *
          * 1. 集合元素的的hashCode之和，这个方法继承之AbstractMap
          *
-         * 2. 集合元素的hashCode的具体算法是 k的hashCode异或操作v的hashCode
+         * 2. 集合元素的hashCode的具体算法是: k的hashCode异或操作v的hashCode
          */
         int hash = hashMap2.hashCode();
         System.out.println("hashMap的hashCode:" + hash);
@@ -86,11 +86,10 @@ public class HashMapMock {
          * 移除某个元素
          */
         System.out.println("移除前数据hashMap2:" + hashMap2);
-        System.out.println("移除指定元素,返回关联的值:" + hashMap2.remove("3"));
+        System.out.println("移除指定元素,返回关联的值1:" + hashMap2.remove("3"));
         System.out.println("移除后数据hashMap2:" + hashMap2);
         //不存在的键
-        System.out.println("移除指定元素,返回关联的值:" + hashMap2.remove("8"));
-
+        System.out.println("移除指定元素,返回关联的值2:" + hashMap2.remove("8"));
 
         hashMap2.put("5", "xubing");
         hashMap2.put("6", "biliang");
@@ -115,15 +114,12 @@ public class HashMapMock {
         }
 
         System.out.println(hashMap2.getOrDefault("8", "不存在情况下的默认值"));
-
         System.out.println("不存在情况返回默认值也不会在底层数据上添加上此元素:" + hashMap2.get("8"));
-
         /**
          * 如果存在则不添加,同时返回旧值。
          */
-        System.out.println("存在则不添加,返回旧值:" + hashMap2.putIfAbsent("6", "biliang2"));
+        System.out.println("不存在则添加,返回旧值:" + hashMap2.putIfAbsent("6", "biliang2"));
         System.out.println("hashMap2:" + hashMap2);
-
         System.out.println("不存在则添加,返回旧值:" + hashMap2.putIfAbsent("8", "biliang2"));
         System.out.println("hashMap2:" + hashMap2);
 
@@ -145,7 +141,7 @@ public class HashMapMock {
          *
          *  1. key==null 则hashCode =0 ;
          *
-         *  2. key.hashCode 然后32位的hashCode值，通过与h>>>16然后让高位也参与到运算，然后再进行 (h-1)&hashCode
+         *  2. key.hashCode 然后32位的hashCode值，通过与h>>>16然后让高位也参与到运算，然后再进行: (h-1)&hashCode 确定index位置
          */
         String key = "8";
         int h;
@@ -160,9 +156,7 @@ public class HashMapMock {
          * HashMap 使用的方法很巧妙，它通过 hash & (table.length -1)来得到该对象的保存位置,HashMap 底层数组的长度总是2的n次方，这是HashMap在速度上的优化。
          * 当 length 总是2的n次方时，hash & (length-1)运算等价于对 length 取模，也就是 hash%length，但是&比%具有更高的效率。
          *
-         * 2^n 次方的数组长度-1 保证了length的高位都是0，低位都是1,与操作后得到了hash值地位且不越界
-         *
-         *
+         * 重点: 2^n 次方的数组长度-1 保证了length的高位都是0,低位都是1,与操作后得到了hash值低位的值且不越界
          *
          * todo hash&(length-1) = hash%length 前提是length 也就是数组长度是2的n次方
          */
@@ -177,7 +171,8 @@ public class HashMapMock {
         /**
          * tableSizeFor(initialCapacity) 扩容门槛:会计算出一个initialCapacity 往上取最近的2的n次方作为threshold的初始值
          *
-         * static final int tableSizeFor(int cap) {//大于输入参数且最近的2的整数次幂的数,最高位1后面的全部设置成1,然后+1成2的整数次幂
+         * //实现原理: 大于输入参数且最近的2的整数次幂的数,最高位1后面的全部设置成1,然后+1成2的整数次幂
+         * static final int tableSizeFor(int cap) {
          *         int n = cap - 1;
          *         n |= n >>> 1;
          *         n |= n >>> 2;
@@ -188,7 +183,7 @@ public class HashMapMock {
          *     }
          *
          */
-        //我们预估HashMap要存储n个元素，它的容量就应该指定为((n/0.75f) + 1),如果这个值小于16，那就直接使用16得了
+        //我们预估HashMap要存储n个元素，它的容量就应该指定为((n/0.75f) + 1),如果这个值小于16，那就直接使用16了
         HashMap hashMap4 = new HashMap(2, 0.5F);
         hashMap4.put(1, 1);
         hashMap4.put(2, 2);
