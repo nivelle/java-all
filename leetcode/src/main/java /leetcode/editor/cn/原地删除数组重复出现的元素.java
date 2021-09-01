@@ -56,7 +56,7 @@
 
 
 //leetcode submit region begin(Prohibit modification and deletion)
-class Solution {
+class 原地删除数组重复出现的元素 {
     public int removeDuplicates(int[] nums) {
         int count = 1;
         for (int i = 1; i < nums.length; i++) {

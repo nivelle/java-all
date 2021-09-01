@@ -36,13 +36,15 @@
 
 //leetcode submit region begin(Prohibit modification and deletion)
 
+import leetcode.editor.cn.base.ListNode;
+
 /**
  * /*
  * <p>
  * 反转部分列表
  */
 
-class Solution {
+class 反转指定位移的链表位置 {
     public ListNode reverseBetween(ListNode head, int m, int n) {
         //构建两个指针
         ListNode dummy = new ListNode(0);

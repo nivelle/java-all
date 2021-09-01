@@ -6,7 +6,7 @@ package leetcode.editor.cn;
  * @author fuxinzhong
  * @date 2021/06/05
  */
-public class QuickSort {
+public class 快速排序 {
 
     public static void main(String[] args) {
         int[] arr = new int[]{2, 1, 0, 4, 98, 5, 7};

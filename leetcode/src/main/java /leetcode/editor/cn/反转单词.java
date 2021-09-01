@@ -78,7 +78,7 @@
  * 翻转字符串里的单词
  */
 //leetcode submit region begin(Prohibit modification and deletion)
-class Solution {
+class 反转单词 {
 //    public String reverseWords(String s) {
 //        if (s == null || s.length() == 0) {
 //            return null;

@@ -28,7 +28,7 @@
 
 
 //leetcode submit region begin(Prohibit modification and deletion)
-class Solution {
+class 计算所有小于n的非负整数中数字1出现的个数 {
     public int countDigitOne(int n) {
         return f(n);
     }

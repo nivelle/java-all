@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 //leetcode submit region begin(Prohibit modification and deletion)
-class Solution {
+class 括号生成组合 {
     List<String> res = new ArrayList<>();
 
     public List<String> generateParenthesis(int n) {

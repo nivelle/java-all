@@ -43,7 +43,7 @@
 
 
 //leetcode submit region begin(Prohibit modification and deletion)
-class Solution {
+class 找到目标值的首个位移和最后位移 {
     public int[] searchRange(int[] nums, int target) {
         //二分法查找左边边界值
         int leftIdx = binarySearch(nums, target, true);

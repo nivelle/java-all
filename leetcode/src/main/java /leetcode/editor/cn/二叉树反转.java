@@ -31,6 +31,8 @@
  * }
  */
 
+import leetcode.editor.cn.base.ListNode;
+
 /**
  * 反转链表
  */

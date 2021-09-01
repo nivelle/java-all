@@ -56,7 +56,7 @@ import java.util.HashMap;
 /**
  * 无重复字符的最长字串
  */
-class Solution {
+class 无重复最长子串 {
     public int lengthOfLongestSubstring(String s) {
         if (s.length() == 0 || s == null) return 0;
         int res = 0;

@@ -37,7 +37,7 @@ import java.util.HashMap;
 import java.util.Set;
 
 //leetcode submit region begin(Prohibit modification and deletion)
-class Solution {
+class 找出仅仅出现一次的元素II {
     public int singleNumber(int[] nums) {
         HashMap<Integer, Integer> map = new HashMap<>();
         for (int i = 0; i < nums.length; i++) {

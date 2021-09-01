@@ -45,7 +45,7 @@ import leetcode.editor.cn.base.ListNode;
  * ListNode(int val, ListNode next) { this.val = val; this.next = next; }
  * }
  */
-class Solution {
+class 删除链表重复元素 {
     public ListNode deleteDuplicates(ListNode head) {
         if (head == null || head.next == null) {
             return head;

@@ -35,12 +35,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 //leetcode submit region begin(Prohibit modification and deletion)
-class Solution {
+class 返回不重复的全列表 {
     List<List<Integer>> res = new ArrayList<>();
 
-    public List<List<Integer>> permuteUnique(int[] nums) {
 
-    }
 
     private void dfs(int[] nums, boolean[] used, ArrayList<Integer> path) {
         if (path.size() == nums.length) {

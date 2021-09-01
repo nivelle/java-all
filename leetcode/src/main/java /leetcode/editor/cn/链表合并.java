@@ -48,6 +48,9 @@
 
 //leetcode submit region begin(Prohibit modification and deletion)
 
+import leetcode.editor.cn.base.ListNode;
+
+import java.util.Comparator;
 import java.util.PriorityQueue;
 
 /**

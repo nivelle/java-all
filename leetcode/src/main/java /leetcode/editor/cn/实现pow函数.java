@@ -38,7 +38,7 @@
 
 
 //leetcode submit region begin(Prohibit modification and deletion)
-class Solution {
+class 实现pow函数 {
     public double myPow(double x, int n) {
         //分治算法，只需要算一半就可以
         if (n == 0) return 1;

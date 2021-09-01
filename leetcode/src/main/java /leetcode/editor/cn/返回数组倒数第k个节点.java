@@ -17,6 +17,8 @@
 
 //leetcode submit region begin(Prohibit modification and deletion)
 
+import leetcode.editor.cn.base.ListNode;
+
 /**
  * Definition for singly-linked list.
  * public class ListNode {
@@ -25,7 +27,7 @@
  * ListNode(int x) { val = x; }
  * }
  */
-class Solution {
+class 返回数组倒数第k个节点 {
     public ListNode getKthFromEnd(ListNode head, int k) {
         if (head == null) {
             return null;

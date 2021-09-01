@@ -22,7 +22,7 @@
 
 
 //leetcode submit region begin(Prohibit modification and deletion)
-class Solution {
+class 字符串可以构造的最长回文字符串 {
     /**
      * 时间复杂度：O(N)，其中 N 为字符串 s 的长度。我们需要遍历每个字符一次
      */

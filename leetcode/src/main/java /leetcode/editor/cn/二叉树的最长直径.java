@@ -23,6 +23,8 @@
 
 //leetcode submit region begin(Prohibit modification and deletion)
 
+import leetcode.editor.cn.base.TreeNode;
+
 /**
  * Definition for a binary tree node.
  * public class TreeNode {
@@ -38,7 +40,7 @@
  * }
  * }
  */
-class Solution {
+class 二叉树的最长直径 {
     int max = 0;
 
     public int diameterOfBinaryTree(TreeNode root) {
@@ -46,7 +48,6 @@ class Solution {
         dfs(root);
         return max;
     }
-
     private int dfs(TreeNode root) {
         if (root == null) return 0;
         int leftDepth = dfs(root.left);

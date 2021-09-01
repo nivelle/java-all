@@ -26,7 +26,7 @@
 
 
 //leetcode submit region begin(Prohibit modification and deletion)
-class Solution {
+class 爬楼梯问题 {
     public int climbStairs(int n) {
         if (n == 0 || n == 1 || n == 2) {
             return n;

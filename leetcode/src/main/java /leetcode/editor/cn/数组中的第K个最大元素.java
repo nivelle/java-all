@@ -22,7 +22,7 @@
  * 数组中的第K个最大元素
  */
 //leetcode submit region begin(Prohibit modification and deletion)
-class Solution {
+class 数组中的第K个最大元素 {
 //    public int findKthLargest(int[] nums, int k) {
 //        PriorityQueue<Integer> heap = new PriorityQueue<>((n1, n2) -> (n1 - n2));
 //        for (int n : nums) {

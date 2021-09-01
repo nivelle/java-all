@@ -48,7 +48,7 @@
 
 
 //leetcode submit region begin(Prohibit modification and deletion)
-class Solution {
+class 单词查找 {
     public boolean exist(char[][] board, String word) {
         //长
         int h = board.length;

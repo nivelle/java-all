@@ -48,7 +48,7 @@ import java.util.HashMap;
 import java.util.List;
 
 //leetcode submit region begin(Prohibit modification and deletion)
-class Solution {
+class 求目标和值的数组元素下标 {
     //    public int[] twoSum(int[] nums, int target) {
 //        int data[] = new int[2];
 //        for (int i = 0; i < nums.length; i++) {

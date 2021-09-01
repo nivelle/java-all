@@ -30,7 +30,7 @@
 
 
 //leetcode submit region begin(Prohibit modification and deletion)
-class Solution {
+class 数组多数元素 {
     public int majorityElement(int[] nums) {
         if (nums == null || nums.length == 0) return 0;
 

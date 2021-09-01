@@ -43,6 +43,8 @@
 
 //leetcode submit region begin(Prohibit modification and deletion)
 
+import leetcode.editor.cn.base.ListNode;
+
 /**
  * Definition for singly-linked list.
  * public class ListNode {
@@ -93,6 +95,10 @@ class 默认交换链表相邻元素 {
         head.next = swapPairs(newHead.next);
         newHead.next = head;
         return newHead;
+    }
+
+    public ListNode swapPairs(ListNode node){
+        return node;
     }
 
 

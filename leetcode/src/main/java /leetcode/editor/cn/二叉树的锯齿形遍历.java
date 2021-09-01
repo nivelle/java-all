@@ -26,6 +26,8 @@
 
 //leetcode submit region begin(Prohibit modification and deletion)
 
+import leetcode.editor.cn.base.TreeNode;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -49,10 +51,10 @@ import java.util.List;
 /**
  * 合并两个有序链表
  */
-class Solution {
+class 二叉树的锯齿形遍历 {
     public List<List<Integer>> zigzagLevelOrder(TreeNode root) {
         List<List<Integer>> res = new ArrayList<>();
-        if (root == null) return res;
+        if (root == null) {return res;}
         LinkedList<TreeNode> queue = new LinkedList<>();
         queue.add(root);
         int level = 1;

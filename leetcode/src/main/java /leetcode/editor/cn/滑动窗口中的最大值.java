@@ -66,7 +66,7 @@
 import java.util.LinkedList;
 
 //leetcode submit region begin(Prohibit modification and deletion)
-class Solution {
+class 滑动窗口中的最大值 {
     public int[] maxSlidingWindow(int[] nums, int k) {
         if (nums == null || nums.length < 2) return nums;
         // 双向队列 保存当前窗口最大值的数组位置 保证队列中数组位置的数值按从大到小排序

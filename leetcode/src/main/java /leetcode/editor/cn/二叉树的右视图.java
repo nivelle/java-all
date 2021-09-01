@@ -18,6 +18,8 @@
 
 //leetcode submit region begin(Prohibit modification and deletion)
 
+import leetcode.editor.cn.base.TreeNode;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -37,7 +39,7 @@ import java.util.List;
  * }
  * }
  */
-class Solution {
+class 二叉树的右视图 {
     public List<Integer> rightSideView(TreeNode root) {
         // DFS（Deep First Search）深度优先搜索。
 

@@ -33,7 +33,7 @@ import java.util.List;
  * ListNode(int val, ListNode next) { this.val = val; this.next = next; }
  * }
  */
-class Solution {
+class 判断链表是否为回文链表 {
         public boolean isPalindrome(ListNode head) {
         List<Integer> vals = new ArrayList<Integer>();
         ListNode currentNode = head;

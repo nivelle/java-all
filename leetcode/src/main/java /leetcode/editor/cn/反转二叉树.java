@@ -28,6 +28,8 @@
 
 //leetcode submit region begin(Prohibit modification and deletion)
 
+import leetcode.editor.cn.base.TreeNode;
+
 /**
  * Definition for a binary tree node.
  * public class TreeNode {
@@ -43,7 +45,7 @@
  * }
  * }
  */
-class Solution {
+class 反转二叉树 {
     public TreeNode invertTree(TreeNode root) {
         if (root == null) return null;
         TreeNode tmp = root.left;

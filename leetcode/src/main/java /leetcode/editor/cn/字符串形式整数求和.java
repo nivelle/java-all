@@ -15,7 +15,7 @@
 
 
 //leetcode submit region begin(Prohibit modification and deletion)
-class Solution {
+class 字符串形式整数求和 {
     public String addStrings(String num1, String num2) {
 
         int i = num1.length() - 1;

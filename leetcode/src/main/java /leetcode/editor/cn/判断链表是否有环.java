@@ -68,7 +68,7 @@ import leetcode.editor.cn.base.ListNode;
  * }
  * }
  */
-public class Solution {
+public class 判断链表是否有环 {
     public boolean hasCycle(ListNode head) {
         if (head == null || head.next == null) {
             return false;

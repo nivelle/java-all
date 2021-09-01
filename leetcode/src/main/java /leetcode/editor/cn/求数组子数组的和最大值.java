@@ -27,7 +27,7 @@
 
 
 //leetcode submit region begin(Prohibit modification and deletion)
-class Solution {
+class 求数组子数组的和最大值 {
     public int maxSubArray(int[] nums) {
         if (nums.length == 0 || nums == null) return 0;
         int n = nums.length;

@@ -36,6 +36,8 @@
 
 //leetcode submit region begin(Prohibit modification and deletion)
 
+import leetcode.editor.cn.base.TreeNode;
+
 /**
  * Definition for a binary tree node.
  * public class TreeNode {
@@ -46,7 +48,7 @@
  * }
  */
 
-class Solution {
+class 指定二叉树节点公共祖先 {
     public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
         if (root.val > p.val && root.val > q.val) {
             //根节点比左右节点都大

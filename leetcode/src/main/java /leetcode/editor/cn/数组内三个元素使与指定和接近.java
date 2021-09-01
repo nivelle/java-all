@@ -26,7 +26,7 @@
 import java.util.Arrays;
 
 //leetcode submit region begin(Prohibit modification and deletion)
-class Solution {
+class 数组内三个元素使与指定和接近 {
     public int threeSumClosest(int[] nums, int target) {
         Arrays.sort(nums);
         //初始值为前三个数字之和初始值

@@ -48,7 +48,7 @@
 
 
 //leetcode submit region begin(Prohibit modification and deletion)
-class Solution {
+class 求数组最长递增子序列 {
     public int lengthOfLIS(int[] nums) {
         if (nums.length == 0) {
             return 0;

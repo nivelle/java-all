@@ -21,7 +21,7 @@
 
 
 //leetcode submit region begin(Prohibit modification and deletion)
-class Solution {
+class 数组奇偶分离 {
 
     public int[] exchange(int[] nums){
         return insertOrderArray(nums);

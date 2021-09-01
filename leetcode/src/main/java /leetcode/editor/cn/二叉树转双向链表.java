@@ -34,6 +34,7 @@
 
 
 import com.sun.xml.internal.fastinfoset.algorithm.ShortEncodingAlgorithm;
+import leetcode.editor.cn.base.Node;
 
 //leetcode submit region begin(Prohibit modification and deletion)
 /*
@@ -56,9 +57,10 @@ class Node {
     }
 };
 */
-class Solution {
+class 二叉树转双向链表 {
     Node head;
     Node pre;
+
 
     public Node treeToDoublyList(Node root) {
         if (root == null) {

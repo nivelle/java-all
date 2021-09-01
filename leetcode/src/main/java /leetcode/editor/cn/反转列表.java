@@ -51,7 +51,7 @@ import leetcode.editor.cn.base.ListNode;
 /**
  * 反转列表
  */
-public class Solution {
+public class 反转列表 {
     public ListNode reverseList(ListNode head) {
         ListNode prev = null;
         ListNode cur = head;

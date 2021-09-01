@@ -50,6 +50,8 @@
 
 //leetcode submit region begin(Prohibit modification and deletion)
 
+import leetcode.editor.cn.base.TreeNode;
+
 /**
  * Definition for a binary tree node.
  * public class TreeNode {
@@ -65,7 +67,7 @@
  * }
  * }
  */
-class Solution {
+class 判断两颗二叉树是否有相同子结构 {
     public boolean isSubtree(TreeNode root, TreeNode subRoot) {
         if (root == null && subRoot == null) return true;
         if (root == null || subRoot == null) return false;
@@ -77,5 +79,6 @@ class Solution {
         if (root == null || subRoot == null) return false;
         return root.val == subRoot.val && dfs(root.left, subRoot.left) && dfs(root.right, subRoot.right);
     }
+
 }
 //leetcode submit region end(Prohibit modification and deletion)

@@ -55,6 +55,8 @@
 
 //leetcode submit region begin(Prohibit modification and deletion)
 
+import leetcode.editor.cn.base.TreeNode;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -74,7 +76,7 @@ import java.util.Stack;
  * }
  * }
  */
-class Solution {
+class 二叉树的中序遍历 {
     public List<Integer> inorderTraversal(TreeNode root) {
         //return inorderTraversal1(root);
 

@@ -22,7 +22,7 @@
 
 
 //leetcode submit region begin(Prohibit modification and deletion)
-class Solution {
+class 实现sqrt函数 {
     public int mySqrt(int x) {
         if (x == 0 || x == 1) {
             return x;

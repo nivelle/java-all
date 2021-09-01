@@ -45,7 +45,7 @@
 
 
 //leetcode submit region begin(Prohibit modification and deletion)
-class Solution {
+class 整数反转 {
     public int reverse(int x) {
         long res = 0;
 

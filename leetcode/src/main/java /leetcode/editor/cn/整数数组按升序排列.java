@@ -48,7 +48,7 @@
 
 
 //leetcode submit region begin(Prohibit modification and deletion)
-class Solution {
+class 整数数组按升序排列 {
     public int search(int[] nums, int target) {
         int len = nums.length;
         int left = 0, right = len - 1;

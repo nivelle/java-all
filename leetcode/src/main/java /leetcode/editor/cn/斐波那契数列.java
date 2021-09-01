@@ -36,7 +36,7 @@
 
 
 //leetcode submit region begin(Prohibit modification and deletion)
-class Solution {
+class 斐波那契数列 {
     public int fib(int n) {
         if (n <=1) {
             return n;

@@ -25,10 +25,12 @@
  * }
  */
 
+import leetcode.editor.cn.base.ListNode;
+
 /**
  *  合并两个有序链表
  */
-class Solution {
+class 合并链表 {
     public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
         ListNode dummy = new ListNode(0);
         //当前指针

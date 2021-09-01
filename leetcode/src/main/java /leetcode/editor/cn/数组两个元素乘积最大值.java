@@ -38,7 +38,7 @@
 
 
 //leetcode submit region begin(Prohibit modification and deletion)
-class Solution {
+class 数组两个元素乘积最大值 {
     public int maxProduct(int[] nums) {
         int max = 0;
         int maxIndex = 0;

@@ -33,7 +33,7 @@
 
 
 //leetcode submit region begin(Prohibit modification and deletion)
-class Solution {
+class 统计小于n的质数数量 {
     public int countPrimes(int n) {
         //return countPrimes1(n);
         return countPrimes2(n);

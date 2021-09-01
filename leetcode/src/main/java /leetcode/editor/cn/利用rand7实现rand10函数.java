@@ -51,13 +51,15 @@
 
 //leetcode submit region begin(Prohibit modification and deletion)
 
+import leetcode.editor.cn.base.SolBase;
+
 /**
  * The rand7() API is already defined in the parent class SolBase.
  * public int rand7();
  *
  * @return a random integer in the range 1 to 7
  */
-class Solution extends SolBase {
+class 利用rand7实现rand10函数 extends SolBase {
     public int rand10() {
         int first = rand7();
         int second = rand7();
@@ -69,5 +71,10 @@ class Solution extends SolBase {
         }
         return (first / 4 == 0 ? 0 : 5) + second;
     }
+
+    int rand7(){
+        return 0;
+    }
+
 }
 //leetcode submit region end(Prohibit modification and deletion)

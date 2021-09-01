@@ -48,7 +48,7 @@ import java.util.Arrays;
 import java.util.List;
 
 //leetcode submit region begin(Prohibit modification and deletion)
-class Solution {
+class 求和组合问题 {
     List<List<Integer>> res = new ArrayList<>();
 
     public List<List<Integer>> combinationSum(int[] candidates, int target) {

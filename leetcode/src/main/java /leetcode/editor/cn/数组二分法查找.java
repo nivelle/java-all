@@ -30,7 +30,7 @@
 
 
 //leetcode submit region begin(Prohibit modification and deletion)
-class Solution {
+class 数组二分法查找 {
     public int search(int[] nums, int target) {
         if (nums == null || nums.length <= 0) return -1;
         int left = 0;

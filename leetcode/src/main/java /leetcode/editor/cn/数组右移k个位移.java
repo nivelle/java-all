@@ -54,7 +54,7 @@
  */
 
 //leetcode submit region begin(Prohibit modification and deletion)
-class Solution {
+class 数组右移k个位移 {
     public void rotate(int[] nums, int k) {
         //真正需要移动的
         k = k % (nums.length);

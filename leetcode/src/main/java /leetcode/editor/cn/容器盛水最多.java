@@ -49,7 +49,7 @@
 
 
 //leetcode submit region begin(Prohibit modification and deletion)
-class Solution {
+class 容器盛水最多 {
     public int maxArea(int[] height) {
         //双指针： 两个板子之间的距离* 短扳的高度，
         int left = 0;

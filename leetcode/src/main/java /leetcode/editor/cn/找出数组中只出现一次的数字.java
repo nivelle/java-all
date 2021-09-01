@@ -20,7 +20,7 @@
 
 
 //leetcode submit region begin(Prohibit modification and deletion)
-class Solution {
+class 找出数组中只出现一次的数字 {
     public int singleNonDuplicate(int[] nums) {
         int res = 0;
         //a^a =0; a^0=a;0^a = a;
