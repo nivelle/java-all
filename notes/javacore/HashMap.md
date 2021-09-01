@@ -1,32 +1,34 @@
-
 ## 简介
 
-HashMap采用key/value存储结构，每个key对应唯一的value，查询和修改的速度都很快，能达到O(1)的平均时间复杂度。它是非线程安全的，且不保证元素存储的顺序；
+- HashMap采用key/value存储结构，每个key对应唯一的value，查询和修改的速度都很快，能达到O(1)的平均时间复杂度。
 
-## 继承体系
+- HashMap 是`非线程安全`的，且`不保证元素存储的顺序`;
+
+### 继承体系
 
 ![HashMap](https://gitee.com/alan-tang-tt/yuan/raw/master/死磕%20java集合系列/resource/HashMap.png)
 
-HashMap实现了Cloneable，可以被克隆。
+- HashMap实现了`Cloneable`,可以被克隆。
 
-HashMap实现了Serializable，可以被序列化。
+- HashMap实现了`Serializable`,可以被序列化。
 
-HashMap继承自AbstractMap，实现了Map接口，具有Map的所有功能。
+- HashMap继承自`AbstractMap`,实现了Map接口，具有Map的所有功能。
 
-## 存储结构
+### 存储结构
 
 ![HashMap-structure](https://gitee.com/alan-tang-tt/yuan/raw/master/死磕%20java集合系列/resource/HashMap-structure.png)
 
-在Java中，HashMap的实现采用了（数组 + 链表 + 红黑树）的复杂结构，数组的一个元素又称作桶。
+- 在Java中，HashMap的实现采用了（数组 + 链表 + 红黑树）的复杂结构，数组的一个元素又称作桶。
 
-在添加元素时，会根据hash值算出元素在数组中的位置，如果该位置没有元素，则直接把元素放置在此处，如果该位置有元素了，则把元素以链表的形式放置在链表的尾部。
+- 在添加元素时，会根据hash值算出元素在数组中的位置，如果该位置没有元素，则直接把元素放置在此处，如果该位置有元素了，则把元素以链表的形式放置在链表的尾部。
 
-当一个链表的元素个数达到一定的数量（且数组的长度达到一定的长度）后，则把链表转化为红黑树，从而提高效率。
+- 当一个链表的元素个数达到一定的数量（且数组的长度达到一定的长度）后，则把链表转化为红黑树，从而提高效率。
 
-数组的查询效率为O(1)，链表的查询效率是O(k)，红黑树的查询效率是O(log k)，k为桶中的元素个数，所以当元素数量非常多的时候，转化为红黑树能极大地提高效率。
+- 数组的查询效率为O(1)，链表的查询效率是O(k)，红黑树的查询效率是O(log k)，k为桶中的元素个数，所以当元素数量非常多的时候，转化为红黑树能极大地提高效率。
 
 ![hashmap结构转化.png](https://i.loli.net/2021/08/31/Xg1IsmoYOJFVqkZ.png)
 
+------
 ## 源码解析
 
 ### 属性
@@ -64,7 +66,7 @@ static final int UNTREEIFY_THRESHOLD = 6;
 static final int MIN_TREEIFY_CAPACITY = 64;
 
 /**
- * 数组，又叫作桶（bucket）
+ * 数组,又叫作桶（bucket）
  */
 transient Node<K,V>[] table;
 
@@ -94,21 +96,21 @@ int threshold;
 final float loadFactor;
 ```
 
-（1）容量
+- 容量
  
 容量为数组的长度，亦即桶的个数，默认为16，最大为2的30次方，当容量达到64时才可以树化。
  
-（2）装载因子
+- 装载因子
  
 装载因子用来计算容量达到多少时才进行扩容，默认装载因子为0.75。
  
-（3）树化
+- 树化
  
 树化，当容量达到64且链表的长度达到8时进行树化，当链表的长度小于6时反树化。
 
 ### Node内部类
 
-Node是一个典型的单链表节点，其中，hash用来存储key计算得来的hash值。
+- Node是一个典型的单链表节点，其中，hash用来存储key计算得来的hash值。
 
 ```java
 static class Node<K,V> implements Map.Entry<K,V> {
@@ -121,9 +123,9 @@ static class Node<K,V> implements Map.Entry<K,V> {
 
 ### TreeNode内部类
 
-这是一个神奇的类，它继承自LinkedHashMap中的Entry类，关于LInkedHashMap.Entry这个类我们后面再讲。
+- 这是一个神奇的类，它继承自`LinkedHashMap`中的Entry类;
 
-TreeNode是一个典型的树型节点，其中，prev是链表中的节点，用于在删除元素的时候可以快速找到它的前置节点。
+- TreeNode是一个典型的树型节点，其中，prev是链表中的节点，用于在删除元素的时候可以快速找到它的前置节点。
 
 ```java
 // 位于HashMap中
@@ -146,7 +148,7 @@ static class Entry<K,V> extends HashMap.Node<K,V> {
 
 ### HashMap()构造方法
 
-空参构造方法，全部使用默认值。
+- 空参构造方法，全部使用默认值。仅设置了默认加载因子是 0.75
 
 ```java
 public HashMap() {
