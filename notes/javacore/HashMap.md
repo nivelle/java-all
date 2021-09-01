@@ -158,17 +158,14 @@ public HashMap() {
 
 ### HashMap(int initialCapacity)构造方法
 
-调用HashMap(int initialCapacity, float loadFactor)构造方法，传入默认装载因子。
+- 调用HashMap(int initialCapacity, float loadFactor)构造方法，传入默认装载因子。
 
 ```java
 public HashMap(int initialCapacity) {
     this(initialCapacity, DEFAULT_LOAD_FACTOR);
 }
 ```
-
-### HashMap(int initialCapacity)构造方法
-
-判断传入的初始容量和装载因子是否合法，并计算扩容门槛，扩容门槛为传入的初始容量往上取最近的2的n次方。
+- 判断传入的初始容量和装载因子是否合法，并计算扩容门槛，扩容门槛为传入的初始容量往上取最近的2的n次方。
 
 ```java
 public HashMap(int initialCapacity, float loadFactor) {
@@ -201,7 +198,7 @@ static final int tableSizeFor(int cap) {
 
 ### put(K key, V value)方法
 
-添加元素的入口。
+- 添加元素的入口。
 
 ```java
 public V put(K key, V value) {
