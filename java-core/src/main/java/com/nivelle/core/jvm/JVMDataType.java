@@ -7,7 +7,7 @@ package com.nivelle.core.jvm;
  * @author fuxinzhong
  * @date 2021/02/08
  */
-public class JvmDataType {
+public class JVMDataType {
     static boolean boolValue;
 
     public static void main(String[] args) {
