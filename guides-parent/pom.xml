@@ -25,11 +25,9 @@
         <module>../rpc-base</module>
         <module>../spring-all</module>
         <module>../middleware</module>
-        <module>../notes</module>
         <module>../java-core</module>
-        <module>../java-agent</module>
-        <module>../springboot-starter</module>
         <module>../leetcode</module>
+        <module>../notes</module>
     </modules>
 
     <dependencyManagement>

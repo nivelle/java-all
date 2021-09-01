@@ -6,7 +6,7 @@ import java.lang.instrument.Instrumentation;
 import java.security.ProtectionDomain;
 
 /**
- * TODO:DOCUMENT ME!
+ * 在main方法执行之前做的一些操作
  *
  * @author fuxinzhong
  * @date 2020/11/26
@@ -21,9 +21,9 @@ public class PreMainTraceAgent {
     static class DefineTransformer implements ClassFileTransformer {
 
         @Override
-        public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
+        public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classFiledBuffer) throws IllegalClassFormatException {
             System.out.println("java-agent load Class:" + className);
-            return classfileBuffer;
+            return classFiledBuffer;
         }
     }
 }
