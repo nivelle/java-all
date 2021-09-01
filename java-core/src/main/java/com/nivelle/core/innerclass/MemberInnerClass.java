@@ -24,6 +24,7 @@ public class MemberInnerClass {
 
     private void action() {
         System.out.println("action");
+        System.out.println(shared);
     }
 
     /**
@@ -37,7 +38,7 @@ public class MemberInnerClass {
     public static void main(String[] args) {
         MemberInnerClass memberInnerClass = new MemberInnerClass();
         memberInnerClass.action();
-
+        System.out.println("------------");
         MemberInnerClass.Inner inner = memberInnerClass.new Inner();
         inner.innerMethod();
 

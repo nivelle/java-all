@@ -14,11 +14,11 @@ public class AnonymousInnerClass {
          *     匿名内部类实现
          * }
          */
-        System.err.println("outer x+y:" + (x + y));
+        System.out.println("outer x+y=" + (x + y));
         InnerClassMethod innerClassMethod = new InnerClassMethod(2, 3) {
             @Override
             public int innerClassMethodValue() {
-                System.err.println("内部类测试===>" + "x:" + x + "++" + "y:" + y);
+                System.out.println("内部类测试===>" + "x:" + x + "++" + "y:" + y);
                 return x + y;
             }
         };

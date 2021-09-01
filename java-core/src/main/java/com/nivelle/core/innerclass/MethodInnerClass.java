@@ -10,7 +10,7 @@ public class MethodInnerClass {
 
     private int shared = 1;
 
-    public void outerMethod(final int param, int param2) {
+    public void outerMethod1(final int param, int param2) {
         final String str = "hello";
         String str2 = "nivelle";
         /**
@@ -21,7 +21,7 @@ public class MethodInnerClass {
                 /**
                  * 内部类直接访问外部实例
                  */
-                System.out.println("outer shared is:" + shared);
+                System.out.println("内部类直接访问外部类的成员变量:" + shared);
                 /**
                  * 内部类直接访问方法的参数和方法中的成员变量,不过这些变量必须是final的
                  *
@@ -32,22 +32,25 @@ public class MethodInnerClass {
                 System.out.println("local var str2 is:" + str2);
                 System.out.println("outer method param is:" + param2);
                 /**
-                 * 内部类直接访问外部方法
+                 * 内部类直接访问实例外部方法
                  */
-                outMethod1();
+                System.out.println("方法内部类直接访问实例的外部方法！");
+                outMethod2();
             }
         }
+        //方法内部使用方法内部类
         InnerClass inner = new InnerClass();
         inner.innerMethod();
     }
 
-    public void outMethod1() {
+    public void outMethod2() {
         System.out.println("out method 2");
     }
 
     public static void main(String[] args) {
         MethodInnerClass methodInnerClass = new MethodInnerClass();
-        methodInnerClass.outerMethod(100, 200);
+        methodInnerClass.outerMethod1(100, 200);
+        methodInnerClass.outMethod2();
     }
 
 }
