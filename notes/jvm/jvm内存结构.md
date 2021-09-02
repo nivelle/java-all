@@ -7,6 +7,7 @@
 ### jvm主要分为: 堆，方法区，程序计数器，虚拟机栈，本地方法栈
 
 [![rtv8C6.png](https://z3.ax1x.com/2020/12/19/rtv8C6.png)](https://imgtu.com/i/rtv8C6)
+
 -------
 ### 1. 虚拟机栈
 
