@@ -1,7 +1,7 @@
 
 WeakHashMap是一种`弱引用map`，内部的key会存储为弱引用，当jvm gc的时候，如果这些key没有强引用存在的话，会被gc回收掉;下一次当我们操作map的时候会把对应的Entry整个删除掉，基于这种特性，WeakHashMap特别适用于缓存处理。
 
-## 继承体系
+### 继承体系
 
 ![WeakHashMap](https://gitee.com/alan-tang-tt/yuan/raw/master/死磕%20java集合系列/resource/WeakHashMap.png)
 
@@ -9,10 +9,9 @@ WeakHashMap是一种`弱引用map`，内部的key会存储为弱引用，当jvm 
 
 ## 存储结构
 
-WeakHashMap因为gc的时候会把没有强引用的key回收掉，所以注定了它里面的元素不会太多，因此也就不需要像HashMap那样元素多的时候转化为红黑树来处理了。
+- WeakHashMap因为gc的时候会把没有强引用的key回收掉，所以**注定了它里面的元素不会太多**，因此也就不需要像HashMap那样元素多的时候转化为红黑树来处理了。 因此,WeakHashMap的存储结构只有（数组 + 链表）。
 
-因此，WeakHashMap的存储结构只有（数组 + 链表）。
-
+----
 ## 源码解析
 
 ### 属性
@@ -59,15 +58,15 @@ private final float loadFactor;
 private final ReferenceQueue<Object> queue = new ReferenceQueue<>();
 ```
 
-（1）容量
+- 容量
  
 容量为数组的长度，亦即桶的个数，默认为16，最大为2的30次方，当容量达到64时才可以树化。
  
-（2）装载因子
+- 装载因子
  
 装载因子用来计算容量达到多少时才进行扩容，默认装载因子为0.75。
- 
-（3）引用队列
+
+- 引用队列
  
 当弱键失效的时候会把Entry添加到这个队列中，当下次访问map的时候会把失效的Entry清除掉。
 
