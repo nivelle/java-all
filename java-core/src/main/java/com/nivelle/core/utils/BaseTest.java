@@ -36,7 +36,7 @@ public class BaseTest {
         System.out.println(+0.0F==-0.0F);
 
         System.out.println(Float.NaN!=2);
-        System.out.println(Float.NaN==2);
+        System.out.println(Float.NaN==Float.NaN);
 
     }
 
