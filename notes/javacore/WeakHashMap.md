@@ -72,11 +72,11 @@ private final ReferenceQueue<Object> queue = new ReferenceQueue<>();
 
 ### Entry内部类
 
-WeakHashMap内部的存储节点, 没有key属性。
+- WeakHashMap内部的存储节点, 没有key属性。
 
 ```java
 private static class Entry<K,V> extends WeakReference<Object> implements Map.Entry<K,V> {
-    // 可以发现没有key, 因为key是作为弱引用存到Referen类中
+    // 可以发现没有key, 因为key是作为弱引用存到 Reference 类中
     V value;
     final int hash;
     Entry<K,V> next;
@@ -112,7 +112,7 @@ public abstract class Reference<T> {
 }
 ```
 
-从Entry的构造方法我们知道，key和queue最终会传到到Reference的构造方法中，这里的key就是Reference的referent属性，它会被gc特殊对待，即当没有强引用存在时，当下一次gc的时候会被清除。
+- 从Entry的构造方法我们知道，key和queue最终会传到到Reference的构造方法中，这里的key就是Reference的referent属性，它会被gc特殊对待，即当没有强引用存在时，当下一次gc的时候会被清除。
 
 ### 构造方法
 
@@ -151,11 +151,11 @@ public WeakHashMap(Map<? extends K, ? extends V> m) {
 }
 ```
 
-构造方法与HashMap基本类似，初始容量为大于等于传入容量最近的2的n次方，扩容门槛threshold等于capacity * loadFactor。
+- 构造方法与HashMap基本类似，初始容量为大于等于传入容量最近的2的n次方，扩容门槛threshold等于capacity * loadFactor。
 
 ### put(K key, V value)方法
 
-添加元素的方法。
+- 添加元素的方法。
 
 ```java
 public V put(K key, V value) {
@@ -190,29 +190,29 @@ public V put(K key, V value) {
 }
 ```
 
-（1）计算hash；
+### 计算hash；
 
-这里与HashMap有所不同，HashMap中如果key为空直接返回0，这里是用空对象来计算的。
+- 这里与HashMap有所不同，HashMap中如果key为空直接返回0，这里是用空对象来计算的。
 
-另外打散方式也不同，HashMap只用了一次异或，这里用了四次，HashMap给出的解释是一次够了，而且就算冲突了也会转换成红黑树，对效率没什么影响。
+- 打散方式也不同，HashMap只用了一次异或，这里用了四次，HashMap给出的解释是一次够了，而且就算冲突了也会转换成红黑树，对效率没什么影响
 
-（2）计算在哪个桶中；
+  - 计算在哪个桶中；
 
-（3）遍历桶对应的链表；
+  - 遍历桶对应的链表；
 
-（4）如果找到元素就用新值替换旧值，并返回旧值；
+  - 如果找到元素就用新值替换旧值，并返回旧值；
 
-（5）如果没找到就在链表头部插入新元素；
+  - 如果没找到就在链表头部插入新元素；
 
-HashMap就插入到链表尾部。
+**HashMap就插入到链表尾部。**
 
-（6）如果元素数量达到了扩容门槛，就把容量扩大到2倍大小； 
+ - 如果元素数量达到了扩容门槛，就把容量扩大到2倍大小； 
 
 HashMap中是大于threshold才扩容，这里等于threshold就开始扩容了。
 
-### resize(int newCapacity)方法
+### resize(int newCapacity)扩容方法
 
-扩容方法。
+- 扩容方法。
 
 ```java
 void resize(int newCapacity) {
@@ -232,7 +232,7 @@ void resize(int newCapacity) {
     // 把新桶赋值桶变量
     table = newTable;
 
-    /*
+    /**
      * If ignoring null elements and processing ref queue caused massive
      * shrinkage, then restore old table.  This should be rare, but avoids
      * unbounded expansion of garbage-filled tables.
@@ -274,19 +274,19 @@ private void transfer(Entry<K,V>[] src, Entry<K,V>[] dest) {
 }
 ```
 
-（1）判断旧容量是否达到最大容量；
+- 判断旧容量是否达到最大容量；
 
-（2）新建新桶并把元素全部转移到新桶中；
+- 新建新桶并把元素全部转移到新桶中；
 
-（3）如果转移后元素个数不到扩容门槛的一半，则把元素再转移回旧桶，继续使用旧桶，说明不需要扩容；
+- 如果转移后元素个数不到扩容门槛的一半，则把元素再转移回旧桶，继续使用旧桶，说明不需要扩容；
 
-（4）否则使用新桶，并计算新的扩容门槛；
+- 否则使用新桶，并计算新的扩容门槛；
 
-（5）转移元素的过程中会把key为null的元素清除掉，所以size会变小；
+- 转移元素的过程中会把key为null的元素清除掉，所以size会变小；
 
 ### get(Object key)方法
 
-获取元素。
+- 获取元素。
 
 ```java
 public V get(Object key) {
@@ -306,17 +306,17 @@ public V get(Object key) {
 }
 ```
 
-（1）计算hash值；
+- 计算hash值；
 
-（2）遍历所在桶对应的链表；
+- 遍历所在桶对应的链表；
 
-（3）如果找到了就返回元素的value值；
+- 如果找到了就返回元素的value值；
 
-（4）如果没找到就返回空；
+- 如果没找到就返回空；
 
 ### remove(Object key)方法
 
-移除元素。
+- 移除元素。
 
 ```java
 public V remove(Object key) {
@@ -353,19 +353,19 @@ public V remove(Object key) {
 }
 ```
 
-（1）计算hash；
+- 计算hash；
 
-（2）找到所在的桶；
+- 找到所在的桶；
 
-（3）遍历桶对应的链表；
+- 遍历桶对应的链表；
 
-（4）如果找到了就删除该节点，并返回该节点的value值；
+- 如果找到了就删除该节点，并返回该节点的value值；
 
-（5）如果没找到就返回null；
+- 如果没找到就返回null；
 
 ### expungeStaleEntries()方法
 
-剔除失效的Entry。
+- 剔除失效的Entry。
 
 ```java
 private void expungeStaleEntries() {
@@ -402,14 +402,15 @@ private void expungeStaleEntries() {
 }
 ```
 
-（1）当key失效的时候gc会自动把对应的Entry添加到这个引用队列中；
+- 当key失效的时候gc会自动把对应的Entry添加到这个引用队列中；
 
-（2）所有对map的操作都会直接或间接地调用到这个方法先移除失效的Entry，比如getTable()、size()、resize()；
+- 所有对map的操作都会直接或间接地调用到这个方法先移除失效的Entry，比如getTable()、size()、resize()；
 
-（3）这个方法的目的就是遍历引用队列，并把其中保存的Entry从map中移除掉，具体的过程请看类注释；
+-  这个方法的目的就是遍历引用队列，并把其中保存的Entry从map中移除掉，具体的过程请看类注释；
 
-（4）从这里可以看到移除Entry的同时把value也一并置为null帮助gc清理元素，防御性编程。
+-  从这里可以看到移除Entry的同时把value也一并置为null帮助gc清理元素，防御性编程。
 
+----
 ## 使用案例
 
 说了这么多，不举个使用的例子怎么过得去。
