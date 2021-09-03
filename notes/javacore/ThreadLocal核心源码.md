@@ -404,13 +404,12 @@ private void remove(ThreadLocal<?> key) {
         }
 ````
 
-### 重点：内存泄漏
+### 重点3：内存泄漏
 
-````
-1. 认为ThreadLocal会引起内存泄漏的说法是因为如果一个ThreadLocal对象被回收了,
+- 认为ThreadLocal会引起内存泄漏的说法是因为如果一个ThreadLocal对象被回收了,
 我们往里面放的value对于【当前线程->当前线程的threadLocals(ThreadLocal.ThreadLocalMap对象）->Entry数组->某个entry.value】这样一条强引用链是可达的,因此value不会被回收。
 
-2. 认为ThreadLocal不会引起内存泄漏的说法是因为ThreadLocal.ThreadLocalMap源码实现中自带一套自我清理的机制。
+- 认为ThreadLocal不会引起内存泄漏的说法是因为ThreadLocal.ThreadLocalMap源码实现中自带一套自我清理的机制。
    
-3. 显示地调用remove,或者调用ThreadLocal的get和set方法都有很高的概率会顺便清理掉无效对象，断开value强引用，从而大对象被收集器回收
-````
+- 显示地调用remove,或者调用ThreadLocal的get和set方法都有很高的概率会顺便清理掉无效对象，断开value强引用，从而大对象被收集器回收
+
