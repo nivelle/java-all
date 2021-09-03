@@ -30,6 +30,14 @@ public class BaseTest {
         }
 
         System.out.println("book_news_zyd82273".startsWith("book_news"));
+
+        boolean test = true;
+
+        System.out.println(+0.0F==-0.0F);
+
+        System.out.println(Float.NaN!=2);
+        System.out.println(Float.NaN==2);
+
     }
 
 
