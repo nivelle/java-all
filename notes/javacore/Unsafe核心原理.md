@@ -1,22 +1,16 @@
 ### 问题
-
-- （1）Unsafe是什么？
-
-- （2）Unsafe具有哪些功能？
-
-- （3）Unsafe为什么是不安全的？
-
-- （4）怎么使用Unsafe？
+- Unsafe是什么？
+- Unsafe具有哪些功能？
+- Unsafe为什么是不安全的？
+- 怎么使用Unsafe？
 
 ### 简介
 
-Unsafe为我们提供了访问低层的机制，这种机制仅供java核心类库使用，而不应该被普通用户使用。
-
-但是，为了更好地了解java的生态体系，我们应该去学习它，去了解它，不求深入到底层的C/C++代码，但求能了解它的基本功能。
+- Unsafe为我们提供了访问低层的机制，这种机制仅供`java核心类库`使用，而不应该被普通用户使用。
 
 ### 获取Unsafe的实例
 
-查看Unsafe的源码我们会发现它提供了一个getUnsafe()的静态方法。
+- 查看Unsafe的源码我们会发现它提供了一个getUnsafe()的静态方法。
 
 ```java
 @CallerSensitive
@@ -30,11 +24,9 @@ public static Unsafe getUnsafe() {
 }
 ```
 
-但是，如果直接调用这个方法会抛出一个SecurityException异常，这是因为Unsafe仅供java内部类使用，外部类不应该使用它。
+- 如果直接调用这个方法会抛出一个SecurityException异常，这是因为Unsafe仅供java内部类使用，外部类不应该使用它。
 
-那么，我们就没有方法了吗？
-
-当然不是，我们有反射啊！查看源码，我们发现它有一个属性叫theUnsafe，我们直接通过反射拿到它即可。
+- 使用反射机制，有一个属性叫theUnsafe，我们直接通过反射拿到它即可。
 
 ```java
 public class UnsafeTest {
@@ -45,6 +37,8 @@ public class UnsafeTest {
     }
 }
 ```
+---
+## Unsafe 的作用
 
 ### 使用Unsafe实例化一个类
 
@@ -76,11 +70,11 @@ User user2 = (User) unsafe.allocateInstance(User.class);
 System.out.println(user2.age);
 ```
 
-age将返回0，因为`Unsafe.allocateInstance()`只会给对象分配内存，并不会调用构造方法，所以这里只会返回int类型的默认值0。
+- age将返回0，因为`Unsafe.allocateInstance()`只会给对象分配内存，并不会调用构造方法，所以这里只会返回int类型的默认值0。
 
 ### 修改私有字段的值
 
-使用Unsafe的putXXX()方法，我们可以修改任意私有字段的值。
+- 使用Unsafe的putXXX()方法，我们可以修改任意私有字段的值。
 
 ```java
 public class UnsafeTest {
@@ -111,7 +105,7 @@ class User {
 }
 ```
 
-一旦我们通过反射调用得到字段age，我们就可以使用Unsafe将其值更改为任何其他int值。（当然，这里也可以通过反射直接修改）
+- 一旦我们通过反射调用得到字段age，我们就可以使用Unsafe将其值更改为任何其他int值。（当然，这里也可以通过反射直接修改）
 
 ### 抛出checked异常
 
@@ -182,7 +176,7 @@ class OffHeapArray {
 }
 ```
 
-- 在构造方法中调用allocateMemory()分配内存，在使用完成后调用freeMemory()释放内存。
+- 在构造方法中调用`allocateMemory()`分配内存，在使用完成后调用freeMemory()释放内存。
 
 #### 使用方式如下：
 
@@ -210,7 +204,7 @@ offHeapArray.freeMemory();
 
 - JUC下面大量使用了CAS操作，它们的底层是调用的Unsafe的CompareAndSwapXXX()方法。这种方式广泛运用于无锁算法，与java中标准的悲观锁机制相比，它可以利用CAS处理器指令提供极大的加速。
 
-- 比如，我们可以基于Unsafe的compareAndSwapInt()方法构建线程安全的计数器。
+- 我们可以基于Unsafe的compareAndSwapInt()方法构建线程安全的计数器。
 
 ```java
 class Counter {
@@ -245,9 +239,9 @@ class Counter {
 }
 ```
 
-- 我们定义了一个volatile的字段count，以便对它的修改所有线程都可见，并在类加载的时候获取count在类中的偏移地址。
+- 我们定义了一个 volatile 的字段count，以便对它的修改所有线程都可见，并在类加载的时候获取count在类中的偏移地址。
 
-- 在increment()方法中，我们通过调用Unsafe的compareAndSwapInt()方法来尝试更新之前获取到的count的值，如果它没有被其它线程更新过，则更新成功，否则不断重试直到成功为止。
+- 在increment()方法中，我们通过调用`Unsafe的compareAndSwapInt()`方法来尝试更新之前获取到的count的值，如果它没有被其它线程更新过，则更新成功，否则不断重试直到成功为止。
 
 #### 我们可以通过使用多个线程来测试我们的代码：
 
@@ -269,16 +263,17 @@ System.out.println(counter.getCount());
 ```
 
 -------------
-### park/unpark
+### park/unpark 现场阻塞、唤醒操作
 
 - JVM在上下文切换的时候使用了Unsafe中的两个非常牛逼的方法 _park()_ 和 _unpark()_。
 
-- 当一个线程正在等待某个操作时，JVM调用Unsafe的park()方法来阻塞此线程。
+- 当一个线程正在等待某个操作时，JVM调用Unsafe的 _park()_ 方法来阻塞此线程。
 
-- 当阻塞中的线程需要再次运行时，JVM调用Unsafe的unpark()方法来唤醒此线程。
+- 当阻塞中的线程需要再次运行时，JVM调用Unsafe的 _unpark()_ 方法来唤醒此线程。
 
-- 我们之前在分析java中的集合时看到了大量的LockSupport.park()/unpark()，它们底层都是调用的Unsafe的这两个方法。
+- 我们之前在分析java中的集合时看到了大量的 LockSupport.park()/unpark()，它们底层都是调用的Unsafe的这两个方法。
 
+----
 ## 总结
 
 使用Unsafe几乎可以操作一切：
