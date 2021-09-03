@@ -1,8 +1,8 @@
-### ThreadLocal 核心源码
+## ThreadLocal 核心源码
 
-#### ThreadLocalMap
+### ThreadLocalMap
 
-##### ThreadLocalMap提供了一种为ThreadLocal定制的高效实现,并且自带一种基于弱引用的垃圾清理机制。
+#### ThreadLocalMap提供了一种为ThreadLocal定制的高效实现,并且自带一种基于弱引用的垃圾清理机制。
 
 ````java
 static class Entry extends WeakReference<ThreadLocal<?>> {
@@ -18,17 +18,16 @@ static class Entry extends WeakReference<ThreadLocal<?>> {
 
 ````
 
-#### 重点: 为什么key是threadLocal的弱饮用
+### 重点1: 为什么key是threadLocal的弱引用
 
-````
+
 1. 如果使用普通的key-value形式来定义存储结构,实质上就会造成节点的生命周期与线程强绑定,只要线程没有销毁,那么节点在GC分析中一直处于可达状态,没办法被回收,而程序本身也无法判断是否可以清理节点。
 
 2. 弱引用是Java中四档引用的第三档，比软引用更加弱一些，如果一个对象没有强引用链可达，那么一般活不过下一次GC。
 
 3. 当某个ThreadLocal已经没有强引用可达，则随着它被垃圾回收，在ThreadLocalMap里对应的Entry的键值会失效，这为ThreadLocalMap本身的垃圾清理提供了便利。
-````
 
-#### 成员变量
+### 成员变量
 
 ````java
          /**
@@ -96,7 +95,7 @@ static class Entry extends WeakReference<ThreadLocal<?>> {
 
 ````
 
-#### 重点: 由于ThreadLocalMap使用线性探测法来解决散列冲突，所以实际上Entry[]数组在程序逻辑上是作为一个环形存在的。
+### 重点2: 由于ThreadLocalMap使用线性探测法来解决散列冲突，所以实际上Entry[]数组在程序逻辑上是作为一个环形存在的。
 
 ![threadlocal.png](https://i.loli.net/2021/05/15/PBQpk7GToM136xS.png)
 
@@ -114,9 +113,9 @@ static class Entry extends WeakReference<ThreadLocal<?>> {
 
     /**
      * Returns the next hash code.
-     *//这个魔数的选取与斐波那契散列有关，0x61c88647对应的十进制为1640531527。斐波那契散列的乘数可以用(long) ((1L << 31) * (Math.sqrt(5) - 1))可以得到2654435769，如果把这个值给转为带符号的int，则会得到-1640531527。
-     *//换句话说(1L << 32) - (long) ((1L << 31) * (Math.sqrt(5) - 1))得到的结果就是1640531527也就是0x61c88647。
-     *//通过理论与实践，当我们用0x61c88647作为魔数累加为每个ThreadLocal分配各自的ID也就是threadLocalHashCode再与2的幂取模，得到的结果分布很均匀。
+     * 这个魔数的选取与斐波那契散列有关，0x61c88647对应的十进制为1640531527。斐波那契散列的乘数可以用(long) ((1L << 31) * (Math.sqrt(5) - 1))可以得到2654435769，如果把这个值给转为带符号的int，则会得到-1640531527。
+     * 换句话说(1L << 32) - (long) ((1L << 31) * (Math.sqrt(5) - 1))得到的结果就是1640531527也就是0x61c88647。
+     * 通过理论与实践，当我们用0x61c88647作为魔数累加为每个ThreadLocal分配各自的ID也就是threadLocalHashCode再与2的幂取模，得到的结果分布很均匀。
      */
     private static int nextHashCode() {
         return nextHashCode.getAndAdd(HASH_INCREMENT);
@@ -134,7 +133,7 @@ private Entry getEntry(ThreadLocal<?> key) {
             int i = key.threadLocalHashCode & (table.length - 1);
             Entry e = table[i];
             //对应的entry存在且未失效且弱引用指向的ThreadLocal就是key，则命中返回
-            //e.get() 是reference的方法，返回的是引用的目标对象
+            //e.get() 是 reference 的方法，返回的是引用的目标对象
             if (e != null && e.get() == key)
                 return e;
             else
@@ -168,11 +167,11 @@ private Entry getEntry(ThreadLocal<?> key) {
 
 #### int expungeStaleEntry(int staleSlot)
 
-**作用:**
+- threadLocal 已经被垃圾回收;调用expungeStaleEntry来清理无效的entry
 
-1. 就是从staleSlot开始遍历,将无效（弱引用指向对象被回收）清理,即对应entry中的value置为null,将指向这个entry的table[i]置为null,直到扫到空entry
+- 就是从staleSlot开始遍历,将无效（弱引用指向对象被回收）清理,即对应entry中的value置为null,将指向这个entry的table[i]置为null,直到扫到空entry
 
-2. 在过程中还会对非空的entry作rehash
+- 在过程中还会对非空的entry作rehash
 
 ````java
 private int expungeStaleEntry(int staleSlot) {
@@ -216,7 +215,7 @@ private int expungeStaleEntry(int staleSlot) {
         }
 
 ````
-
+----
 ### private void set(ThreadLocal<?> key, Object value)
 
 ````java
@@ -256,7 +255,9 @@ private void set(ThreadLocal<?> key, Object value) {
 
 ````
 
-#### private void replaceStaleEntry(ThreadLocal<?> key, Object value,int staleSlot) //替换失效的 sloat
+#### private void replaceStaleEntry(ThreadLocal<?> key, Object value,int staleSlot)
+
+- 替换失效的 sloat
 
 ````java
 
@@ -329,10 +330,12 @@ private void replaceStaleEntry(ThreadLocal<?> key, Object value,int staleSlot) {
 
 #### boolean cleanSomeSlots(int i, int n)
 
+- 清理节点
+
 ````java
 /**
- * 启发式地清理slot,
- * i对应entry是非无效（指向的ThreadLocal没被回收，或者entry本身为空）
+ * 启发式地清理slot: 
+ * i对应entry是否无效（指向的ThreadLocal没被回收，或者entry本身为空）
  * n是用于控制控制扫描次数的
  * 正常情况下如果log n次扫描没有发现无效slot,函数就结束了
  * 但是如果发现了无效的slot，将n置为table的长度len，做一次连续段的清理
