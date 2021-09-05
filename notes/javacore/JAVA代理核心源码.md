@@ -1,6 +1,8 @@
+## proxy 代理类
+
 ### public class Proxy implements java.io.Serializable
 
-##### 静态方法创建代理对象
+#### 静态方法创建代理对象
 
 ```java
 public static Object newProxyInstance(ClassLoader loader,Class<?>[] interfaces,InvocationHandler h) throws IllegalArgumentException
