@@ -3,6 +3,7 @@ package com.nivelle.spring.springcore.event;
 import com.nivelle.spring.pojo.TimeLine;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
 
 import java.util.Date;
@@ -14,7 +15,13 @@ import java.util.Date;
  * <p>
  * **支持启动配置和@Component配置**
  */
-
+/**
+ * Event raised when an {@code ApplicationContext} gets initialized or refreshed.
+ *
+ * @author Juergen Hoeller
+ * @since 04.03.2003
+ * @see ContextClosedEvent
+ */
 public class MyContextRefreshedEventListener implements ApplicationListener<ContextRefreshedEvent> {
 
     /**

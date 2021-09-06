@@ -1,10 +1,20 @@
 package com.nivelle.spring.springcore.event;
 
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.context.event.ApplicationFailedEvent;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 
 /**
- * 上下文已经准备完毕的时候触发
+ * 上下文 容器启动失败的时候触发
+ */
+
+/**
+ * Event published by a {@link SpringApplication} when it fails to start.
+ *
+ * @author Dave Syer
+ * @since 1.0.0
+ * @see ApplicationReadyEvent
  */
 public class MyApplicationFailedEventListener implements ApplicationListener<ApplicationFailedEvent> {
 

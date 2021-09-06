@@ -32,7 +32,7 @@ public class MyBeanPostProcessor implements BeanPostProcessor {
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName)
             throws BeansException {
-        System.out.println(beanName + ":" + "MyBeanPostProcessor 后置处理器在Initialization或init方法之前调用 -》postProcessBeforeInitialization");
+        System.out.println(beanName + ":" + "MyBeanPostProcessor 后置处理器在 Initialization 或 init方法之前调用 -》postProcessBeforeInitialization");
         return bean;
     }
 

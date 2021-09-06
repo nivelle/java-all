@@ -7,6 +7,12 @@ import org.springframework.context.ApplicationListener;
  * 正在启动的时候候触发,支持两种添加方式（application.properties配置或者java启动配置）
  * 不能通过在类上添加@Component来实现注册,因为此时容器还没有初始化成功。
  */
+
+/**
+ *  * Event published once the application context has been refreshed but before any
+ *  * {@link ApplicationRunner application} and {@link CommandLineRunner command line}
+ *  * runners have been called.
+ */
 public class MyApplicationStartedEventListener implements ApplicationListener<ApplicationStartedEvent> {
 
 
