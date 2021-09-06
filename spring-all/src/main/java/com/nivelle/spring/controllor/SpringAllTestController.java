@@ -58,7 +58,7 @@ public class SpringAllTestController implements ApplicationContextAware {
      * 获取上下文
      */
     @Autowired
-    WebApplicationContext webApplicationConnect;
+    WebApplicationContext webApplicationContext;
 
 
     ApplicationContext applicationContext;
@@ -223,7 +223,7 @@ public class SpringAllTestController implements ApplicationContextAware {
      */
     @RequestMapping("/publishEvent")
     public void publishEvent() {
-        webApplicationConnect.publishEvent(new MyEvent("你好"));
+        webApplicationContext.publishEvent(new MyEvent("你好"));
         return;
     }
 
@@ -233,9 +233,9 @@ public class SpringAllTestController implements ApplicationContextAware {
      */
     @RequestMapping("/singletonBean")
     public Object singletonTest() {
-        Dog dog = (Dog) webApplicationConnect.getBean("bigDog");
+        Dog dog = (Dog) webApplicationContext.getBean("bigDog");
         System.out.println(dog.getClass().getName());
-        Dog dog2 = (Dog) webApplicationConnect.getBean("bigDog");
+        Dog dog2 = (Dog) webApplicationContext.getBean("bigDog");
         if (dog == dog2) {
             return true;
         } else {
@@ -248,8 +248,8 @@ public class SpringAllTestController implements ApplicationContextAware {
      */
     @RequestMapping("/prototypeBean")
     public Object prototypeBeanTest() {
-        Dog dog = (Dog) webApplicationConnect.getBean("buDingDog");
-        Dog dog2 = (Dog) webApplicationConnect.getBean("buDingDog");
+        Dog dog = (Dog) webApplicationContext.getBean("buDingDog");
+        Dog dog2 = (Dog) webApplicationContext.getBean("buDingDog");
         if (dog == dog2) {
             return true;
         } else {
@@ -258,7 +258,7 @@ public class SpringAllTestController implements ApplicationContextAware {
     }
 
     /**
-     * 从webApplicationConnect容器获取指定bean
+     * 从webApplicationContext容器获取指定bean
      *
      * @return
      */
@@ -267,7 +267,7 @@ public class SpringAllTestController implements ApplicationContextAware {
         /**
          * springboot默认属性未设置值时为null,可设置为""
          */
-        Object object = webApplicationConnect.getBean("userInfo");
+        Object object = webApplicationContext.getBean("userInfo");
         return object;
     }
 
@@ -278,7 +278,7 @@ public class SpringAllTestController implements ApplicationContextAware {
      */
     @RequestMapping("xml")
     public Object xmlService() {
-        Object xmlBeanService = webApplicationConnect.getBean("xmlService");
+        Object xmlBeanService = webApplicationContext.getBean("xmlService");
         XmlBean xmlBeanService1 = (XmlBean) xmlBeanService;
         return xmlBeanService1.helloXmlService();
     }

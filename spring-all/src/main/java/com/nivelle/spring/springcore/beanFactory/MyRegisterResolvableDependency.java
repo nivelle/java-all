@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class MyRegisterResolvableDependency implements BeanFactoryPostProcessor {
 
-
     /**
      * 当有其他类要注入MyComponent 类型的对象时，就给他注入我们这里自己创建的 MyComponentAImpl 对象
      */
