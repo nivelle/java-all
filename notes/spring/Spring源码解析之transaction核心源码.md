@@ -1,6 +1,8 @@
-#### Spring 源码之事物核心源码
+## Spring 源码之事物核心源码
 
-```
+- [spring 事物详解](https://www.cnblogs.com/dennyzhangdd/p/9602673.html#_label3_0)
+
+```java
 public interface PlatformTransactionManager {
     // 获取事务状态
     TransactionStatus getTransaction(TransactionDefinition definition) throws TransactionException;
@@ -11,31 +13,28 @@ public interface PlatformTransactionManager {
 }
 ```
 
-##### getTransaction
+### getTransaction 事物获取方法
 
 public final TransactionStatus getTransaction(TransactionDefinition definition) throws TransactionException
 
 - TransactionDefinition def = (definition != null ? definition : TransactionDefinition.withDefaults());// // Use
   defaults if no transaction definition given.
 
-- Object transaction = doGetTransaction();//抽象方法，具体的实现由具体的事务处理器提供
+- Object transaction = doGetTransaction();//**抽象方法，具体的实现由具体的事务处理器提供**
 
 - if (isExistingTransaction(transaction)) ;//检查当前线程是否存在事务
 
-    - return **handleExistingTransaction(definition, transaction, debugEnabled);**//对于已经存在的事物，根据不同传播机制不同处理
+    - return **handleExistingTransaction(definition, transaction, debugEnabled);// **对于已经存在的事物，根据不同传播机制不同处理**
 
-        - if (definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_NEVER)
-          ;//1.NERVER（不支持当前事务;如果当前事务存在，抛出异常）报错
-
+        - if (definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_NEVER)//**1.NERVER（不支持当前事务;如果当前事务存在，抛出异常）报错**
             - throw new IllegalTransactionStateException("Existing transaction found for transaction marked with
               propagation 'never'");
 
         - if (definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_NOT_SUPPORTED)
-          ;//2.NOT_SUPPORTED（不支持当前事务，现有同步将被挂起）挂起当前事务
+          ;//**2.NOT_SUPPORTED（不支持当前事务，现有同步将被挂起）挂起当前事务**
 
-            - Object suspendedResources = suspend(transaction);//挂起当前事务
-
-              ```
+            - Object suspendedResources = suspend(transaction);//**挂起当前事务**
+              ```java
               suspendedResources 所谓挂起事物，就是把目前线程中所有储存的信息，都保存起来，返回一个suspendedResources对象并且把当前线程中的事物相关信息都清空，方便下一个事物newSynchronization和prepareTransactionStatus（）中判断
               来更新到线程中
               
@@ -44,12 +43,12 @@ public final TransactionStatus getTransaction(TransactionDefinition definition) 
 
                     - if (TransactionSynchronizationManager.isSynchronizationActive())//**1.当前存在同步**
 
-                    - List<TransactionSynchronization> suspendedSynchronizations = doSuspendSynchronization()
-                      ;//执行注册方法，并全部取出，把当前线程事物设置为不同步状态，说明这个事物已经被挂起了
+                    - List<TransactionSynchronization> suspendedSynchronizations = doSuspendSynchronization();//执行注册方法，并全部取出，把当前线程事物设置为不同步状态，说明这个事物已经被挂起了
 
                     - suspendedResources = doSuspend(transaction);//**在DataSource的状态下，是取出连接的持有者对象**
 
-                  ```
+                  ```java
+                 
                   String name = TransactionSynchronizationManager.getCurrentTransactionName();
                   TransactionSynchronizationManager.setCurrentTransactionName(null);
                   boolean readOnly = TransactionSynchronizationManager.isCurrentTransactionReadOnly();
@@ -85,10 +84,8 @@ public final TransactionStatus getTransaction(TransactionDefinition definition) 
 
                                 - txObject.setConnectionHolder(null);//1.**把当前事务的connectionHolder数据库连接持有者清空。**
 
-                                - return TransactionSynchronizationManager.unbindResource(this.dataSource);//2.**
-                                  当前线程解绑datasource**.其实就是ThreadLocal移除对应变量（TransactionSynchronizationManager类中定义的private
-                                  static final ThreadLocal<Map<Object, Object>> resources = new NamedThreadLocal<Map<
-                                  Object, Object>>("Transactional resources");）
+                                - return TransactionSynchronizationManager.unbindResource(this.dataSource);//2.**当前线程解绑datasource**.其实就是ThreadLocal移除对应变量
+                                  （TransactionSynchronizationManager类中定义的private static final ThreadLocal<Map<Object, Object>> resources = new NamedThreadLocal<Map<Object, Object>>("Transactional resources");）
 
                         - return new SuspendedResourcesHolder(suspendedResources);
 
@@ -102,8 +99,7 @@ public final TransactionStatus getTransaction(TransactionDefinition definition) 
               suspendedResources);//Create a new TransactionStatus for the given arguments,also initializing transaction
               synchronization as appropriate.
 
-        - if (definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_REQUIRES_NEW);//3.
-          REQUIRES_NEW挂起当前事务，创建新事务
+        - if (definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_REQUIRES_NEW);//**3. REQUIRES_NEW挂起当前事务，创建新事务**
 
             - SuspendedResourcesHolder suspendedResources = suspend(transaction);//挂起当前事务
 
@@ -116,7 +112,7 @@ public final TransactionStatus getTransaction(TransactionDefinition definition) 
 
               ##### 子类实现:DataSourceTransactionManager
 
-              ```
+              ```java
               1.DataSourceTransactionObject“数据源事务对象”，设置ConnectionHolder，再给ConnectionHolder设置各种属性：自动提交、超时、事务开启、隔离级别。
               
               2.给当前线程绑定一个线程本地变量，key=DataSource数据源  v=ConnectionHolder数据库连接。
@@ -127,8 +123,7 @@ public final TransactionStatus getTransaction(TransactionDefinition definition) 
 
                 - Connection con = null;
 
-                - if (!txObject.hasConnectionHolder() || txObject.getConnectionHolder().isSynchronizedWithTransaction())
-                  ;//如果事务还没有connection或者connection在事务同步状态，重置新的connectionHolder
+                - if (!txObject.hasConnectionHolder() || txObject.getConnectionHolder().isSynchronizedWithTransaction());//如果事务还没有connection或者connection在事务同步状态，重置新的connectionHolder
 
                 - Connection newCon = this.dataSource.getConnection();
 
@@ -158,20 +153,17 @@ public final TransactionStatus getTransaction(TransactionDefinition definition) 
 
                 - if (txObject.isNewConnectionHolder())
 
-                - TransactionSynchronizationManager.bindResource(getDataSource(), txObject.getConnectionHolder());//
-                  绑定connection持有者到当前线程
+                - TransactionSynchronizationManager.bindResource(getDataSource(), txObject.getConnectionHolder());// 绑定connection持有者到当前线程
 
             - prepareSynchronization(status, definition);
 
             - return status;
 
-        - if (definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_NESTED);//4.NESTED嵌套事务
+        - if (definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_NESTED);//**4.NESTED嵌套事务**
 
-            - if (useSavepointForNestedTransaction())
-              ;//是否支持保存点：非JTA事务走这个分支。AbstractPlatformTransactionManager默认是true，JtaTransactionManager复写了该方法false，DataSourceTransactionmanager没有复写，还是true
+            - if (useSavepointForNestedTransaction());//是否支持保存点：非JTA事务走这个分支。AbstractPlatformTransactionManager默认是true，JtaTransactionManager复写了该方法false，DataSourceTransactionmanager没有复写，还是true
 
-                - DefaultTransactionStatus status = prepareTransactionStatus(definition, transaction, false, false,
-                  debugEnabled, null);
+                - DefaultTransactionStatus status = prepareTransactionStatus(definition, transaction, false, false, debugEnabled, null);
 
                 - status.createAndHoldSavepoint();// 创建保存点
 
@@ -196,7 +188,7 @@ public final TransactionStatus getTransaction(TransactionDefinition definition) 
 
 - if (definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_MANDATORY)
 
-  ```
+  ```java
   1. 如果事务传播特性配置的是mandatory，当前没有事务存在，抛出异常.MANDATORY 是必须要有一个事物，到这里说明，上面没有已经存在的事物
   
   2. PROPAGATION_MANDATORY 如果已经存在一个事务，支持当前事务。如果没有一个活动的事务，则抛出异常
@@ -209,7 +201,8 @@ public final TransactionStatus getTransaction(TransactionDefinition definition) 
   definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_REQUIRES_NEW ||
   definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_NESTED)
 
-   ```
+   ```java
+
    1. required 如果有事物就支持当前事物，没有就自己开启一个,PROPAGATION_REQUIRED
    
    2. required_new 如果当前无事务则开启一个事务,否则挂起当前事务并开启新事务,PROPAGATION_REQUIRES_NEW
@@ -218,12 +211,11 @@ public final TransactionStatus getTransaction(TransactionDefinition definition) 
    
    ```
 
-    - SuspendedResourcesHolder suspendedResources = suspend(null)
-      ;//挂起操作，触发相关的挂起注册的事件，把当前线程事物的所有属性都封装好，放到一个SuspendedResourcesHolder，在清空一下当前线程事物，返回SuspendedResourcesHolder
+    - SuspendedResourcesHolder suspendedResources = suspend(null);//挂起操作，触发相关的挂起注册的事件，把当前线程事物的所有属性都封装好，放到一个SuspendedResourcesHolder，在清空一下当前线程事物，返回SuspendedResourcesHolder
 
     - boolean newSynchronization = (getTransactionSynchronization() != SYNCHRONIZATION_NEVER);
 
-      ```
+      ```java
       1. 不激活和当前线程绑定的事务，因为事务传播特性配置要求创建新的事务;
       
       2. newSynchronization 在 prepareSynchronization 中会通过这个字段来决定是否把事物更新到当前线程中
@@ -238,7 +230,7 @@ public final TransactionStatus getTransaction(TransactionDefinition definition) 
 
     - prepareSynchronization(status, definition);//预备同步事务状态
 
-- else //没有事物的情况当前不存在事务，且传播机制=PROPAGATION_SUPPORTS/PROPAGATION_NOT_SUPPORTED/PROPAGATION_NEVER这三种情况，创建空事物:没有实际事物，但是可能同步。
+- else //**没有事物的情况当前不存在事务，且传播机制=PROPAGATION_SUPPORTS/PROPAGATION_NOT_SUPPORTED/PROPAGATION_NEVER这三种情况，创建空事物:没有实际事物，但是可能同步。**
 
   **定义了隔离级别，但并没有真实的事务初始化，隔离级别被忽略**
 
@@ -246,7 +238,7 @@ public final TransactionStatus getTransaction(TransactionDefinition definition) 
 
     - return prepareTransactionStatus(definition, null, true, newSynchronization, debugEnabled, null);
 
-##### commit
+### commit 事物提交方法
 
 - public final void commit(TransactionStatus status) throws TransactionException
 
@@ -265,7 +257,7 @@ public final TransactionStatus getTransaction(TransactionDefinition definition) 
 
         - processRollback(defStatus);//执行回滚
 
-        - if (status.isNewTransaction() || isFailEarlyOnGlobalRollbackOnly());//// 仅在最外层事务边界（新事务）或显式地请求时抛出“未期望的回滚异常”
+        - if (status.isNewTransaction() || isFailEarlyOnGlobalRollbackOnly());// 仅在最外层事务边界（新事务）或显式地请求时抛出“未期望的回滚异常”
 
             - throw new UnexpectedRollbackException("Transaction rolled back because it has been marked as
               rollback-only");
@@ -446,7 +438,7 @@ public final TransactionStatus getTransaction(TransactionDefinition definition) 
                 - resume(status.getTransaction(), (SuspendedResourcesHolder) status.getSuspendedResources())
                   ;//唤醒挂起的事务和资源（重新绑定之前挂起的数据库资源，唤醒同步器，注册同步器到TransactionSynchronizationManager）
 
-##### rollback
+### rollback 事物回滚方法
 
 - public final void rollback(TransactionStatus status) throws TransactionException
 
