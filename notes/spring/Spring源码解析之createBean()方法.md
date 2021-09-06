@@ -1,6 +1,18 @@
 ### 创建bean实例
 
 - 创建 bean 的真正逻辑位于createBean方法中,该方法的具体实现位于 `AbstractAutowireCapableBeanFactory` 中
+### 解决循环依赖问题
+
+- 一级缓存：singletonObjects
+- 二级缓存：earlySingletonObjects
+- 三级缓存：singletonFactories，第三级缓存存放的是ObjectFactory-》FunctionalInterface  即函数式接口
+
+
+
+
+
+
+
 
 ### 创建单例对象
 
@@ -84,7 +96,7 @@ protected Object createBean(String beanName, RootBeanDefinition mbd, @Nullable O
 		// Make sure bean class is actually resolved at this point, and
 		// clone the bean definition in case of a dynamically resolved Class
 		// which cannot be stored in the shared merged bean definition.
-        //1. 根据设置的class属性或className来解析得到Class引用，会包括解析别名等操作
+               //1. 根据设置的class属性或className来解析得到Class引用，会包括解析别名等操作
 		Class<?> resolvedClass = resolveBeanClass(mbd, beanName);
 		if (resolvedClass != null && !mbd.hasBeanClass() && mbd.getBeanClassName() != null) {
             //如果resolvedClass存在,并且mdb的beanClass类型不是Class，并且mdb的beanClass不为空（则代表beanClass存的是Class的name）,
@@ -102,11 +114,10 @@ protected Object createBean(String beanName, RootBeanDefinition mbd, @Nullable O
 		catch (BeanDefinitionValidationException ex) {
 			throw new BeanDefinitionStoreException(mbdToUse.getResourceDescription(),beanName, "Validation of method overrides failed", ex);
 		}
-
+		//重点1
 		try {
-			// Give BeanPostProcessors a chance to return a proxy instead of the target bean instance.
-            //处理 InstantiationAwareBeanPostProcessor
-            //[AnnotationAwareAspectJAutoProxyCreator 后置处理器的使用,返回AOP代理类](./Spring源码解析之aop实现.md) 
+			 // Give BeanPostProcessors a chance to return a proxy instead of the target bean instance.
+             // 处理 InstantiationAwareBeanPostProcessor [AnnotationAwareAspectJAutoProxyCreator 后置处理器的使用,返回AOP代理类](./Spring源码解析之aop实现.md) 
 			Object bean = resolveBeforeInstantiation(beanName, mbdToUse);
 			if (bean != null) {
                 //如果处理结果不为null，则直接返回，而不执行后续的createBean;直接返回代理
@@ -138,9 +149,10 @@ protected Object createBean(String beanName, RootBeanDefinition mbd, @Nullable O
 
 #### 1.1 处理Override属性
 
-- Spring 中并不存在 override-method 的标签，这里的 override 指的是 <lookup-method/> 和 <replaced-method/> 两个标签, 之前解析这两个标签时是将这两个标签配置以
+- Spring 中并不存在 override-method 的标签，这里的 override 指的是 `<lookup-method/>` 和 `<replaced-method/>` 两个标签, 之前解析这两个标签时是将这两个标签配置以
 MethodOverride 对象的形式记录在 beanDefinition 实例的 methodOverrides 属性中,
-而这里的处理主要是逐一检查所覆盖的方法是否存在，如果不存在则覆盖无效，如果存在唯一的方法，则覆盖是明确的，标记后期无需依据参数类型以及个数进行推测
+
+- 这里的处理主要是逐一检查所覆盖的方法是否存在，如果不存在则覆盖无效，如果存在唯一的方法，则覆盖是明确的，标记后期无需依据参数类型以及个数进行推测
 
 ````java
 public void prepareMethodOverrides() throws BeanDefinitionValidationException {
@@ -183,6 +195,10 @@ protected void prepareMethodOverride(MethodOverride mo) throws BeanDefinitionVal
 ````
 
 #### 1.2 处理后置处理器逻辑
+
+- resolveBeforeInstantiation
+  
+- [AnnotationAwareAspectJAutoProxyCreator 后置处理器的使用,返回AOP代理类](./Spring源码解析之aop实现.md) 
 
 ````java
 protected Object resolveBeforeInstantiation(String beanName, RootBeanDefinition mbd) {
@@ -249,7 +265,7 @@ protected Object doCreateBean(final String beanName, final RootBeanDefinition mb
     synchronized (mbd.postProcessingLock) {
         if (!mbd.postProcessed) {
             try {
-                // 处理 merged bean Autowired通过此方法实现诸如类型的解析
+                // 重点: 处理 merged bean Autowired通过此方法实现诸如类型的解析
                 this.applyMergedBeanDefinitionPostProcessors(mbd, beanType, beanName);
             } catch (Throwable ex) {
                 throw new BeanCreationException(mbd.getResourceDescription(), beanName, "Post-processing of merged bean definition failed", ex);
@@ -279,10 +295,10 @@ protected Object doCreateBean(final String beanName, final RootBeanDefinition mb
     // 5. 重点=》初始化:初始化bean实例
     Object exposedObject = bean;
     try {
-        // 对bean进行填充，将各个属性值注入，如果存在依赖的bean则进行递归初始化
+        // 重点： 填充属性-》对bean进行填充，将各个属性值注入，如果存在依赖的bean则进行递归初始化
         this.populateBean(beanName, mbd, instanceWrapper);
         if (exposedObject != null) {
-            // 初始化bean,调用初始化方法，比如init-method
+            // 重点： 初始化方法执行 -》  初始化bean,调用初始化方法，比如init-method
             exposedObject = this.initializeBean(beanName, exposedObject, mbd);
         }
     } catch (Throwable ex) {
@@ -293,8 +309,8 @@ protected Object doCreateBean(final String beanName, final RootBeanDefinition mb
         }
     }
  
-    // 6. 再次基于依存关系验证是否存在循环依赖
-    if (earlySingletonExposure) { // 提前曝光
+    // 6. 再次基于依存关系验证是否存在循环依赖,提前曝光
+    if (earlySingletonExposure) { 
         //获取指定实例的提前曝光的引用
         Object earlySingletonReference = this.getSingleton(beanName, false);
         if (earlySingletonReference != null) { // 只有在检测到循环引用的情况下才会不为null
