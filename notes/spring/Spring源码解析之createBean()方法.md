@@ -1,10 +1,10 @@
 ### 创建bean实例
 
-- 创建 bean 的真正逻辑位于 createBean 方法中，该方法的具体实现位于 AbstractAutowireCapableBeanFactory 中
+- 创建 bean 的真正逻辑位于createBean方法中,该方法的具体实现位于 `AbstractAutowireCapableBeanFactory` 中
 
-##### 创建单例对象
+### 创建单例对象
 
-````
+````java
 public Object getSingleton(String beanName, ObjectFactory<?> singletonFactory) {
     Assert.notNull(beanName, "'beanName' must not be null");
     //singletonObjects用于缓存beanName与已创建的单例对象的映射关系
@@ -67,9 +67,13 @@ public Object getSingleton(String beanName, ObjectFactory<?> singletonFactory) {
 }
 ````
 
-#### 第一步：尝试获取实例,给后置处理器一次机会创建
+### 第一步：尝试创建实例,同时给后置处理器一次机会创建代理而不是返回实例
 
-`````
+- **Give BeanPostProcessors a chance to return a proxy instead of the target bean instance**
+
+-  [AnnotationAwareAspectJAutoProxyCreator 后置处理器的使用,返回AOP代理类](./Spring源码解析之aop实现.md) 
+
+`````java
 protected Object createBean(String beanName, RootBeanDefinition mbd, @Nullable Object[] args)throws BeanCreationException {
 
 		if (logger.isTraceEnabled()) {
@@ -132,13 +136,13 @@ protected Object createBean(String beanName, RootBeanDefinition mbd, @Nullable O
 
 `````
 
-##### 1.1 处理Override属性
+#### 1.1 处理Override属性
 
-Spring 中并不存在 override-method 的标签，这里的 override 指的是 <lookup-method/> 和 <replaced-method/> 两个标签, 之前解析这两个标签时是将这两个标签配置以
+- Spring 中并不存在 override-method 的标签，这里的 override 指的是 <lookup-method/> 和 <replaced-method/> 两个标签, 之前解析这两个标签时是将这两个标签配置以
 MethodOverride 对象的形式记录在 beanDefinition 实例的 methodOverrides 属性中,
 而这里的处理主要是逐一检查所覆盖的方法是否存在，如果不存在则覆盖无效，如果存在唯一的方法，则覆盖是明确的，标记后期无需依据参数类型以及个数进行推测
 
-````
+````java
 public void prepareMethodOverrides() throws BeanDefinitionValidationException {
     // 获取之前记录的<lookup-method/>和<replaced-method/>标签配置
     MethodOverrides methodOverrides = this.getMethodOverrides();
@@ -157,8 +161,7 @@ public void prepareMethodOverrides() throws BeanDefinitionValidationException {
 
 ##### 1.1.1 方法复写默认为true,如果仅仅一个方法，则设置 MethodOverride为false
 
-````
-
+````java
 protected void prepareMethodOverride(MethodOverride mo) throws BeanDefinitionValidationException {
     // 获取指定类中指定方法名的个数
     int count = ClassUtils.getMethodCountForName(this.getBeanClass(), mo.getMethodName());
@@ -166,7 +169,7 @@ protected void prepareMethodOverride(MethodOverride mo) throws BeanDefinitionVal
         // 无效
         throw new BeanDefinitionValidationException("Invalid method override: no method with name '" + mo.getMethodName() + "' on class [" + getBeanClassName() + "]");
     } else if (count == 1) {
-        /*
+        /**
          * 标记MethodOverride暂未被覆盖，避免参数类型检查的开销
          *
          * 如果一个方法存在多个重载，那么在调用及增强的时候还需要根据参数类型进行匹配来最终确认调用的函数
@@ -179,10 +182,9 @@ protected void prepareMethodOverride(MethodOverride mo) throws BeanDefinitionVal
 
 ````
 
-##### 1.2 处理后置处理器逻辑
+#### 1.2 处理后置处理器逻辑
 
-````
-
+````java
 protected Object resolveBeforeInstantiation(String beanName, RootBeanDefinition mbd) {
     Object bean = null;
     if (!Boolean.FALSE.equals(mbd.beforeInstantiationResolved)) { // 表示尚未被解析
@@ -206,24 +208,18 @@ protected Object resolveBeforeInstantiation(String beanName, RootBeanDefinition 
 }
 
 ````
+---
+### 第二步: 没有后置处理器创建代理过程，正常的创建实例过程
 
-#### 第二步: 没有后置处理器创建代理过程，正常的创建实例过程
+- 如果是单例，尝试从缓存中获取 bean 的包装器 BeanWrapper
+- 如果不存在对应的 Wrapper，则说明 bean 未被实例化，创建 bean 实例
+- 应用 MergedBeanDefinitionPostProcessor
+- `检查是否需要提前曝光，避免循环依赖`
+- 初始化 bean 实例
+- `再次基于依存关系验证是否存在循环依赖`
+- 注册 DisposableBean
 
-1. 如果是单例，尝试从缓存中获取 bean 的包装器 BeanWrapper
-
-2. 如果不存在对应的 Wrapper，则说明 bean 未被实例化，创建 bean 实例
-
-3. 应用 MergedBeanDefinitionPostProcessor
-
-4. 检查是否需要提前曝光，避免循环依赖
-
-5. 初始化 bean 实例
-
-6. 再次基于依存关系验证是否存在循环依赖
-
-7. 注册 DisposableBean
-
-````
+````java
 protected Object doCreateBean(final String beanName, final RootBeanDefinition mbd, final Object[] args) throws BeanCreationException {
  
     BeanWrapper instanceWrapper = null;
@@ -233,7 +229,7 @@ protected Object doCreateBean(final String beanName, final RootBeanDefinition mb
     }
     // 2. 重点：实例化=》bean未实例化,创建 bean 实例
     if (instanceWrapper == null) {
-        /*
+        /**
          * 说明对应的bean还没有创建，用对应的策略（工厂方法、构造函数）创建bean实例，以及简单初始化
          *
          * 将beanDefinition转成BeanWrapper，大致流程如下：
@@ -263,7 +259,8 @@ protected Object doCreateBean(final String beanName, final RootBeanDefinition mb
     }
  
     // 4. 检查是否需要提前曝光，避免循环依赖,条件: 单例 && 允许循环依赖 && 当前bean正在创建中
-    //方法的逻辑是先判断是否允许提前曝光,如果当前为单例 bean,且程序制定允许循环引用,同时当前 bean 正处于创建中,则会将创建 bean 的 ObjectFactory 对象加入到用于保存 beanName 和创建 bean 的工厂之间的关系的集合中
+    //方法的逻辑是先判断是否允许提前曝光,如果当前为单例 bean,且程序制定允许循环引用,同时当前 bean 正处于创建中,
+    //则会将创建 bean 的 ObjectFactory 对象加入到用于保存 beanName 和创建 bean 的工厂之间的关系的集合中
     boolean earlySingletonExposure = (mbd.isSingleton() && this.allowCircularReferences && this.isSingletonCurrentlyInCreation(beanName));
     if (earlySingletonExposure) {
         if (logger.isDebugEnabled()) {
@@ -313,7 +310,7 @@ protected Object doCreateBean(final String beanName, final RootBeanDefinition mb
                         actualDependentBeans.add(dependentBean);
                     }
                 }
-                /*
+                /**
                  * 因为bean在创建完成之后，其依赖的bean一定是被创建了的
                  * 如果actualDependentBeans不为空，则说明bean依赖的bean没有完成创建，存在循环依赖
                  */
@@ -340,13 +337,13 @@ protected Object doCreateBean(final String beanName, final RootBeanDefinition mb
 
 #### 2.1 :createBeanInstance 创建实例
 
-1. 如果存在工厂方法，则使用工厂方法初始化
+-  如果存在工厂方法，则使用工厂方法初始化
 
-2. 否则，如果存在多个构造函数，则根据参数确定构造函数，并利用构造函数初始化
+- 否则，如果存在多个构造函数，则根据参数确定构造函数，并利用构造函数初始化
 
-3. 否则，使用默认构造函数初始化
+- 否则，使用默认构造函数初始化
 
-````
+````java
 protected BeanWrapper createBeanInstance(String beanName, RootBeanDefinition mbd, Object[] args) {
     //解析class引用
     Class<?> beanClass = this.resolveBeanClass(mbd, beanName);
@@ -396,9 +393,9 @@ protected BeanWrapper createBeanInstance(String beanName, RootBeanDefinition mbd
 
 ````
 
-##### 2.1.1 instantiateUsingFactoryMethod 工厂方法执行实例化过程
+#### 2.1.1 instantiateUsingFactoryMethod 工厂方法执行实例化过程
 
-````
+````java
 public BeanWrapper instantiateUsingFactoryMethod(final String beanName, final RootBeanDefinition mbd, final Object[] explicitArgs) {
     // 创建并初始化 BeanWrapper
     BeanWrapperImpl bw = new BeanWrapperImpl();
@@ -409,7 +406,7 @@ public BeanWrapper instantiateUsingFactoryMethod(final String beanName, final Ro
     boolean isStatic;  // 是不是静态工厂
     String factoryBeanName = mbd.getFactoryBeanName(); // 获取factory-bean
     if (factoryBeanName != null) {
-        /*
+        /**
          * 存在factory-bean，说明是非静态工厂
          *
          * <bean id="my-bean-simple-factory" class="org.zhenchao.factory.MyBeanSimpleFactory"/>
@@ -430,7 +427,7 @@ public BeanWrapper instantiateUsingFactoryMethod(final String beanName, final Ro
         factoryClass = factoryBean.getClass();
         isStatic = false;
     } else {
-        /*
+        /**
          * 不存在factory-bean，说明是静态工厂
          *
          * <bean id="my-bean-2" class="org.zhenchao.factory.MyBeanStaticFactory" factory-method="create"/>
@@ -637,9 +634,9 @@ public BeanWrapper instantiateUsingFactoryMethod(final String beanName, final Ro
 }
 ````
 
-##### 2.2.1 构造方法执行实例化过程
+#### 2.2.1 构造方法执行实例化过程
 
-```
+```java
 public BeanWrapper autowireConstructor(
         final String beanName, final RootBeanDefinition mbd, Constructor<?>[] chosenCtors, final Object[] explicitArgs) {
     // 创建并初始化BeanWrapper
