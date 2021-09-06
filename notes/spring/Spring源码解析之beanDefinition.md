@@ -1,6 +1,6 @@
-### BeanDefinition
+## BeanDefinition Spring bean属性定义类
 
-````
+````java
 public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccessor implements BeanDefinition, Cloneable {
 
     /** 对应的类 Class 对象 */
@@ -74,62 +74,62 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 }
 
 ````
+----
+## Spring 的 自动注入能力L autowireMode 
 
-#### autowireMode 自动注入
+- `int AUTOWIRE_NO = 0`;//不会对当前Bean进行外部类的注入，但是**BeanFactoryAware和annotation-driven**仍然会被应用就是说Bean里面加了`@Autowired` 和 `@Resource`这类的依然会有作用
 
-- int AUTOWIRE_NO = 0;//不会对当前Bean进行外部类的注入，但是BeanFactoryAware和annotation-driven仍然会被应用就是说Bean里面加了@Autowired的@Resource这类的依然会有作用
+- `int AUTOWIRE_BY_NAME = 1`;//把与Bean的属性具有相同名字的其他Bean自动装配到Bean的对应属性中
 
-- int AUTOWIRE_BY_NAME = 1;//把与Bean的属性具有相同名字的其他Bean自动装配到Bean的对应属性中
+- `int AUTOWIRE_BY_TYPE = 2`;//把与Bean的属性具有相同类型的其他Bean自动装配到Bean的对应属性中。
 
-- int AUTOWIRE_BY_TYPE = 2;//把与Bean的属性具有相同类型的其他Bean自动装配到Bean的对应属性中。
+- `int AUTOWIRE_CONSTRUCTOR` = 3;//把与Bean的构造器入参具有相同类型的其他Bean自动装配到Bean构造器的对应入参中。**值的注意的是，具有相同类型的其他Bean这句话说明它在查找入参的时候，还是通过Bean的类型来确定**
 
-- int AUTOWIRE_CONSTRUCTOR =
-  3;//把与Bean的构造器入参具有相同类型的其他Bean自动装配到Bean构造器的对应入参中。值的注意的是，具有相同类型的其他Bean这句话说明它在查找入参的时候，还是通过Bean的类型来确定
+- `int AUTOWIRE_AUTODETECT` = 4;//它首先会尝试使用constructor进行自动装配，如果失败再尝试使用byType。不过，它在Spring3.0之后已经被标记为@Deprecated。
 
-- int AUTOWIRE_AUTODETECT = 4;//它首先会尝试使用constructor进行自动装配，如果失败再尝试使用byType。不过，它在Spring3.0之后已经被标记为@Deprecated。
+## dependencyCheck 依赖检查
 
-#### dependencyCheck 依赖检查
+**在自动装配中，因为是隐式的，所以开发人员很难看出Bean的每个属性是否都设定完成，这时就要借助于依赖检查来实现查看Bean的每个属性是否都设定完成的功能，依赖检查，对应 dependency-check 属性：**
 
-##### 在自动装配中，因为是隐式的，所以开发人员很难看出Bean的每个属性是否都设定完成，这时就要借助于依赖检查来实现查看Bean的每个属性是否都设定完成的功能，依赖检查，对应 dependency-check 属性：
+- `DEPENDENCY_CHECK_NONE = 0`;//不进行依赖检查
 
-- DEPENDENCY_CHECK_NONE = 0;//不进行依赖检查
+- `DEPENDENCY_CHECK_OBJECTS = 1`;// __object模式__ 指的是对依赖的对象进行依赖检查.
 
-- DEPENDENCY_CHECK_OBJECTS = 1;//object模式指的是对依赖的对象进行依赖检查.
+- `DEPENDENCY_CHECK_SIMPLE = 2`;// __simple模式__ 是指对基本类型，字符串和集合进行依赖检查;isSimpleProperty
 
-- DEPENDENCY_CHECK_SIMPLE = 2;// simple模式是指对基本类型，字符串和集合进行依赖检查;isSimpleProperty
+- `DEPENDENCY_CHECK_ALL = 3`;// all模式指的是对全部属性进行依赖检查.
 
-- DEPENDENCY_CHECK_ALL = 3;// all模式指的是对全部属性进行依赖检查.
 
-#### Autowired 注解
+---
+## Autowired 注解
 
 从Spring2.5开始，开始支持使用注解来自动装配Bean的属性。它允许更细粒度的自动装配，我们可以选择性的标注某一个属性来对其应用自动装配。
 
 Spring支持几种不同的应用于自动装配的注解:
 
-- Spring自带的@Autowired 注解
-- JSR-330的@Inject注解。
-- JSR-250的@Resource注解。
+- Spring自带的`@Autowired` 注解
+- JSR-330的`@Inject`注解。
+- JSR-250的`@Resource`注解。
 
-##### 强制性
+#### 强制性
 
 - 默认情况下，它具有强制契约特性，其所标注的属性必须是可装配的。如果没有Bean可以装配到Autowired所标注的属性或参数中，那么你会看到NoSuchBeanDefinitionException的异常信息;
 
-- 如果取消强制性，则 @Autowired(required=false)
+- 如果取消强制性，则 `@Autowired(required=false)`
 
-##### 装配策略
+#### 装配策略
 
-- 默认是按照类型装配，即byType，仅仅有一个类型匹配上
+- 默认是按照类型装配，即 `byType，仅仅有一个类型匹配上`
 
 - 按照名称装配
 
-**按照类型匹配可能会查询到多个实例,可以加注解以此规避。比如@qulifier、@Primary等;也可以在注入的时候，就可以把属性名称定义为Bean实现类的名称**
+**按照类型匹配可能会查询到多个实例,可以加注解以此规避。比如`@qulifier、@Primary`等;也可以在注入的时候，就可以把属性名称定义为Bean实现类的名称**
 
-**
-AutowiredAnnotationBeanPostProcessor在处理依赖注入时，从bean工厂中去获取，首先是根据字段的类型去找符合条件的bean，若得到的bean有多个，则找出有@Primary注解修饰的bean，若都没有,则退化成@Resource注解的功能，即根据字段名去寻找bean，若都没有，则会抛出找到多个bean的异常**
+**AutowiredAnnotationBeanPostProcessor在处理依赖注入时，从bean工厂中去获取，首先是根据字段的类型去找符合条件的bean，若得到的bean有多个，则找出有@Primary注解修饰的bean，若都没有,则退化成@Resource注解的功能，即根据字段名去寻找bean，若都没有，则会抛出找到多个bean的异常**
 
-**装配是在 InstantiationAwareBeanPostProcessors**
+### **自动装配是在 InstantiationAwareBeanPostProcessors 中实现的**
 
-````
+````java
         // 获取匹配类型的bean实例
         Map<String, Object> matchingBeans = this.findAutowireCandidates(beanName, type, descriptor);
         if (matchingBeans.isEmpty()) {
@@ -164,15 +164,15 @@ AutowiredAnnotationBeanPostProcessor在处理依赖注入时，从bean工厂中�
 
 ##### determineAutowireCandidate 基于优先级匹配来获取注入的实例
 
-````
+````java
 protected String determineAutowireCandidate(Map<String, Object> candidates, DependencyDescriptor descriptor) {
 		Class<?> requiredType = descriptor.getDependencyType();
-        //@Primary 注解
+               //@Primary 注解
 		String primaryCandidate = determinePrimaryCandidate(candidates, requiredType);
 		if (primaryCandidate != null) {
 			return primaryCandidate;
 		}
-        //@Priority 注解
+                //@Priority 注解
 		String priorityCandidate = determineHighestPriorityCandidate(candidates, requiredType);
 		if (priorityCandidate != null) {
 			return priorityCandidate;
@@ -181,7 +181,7 @@ protected String determineAutowireCandidate(Map<String, Object> candidates, Depe
 		for (Map.Entry<String, Object> entry : candidates.entrySet()) {
 			String candidateName = entry.getKey();
 			Object beanInstance = entry.getValue();
-            //通过matchesBeanName方法来确定bean集合中的名称是否与属性的名称相同，此时也就是按照名字匹配
+                       //通过matchesBeanName方法来确定bean集合中的名称是否与属性的名称相同，此时也就是按照名字匹配
 			if ((beanInstance != null && this.resolvableDependencies.containsValue(beanInstance)) || matchesBeanName(candidateName, descriptor.getDependencyName())) {
 				return candidateName;
 			}
@@ -190,11 +190,11 @@ protected String determineAutowireCandidate(Map<String, Object> candidates, Depe
 	}
 ````
 
-#### MethodOverrides
+##### methodOverrides
 
-- MethodOverrides的作用就是在spring配置中存在lookup-method 和replace-method
+- methodOverrides 的作用就是在spring配置中存在`lookup-method `和`replace-method`
   的，而这两个配置在加载xml的时候就会统一存放在BeanDefinition中的methodOverrides属性里;
 
-- 遍历MethodOverrides,对于一个方法的匹配来讲，如果一个类中存在若干个重载方法，那么，在函数调用以及增强的时候还需要根据参数类型进行匹配，来最终确认当前调用的到底是哪个函数，
+- 遍历 methodOverrides,对于一个方法的匹配来讲，如果一个类中存在若干个重载方法，那么，在函数调用以及增强的时候还需要根据参数类型进行匹配，来最终确认当前调用的到底是哪个函数，
   但是，spring将一部分匹配工作在这里完成了，如果当前类中的方法只有一个，那么就设置重载该方法没有被重载，这样在后续调用的时候便可以直接使用找到的方法，而不需要进行方法的参数匹配了，而且还可以提前对方法存在性进行验证;
 
