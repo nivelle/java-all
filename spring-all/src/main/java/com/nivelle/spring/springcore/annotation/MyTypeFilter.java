@@ -11,7 +11,9 @@ import java.io.IOException;
 
 
 /**
- * 自定义扫描过滤条件
+ * 1. 自定义扫描过滤条件
+ *
+ * 2. 采用自定义的过滤方式,必须使用:useDefaultFilters=false
  *
  * @author nivelle
  * @date 2019/09/23

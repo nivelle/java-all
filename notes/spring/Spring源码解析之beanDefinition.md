@@ -77,8 +77,7 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 
 #### autowireMode 自动注入
 
-- int AUTOWIRE_NO =
-  0;//不会对当前Bean进行外部类的注入，但是BeanFactoryAware和annotation-driven仍然会被应用就是说Bean里面加了@Autowired的@Resource这类的依然会有作用
+- int AUTOWIRE_NO = 0;//不会对当前Bean进行外部类的注入，但是BeanFactoryAware和annotation-driven仍然会被应用就是说Bean里面加了@Autowired的@Resource这类的依然会有作用
 
 - int AUTOWIRE_BY_NAME = 1;//把与Bean的属性具有相同名字的其他Bean自动装配到Bean的对应属性中
 

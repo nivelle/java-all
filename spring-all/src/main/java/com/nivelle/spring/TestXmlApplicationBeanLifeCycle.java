@@ -5,7 +5,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * 运行看懂spring启动过程
+ * 运行看懂spring启动过程，查看Spring 生命周期
  */
 public class TestXmlApplicationBeanLifeCycle {
 

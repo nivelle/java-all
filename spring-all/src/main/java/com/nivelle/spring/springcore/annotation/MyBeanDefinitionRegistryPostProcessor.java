@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
  * BeanDefinitionRegistryPostProcessor 接口可以看作是 BeanFactoryPostProcessor 和 ImportBeanDefinitionRegistrar 的功能集合，
  * 既可以获取和修改BeanDefinition的元数据，也可以实现BeanDefinition的注册、移除等操作。
  * <p>
- * 执行时机 : 在BeanDefinitionRegistry的标准初始化之后所有其他一般的BeanFactoryPostProcessor执行之前执行，此时所有的bean定义已经加载但是还没有bean实例被创建。
+ * 执行时机 : 在BeanDefinitionRegistry的标准初始化之后所有其他一般的 BeanFactoryPostProcessor 执行之前执行，此时所有的bean定义已经加载但是还没有bean实例被创建。
  *
  * @author nivelle
  * @date 2019/08/25

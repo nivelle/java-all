@@ -13,7 +13,7 @@ import java.util.Objects;
 /**
  * 自定义AOP
  * <p>
- * 自动配置AopAutoConfiguration类的主要任务是根据配置参数使用注解@EnableAspectJAutoProxy。
+ * 自动配置 AopAutoConfiguration 类的主要任务是根据配置参数使用注解 @EnableAspectJAutoProxy。
  * <p>
  * 该自动配置类通过注解声明了自己生效的条件是 :
  * <p>
@@ -23,7 +23,7 @@ import java.util.Objects;
  * 2. Aspect
  * 3. Advice
  * 4. AnnotatedElement
- * 2. 配置参数spring.aop.auto值不为false. 默认为true
+ * 2. 配置参数:spring.aop.auto值不为false. 默认为true
  */
 @Aspect
 @Component

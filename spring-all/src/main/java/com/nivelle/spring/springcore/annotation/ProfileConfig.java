@@ -43,6 +43,8 @@ public class ProfileConfig implements EmbeddedValueResolverAware, EnvironmentAwa
 
 
     /**
+     * 指定激活指定配置的方式:
+     *
      * 1. VM 配置设置启动参数来指定:-Dspring.profiles.active=dev
      * 2. 启动类 - configurableEnvironment.setActiveProfiles("dev"); -> refresh()
      */

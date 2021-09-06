@@ -5,7 +5,7 @@ import org.springframework.context.annotation.ConditionContext;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 
 /**
- * T
+ * 条件判断
  *
  * @author nivelle
  * @date 2019/09/24

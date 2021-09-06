@@ -29,6 +29,12 @@ public class MySelfImportBeanDefinitionRegistrar implements ImportBeanDefinition
         System.out.println("My JAVA_HOME:" + environment.getProperty("JAVA_HOME"));
     }
 
+    /**
+     * 指定注解标记的类被注入
+     *
+     * @param importingClassMetadata
+     * @param registry
+     */
     @Override
     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata,
                                         BeanDefinitionRegistry registry) {

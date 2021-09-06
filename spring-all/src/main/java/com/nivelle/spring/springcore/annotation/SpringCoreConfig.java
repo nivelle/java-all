@@ -14,15 +14,15 @@ import org.springframework.context.annotation.*;
  */
 
 /**
- * 采用自定义的过滤方式，必须使用:useDefaultFilters=false
+ * 采用自定义的过滤方式,必须使用:useDefaultFilters=false
  */
 @Configuration
-//返回true时将此类作为配置类，系统条件注解
+//返回true时将此类作为配置类,系统条件注解
 @Conditional(MyCondition.class)
 /**
  * @Import 导入另外一个配置类的方式注册bean, 也可以将一些普通java类注册成一个bean
  *
- * 1. 导入某个配置类（导入某个加了@Configuration的配置类或者某个类）
+ * 1. 导入某个配置类（导入某个加了 @Configuration 注解的配置类或者某个类）
  *
  * 2. 导入某个 ImportSelector 接口的实现类
  *
@@ -46,7 +46,7 @@ public class SpringCoreConfig {
     }
 
     /**
-     * 默认单例,饿汉模式，通过@Lazy @Scope指定为多实例和懒汉模式
+     * 默认单例,饿汉模式; 通过@Lazy @Scope指定为多实例和懒汉模式
      *
      * @return
      */
