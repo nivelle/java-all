@@ -1,17 +1,19 @@
-#### populateBean：属性设置，子类实现：AbstractAutowireCapableBeanFactory
+### populateBean：属性设置方法，
 
-1. 该方法中会执行 InstantiationAwareBeanPostProcessor 后置处理器的 postProcessAfterInstantiation 方法逻辑,从而实现对完成实例化且还没有注入属性值的对象进行最后的更改;
+#### 子类实现：AbstractAutowireCapableBeanFactory
 
-2. 如果我们在 postProcessAfterInstantiation 指明不需要执行后续的属性注入过程,则方法到此结束;
+- 该方法中会执行 InstantiationAwareBeanPostProcessor 后置处理器的 `postProcessAfterInstantiation` 方法逻辑,从而实现对完成实例化且还没有注入属性值的对象进行最后的更改;
 
-3. 否则方法会检测当前的注入类型,是 byName 还是 byType,并调用相应的注入逻辑获取依赖的 bean,加入属性集合中。
+- 如果我们在 `postProcessAfterInstantiation` 指明不需要执行后续的属性注入过程,则方法到此结束;
 
-4. 然后方法会调用 InstantiationAwareBeanPostProcessor 后置处理器的 postProcessPropertyValues 方法,实现在将属性值应用到 bean
+- 否则方法会检测当前的注入类型,是 byName 还是 byType,并调用相应的注入逻辑获取依赖的 bean,加入属性集合中。
+
+- 然后方法会调用 InstantiationAwareBeanPostProcessor 后置处理器的 `postProcessPropertyValues` 方法,实现在将属性值应用到 bean
    实例之前的最后一次对属性值的更改,同时会依据配置执行依赖检查,以确保所有的属性都被赋值（这里的赋值是指 beanDefinition 中的属性都有对应的值，而不是指最终 bean 实例的属性是否注入了对应的值）；
 
-5. 最后将输入值应用到 bean 实例对应的属性上。
+- 最后将输入值应用到 bean 实例对应的属性上。
 
-````
+````java
 protected void populateBean(String beanName, RootBeanDefinition mbd, BeanWrapper bw) {
     //1. 获取bean实例的属性值集合
     PropertyValues pvs = mbd.getPropertyValues();
@@ -50,7 +52,7 @@ protected void populateBean(String beanName, RootBeanDefinition mbd, BeanWrapper
     }
  
     // autowire by name or autowire by type
-    // spring 自动注入，byType 和 byName
+    // spring 自动注入，byType 和 byName,优先按照名字自动注入
     if (mbd.getResolvedAutowireMode() == RootBeanDefinition.AUTOWIRE_BY_NAME
             || mbd.getResolvedAutowireMode() == RootBeanDefinition.AUTOWIRE_BY_TYPE) {
         MutablePropertyValues newPvs = new MutablePropertyValues(pvs);
@@ -76,7 +78,7 @@ protected void populateBean(String beanName, RootBeanDefinition mbd, BeanWrapper
                 if (bp instanceof InstantiationAwareBeanPostProcessor) {
                     InstantiationAwareBeanPostProcessor ibp = (InstantiationAwareBeanPostProcessor) bp;
                     // 调用后置处理器的:postProcessPropertyValues方法
-                    // AutowiredAnnotationBeanPostProcessor: 完成bean实例注入; (beanDefinition)[Spring源码解析之beanDefinition.md]
+                    // 重点: AutowiredAnnotationBeanPostProcessor: 完成bean实例注入; (beanDefinition)[Spring源码解析之beanDefinition.md]
                     pvs = ibp.postProcessPropertyValues(pvs, filteredPds, bw.getWrappedInstance(), beanName);
                     if (pvs == null) {
                         // 处理器中把属性值处理没了，则继续执行属性注入已经没有意义
@@ -91,15 +93,15 @@ protected void populateBean(String beanName, RootBeanDefinition mbd, BeanWrapper
         }
     }
  
-    // 执行属性注入,上面只是把属性写入到beanDefinition中了
+    // 重点:执行属性注入,上面只是把属性写入到beanDefinition中了
     this.applyPropertyValues(beanName, mbd, bw, pvs);
 }
 
 ````
 
-##### 第一步: getResolvedAutowireMode //检查注入注入类型
+## 第一步: getResolvedAutowireMode //检查自动注入类型
 
-````
+````java
    /**
 	 * Return the resolved autowire code,
 	 * (resolving AUTOWIRE_AUTODETECT to AUTOWIRE_CONSTRUCTOR or AUTOWIRE_BY_TYPE).
@@ -129,21 +131,20 @@ protected void populateBean(String beanName, RootBeanDefinition mbd, BeanWrapper
 
 ````
 
-##### 第二步：1. autowireByName //根据名称注入
+### 第二步：1. autowireByName //根据名称注入
 
-````
+````java
 protected void autowireByName(String beanName, AbstractBeanDefinition mbd, BeanWrapper bw, MutablePropertyValues pvs) {
-        //寻找需要注入的属性(非简单属性：非Local,Date,Enum,Void,class 等，以及数组元素是简单类型的属性)
-		String[] propertyNames = unsatisfiedNonSimpleProperties(mbd, bw);
+     //寻找需要注入的属性(非简单属性：非Local,Date,Enum,Void,class 等，以及数组元素是简单类型的属性)
+	 String[] propertyNames = unsatisfiedNonSimpleProperties(mbd, bw);
         //遍历propertyName 数组
 		for (String propertyName : propertyNames) {
 			if (containsBean(propertyName)) {
-                //如果依赖的bean没有初始化,则递归初始化相关的bean
+			    //如果依赖的bean没有初始化,则递归初始化相关的bean
 				Object bean = getBean(propertyName);
-                //记录依赖关系到集合中
+				//记录依赖关系到集合中
 				pvs.add(propertyName, bean);
-                //属性依赖注入
-                //dependentBeanMap;dependenciesForBeanMap
+				 //属性依赖注入//dependentBeanMap;dependenciesForBeanMap
 				registerDependentBean(propertyName, beanName);
 				if (logger.isTraceEnabled()) {
 					logger.trace("Added autowiring by name from bean name '" + beanName +
@@ -160,9 +161,9 @@ protected void autowireByName(String beanName, AbstractBeanDefinition mbd, BeanW
 
 ````
 
-##### 第二步: 2. autowireByType//根据类型注入
+### 第二步: 2. autowireByType//根据类型注入
 
-````
+````java
 protected void autowireByType(String beanName, AbstractBeanDefinition mbd, BeanWrapper bw, MutablePropertyValues pvs) {
     //获取TypeConverter实例 使用自定义的TypeConverter,用于取代默认的PropertyEditor
     TypeConverter converter = this.getCustomTypeConverter();
@@ -183,7 +184,7 @@ protected void autowireByType(String beanName, AbstractBeanDefinition mbd, BeanW
                 MethodParameter methodParam = BeanUtils.getWriteMethodParameter(pd);
                 boolean eager = !PriorityOrdered.class.isAssignableFrom(bw.getWrappedClass());
                 DependencyDescriptor desc = new AutowireByTypeDependencyDescriptor(methodParam, eager);
-                /*
+                /**
                  * 解析指定beanName的属性所匹配的值,并把解析到的属性存储在autowiredBeanNames中,当属性存在多个封装的bean时,比如:
                  *
                  * @Autowired
@@ -210,12 +211,12 @@ protected void autowireByType(String beanName, AbstractBeanDefinition mbd, BeanW
 
 ````
 
-##### 第二步: 2.1 resolveDependency //解析依赖的属性
+### 第二步: 2.1 resolveDependency //解析依赖的属性
 
-````
+````java
 public Object resolveDependency(DependencyDescriptor descriptor, @Nullable String requestingBeanName,
 			@Nullable Set<String> autowiredBeanNames, @Nullable TypeConverter typeConverter) throws BeansException {
-        //获取并初始化参数名称探测器
+         //获取并初始化参数名称探测器
 		descriptor.initParameterNameDiscovery(getParameterNameDiscoverer());
 		if (Optional.class == descriptor.getDependencyType()) {
             //支持java8的java.util.Optional
@@ -240,15 +241,15 @@ public Object resolveDependency(DependencyDescriptor descriptor, @Nullable Strin
 
 ````
 
-##### 第二步: 2.1.2  doResolveDependency //执行具体的解析依赖逻辑
+### 第二步: 2.1.2  doResolveDependency //执行具体的解析依赖逻辑
 
-- 首先会依次以确定的 @Value 注解和集合类型进行解析；
+- 首先会依次以确定的 `@Value` 注解和`集合类型`进行解析；
 
 - 如果不是这些类型，则获取匹配类型的 bean 实例集合，如果存在多个匹配，则尝试以优先级配置（比如 Primary 或 Priority）来确定首选的 bean 实例，如果仅存在唯一的匹配，则无需做推断逻辑；
 
 - 最后会检测当前解析得到的 bean 是不是目标 bean 实例，如果是工厂一类的 bean，则还要继续获取工厂所指代的 bean 实例
 
-````
+````java
 public Object doResolveDependency(DependencyDescriptor descriptor, String beanName, Set<String> autowiredBeanNames, TypeConverter typeConverter) throws BeansException {
  
     InjectionPoint previousInjectionPoint = ConstructorResolver.setCurrentInjectionPoint(descriptor);
@@ -322,12 +323,13 @@ public Object doResolveDependency(DependencyDescriptor descriptor, String beanNa
 
 ````
 
-##### 第三步: applyPropertyValues
+### 第三步: applyPropertyValues
 
-在这一步才真正将 bean 的所有属性全部注入到 bean 实例中，之前虽然已经创建了实例，但是属性仍然存在于 beanDefinition 实例中，applyPropertyValues 会将相应属性转换成 bean
-中对应属性的真实类型注入到对应属性上
+- 在这一步才真正将 bean 的所有属性全部注入到 bean 实例中，之前虽然已经创建了实例，但是属性仍然存在于 beanDefinition 实例中，
+  
+- applyPropertyValues 会将相应属性转换成 bean 中对应属性的真实类型注入到对应属性上
 
-````
+````java
 protected void applyPropertyValues(String beanName, BeanDefinition mbd, BeanWrapper bw, PropertyValues pvs) {
     //属性集合为空就没必要解析了
     if (pvs == null || pvs.isEmpty()) {
