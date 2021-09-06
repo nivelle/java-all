@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
  */
 
 /**
- * 1. 如果想在SpringApplication启动完成时，执行一些初始化的操作，可以实现 ApplicationRunner或者CommanLinerRunner接口，
+ * 1. 如果想在SpringApplication启动完成时，执行一些初始化的操作，可以实现 ApplicationRunner 或者 CommanLinerRunner接口，
  * 2. 他们是以同样的方式提供服务，他们在SpringApplication.run()方法执行完之前执行。
  * 3. 可以有多个实现，通过@Order 排序
  */
