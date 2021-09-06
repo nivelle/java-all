@@ -69,7 +69,7 @@
 
 #### 第三步:prepareBeanFactory(beanFactory):BeanFactory的预准备工作（BeanFactory进行一些设置;
 
-```
+```java
         // Tell the internal bean factory to use the context's class loader etc.
         //设置类加载器：存在则直接设置/不存在则新建一个默认类加载器
 		beanFactory.setBeanClassLoader(getClassLoader());
@@ -155,7 +155,7 @@
 
 ##### 两个接口:接口 BeanDefinitionRegistryPostProcessor 继承自 BeanFactoryPostProcessor
 
-   ````
+   ````java
    final class PostProcessorRegistrationDelegate {
        public static void invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory beanFactory, List<BeanFactoryPostProcessor> beanFactoryPostProcessors) {
            Set<String> processedBeans = new HashSet<>();
@@ -336,8 +336,8 @@
 ##### 委托给:PostProcessorRegistrationDelegate.registerBeanPostProcessors(beanFactory, this) 来实现功能
 
 ##### BeanPostProcessor类型:DestructionAwareBeanPostProcessor、InstantiationAwareBeanPostProcessor、SmartInstantiationAwareBeanPostProcessor、MergedBeanDefinitionPostProcessor
+   ````java
 
-   ````
    public static void registerBeanPostProcessors(ConfigurableListableBeanFactory beanFactory, AbstractApplicationContext applicationContext) {
         //找出所有实现 BeanPostProcessor接口的类
    		String[] postProcessorNames = beanFactory.getBeanNamesForType(BeanPostProcessor.class, true, false);
@@ -478,7 +478,7 @@ MESSAGE_SOURCE_BEAN_NAME, this.messageSource);
 
 #### 第十步:registerListeners();
 
-    ````
+    ````java
     protected void registerListeners() {
     		// Register statically specified listeners first.
     		//（1）从容器中获取静态的ApplicationListener然后注册放入到applicationListeners中
@@ -506,9 +506,9 @@ MESSAGE_SOURCE_BEAN_NAME, this.messageSource);
     	}
     ```` 
 
-#### 第十一步:finishBeanFactoryInitialization(beanFactory);//初始化所有剩下的单实例bean；
+#### 第十一步:finishBeanFactoryInitialization(beanFactory);//初始化所有剩下的单实例bean,非懒加载的实力
 
-   ````
+   ````java
         // Initialize conversion service for this context.
    		if (beanFactory.containsBean(CONVERSION_SERVICE_BEAN_NAME) &&
    				beanFactory.isTypeMatch(CONVERSION_SERVICE_BEAN_NAME, ConversionService.class)) {
@@ -550,7 +550,7 @@ MESSAGE_SOURCE_BEAN_NAME, this.messageSource);
 
 ##### 子类实现: DefaultListableBeanFactory
 
-````
+````java
             // Iterate over a copy to allow for init methods which in turn register new bean definitions.
      		// While this may not be part of the regular factory bootstrap, it does otherwise work fine.
             // 遍历一个副本以允许init方法，而init方法反过来注册新的bean定义

@@ -1,19 +1,12 @@
 ### 创建bean实例
 
 - 创建 bean 的真正逻辑位于createBean方法中,该方法的具体实现位于 `AbstractAutowireCapableBeanFactory` 中
-### 解决循环依赖问题
-
-- 一级缓存：singletonObjects
-- 二级缓存：earlySingletonObjects
-- 三级缓存：singletonFactories，第三级缓存存放的是ObjectFactory-》FunctionalInterface  即函数式接口
 
 
-
-
-
-
-
-
+````
+只用二级缓存是可以解决缓存依赖的，（废弃第三级，保留第一第二）但是会有一个问题，在配置AOP切面的时候会出错，因为无法生成代理对象。
+所以三级缓存是为了处理AOP中的循环依赖。因为当配置了切面之后，在getEarlyBeanReference方法中，有可能会把之前的原始对象替换成代理对象，导致Bean的版本不是最终的版本，所以报错。
+````
 ### 创建单例对象
 
 ````java
@@ -283,6 +276,7 @@ protected Object doCreateBean(final String beanName, final RootBeanDefinition mb
             logger.debug("Eagerly caching bean '" + beanName + "' to allow for resolving potential circular references");
         }
         // 为避免循环依赖,在完成bean实例化之前,将对应的ObjectFactory加入bean的创建工厂缓存
+        //重点： 添加到三级缓存，后续bean 在 getSingleton 方法中，从一级缓存和二级缓存中获取不到的时候，通过三级缓存创建对象，并设置到二级缓存，同时从三级缓存移除
         this.addSingletonFactory(beanName, new ObjectFactory<Object>() {
             @Override
             public Object getObject() throws BeansException {
