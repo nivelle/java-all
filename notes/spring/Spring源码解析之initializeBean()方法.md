@@ -1,16 +1,13 @@
-### Spring 的 initializeBean()
+## Spring 的 initializeBean()
 
-#### 属性注入(populateBean()方法)完成后，接下来就会执行init-method方法
+### 实例化时（doCreateBean方法执行时）属性注入(populateBean()方法)完成后，接下来就会执行init-method方法
 
-- 激活 bean 实现的 Aware 类: BeanNameAware, BeanClassLoaderAware, BeanFactoryAware
+- 激活 bean 实现的 `Aware `类: **BeanNameAware, BeanClassLoaderAware, BeanFactoryAware**
+- 应用 `BeanPostProcessor` 的 `postProcessBeforeInitialization`
+- 激活用户自定义的 `init-method` 方法，以及常用的 **afterPropertiesSet 方法**
+- 应用 BeanPostProcessor 的 **postProcessAfterInitialization**
 
-- 应用 BeanPostProcessor 的 postProcessBeforeInitialization
-
-- 激活用户自定义的 init-method 方法，以及常用的 afterPropertiesSet 方法
-
-- 应用 BeanPostProcessor 的 postProcessAfterInitialization
-
-````        
+````   java     
 protected Object initializeBean(final String beanName, final Object bean, RootBeanDefinition mbd) {
     // 1. 激活bean实现的Aware类：BeanNameAware, BeanClassLoaderAware, BeanFactoryAware
     if (System.getSecurityManager() != null) {
@@ -49,9 +46,9 @@ protected Object initializeBean(final String beanName, final Object bean, RootBe
 
 ### DisposableBean
 
-在销毁对应的 bean 时能够回调实现的 destroy 方法，从而为销毁前的处理工作提供了入口，容器会利用一个 Map 集合来记录所有实现了 DisposableBean 接口的 bean
+- 在销毁对应的 bean 时能够回调实现的 destroy 方法，从而为销毁前的处理工作提供了入口，容器会利用一个 Map 集合来记录所有实现了 DisposableBean 接口的 bean
 
-````
+````java
 protected void registerDisposableBeanIfNecessary(String beanName, Object bean, RootBeanDefinition mbd) {
     AccessControlContext acc = (System.getSecurityManager() != null ? getAccessControlContext() : null);
     if (!mbd.isPrototype() && this.requiresDestruction(bean, mbd)) {
