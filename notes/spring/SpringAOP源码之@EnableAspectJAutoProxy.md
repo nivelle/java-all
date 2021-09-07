@@ -48,7 +48,7 @@ public @interface EnableAspectJAutoProxy {
 
 ----
 
-### AnnotationAwareAspectJAutoProxyCreator的创建过程。
+### AnnotationAwareAspectJAutoProxyCreator 的创建过程。
 
 - 上面说到，注解@EnableAspectJAutoProxy为容器中导入了该类的注册信息，这仅仅是个注册信息，相当于在容器中添加了一个标识，但是实际上真正还没被实例化。
 
