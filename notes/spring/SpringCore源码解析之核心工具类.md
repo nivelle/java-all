@@ -1,42 +1,39 @@
-### Environment
+## Environment extends PropertyResolver
 
 #### Environment是Spring核心框架中定义的一个接口，用来表示整个应用运行时的环境。
 
-- profile
+#### profile
 
-1. 一个profile是一组Bean定义(Bean definition)的逻辑分组(logical group)
+-  一个profile是一组Bean定义(Bean definition)的逻辑分组(logical group)
+- 这个分组，也就是这个profile，被赋予一个命名，就是这个profile的名字
+- 只有当一个profile处于active状态时，它对应的逻辑上组织在一起的这些Bean定义才会被注册到容器中。
+- Bean添加到profile可以通过XML定义方式或者注解方式
+- Environment对于profile机制所扮演的角色是用来指定哪些profile是当前活跃的/缺省活跃的
 
-2. 这个分组，也就是这个profile，被赋予一个命名，就是这个profile的名字
+#### property 属性
 
-3. 只有当一个profile处于active状态时，它对应的逻辑上组织在一起的这些Bean定义才会被注册到容器中。
+- 一个应用的属性有很多来源: `属性文件(properties files)`,`JVM系统属性`，`系统环境变量`，`JNDI`，`servlet上下文参数`，`临时属性对象`等。
 
-4. Bean添加到profile可以通过XML定义方式或者注解方式
+- Environment对于property所扮演的角色是提供给使用者一个方便的服务接口用于(配置属性源;从属性源中获取属性)
 
-5. Environment对于profile机制所扮演的角色是用来指定哪些profile是当前活跃的/缺省活跃的
+### 容器(ApplicationContext)所管理的bean如果想直接使用Environment对象访问profile状态或者获取属性，可以有两种方式
 
-- property 属性
+- 实现`EnvironmentAware接口`
 
-1. 一个应用的属性有很多来源: 属性文件(properties files),JVM系统属性，系统环境变量，JNDI，servlet上下文参数，临时属性对象等。
-
-2. Environment对于property所扮演的角色是提供给使用者一个方便的服务接口用于(配置属性源;从属性源中获取属性)
-
-#### 容器(ApplicationContext)所管理的bean如果想直接使用Environment对象访问profile状态或者获取属性，可以有两种方式
-
-- 实现EnvironmentAware接口
-
-- @Inject 或者 @Autowired注入一个 Environment对象
+- `@Inject` 或者 `@Autowired`注入一个 Environment对象
 
 **绝大多数情况下，bean都不需要直接访问Environment对象，而是通过类似@Value注解的方式把属性值注入进来。**
 
-[![D6ct74.jpg](https://s3.ax1x.com/2020/11/29/D6ct74.jpg)](https://imgchr.com/i/D6ct74)
+![environment](../images/environment.jpg)
+
 
 接口/类     | 介绍
 ---|---
 PropertyResolver | 接口，抽象对属性源的访问，比如是否包含某个属性，读取属性，解析占位符，将读取到的属性转换成指定类型
-Environment |接口，继承自PropertyResolver,对环境属性访问和default/active profile访问的抽象因为继承自PropertyResolver，所以它自然具备PropertyResolver提供的所有能力，对环境属性的访问也正是通过PropertyResolver定义的这些能力
+Environment |接口，继承自PropertyResolver,对环境属性访问和 `default/active profile`访问的抽象因为继承自PropertyResolver，所以它自然具备PropertyResolver提供的所有能力，对环境属性的访问也正是通过PropertyResolver定义的这些能力
 ConfigurablePropertyResolver | 接口，为PropertyResolver接口抽象的属性源访问做了配置方面的增强。比如设置将属性值转换工具，指定占位符前缀后缀，遇到不可解析的嵌套的占位符怎么办等等
-ConfigurableEnvironment    | 接口，在所继承的接口之上增加了设置defaut/active profile的能力，增加/删除环境对象中属性源的能力
-ConfigurableWebEnvironment | 接口，向接口ConfigurableEnvironment增强了根据Servlet上下文/配置初始化属性源的能力
+ConfigurableEnvironment    | 接口，在所继承的接口之上增加了设置`defaut/active profile`的能力，增加/删除环境对象中属性源的能力
+ConfigurableWebEnvironment | 接口，向接口 ConfigurableEnvironment增强了根据`Servlet上下文/配置初始化属性源的能力`
 AbstractEnvironment | Environment抽象基类，实现了ConfigurableEnvironment
 StandardEnvironment | 实现类,针对标准Spring应用(非Web应用)环境,在AbstractEnvironment基础上提供了属性源systemEnvironment(来自System.getenv())和systemProperties(来自System.getProperties())
 StandardServletEnvironment | 实现类,针对标准SpringServletWeb应用的环境，在StandardEnvironment的基础上增加了servletContextInitParams/servletConfigInitParams/jndiProperties三个属性源
@@ -67,15 +64,16 @@ servletConfigInitParams     | 来自 ServletConfig的属性源ServletConfigPrope
 servletContextInitParams     | 来自 ServletContext的属性源ServletContextPropertySource
 jndiProperties     | 如果使用了jndi环境的话会添加该属性源JndiPropertySource
 
+----
 ### PropertySource
 
-对于各种基于"名称/值"对(key/value pair)的属性源,Spring将其抽象成了抽象泛型类PropertySource<T>。底层的属性源T可以是容纳属性信息的任意类型，
+#### 对于各种基于"名称/值"对(key/value pair)的属性源,Spring将其抽象成了抽象泛型类PropertySource<T>。底层的属性源T可以是容纳属性信息的任意类型，
 
 - java.util.Properties,
 - java.util.Map,
 - ServletContext,
 - ServletConfig对象,
-- 命令行参数CommandLineArgs对象。
+- 命令行参数:CommandLineArgs 对象。
 
 类PropertySource的方法getSource()用于获取底层的属性源对象T。顶层的属性源对象经过PropertySource封装，从而具有统一的访问方式。
 
@@ -89,7 +87,7 @@ SystemEnvironmentPropertySource | 继承自MapPropertySource，被StandardEnviro
 SimpleCommandLinePropertySource | 将命令行参数字符串数组转换成一个 CommandLineArgs对象，然后封装成一个属性源比如一个springboot应用SpringApplication启动时，如果提供了命令行参数，他们就会被封装成一个SimpleCommandLinePropertySource对象放到上下文环境中去。
 PropertiesPropertySource    | 继承自MapPropertySource,将一个java.util.Properties对象封装为属性源
 
-[![D6Wzi4.png](https://s3.ax1x.com/2020/11/29/D6Wzi4.png)](https://imgchr.com/i/D6Wzi4)
+![environment](../images/propertySource.png)
 
 ````java
 package org.springframework.core.env;
@@ -120,7 +118,7 @@ package org.springframework.core.env;
  * objects when in collection contexts. See operations in MutablePropertySources
  * as well as the #named(String) and #toString() methods for details.
  * 
- * PropertySource有一个唯一标识id，这个唯一标识id不是基于所封装的属性内容，而是基于指定给
+ * PropertySource 有一个唯一标识id，这个唯一标识id不是基于所封装的属性内容，而是基于指定给
  * 这个PropertySource对象的名称属性#getName()。
  *
  * Note that when working with
@@ -213,12 +211,12 @@ public abstract class PropertySource<T> {
 }
 
 ````
+---
+## PropertyResolver //属性解析
 
-### PropertyResolver //属性解析
+- Spring 使用接口PropertyResolver抽象了从`底层来源获取属性`的基本功能，和`解析${...}`这样的占位符的功能。
 
-Spring 使用接口PropertyResolver抽象了从底层来源获取属性的基本功能，和解析${...}这样的占位符的功能。
-
-#### 接口定义
+### 接口定义
 
 - boolean containsProperty(String key) – 是否包含某个属性
 
@@ -240,8 +238,7 @@ Spring 使用接口PropertyResolver抽象了从底层来源获取属性的基本
 
 - Spring框架将某个属性源抽象成了类PropertySource，又将多个属性源PropertySource组合抽象为接口PropertySources。
 
--
-对某个PropertySource对象中属性的解析，抽象成了接口PropertyResolver,而类PropertySourcesPropertyResolver则是Spring用于解析一个PropertySources对象中属性的工具类。
+- 对某个PropertySource对象中属性的解析，抽象成了接口PropertyResolver,而类PropertySourcesPropertyResolver则是Spring用于解析一个PropertySources对象中属性的工具类。
 
 - Spring应用Environment对象中对其PropertySources对象的属性解析，就是通过这样一个对象。
 
@@ -250,7 +247,7 @@ Spring 使用接口PropertyResolver抽象了从底层来源获取属性的基本
 private final ConfigurablePropertyResolver propertyResolver = new PropertySourcesPropertyResolver(this.propertySources);
 ````
 
-````
+````java
 package org.springframework.core.env;
 
 import org.springframework.lang.Nullable;
@@ -377,6 +374,7 @@ public class PropertySourcesPropertyResolver extends AbstractPropertyResolver {
 
 ````
 
+-----
 ### PropertyPlaceholderHelper
 
 #### 将字符串里的占位符内容，用我们配置的properties里的替换。这个是一个单纯的类，没有继承没有实现，而且也没简单，没有依赖Spring框架其他的任何类。
@@ -447,7 +445,7 @@ public class PropertySourcesPropertyResolver extends AbstractPropertyResolver {
 
 ````
 
-````
+````java
 private int findPlaceholderEndIndex(CharSequence buf, int startIndex) {
         //获取前缀后面一个字符的索引
 		int index = startIndex + this.placeholderPrefix.length();
