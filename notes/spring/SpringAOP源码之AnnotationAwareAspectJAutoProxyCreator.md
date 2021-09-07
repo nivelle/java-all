@@ -1,12 +1,12 @@
-### 1、AnnotationAwareAspectJAutoProxyCreator继承关系图。
+### 1、AnnotationAwareAspectJAutoProxyCreator 继承关系图。
 
-[![yzrTSg.md.png](https://s3.ax1x.com/2021/02/26/yzrTSg.md.png)](https://imgtu.com/i/yzrTSg)
+![yzrTSg.md.png](../images/AnnotationAwareAspectJAutoProxyCreator.png)
 
-- 他的父类实现了InstantiationAwareBeanPostProcessor、而该接口继承了后置处理器BeanPostProcessor接口，他的父类有这么几个实现方法
+- 他的父类实现了`InstantiationAwareBeanPostProcessor`、而该接口继承了后置处理器BeanPostProcessor接口，他的父类有这么几个实现方法
 
-````
-		//bean实例化前的回调操作
-@Override
+````java
+	//bean实例化前的回调操作
+     @Override
 	public Object postProcessBeforeInstantiation(Class<?> beanClass, String beanName) throws BeansException {
 	}
 		//bean实例化后的回调操作
@@ -28,12 +28,14 @@
 
 
 ````
-- 也就是说该类会在bean的实例化和初始化的前后起作用 
+ 也就是说该类会在bean的实例化和初始化的前后起作用 
   
- -【BeanPostProcessor是在Bean对象创建完成初始化前后调用的】
- - 【InstantiationAwareBeanPostProcessor是在创建Bean实例之前先尝试用后置处理器返回对象的】
+- BeanPostProcessor是在Bean对象创建完成初始化前后调用的
+ 
+- InstantiationAwareBeanPostProcessor是在创建Bean实例之前先尝试用后置处理器返回对象的
 
 ---------
+
 ### 那么接着介绍上述的方法是在bean创建的过程怎么起作用的
 
 - 容器在启动过程中，会有一个方法**finishBeanFactoryInitialization(beanFactory)** 这个是初始化容器中剩余的单实例bean
@@ -41,7 +43,7 @@
 
 - 在CreatBean方法中有一个方法、resolveBeforeInstantiation(beanName, mbdToUse);解析BeforeInstantiation会先尝试返回一个代理对象，如果返回不成功，那么就执行doCreatBea方法。
 
-````
+````java
 protected Object createBean(String beanName, RootBeanDefinition mbd, Object[] args) throws BeanCreationException {
 
    	try {
@@ -63,7 +65,7 @@ protected Object createBean(String beanName, RootBeanDefinition mbd, Object[] ar
 ````
 - 我们要重点关注一下resolveBeforeInstantiation这个方法，每次bean创建之前都会执行该方法，会先尝试返回一个代理对象。
 
-````
+````java
 	protected Object resolveBeforeInstantiation(String beanName, RootBeanDefinition mbd) {
    	Object bean = null;
    	if (!Boolean.FALSE.equals(mbd.beforeInstantiationResolved)) {
@@ -101,7 +103,7 @@ protected Object createBean(String beanName, RootBeanDefinition mbd, Object[] ar
    	}
 
 ````
-### 小结：
+## 小结：
 
 ````
 1、 当我们在创建bean的时候都会调用一个resolveBeforeInstantiation 尝试返回单实例bean
@@ -121,8 +123,3 @@ protected Object createBean(String beanName, RootBeanDefinition mbd, Object[] ar
    	4)、执行后置处理器的postProcessAfterInitialization（）；
 
 ````
-
-
------------------
-版权声明：本文为CSDN博主「莫失莫忘hh」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
-原文链接：https://blog.csdn.net/weixin_43732955/article/details/99109542
