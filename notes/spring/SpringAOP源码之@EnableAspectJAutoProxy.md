@@ -1,14 +1,11 @@
-### 1、源码分析
 
-#### （1）@EnableAspectJAutoProxy 【开启基于注解的aop模式】
+### @EnableAspectJAutoProxy 【开启基于注解的aop模式】
 
 - 进入这个注解，它通过@Import标签向容器当中导入了一个注册器。AspectJAutoProxyRegistrar
 
--
+- 其底层代码就是往容器注册了一个Bean，如果容器中不存在AUTO_PROXY_CREATOR_BEAN_NAME为这个的bean,那么就注册一个名字为这的bean.类型为AnnotationAwareAspectJAutoProxyCreator，
 
-其底层代码就是往容器注册了一个Bean，如果容器中不存在AUTO_PROXY_CREATOR_BEAN_NAME为这个的bean,那么就注册一个名字为这的bean.类型为AnnotationAwareAspectJAutoProxyCreator，
-
-````
+````java
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
@@ -41,20 +38,23 @@ public @interface EnableAspectJAutoProxy {
 
 ---
 
-[![yz3Bwj.md.png](https://s3.ax1x.com/2021/02/26/yz3Bwj.md.png)](https://imgtu.com/i/yz3Bwj)
+![AspectJAutoProxy](../images/aop-AspectJAutoProxy.png)
 
 顶部基类实现了BeanPostProcessor接口和BeanFactoryAware，说明这个类是一个后置处理器，并且初始化的时候，会自动装配BeanFactory。（后置处理器的作用时期是，创建完成初始化前后）
-小结：@EnableAspectJAutoProxy为容器中注册一个AnnotationAwareAspectJAutoProxyCreator后置处理器的定义信息。下面分析他是如何被创建的。
+
+### 小结：
+
+- @EnableAspectJAutoProxy为容器中注册一个`AnnotationAwareAspectJAutoProxyCreator`后置处理器的定义信息。下面分析他是如何被创建的。
 
 ----
 
-#### （2） AnnotationAwareAspectJAutoProxyCreator的创建过程。
+### AnnotationAwareAspectJAutoProxyCreator的创建过程。
 
 - 上面说到，注解@EnableAspectJAutoProxy为容器中导入了该类的注册信息，这仅仅是个注册信息，相当于在容器中添加了一个标识，但是实际上真正还没被实例化。
 
-- 初始化容器的过程中会创建后置处理器。具体调用时机在refresh()中的registerBeanPostProcessors(beanFactory);方法
+- 初始化容器的过程中会创建后置处理器。具体调用时机在refresh()中的 registerBeanPostProcessors(beanFactory)方法
 
-````
+````java
 	@Override
 	public void refresh() throws BeansException, IllegalStateException {
 		synchronized (this.startupShutdownMonitor) {
@@ -77,18 +77,17 @@ public @interface EnableAspectJAutoProxy {
 			}
 ````
 
-- registerBeanPostProcessors(beanFactory)的代码如下：
+#### registerBeanPostProcessors(beanFactory)的代码如下：
 
-````
+````java
 public static void registerBeanPostProcessors(ConfigurableListableBeanFactory beanFactory, AbstractApplicationContext applicationContext) {
-	   //获得容器中已经定义好了 需要被创建的所有的	BeanPostProcessor(后置处理器)
+	        //获得容器中已经定义好了 需要被创建的所有的	BeanPostProcessor(后置处理器)
 		String[] postProcessorNames = beanFactory.getBeanNamesForType(BeanPostProcessor.class, true, false);
-	   //额外添加一个后置处理器
+	        //额外添加一个后置处理器
 		int beanProcessorTargetCount = beanFactory.getBeanPostProcessorCount() + 1 + postProcessorNames.length;
 		beanFactory.addBeanPostProcessor(new BeanPostProcessorChecker(beanFactory, beanProcessorTargetCount));
 
-		//对后置处理器进行分离  分为：1、实现了priorityOrdered接口     2、实现了Ordered接口   3、原生的
-	    //在分离过程中还将MergedBeanDefinitionPostProcessor类型的分开来
+		//对后置处理器进行分离  分为：1、实现了priorityOrdered接口 2、实现了Ordered接口 3、原生的在分离过程中还将MergedBeanDefinitionPostProcessor类型的分开来
 		List<BeanPostProcessor> priorityOrderedPostProcessors = new ArrayList<BeanPostProcessor>();
 		List<BeanPostProcessor> internalPostProcessors = new ArrayList<BeanPostProcessor>();
 		List<String> orderedPostProcessorNames = new ArrayList<String>();
@@ -149,10 +148,11 @@ public static void registerBeanPostProcessors(ConfigurableListableBeanFactory be
 
 ````
 
-- beanFactory.getBean()方法如下如下,调用的是AbstarctBeanFactory这个类的getBean()方法。调用过程是 getBean---->doGetBean----->
-  getSingleton------->getObject-------->CreatBean------->doCreatBean
+#### beanFactory.getBean()方法如下,
 
-````
+- 调用的是AbstarctBeanFactory这个类的getBean()方法。调用过程是 getBean-->doGetBean-->getSingleton-->getObject-->CreatBean-->doCreatBean
+
+````java
 	@Override
 	public <T> T getBean(String name, Class<T> requiredType) throws BeansException {
 		//调用doGetBean
@@ -160,7 +160,7 @@ public static void registerBeanPostProcessors(ConfigurableListableBeanFactory be
 	}
 
 
-//doGetBean方法如下
+         //doGetBean方法如下
 		protected <T> T doGetBean(
 			final String name, final Class<T> requiredType, final Object[] args, boolean typeCheckOnly)
 			throws BeansException {
@@ -210,9 +210,11 @@ public static void registerBeanPostProcessors(ConfigurableListableBeanFactory be
 
 ````
 
-- createBean（）方法 :此方法是调用AbstractAutowireCapableBeanFactory这个类的
+#### createBean（）方法 
 
-````
+- 此方法是调用AbstractAutowireCapableBeanFactory这个类的
+
+````java
 	@Override
 	protected Object createBean(String beanName, RootBeanDefinition mbd, Object[] args) throws BeanCreationException {
 			// 部分代码省略
@@ -232,9 +234,9 @@ public static void registerBeanPostProcessors(ConfigurableListableBeanFactory be
 
 ````
 
-- doCreateBean（）方法 
+#### doCreateBean（）方法 
 
-````
+````java
 	protected Object doCreateBean(final String beanName, final RootBeanDefinition mbd, final Object[] args)
 			throws BeanCreationException {
 
@@ -260,10 +262,9 @@ public static void registerBeanPostProcessors(ConfigurableListableBeanFactory be
 
 ````
 
-- initializeBean(beanName, exposedObject, mbd)初始化方法;这也验证了后置处理器是在创建完成 初始化前后起作用的
+#### initializeBean(beanName, exposedObject, mbd)初始化方法;这也验证了后置处理器是在创建完成 初始化前后起作用的
 
-
-````
+````java
 protected Object initializeBean(final String beanName, final Object bean, RootBeanDefinition mbd) {
 			// 部分代码省略....
 			
@@ -291,11 +292,11 @@ protected Object initializeBean(final String beanName, final Object bean, RootBe
 ````
 ---------------
 
-#### 小结一下：AnnotationAwareAspectJAutoProxyCreator的创建过程： （因为@EnableAspectJAutoProxy为容器添加了一个该bean的定义信息在容器中）
+## 小结一下：AnnotationAwareAspectJAutoProxyCreator的创建过程：
 
+- 因为@EnableAspectJAutoProxy为容器添加了一个该bean的定义信息在容器中
 
 ````
-（因为@EnableAspectJAutoProxy为容器添加了一个该bean的定义信息在容器中）
 1、传入配置类，创建ioc容器
 2、注册配置类，调用refresh（）刷新容器；
 3、`registerBeanPostProcessors(beanFactory)`注册后置处理器
