@@ -91,7 +91,7 @@ PropertiesPropertySource    | 继承自MapPropertySource,将一个java.util.Prop
 
 [![D6Wzi4.png](https://s3.ax1x.com/2020/11/29/D6Wzi4.png)](https://imgchr.com/i/D6Wzi4)
 
-````
+````java
 package org.springframework.core.env;
 
 
@@ -245,7 +245,7 @@ Spring 使用接口PropertyResolver抽象了从底层来源获取属性的基本
 
 - Spring应用Environment对象中对其PropertySources对象的属性解析，就是通过这样一个对象。
 
-````
+````java
 // Spring Environment 实现类的抽象基类 AbstractEnvironment代码片段
 private final ConfigurablePropertyResolver propertyResolver = new PropertySourcesPropertyResolver(this.propertySources);
 ````
@@ -381,7 +381,7 @@ public class PropertySourcesPropertyResolver extends AbstractPropertyResolver {
 
 #### 将字符串里的占位符内容，用我们配置的properties里的替换。这个是一个单纯的类，没有继承没有实现，而且也没简单，没有依赖Spring框架其他的任何类。
 
-````
+````java
  protected String parseStringValue(String value, PropertyPlaceholderHelper.PlaceholderResolver placeholderResolver, @Nullable Set<String> visitedPlaceholders) {
         //获取路径中占位符前缀的索引
         int startIndex = value.indexOf(this.placeholderPrefix);

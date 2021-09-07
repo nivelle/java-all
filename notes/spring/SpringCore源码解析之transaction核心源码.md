@@ -121,7 +121,7 @@ public interface InitializingBean {
 - `引入（Introduction）`:允许我们向现有的类添加新方法或属性。
 - `织入（Weaving）`:织入是把切面应用到目标对象并创建新的代理对象的过程。
 
-#### 申明式事务
+## 申明式事务
 
 申明式事务整体调用过程，可以抽出2条线：
 
@@ -203,13 +203,13 @@ public class TransactionAutoConfiguration {
 
 
 ````
-#### 2个类注解
+### 2个类注解
 
-- @ConditionalOnClass(PlatformTransactionManager.class)即类路径下包含PlatformTransactionManager这个类时这个自动配置生效，这个类是spring事务的核心包，肯定引入了。
+- @ConditionalOnClass(PlatformTransactionManager.class) 即类路径下包含 PlatformTransactionManager 这个类时这个自动配置生效，这个类是spring事务的核心包，肯定引入了。
 
 - @AutoConfigureAfter({ JtaAutoConfiguration.class, HibernateJpaAutoConfiguration.class, DataSourceTransactionManagerAutoConfiguration.class, Neo4jDataAutoConfiguration.class })，这个配置在括号中的4个配置类后才生效。
 
-#### 2个内部类
+### 2个内部类
 
 - TransactionTemplateConfiguration事务模板配置类：
 
@@ -224,17 +224,16 @@ public class TransactionAutoConfiguration {
 
   - @ConditionalOnMissingBean(AbstractTransactionManagementConfiguration.class)当没有自定义抽象事务管理器配置类时才生效。（即用户自定义抽象事务管理器配置类会优先，如果没有，就用这个默认事务管理器配置类）
 
-##### EnableTransactionManagementConfiguration支持2种代理方式：
+#### EnableTransactionManagementConfiguration支持2种代理方式：
 
 - 1.JdkDynamicAutoProxyConfiguration：
-@EnableTransactionManagement(proxyTargetClass = false)，即proxyTargetClass = false表示是JDK动态代理支持的是：面向接口代理。
+  
+  - @EnableTransactionManagement(proxyTargetClass = false)，即proxyTargetClass = false表示是JDK动态代理支持的是：面向接口代理。
 
-@ConditionalOnProperty(prefix = "spring.aop", name = "proxy-target-class", havingValue = "false", matchIfMissing = false)，即spring.aop.proxy-target-class=false时生效，且没有这个配置不生效。
-
-
+  - @ConditionalOnProperty(prefix = "spring.aop", name = "proxy-target-class", havingValue = "false", matchIfMissing = false)，即spring.aop.proxy-target-class=false时生效，且没有这个配置不生效。
 - 2.CglibAutoProxyConfiguration：
-@EnableTransactionManagement(proxyTargetClass = true)，即proxyTargetClass = true标识Cglib代理支持的是子类继承代理。
-@ConditionalOnProperty(prefix = "spring.aop", name = "proxy-target-class", havingValue = "true", matchIfMissing = true)，即spring.aop.proxy-target-class=true时生效，且没有这个配置默认生效。
+  - @EnableTransactionManagement(proxyTargetClass = true)，即proxyTargetClass = true标识Cglib代理支持的是子类继承代理。
+  - @ConditionalOnProperty(prefix = "spring.aop", name = "proxy-target-class", havingValue = "true", matchIfMissing = true)，即spring.aop.proxy-target-class=true时生效，且没有这个配置默认生效。
 
 **注意了，默认没有配置，走的Cglib代理。说明@Transactional注解支持直接加在类上。**
 
@@ -259,11 +258,11 @@ public @interface EnableTransactionManagement {
 }
 ````
 
-重点看类注解@Import(TransactionManagementConfigurationSelector.class)TransactionManagementConfigurationSelector类图如下：
+- 重点看类注解@Import(TransactionManagementConfigurationSelector.class)TransactionManagementConfigurationSelector类图如下：
 
 ![声明式事务](../images/TransactionManagementConfigurationSelector类图.png)
 
-如上图所示，TransactionManagementConfigurationSelector继承自AdviceModeImportSelector实现了ImportSelector接口。
+- 如上图所示，TransactionManagementConfigurationSelector继承自AdviceModeImportSelector实现了ImportSelector接口。
 
 ````java
 public class TransactionManagementConfigurationSelector extends AdviceModeImportSelector<EnableTransactionManagement> {
@@ -334,24 +333,31 @@ public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, B
     }
 ````
 
-代理模式：AopConfigUtils.registerAutoProxyCreatorIfNecessary(registry);
+#### 代理模式：AopConfigUtils.registerAutoProxyCreatorIfNecessary(registry);
 
-最终调用的是：registerOrEscalateApcAsRequired(InfrastructureAdvisorAutoProxyCreator.class, registry, source);基础构建增强自动代理构造器
+- 最终调用的是: registerOrEscalateApcAsRequired(InfrastructureAdvisorAutoProxyCreator.class, registry, source);基础构建增强自动代理构造器
+
+- Escalate(升级)
 
 ````java
 private static BeanDefinition registerOrEscalateApcAsRequired(Class<?> cls, BeanDefinitionRegistry registry, Object source) {
-        Assert.notNull(registry, "BeanDefinitionRegistry must not be null");　　　　　　 //如果当前注册器包含internalAutoProxyCreator
-        if (registry.containsBeanDefinition(AUTO_PROXY_CREATOR_BEAN_NAME)) {//org.springframework.aop.config.internalAutoProxyCreator内部自动代理构造器
+        Assert.notNull(registry, "BeanDefinitionRegistry must not be null");　　　　　　 
+        //如果当前注册器包含:internalAutoProxyCreator
+        if (registry.containsBeanDefinition(AUTO_PROXY_CREATOR_BEAN_NAME)) {
+            //org.springframework.aop.config.internalAutoProxyCreator内部自动代理构造器
             BeanDefinition apcDefinition = registry.getBeanDefinition(AUTO_PROXY_CREATOR_BEAN_NAME);
-            if (!cls.getName().equals(apcDefinition.getBeanClassName())) {//如果当前类不是internalAutoProxyCreator
+            if (!cls.getName().equals(apcDefinition.getBeanClassName())) {
+                //如果当前类不是internalAutoProxyCreator
                 int currentPriority = findPriorityForClass(apcDefinition.getBeanClassName());
                 int requiredPriority = findPriorityForClass(cls);
-                if (currentPriority < requiredPriority) {//如果下标大于已存在的内部自动代理构造器，index越小，优先级越高,InfrastructureAdvisorAutoProxyCreator index=0,requiredPriority最小，不进入
+                if (currentPriority < requiredPriority) {
+                    //如果下标大于已存在的内部自动代理构造器，index越小，优先级越高,InfrastructureAdvisorAutoProxyCreator index=0,requiredPriority最小，不进入
                     apcDefinition.setBeanClassName(cls.getName());
                 }
             }
             return null;//直接返回
-        }//如果当前注册器不包含internalAutoProxyCreator，则把当前类作为根定义
+        }
+        //如果当前注册器不包含internalAutoProxyCreator，则把当前类作为根定义
         RootBeanDefinition beanDefinition = new RootBeanDefinition(cls);
         beanDefinition.setSource(source);
         beanDefinition.getPropertyValues().add("order", Ordered.HIGHEST_PRECEDENCE);//优先级最高
@@ -361,7 +367,7 @@ private static BeanDefinition registerOrEscalateApcAsRequired(Class<?> cls, Bean
     }
 ````
 
-如上图，APC_PRIORITY_LIST列表如下图：
+如上，APC_PRIORITY_LIST列表如下图：
 
 ````java
 /**
@@ -373,59 +379,62 @@ private static BeanDefinition registerOrEscalateApcAsRequired(Class<?> cls, Bean
      * 优先级上升list
      */
     static {
+        //基础设施
         APC_PRIORITY_LIST.add(InfrastructureAdvisorAutoProxyCreator.class);
         APC_PRIORITY_LIST.add(AspectJAwareAdvisorAutoProxyCreator.class);
         APC_PRIORITY_LIST.add(AnnotationAwareAspectJAutoProxyCreator.class);
     }
 ````
 
-如上图，由于InfrastructureAdvisorAutoProxyCreator这个类在list中第一个index=0,requiredPriority最小，不进入，所以没有重置beanClassName，啥都没做，返回null.
+如上，由于`InfrastructureAdvisorAutoProxyCreator`这个类在list中第一个index=0,requiredPriority最小，不进入，所以没有重置beanClassName，啥都没做，返回null.
 
 那么增强代理类何时生成呢？
 
-InfrastructureAdvisorAutoProxyCreator类图如下：
+`InfrastructureAdvisorAutoProxyCreator`类图如下：
+
 ![声明式事务](../images/InfrastructureAdvisorAutoProxyCreator类图.png)
 
 
 如上图所示，看2个核心方法：InstantiationAwareBeanPostProcessor接口的postProcessBeforeInstantiation实例化前+BeanPostProcessor接口的postProcessAfterInitialization初始化后
 
 ````java
-
-1     @Override
- 2     public Object postProcessBeforeInstantiation(Class<?> beanClass, String beanName) throws BeansException {
-        3         Object cacheKey = getCacheKey(beanClass, beanName);
-        4
-        5         if (beanName == null || !this.targetSourcedBeans.contains(beanName)) {
-        6             if (this.advisedBeans.containsKey(cacheKey)) {//如果已经存在直接返回
-        7                 return null;
-        8             }//是否基础构件（基础构建不需要代理）：Advice、Pointcut、Advisor、AopInfrastructureBean这四类都算基础构建
-        9             if (isInfrastructureClass(beanClass) || shouldSkip(beanClass, beanName)) {
-        10                 this.advisedBeans.put(cacheKey, Boolean.FALSE);//添加进advisedBeans ConcurrentHashMap<k=Object,v=Boolean>标记是否需要增强实现，这里基础构建bean不需要代理，都置为false，供后面postProcessAfterInitialization实例化后使用。
-        11                 return null;
-        12             }
-        13         }
-        14
-        15         // TargetSource是spring aop预留给我们用户自定义实例化的接口，如果存在TargetSource就不会默认实例化，而是按照用户自定义的方式实例化，咱们没有定义，不进入
-        18         if (beanName != null) {
-        19             TargetSource targetSource = getCustomTargetSource(beanClass, beanName);
-        20             if (targetSource != null) {
-        21                 this.targetSourcedBeans.add(beanName);
-        22                 Object[] specificInterceptors = getAdvicesAndAdvisorsForBean(beanClass, beanName, targetSource);
-        23                 Object proxy = createProxy(beanClass, beanName, specificInterceptors, targetSource);
-        24                 this.proxyTypes.put(cacheKey, proxy.getClass());
-        25                 return proxy;
-        26             }
-        27         }
-        28
-        29         return null;
-        30     }
+      @Override
+       public Object postProcessBeforeInstantiation(Class<?> beanClass, String beanName) throws BeansException {
+                 Object cacheKey = getCacheKey(beanClass, beanName);
+        
+                 if (beanName == null || !this.targetSourcedBeans.contains(beanName)) {
+                     if (this.advisedBeans.containsKey(cacheKey)) {//如果已经存在直接返回
+                         return null;
+                     }
+                     //是否基础构件（基础构建不需要代理）：Advice、Pointcut、Advisor、AopInfrastructureBean这四类都算基础构建
+                     if (isInfrastructureClass(beanClass) || shouldSkip(beanClass, beanName)) {
+                         this.advisedBeans.put(cacheKey, Boolean.FALSE);//添加进advisedBeans ConcurrentHashMap<k=Object,v=Boolean>标记是否需要增强实现，这里基础构建bean不需要代理，都置为false，供后面postProcessAfterInitialization实例化后使用。
+                         return null;
+                     }
+                 }
+        
+                 // TargetSource是spring aop预留给我们用户自定义实例化的接口，如果存在TargetSource就不会默认实例化，而是按照用户自定义的方式实例化，咱们没有定义，不进入
+                 if (beanName != null) {
+                     TargetSource targetSource = getCustomTargetSource(beanClass, beanName);
+                     if (targetSource != null) {
+                           this.targetSourcedBeans.add(beanName);
+                           Object[] specificInterceptors = getAdvicesAndAdvisorsForBean(beanClass, beanName, targetSource);
+                           //重点:创建代理类
+                           Object proxy = createProxy(beanClass, beanName, specificInterceptors, targetSource);
+                           this.proxyTypes.put(cacheKey, proxy.getClass());
+                           return prox
+                     }
+                 }
+         
+                  return null;
+}
 ````
 
-通过追踪，由于InfrastructureAdvisorAutoProxyCreator是基础构建类，advisedBeans.put(cacheKey, Boolean.FALSE)
+- 通过追踪，由于InfrastructureAdvisorAutoProxyCreator是基础构建类，advisedBeans.put(cacheKey, Boolean.FALSE)
 
-添加进advisedBeans ConcurrentHashMap<k=Object,v=Boolean>标记是否需要增强实现，这里基础构建bean不需要代理，都置为false，供后面postProcessAfterInitialization实例化后使用。
+- 添加进: advisedBeans ConcurrentHashMap<k=Object,v=Boolean>标记是否需要增强实现，这里基础构建bean不需要代理，都置为false，供后面: postProcessAfterInitialization实例化后使用。
 
-postProcessAfterInitialization源码如下：
+#### postProcessAfterInitialization源码如下：
 
 ````java
 @Override
@@ -442,10 +451,12 @@ postProcessAfterInitialization源码如下：
     protected Object wrapIfNecessary(Object bean, String beanName, Object cacheKey) {　　　　　　 // 如果是用户自定义获取实例，不需要增强处理，直接返回
         if (beanName != null && this.targetSourcedBeans.contains(beanName)) {
             return bean;
-        }// 查询map缓存，标记过false,不需要增强直接返回
+        }
+        // 查询map缓存，标记过false,不需要增强直接返回
         if (Boolean.FALSE.equals(this.advisedBeans.get(cacheKey))) {
             return bean;
-        }// 判断一遍springAOP基础构建类，标记过false,不需要增强直接返回
+        }
+        // 判断一遍springAOP基础构建类，标记过false,不需要增强直接返回
         if (isInfrastructureClass(bean.getClass()) || shouldSkip(bean.getClass(), beanName)) {
             this.advisedBeans.put(cacheKey, Boolean.FALSE);
             return bean;
@@ -454,9 +465,10 @@ postProcessAfterInitialization源码如下：
         // 获取增强List<Advisor> advisors
         Object[] specificInterceptors = getAdvicesAndAdvisorsForBean(bean.getClass(), beanName, null);　　　　　　 // 如果存在增强
         if (specificInterceptors != DO_NOT_PROXY) {
-            this.advisedBeans.put(cacheKey, Boolean.TRUE);// 标记增强为TRUE,表示需要增强实现　　　　　　　　  // 生成增强代理类
-            Object proxy = createProxy(
-                    bean.getClass(), beanName, specificInterceptors, new SingletonTargetSource(bean));
+            this.advisedBeans.put(cacheKey, Boolean.TRUE);
+            // 标记增强为TRUE,表示需要增强实现　　　　　　　　  
+             // 生成增强代理类
+            Object proxy = createProxy(bean.getClass(), beanName, specificInterceptors, new SingletonTargetSource(bean));
             this.proxyTypes.put(cacheKey, proxy.getClass());
             return proxy;
         }
@@ -466,25 +478,28 @@ postProcessAfterInitialization源码如下：
     }
 
 ````
-下面看核心方法createProxy如下：
+
+#### 下面看核心方法createProxy如下：
 
 ````java
-
 protected Object createProxy(
             Class<?> beanClass, String beanName, Object[] specificInterceptors, TargetSource targetSource) {
 　　　　 // 如果是ConfigurableListableBeanFactory接口（咱们DefaultListableBeanFactory就是该接口的实现类）则，暴露目标类
-        if (this.beanFactory instanceof ConfigurableListableBeanFactory) {　　　　　　　　  //给beanFactory->beanDefinition定义一个属性：k=AutoProxyUtils.originalTargetClass,v=需要被代理的bean class
+        if (this.beanFactory instanceof ConfigurableListableBeanFactory) {　
+           //给beanFactory->beanDefinition定义一个属性：k=AutoProxyUtils.originalTargetClass,v=需要被代理的bean class
             AutoProxyUtils.exposeTargetClass((ConfigurableListableBeanFactory) this.beanFactory, beanName, beanClass);
         }
 
         ProxyFactory proxyFactory = new ProxyFactory();
         proxyFactory.copyFrom(this);
 　　　　 //如果不是代理目标类
-        if (!proxyFactory.isProxyTargetClass()) {//如果beanFactory定义了代理目标类（CGLIB）
+        if (!proxyFactory.isProxyTargetClass()) {
+            //如果beanFactory定义了代理目标类（CGLIB）
             if (shouldProxyTargetClass(beanClass, beanName)) {
                 proxyFactory.setProxyTargetClass(true);//代理工厂设置代理目标类
             }
-            else {//否则设置代理接口（JDK）
+            else {
+                //否则设置代理接口（JDK）
                 evaluateProxyInterfaces(beanClass, proxyFactory);
             }
         }
