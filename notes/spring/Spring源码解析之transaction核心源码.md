@@ -13,11 +13,11 @@
 
 ### 2.1 编程式事务TransactionTemplate
 
-- 编程式事务，Spring已经给我们提供好了模板类TransactionTemplate，可以很方便的使用，如下图：
+- 编程式事务，Spring已经给我们提供好了模板类`TransactionTemplate`，可以很方便的使用，如下图：
 
 ![spring编程式事务](../images/spring编程式事务.png)
 
-- TransactionTemplate全路径名是：org.springframework.transaction.support.TransactionTemplate。看包名也知道了这是spring对事务的模板类。（...），看下类图先：
+- TransactionTemplate全路径名是：`org.springframework.transaction.support.TransactionTemplate`。看包名也知道了这是spring对事务的模板类. 看下类图先：
 
 ![spring事务继承结构](../images/spring事务继承结构.png)
 
@@ -55,6 +55,7 @@ public interface InitializingBean {
 }
 
 ````
+
 如上图，TransactionOperations这个接口用来执行事务的回调方法，InitializingBean这个是典型的spring bean初始化流程中的预留接口，专用用来在bean属性加载完毕时执行的方法。
 
 - TransactionTemplate的2个接口的impl方法做了什么？
@@ -111,14 +112,14 @@ public interface InitializingBean {
 
 #### AOP相关概念
 
-申明式事务使用的是spring AOP，即面向切面编程。（什么❓你不知道什么是AOP...一句话概括就是：把业务代码中重复代码做成一个切面，提取出来，并定义哪些方法需要执行这个切面。其它的自行百度吧...）AOP核心概念如下：
+申明式事务使用的是spring AOP，即面向切面编程。AOP核心概念如下：
 
-- 通知（Advice）:定义了切面(各处业务代码中都需要的逻辑提炼成的一个切面)做什么what+when何时使用。例如：前置通知Before、后置通知After、返回通知After-returning、异常通知After-throwing、环绕通知Around.
-- 连接点（Joint point）：程序执行过程中能够插入切面的点，一般有多个。比如调用方式时、抛出异常时。
-- 切点（Pointcut）:切点定义了连接点，切点包含多个连接点,即where哪里使用通知.通常指定类+方法 或者 正则表达式来匹配 类和方法名称。
-- 切面（Aspect）:切面=通知+切点，即when+where+what何时何地做什么。
-- 引入（Introduction）:允许我们向现有的类添加新方法或属性。
-- 织入（Weaving）:织入是把切面应用到目标对象并创建新的代理对象的过程。
+- `通知（Advice）`:定义了切面(各处业务代码中都需要的逻辑提炼成的一个切面)做什么what+when何时使用。例如：前置通知Before、后置通知After、返回通知After-returning、异常通知After-throwing、环绕通知Around.
+- `连接点（Joint point）`：程序执行过程中能够插入切面的点，一般有多个。比如调用方式时、抛出异常时。
+- `切点（Pointcut）`:切点定义了连接点，切点包含多个连接点,即where哪里使用通知.通常指定类+方法 或者 正则表达式来匹配 类和方法名称。
+- `切面（Aspect）`:切面=通知+切点，即when+where+what何时何地做什么。
+- `引入（Introduction）`:允许我们向现有的类添加新方法或属性。
+- `织入（Weaving）`:织入是把切面应用到目标对象并创建新的代理对象的过程。
 
 #### 申明式事务
 
