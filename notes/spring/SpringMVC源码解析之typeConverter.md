@@ -6,7 +6,7 @@
 
 #### 实现子类: TypeConverterDelegate()
 
-```
+```java
 public <T> T convertIfNecessary(@Nullable String propertyName, @Nullable Object oldValue, @Nullable Object newValue,
 			@Nullable Class<T> requiredType, @Nullable TypeDescriptor typeDescriptor) throws IllegalArgumentException {
 
@@ -240,7 +240,7 @@ public interface ConverterFactory<S, R> {
 
 - GenericConverter接口支持在多个不同的原类型和目标类型之间进行转换
 
-````
+````java
 public interface GenericConverter {
     
     //getConvertibleTypes方法就返回这个转换器支持的转换类型（一对一，一对多，多对多都可以满足）
@@ -277,7 +277,7 @@ public interface GenericConverter {
 
 #### ConditionalGenericConverter
 
-````
+````java
 public interface ConditionalGenericConverter extends GenericConverter, ConditionalConverter 
 
 public interface ConditionalConverter {
@@ -291,7 +291,7 @@ public interface ConditionalConverter {
 - 正如前言所说的，要实现自己的类型转换逻辑我们可以实现Converter接口、ConverterFactory接口和GenericConverter接口，ConverterRegistry接口就分别为这三种类型提供了对应的注册方法，至于里面的逻辑就可以发挥自己的设计能力进行设计实现了。
 
 - 对于ConversionService，Spring已经为我们提供了一个实现，它就是GenericConversionService，位于org.springframework.core.convert.support包下面，它实现了ConversionService接口和ConverterRegistry接口
-````
+````java
 public interface ConverterRegistry {  
      
     void addConverter(Converter<?, ?> converter);  
@@ -328,7 +328,7 @@ public interface Formatter<T> extends Printer<T>, Parser<T> {
 
 - HttpInputMessage 转为入参
 
-```
+```java
 protected <T> Object readWithMessageConverters(HttpInputMessage inputMessage, MethodParameter parameter,Type targetType) throws IOException, HttpMediaTypeNotSupportedException, HttpMessageNotReadableException {
 
 		MediaType contentType;
@@ -401,8 +401,7 @@ protected <T> Object readWithMessageConverters(HttpInputMessage inputMessage, Me
 
 - 返参转 HttpOutMessage
 
-```
-
+```java
 protected <T> void writeWithMessageConverters(@Nullable T value, MethodParameter returnType,ServletServerHttpRequest inputMessage, ServletServerHttpResponse outputMessage)
 			throws IOException, HttpMediaTypeNotAcceptableException, HttpMessageNotWritableException {
 		Object body;
