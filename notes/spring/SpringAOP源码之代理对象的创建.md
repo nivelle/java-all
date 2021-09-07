@@ -4,7 +4,7 @@
 
 - 正好容器中@EnableAspectJAutoProxy为我们添加了该类型的后置处理器。所以每次单实例bean创建的时候都会调用该方法。
 
-````
+````java
 	public Object postProcessBeforeInstantiation(Class<?> beanClass, String beanName) throws BeansException {
 		// 先尝试从缓存中获得该bean
 		Object cacheKey = getCacheKey(beanClass, beanName);
@@ -15,8 +15,7 @@
 			}
 			//回调子类重写的方法
 			//isInfrastructureClass(beanClass)判断是否是切面的基础类如:Advice Pointcut Advisor AopInfrastructureBean 否是切面（@Aspect）
-			//shouldSkip(beanClass,beanName)是否需要跳过
-		    //1、获得所有的增强器List<Advisor>遍历并且判断类型
+			//shouldSkip(beanClass,beanName)是否需要跳过 1、获得所有的增强器List<Advisor>遍历并且判断类型
 			if (isInfrastructureClass(beanClass) || shouldSkip(beanClass, beanName)) {
 				this.advisedBeans.put(cacheKey, Boolean.FALSE);
 				return null;
@@ -42,7 +41,7 @@
 
 - 2、postProcessAfterInstantiation 方法,当postProcessBeforeInstantiation返回的不为null 的时候才会执行下面的方法
 
-````
+````java
 public boolean postProcessAfterInstantiation(Object bean, String beanName) {
 		return true;
 	}
@@ -50,12 +49,12 @@ public boolean postProcessAfterInstantiation(Object bean, String beanName) {
 ````
 - 3、postProcessBeforeInitialization 方法
 
-因为尝试返回一个代理对象失败，所以将执行doCreateBean方法。创建一个bean。然后在创建完成初始化之前会调用
+  - 因为尝试返回一个代理对象失败，所以将执行doCreateBean方法。创建一个bean。然后在创建完成初始化之前会调用
 applyBeanPostProcessorsBeforeInitialization方法，这个方法的内部就是，遍历所有后置处理器并调用他们的postProcessBeforeInitialization方法。
 
-当然也会调用AnnotationAwareAspectJAutoProxyCreator的postProcessBeforeInitialization方法。他就会执行在每次创建bean的时候执行下面操作。
+  - 当然也会调用`AnnotationAwareAspectJAutoProxyCreator`的`postProcessBeforeInitialization`方法。他就会执行在每次创建bean的时候执行下面操作。
 
-``````
+``````java
 	@Override
 	public Object postProcessBeforeInitialization(Object bean, String beanName) {
 		return bean;
@@ -65,11 +64,11 @@ applyBeanPostProcessorsBeforeInitialization方法，这个方法的内部就是�
 
 - 4、postProcessAfterInitialization方法
 
-在调用完invokeInitMethods(beanName, wrappedBean, mbd); 初始化方法之后，也会遍历所有的后置处理器，执行他们的后置方法。
+  - 在调用完invokeInitMethods(beanName, wrappedBean, mbd); 初始化方法之后，也会遍历所有的后置处理器，执行他们的后置方法。
 
-所以每个bean创建的时候都会调用AnnotationAwareAspectJAutoProxyCreator的postProcessAfterInitialization方法。在这里也就是尝试创建一个代理对象。 前面都是准备工作。
+  - 所以每个bean创建的时候都会调用`AnnotationAwareAspectJAutoProxyCreator`的`postProcessAfterInitialization`方法。在这里也就是尝试创建一个代理对象。 前面都是准备工作。
 
-``````
+``````java
 	@Override
 	public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
 		if (bean != null) {
@@ -133,5 +132,3 @@ ObjenesisCglibAopProxy(config);cglib的动态代理；
 ```````````
 
 ------------
-版权声明：本文为CSDN博主「莫失莫忘hh」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
-原文链接：https://blog.csdn.net/weixin_43732955/article/details/99121404

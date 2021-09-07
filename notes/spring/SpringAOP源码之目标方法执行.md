@@ -1,8 +1,8 @@
-### 目标方法执行
+## 目标方法执行
 
-[![69kQrq.md.png](https://s3.ax1x.com/2021/02/27/69kQrq.md.png)](https://imgtu.com/i/69kQrq)
+![69kQrq.md.png](../images/代理类.png)
 
-````
+````java
 	    @Override
 		public Object intercept(Object proxy, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
 			     // --------------------部分代码省略-------------------
@@ -45,9 +45,9 @@
 - 如果有拦截器链那么获取一个CglibMethodInvocation对象 
 - Object retVal = mi.proceed(); 推动拦截器 
 
-#### 尝试返回一个拦截器链 getInterceptorsAndDynamicInterceptionAdvice
+### 尝试返回一个拦截器链 getInterceptorsAndDynamicInterceptionAdvice
 
-`````
+`````java
 	public List<Object> getInterceptorsAndDynamicInterceptionAdvice(Method method, Class<?> targetClass) {
 		// 尝试从缓存中获取
 		MethodCacheKey cacheKey = new MethodCacheKey(method);
@@ -62,9 +62,9 @@
 	
 `````
 
--  DefaultAdvisorChainFactory.getInterceptorsAndDynamicInterceptionAdvice方法
+#### DefaultAdvisorChainFactory.getInterceptorsAndDynamicInterceptionAdvice方法
 
-````
+````java
 	@Override
 	public List<Object> getInterceptorsAndDynamicInterceptionAdvice(Advised config, Method method, Class<?> targetClass) {
 		//创建一个增强器链条的list集合 在后面会不断向里面增加拦截器
@@ -113,13 +113,13 @@
 
 `````
 
-- 这个方法的主要作用就是 将所有增强器方法中需转换的 转换成为MethodInterceptor类型，也就是拦截器链。然后如果有拦截器链，就会执行#4方法
+- 这个方法的主要作用就是 将所有增强器方法中需转换的 转换成为`MethodInterceptor`类型，也就是拦截器链。然后如果有拦截器链，就会执行#4方法
 
 #### 如果有拦截器链，则执行 该步骤-》new CglibMethodInvocation().process()方法执行器的调用
 
 - 拦截器链该是如何进行调用的。我们说的拦截器链条，就是我们定义的那些通知方法比如:前置通知，后置通知，返回通知 异常通知
 
-````
+````java
 	@Override
 	public Object proceed() throws Throwable {
 		//	currentInterceptorIndex 的默认初始值为-1
@@ -156,7 +156,7 @@
 
 #### 第一个拦截器是ExposeInvocationInterceptor，进入他的invoke方法(这是它内部自带的一个通知方法)，下面代码有一个重要的一句话mi.proceed(),他也执行了mi.proceed方法
 
-````
+````java
 	@Override
 	public Object invoke(MethodInvocation mi) throws Throwable {
 		MethodInvocation oldInvocation = invocation.get();
@@ -172,7 +172,7 @@
 ````
 - mi.proceed()方法，也就回到我们一开始调用的proceed()方法体中，重复又执行一遍逻辑，只不过获取到的是另外一个拦截器
 
-````
+````java
 	@Override
 	public Object proceed() throws Throwable {
 		//判断 是否到达最后一个
@@ -190,7 +190,7 @@
 
 #### 第二个拦截器是AspectJAfterThrowingAdvice，同样进入他的invoke方法，代码如下：
 
-````
+````java
 	@Override
 	public Object invoke(MethodInvocation mi) throws Throwable {
 		try {
@@ -208,7 +208,7 @@
 
 - 如出一辙它也是调用MethodInvocation 的proceed()方法，也就有由进入下面这段代码
 
-````
+````java
 @Override
 	public Object proceed() throws Throwable {
 		//判断 是否到达最后一个
@@ -227,7 +227,7 @@
 
 ##### 第三个AspectJAfterReturningAdvice返回通知，同样它由调用返回通知的invoke(this)方法，就这样形成了一个链条
   
-````
+````java
 	@Override
 	public Object invoke(MethodInvocation mi) throws Throwable {
 		//调用前置通知方法
@@ -238,13 +238,13 @@
 
 
 ````
-#### 第四个拦截器MethodBeforeAdviceInterceptor的方法代码
+#### 第四个拦截器 MethodBeforeAdviceInterceptor 的方法代码
 
-[![69Fygs.md.png](https://s3.ax1x.com/2021/02/27/69Fygs.md.png)](https://imgtu.com/i/69Fygs)
+![MethodBeforeAdviceInterceptor](../images/MethodBeforeAdviceInterceptor.png)
 
 ----
 
 
 ### 环绕通知
 
-[![69Fguq.md.png](https://s3.ax1x.com/2021/02/27/69Fguq.md.png)](https://imgtu.com/i/69Fguq)
+![aroundAdvice](../images/aroundAdvice.png)
