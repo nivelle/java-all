@@ -201,7 +201,7 @@
 
         - checkThatConnectorsHaveStarted();// 检查确保Connector已经启动，如果没启动，抛出异常
 
-#### 总结
+## 总结
 
 - Spring Boot利用Spring的启动的refresh()模板方法，在onRefresh阶段将WebServer进行创建。而在finishRefresh阶段完成服务器的启动，其本质就是Runnable的run方法的调用
 
