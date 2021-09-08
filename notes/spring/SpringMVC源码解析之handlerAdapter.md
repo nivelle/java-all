@@ -2,7 +2,7 @@
 
 #### SimpleControllerHandlerAdapter //直接处理 HttpServletRequest , HttpServletResponse
 
-```
+```java
 public class SimpleControllerHandlerAdapter implements HandlerAdapter {
 
 	@Override

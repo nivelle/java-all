@@ -13,7 +13,7 @@ public @interface EnableWebMvc {
 
 ### DelegatingWebMvcConfiguration
 
-````
+````java
 
 public class DelegatingWebMvcConfiguration extends WebMvcConfigurationSupport {
 
