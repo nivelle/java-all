@@ -1,8 +1,8 @@
-#### Spring容器的 refresh() 方法，synchronized (this.startupShutdownMonitor)实现同步
+## Spring容器的 refresh() 方法，synchronized (this.startupShutdownMonitor)实现同步
 
-#### 第一步:prepareRefresh(); 刷新前的预处理:(Prepare this context for refreshing.)
+### 第一步:prepareRefresh(); 刷新前的预处理:(Prepare this context for refreshing.)
 
-(1) initPropertySources();//初始化一些属性设置,默认不做任何处理,留给子类自定义属性设置方法;//servletContextInitParams 和 servletConfigInitParams
+#### (1) initPropertySources();//初始化一些属性设置,默认不做任何处理,留给子类自定义属性设置方法;servletContextInitParams 和 servletConfigInitParams
 
        - AbstractRefreshableWebApplicationContext
        
@@ -12,7 +12,7 @@
          
            - WebApplicationContextUtils.initServletPropertySources(getPropertySources(), servletContext, servletConfig);//解析 servletContextInitParams 和 servletConfigInitParams 参数
 
-(2) getEnvironment().validateRequiredProperties();//校验非空属性是否设置了值，没有设置的话抛出异常(MissingRequiredPropertiesException)
+#### (2) getEnvironment().validateRequiredProperties();//校验非空属性是否设置了值，没有设置的话抛出异常(MissingRequiredPropertiesException)
 ;//Validate that all properties marked as required are resolvable:see ConfigurablePropertyResolver#setRequiredProperties
 
        - systemEnvironment

@@ -26,6 +26,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.HandlerMapping;
@@ -39,6 +40,7 @@ import java.io.PrintWriter;
 import java.util.*;
 
 @RestController
+@Validated
 public class SpringAllTestController implements ApplicationContextAware {
 
     @Autowired
@@ -64,6 +66,12 @@ public class SpringAllTestController implements ApplicationContextAware {
     ApplicationContext applicationContext;
 
     ///springMVC核心注解
+
+    @RequestMapping("/getTest")
+    public Object getTest(@RequestParam(required = true ,defaultValue = "2") String value) {
+        System.out.println(value);
+        return value;
+    }
 
     /**
      * 获取某个请求头
@@ -481,6 +489,8 @@ public class SpringAllTestController implements ApplicationContextAware {
         System.err.println(user);
         return user;
     }
+
+
 
     /**
      * 默认加载类
