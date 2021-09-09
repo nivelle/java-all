@@ -54,7 +54,7 @@ public boolean processSocket(SocketWrapperBase<S> socketWrapper, SocketEvent eve
 
 ##### NioEndpoint重写了父类AbstractEndpoint的方法 createSocketProcessor
 
-```
+```java
 @Override
     protected SocketProcessorBase<NioChannel> createSocketProcessor(SocketWrapperBase<NioChannel> socketWrapper, SocketEvent event) {
         return new SocketProcessor(socketWrapper, event);
@@ -64,7 +64,7 @@ public boolean processSocket(SocketWrapperBase<S> socketWrapper, SocketEvent eve
 
 #### SocketProcessor 套接字处理器
 
-```
+```java
  protected class SocketProcessor extends SocketProcessorBase<NioChannel> {
         public SocketProcessor(SocketWrapperBase<NioChannel> socketWrapper, SocketEvent event) {
             super(socketWrapper, event);
@@ -145,7 +145,7 @@ public boolean processSocket(SocketWrapperBase<S> socketWrapper, SocketEvent eve
 
 #### public abstract class AbstractProcessorLight implements Processor
 
-```
+```java
 public SocketState process(SocketWrapperBase<?> socketWrapper, SocketEvent status)throws IOException {
         SocketState state = SocketState.CLOSED;
         Iterator<DispatchType> dispatches = null;
