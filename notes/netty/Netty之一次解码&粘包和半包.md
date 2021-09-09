@@ -14,22 +14,19 @@
 
 ### 解决问题的根本方法:找出消息的边界的方式
 
-1. tcp连接改成短连接，一个请求一个短连接
-
-2. 固定长度,比较浪费空间
-
-3. 分割符,特殊处理分割符
-
-4. 固定长度字段存内容的长度信息
+- tcp连接改成短连接，一个请求一个短连接
+- 固定长度,比较浪费空间
+- 分割符,特殊处理分割符
+- 固定长度字段存内容的长度信息
 
 **后面三种都是采用分帧方式实现确定消息边界**
 
 ### Netty对三种常用分帧方式的支持,解码器抽象类：ByteToMessageDecoder
 
-1. 固定长度:FixedLengthFrameDecoder ; int frameLength
+-  固定长度:FixedLengthFrameDecoder ; int frameLength
 
-2. 分割符: DelimiterBasedFrameDecoder  byteBuf[] delimiters
+- 分割符: DelimiterBasedFrameDecoder  byteBuf[] delimiters
 
-3. 固定长度字段存内容的长度信息:LengthFieldBasedFrameDecoder (LengthFiledOffset、LengthFieldLength、lengthAdjustment、initialBytesToStrip)
+- 固定长度字段存内容的长度信息:LengthFieldBasedFrameDecoder (LengthFiledOffset、LengthFieldLength、lengthAdjustment、initialBytesToStrip)
 
-4. 行解码器:LineBasedFrameDecode 
+- 行解码器:LineBasedFrameDecode 
