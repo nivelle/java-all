@@ -1,27 +1,27 @@
-### nginx 基础指令
+## nginx 基础指令
 
-#### 启动
+### 启动
 
 ```
  nginx -s start;
 
 ```
 
-#### 重新启动，热启动，修改配置重启不影响线上
+### 重新启动，热启动，修改配置重启不影响线上
 
 ```
 nginx -s reload;
 
 ```
 
-#### 关闭
+### 关闭
 
 ```
 nginx -s stop;
 
 ```
 
-#### 修改配置后，可以通过下面的命令测试是否有语法错误
+### 修改配置后，可以通过下面的命令测试是否有语法错误
 
 ```
 nginx -t;
@@ -30,23 +30,23 @@ nginx -t;
 
 ### web服务器的 nginx.conf 配置文件解读
 
-#### 指定执行 nginx的 worker process的用户
+### 指定执行 nginx的 worker process的用户
 
 ```
 user  nobody;
 
 ```
 
-#### 工作进程数,通常将其设成CPU的个数或者内核数
+### 工作进程数,通常将其设成CPU的个数或者内核数
 
 ```
 worker_processes  1;
 
 ```
 
-#### 定义 nginx 在哪里打日志
+### 定义 nginx 在哪里打日志
 
-```
+```nginx
 error_log(关键字)    <FILE>(日志文件)    <LEVEL>(错误日志级别);
 
 1. 关键字：其中关键字error_log不能改变
@@ -59,11 +59,15 @@ error_log(关键字)    <FILE>(日志文件)    <LEVEL>(错误日志级别);
 
 ```
 
-#### pid  logs/nginx.pid; //nginx 进程ID（PID）;定nginx进程运行文件存放地址
+### pid  logs/nginx.pid; 
+
+- nginx 进程ID（PID）; 
+  
+- 定nginx进程运行文件存放地址
 
 #### 配置影响 nginx 服务器或与用户的网络连接。有每个进程的最大连接数,选取哪种事件驱动模型处理连接请求,是否允许同时接受多个网路连接,开启多个网络连接序列化等。
 
-```
+```nginx
 events { 
     accept_mutex on;   // 设置网路连接序列化，防止惊群现象发生，默认为on
     multi_accept on;  //设置一个进程是否同时接受多个网络连接，默认为off
@@ -74,18 +78,18 @@ events {
 
 ```
 
-##### worker_connections,connections不是随便设置的，而是与两个指标有重要关联，一是内存，二是操作系统级别的“进程最大可打开文件数”
+#### worker_connections,connections不是随便设置的，而是与两个指标有重要关联，一是内存，二是操作系统级别的“进程最大可打开文件数”
 
 - 内存:每个连接数分别对应一个read_event、一个write_event事件，一个连接数大概占用232字节，2个事件总占用96字节，那么一个连接总共占用328字节，通过数学公式可以算出100000个连接数大概会占用 31M =
   100000 * 328 / 1024 / 1024，当然这只是nginx启动时，connections连接数所占用的nginx。
 
-- 进程最大可打开文件数：进程最大可打开文件数受限于操作系统，可通过 ulimit -n
-  命令查询，以前是1024，现在是65535,nginx提供了worker_rlimit_nofile指令，这是除了ulimit的一种设置可用的描述符的方式。
+- 进程最大可打开文件数：进程最大可打开文件数受限于操作系统，可通过 `ulimit -n`
+  命令查询，以前是1024，现在是65535,nginx提供了`worker_rlimit_nofile`指令，这是除了ulimit的一种设置可用的描述符的方式。
   该指令与使用ulimit对用户的设置是同样的效果。此指令的值将覆盖ulimit的值，如：worker_rlimit_nofile 20960;
 
   设置ulimits：ulimit -SHn 65535
 
-```
+```nginx
 http {
     include       mime.types;  // 在/opt/nginx/conf/mime.types写的配置将在http模块中解析,文件扩展名与文件类型映射表 
     
@@ -171,11 +175,11 @@ http {
 
 ```
 
-#### 主要关键词
+### 主要关键词
 
 - location
 
-```
+```nginx
 
 完全匹配  =;大小写敏感 ~;忽略大小写 ~*
     
@@ -192,30 +196,30 @@ http {
 
 - Rewrite 重定向
 
-```
+```nginx
 location /users/ {
     rewrite ^/users/(.*)$ /show?user=$1 break;
 }
 
 ```
 
-重写类型：
+#### 重写类型：
 
-last ：相当于Apache里德(L)标记，表示完成rewrite，浏览器地址栏URL地址不变
+- last ：相当于Apache里德(L)标记，表示完成rewrite，浏览器地址栏URL地址不变
 
-break；本条规则匹配完成后，终止匹配，不再匹配后面的规则，浏览器地址栏URL地址不变
+- break；本条规则匹配完成后，终止匹配，不再匹配后面的规则，浏览器地址栏URL地址不变
 
-redirect：返回302临时重定向，浏览器地址会显示跳转后的URL地址
+- redirect：返回302临时重定向，浏览器地址会显示跳转后的URL地址
 
-permanent：返回301永久重定向，浏览器地址栏会显示跳转后的URL地址
+- permanent：返回301永久重定向，浏览器地址栏会显示跳转后的URL地址
 
 ---
 
 #### 反向代理服务器配置
 
-```
+```nginx
 upstream baidunode {
-server 172.25.0.105:8081 weight=10 max_fails=3     fail_timeout=30s;
+      server 172.25.0.105:8081 weight=10 max_fails=3     fail_timeout=30s;
 }
 location / {
 
@@ -237,13 +241,13 @@ location / {
 
 ```
 
-#### upstream(负载均衡)
+### upstream(负载均衡)
 
-##### Nginx提供了两种负载均衡策略:内置策略和扩展策略。大家可以通过upstream这个配置，写一组被代理的服务器地址，然后配置负载均衡的算法。
+#### Nginx提供了两种负载均衡策略:内置策略和扩展策略。大家可以通过upstream这个配置，写一组被代理的服务器地址，然后配置负载均衡的算法。
 
 - 热备
 
-```
+```nginx
 upstream mysvr { 
       server 127.0.0.1:7878; 
       server 192.168.10.121:3333 backup;  //热备  当一台服务器发生事故时，才启用第二台服务器给提供服务。比如127.0.0.1 挂了，就启动192.168.10.121。
@@ -252,8 +256,8 @@ upstream mysvr {
 ```
 
 - 轮询
-
-```
+  
+```nginx
 upstream mysvr { 
       server 127.0.0.1:7878; 
       server 192.168.10.121:3333; //Nginx 轮询的默认权重是1。 所以请求顺序就是ABABAB....交替
@@ -263,7 +267,7 @@ upstream mysvr {
 
 - 加权轮询
 
-```
+```nginx
 upstream mysvr { 
       server 127.0.0.1:7878 weight=1; //根据权重大小，分发给不同服务器不同数量请求。如下配置的请求顺序为：ABBABBABBABB.....。可以针对不同服务器的性能，配置不同的权重。
       server 192.168.10.121:3333 weight=2;
@@ -273,7 +277,7 @@ upstream mysvr {
 
 - ip_hash
 
-```
+```nginx
 upstream mysvr { 
       server 127.0.0.1:7878;  //让相同客户端ip请求相同的服务器。对客户端请求的ip进行hash操作，然后根据hash结果将同一个客户端ip的请求分发给同一台服务器进行处理，可以解决session不共享的问题。
       server 192.168.10.121:3333;
@@ -284,7 +288,7 @@ upstream mysvr {
 
 - fair
 
-```
+```nginx
 upstream mysvr { 
       server 127.0.0.1:7878;  // 按后端服务器的响应时间来分配请求，响应时间短的优先分配。与weight分配策略类似。                              
       server 192.168.10.121:3333;
@@ -295,7 +299,7 @@ upstream mysvr {
 
 - url_hash
 
-```
+```nginx
 upstream mysvr{ 
       server 127.0.0.1:7878;  // 按访问url的hash结果来分配请求，使每个url定向到同一个后端服务器，后端服务器为缓存时比较有效。                                                              
       server 192.168.10.121:3333;
@@ -305,7 +309,7 @@ upstream mysvr{
 
 ```
 
-##### upstream还可以为每个设备设置状态值，这些状态值的含义分别如下：
+#### upstream还可以为每个设备设置状态值，这些状态值的含义分别如下：
 
 - down 表示单前的server暂时不参与负载.
 
