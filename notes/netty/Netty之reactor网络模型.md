@@ -6,7 +6,7 @@ BIO | NIO |AIO
 ---|---|---
 Thread-Per-Connection | Reactor | Proactor
 
-#### Reactor开发模式的核心流程
+### Reactor开发模式的核心流程
 
 - 注册感兴趣的事件
 
@@ -20,30 +20,31 @@ client | SocketChannel| |Y|Y|Y
 server | ServerSocketChannel|Y|||
 client | SocketChannel| | |Y|Y
 
-#### 单线程模式
+### reactor 单线程模式
 
 ![netty 单线程模式.png](https://i.loli.net/2021/05/15/42PErxiKT3qOIso.png)
-````
+
+````java
 EventLoopGroup boss = new NioEventLoopGroup(1);
 ServerBootstrap b = new ServerBootstrap();
 b.group(boss);
 ````
 
-#### 多线程模式
+### reactor 多线程模式
 
 ![reactor多线程模式.png](https://i.loli.net/2021/05/15/zV87DbXl6BA2Jax.png)
 
-````
+````java
 EventLoopGroup boss = new NioEventLoopGroup();//根据CPU核数计算一个最优的线程数
 
 ServerBootstrap b = new ServerBootstrap();
 b.group(boss);
 ````
 
-#### 主从Reactor模式
+### 主从Reactor模式
 
 ![netty reactor模式.png](https://i.loli.net/2021/05/15/q4luJ6zVEg2sWmo.png)
-````
+````java
 EventLoopGroup boss = new NioEventLoopGroup();
 EventLoopGroup worler = new NioEventLoopGroup();
 
