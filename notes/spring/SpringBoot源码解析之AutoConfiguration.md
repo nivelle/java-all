@@ -1,8 +1,8 @@
-### SpringBoot 之自动配置
+## SpringBoot的自动配置
 
-#### 1. springBoot隐含的自动依赖
+### 1. springBoot隐含的自动依赖
 
-```
+```java
   //   org.springframework.boot:spring-boot-starter
 	    //   |--org.springframework.boot:spring-boot
 	    //   |--org.springframework.boot:spring-boot-autoconfigure
@@ -12,7 +12,7 @@
 
 ```
 
-#### 2. 自动配置注解
+### 2. 自动配置注解
 
 ````java
 - @SpringBootApplication
@@ -23,22 +23,18 @@
 
         - public String[] selectImports(AnnotationMetadata annotationMetadata)
 
-            - AutoConfigurationMetadata autoConfigurationMetadata = AutoConfigurationMetadataLoader.loadMetadata(
-              this.beanClassLoader);
+            - AutoConfigurationMetadata autoConfigurationMetadata = AutoConfigurationMetadataLoader.loadMetadata(this.beanClassLoader);
 
-                - loadMetadata(classLoader, PATH);// PATH = "META-INF/" + "spring-autoconfigure-metadata.properties"
-                  ;加载MetaData数据
+                - loadMetadata(classLoader, PATH);// PATH = "META-INF/" + "spring-autoconfigure-metadata.properties";加载MetaData数据
 
-            - AutoConfigurationEntry autoConfigurationEntry = getAutoConfigurationEntry(
-              autoConfigurationMetadata,annotationMetadata);
+            - AutoConfigurationEntry autoConfigurationEntry = getAutoConfigurationEntry(autoConfigurationMetadata,annotationMetadata);
 
                 - AnnotationAttributes attributes = getAttributes(annotationMetadata);
 
                 - List<String> configurations = getCandidateConfigurations(annotationMetadata, attributes); //自动配置加载默认的
                     - List<String> configurations = SpringFactoriesLoader.loadFactoryNames(
                       getSpringFactoriesLoaderFactoryClass(),getBeanClassLoader()); //加载META-INF/spring.factories下的自动配置
-                        - loadSpringFactories(classLoader).getOrDefault(factoryTypeName, Collections.emptyList()); //使用
-                          LinkedHashSet实现移除冲突的配置
+                        - loadSpringFactories(classLoader).getOrDefault(factoryTypeName, Collections.emptyList()); //使用LinkedHashSet实现移除冲突的配置
                 - configurations = removeDuplicates(configurations); //获取配置除外的配置
                 - Set<String> exclusions = getExclusions(annotationMetadata, attributes);
 
@@ -47,8 +43,7 @@
                 - configurations.removeAll(exclusions);//移除需要被除外的配置
 
                 - configurations = filter(configurations, autoConfigurationMetadata);
-
-                  ```
+                
                   1. 应用过滤器AutoConfigurationImportFilter，对于 spring boot autoconfigure，定义了一个需要被应用的过滤器:org.springframework.boot.autoconfigure.condition.OnClassCondition,
                      
                      此过滤器检查候选配置类上的注解@ConditionalOnClass，如果要求的类在classpath中不存在，则这个候选配置类会被排除掉
@@ -58,9 +53,7 @@
                      的属性定义的过滤器类并实例化。AutoConfigurationImportFilter过滤器可以被注册到 spring.factories用于对自动配置类做一些限制，在这些自动配置类的字节码被读取之前做快速排除处理。
                      
                      spring boot autoconfigure 缺省注册了一个 AutoConfigurationImportFilter:org.springframework.boot.autoconfigure.condition.OnClassCondition.也就是检查当前Class是否存在不存在的话满足过滤条件
-                  
-                  ```
-
+        
                 - fireAutoConfigurationImportEvents(configurations, exclusions);//触发事件
 
                 - return new AutoConfigurationEntry(configurations, exclusions);
@@ -69,29 +62,32 @@
 ````
 
 
-#### 3. 应用启动时 ConfigurationClassPostProcessor 的注册 [SpringBoot run()方法prepareContext创建BeanDefinitionReader时构造ConfigurationClassPostProcessor注册](./SpringBoot源码解析之run()方法.md)
+### 3. 应用启动时 ConfigurationClassPostProcessor 的注册
 
-1. **ConfigurationClassPostProcessor
-   被设计用来发现所有的配置类和相关的Bean定义并注册到容器，它在所有BeanFactoryPostProcessor中具备最高执行优先级，因为其他BeanFactoryPostProcessor需要基于注册了Bean定义工作。**
+- [SpringBoot run()方法prepareContext创建BeanDefinitionReader时构造ConfigurationClassPostProcessor并注册](./SpringBoot源码解析之run()方法.md)
 
-2. **ConfigurationClassPostProcessor.postProcessBeanFactory()会将识别这些配置类中定义的bean并将它们注册到容器。**
+- **ConfigurationClassPostProcessor 被设计用来发现所有的配置类和相关的Bean定义并注册到容器，它在所有BeanFactoryPostProcessor中具备最高执行优先级，因为其他BeanFactoryPostProcessor需要基于注册了Bean定义工作。**
 
-3. PostProcessorRegistrationDelegate#invokeBeanFactoryPostProcessors()
+-  **ConfigurationClassPostProcessor.postProcessBeanFactory()会将识别这些配置类中定义的bean并将它们注册到容器。**
+
+- PostProcessorRegistrationDelegate#invokeBeanFactoryPostProcessors()
    方法会先应用所有的BeanDefinitionRegistryPostProcessor的方法postProcessBeanDefinitionRegistry()
    ，直到参数指定的或者容器中所有的这些BeanDefinitionRegistryPostProcessor的该方法都被执行完，然后执行所有的BeanFactoryPostProcessor的方法postProcessBeanFactory()
    直到参数指定的或者容器中所有的这些BeanFactoryPostProcessor的该方法都被执行完。
 
-   
+---   
 - AbstractApplicationContext.refresh()
 
     - invokeBeanFactoryPostProcessors()
 
     - PostProcessorRegistrationDelegate#invokeBeanFactoryPostProcessors(); [refresh()第五步](Spring源码解析之refresh()方法.md)
 
-        - public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry)
-          ;//使用工具ConfigurationClassParser尝试发现所有的配置(@Configuration)
-          类，使用工具ConfigurationClassBeanDefinitionReader注册所发现的配置类中所有的bean定义。结束执行的条件是所有配置类都被发现和处理,相应的bean定义注册到容器
-
+        - public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry)；
+          ````
+          使用工具ConfigurationClassParser尝试发现所有的配置(@Configuration)类，
+          使用工具ConfigurationClassBeanDefinitionReader注册所发现的配置类中所有的bean定义。
+          结束执行的条件是所有配置类都被发现和处理,相应的bean定义注册到容器
+          ````
         - int registryId = System.identityHashCode(registry); =>this.registriesPostProcessed.add(registryId);
 
         - processConfigBeanDefinitions(registry);//处理配置类的bean定义信息,Build and validate a configuration model based on the
@@ -121,13 +117,11 @@
 
         - else if (ConfigurationClassUtils.checkConfigurationClassCandidate(beanDef,this.metadataReaderFactory))
 
-            - configCandidates.add(new BeanDefinitionHolder(beanDef, beanName));//
-              如果这个Bean定义有注解@Configuration，将其记录为候选配置类
+            - configCandidates.add(new BeanDefinitionHolder(beanDef, beanName));// 如果这个Bean定义有注解@Configuration，将其记录为候选配置类
 
         - if (configCandidates.isEmpty()) return; //一个候选配置类都没有找到，直接返回
 
-        - Collections.sort(configCandidates, new Comparator<BeanDefinitionHolder>());//Sort by previously determined
-          @Order value, if applicable
+        - Collections.sort(configCandidates, new Comparator<BeanDefinitionHolder>());//Sort by previously determined @Order value, if applicable
 
         - ConfigurationClassParser parser = new ConfigurationClassParser(this.metadataReaderFactory,
           this.problemReporter, this.environment,this.resourceLoader, this.componentScanBeanNameGenerator, registry); //
@@ -162,8 +156,8 @@
 
             - if (registry.getBeanDefinitionCount() > candidateNames.length)
 
-                - String[] newCandidateNames = registry.getBeanDefinitionNames()
-                  ;//经过一轮do循环,现在容器中Bean定义数量超过了该次循环开始时的容器内Bean定义数量，说明在该次循环中发现并注册了更多的Bean定义到容器中去，这些新注册的Bean定义也有可能是候选配置类，它们也要被处理用来发现和注册Bean定义
+                - String[] newCandidateNames = registry.getBeanDefinitionNames(); 
+                  - 经过一轮do循环,现在容器中Bean定义数量超过了该次循环开始时的容器内Bean定义数量，说明在该次循环中发现并注册了更多的Bean定义到容器中去，这些新注册的Bean定义也有可能是候选配置类，它们也要被处理用来发现和注册Bean定义
 
                 - Set<String> oldCandidateNames = new HashSet<String>(Arrays.asList(candidateNames));
 
@@ -178,9 +172,11 @@
                 - sbr.registerSingleton(IMPORT_REGISTRY_BEAN_NAME, parser.getImportRegistry());//Register the
                   ImportRegistry as a bean in order to support ImportAware @Configuration classes
 
-        - public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory);//1. 对容器中的每个配置类做增强 2.
-          往容器中增加一个BeanPostProcessor:ImportAwareBeanPostProcessor(如果所增加的BeanPostProcessor已经存在会先将其删除然后重新添加)
-
+        - public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory);
+          ````
+          1. 对容器中的每个配置类做增强
+          2.往容器中增加一个BeanPostProcessor:ImportAwareBeanPostProcessor(如果所增加的BeanPostProcessor已经存在会先将其删除然后重新添加)
+          ````
             - int factoryId = System.identityHashCode(beanFactory);
 
             - this.factoriesPostProcessed.add(factoryId);
