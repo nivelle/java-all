@@ -105,7 +105,7 @@ protected Object createBean(String beanName, RootBeanDefinition mbd, Object[] ar
 ````
 ## 小结：
 
-````
+````text
 1、 当我们在创建bean的时候都会调用一个resolveBeforeInstantiation 尝试返回单实例bean
    		bean = applyBeanPostProcessorsBeforeInstantiation（）：
    						拿到所有后置处理器，如果是InstantiationAwareBeanPostProcessor类型

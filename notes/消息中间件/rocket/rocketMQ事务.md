@@ -1,1 +1,0 @@
-[![cPtO6x.jpg](https://z3.ax1x.com/2021/03/30/cPtO6x.jpg)](https://imgtu.com/i/cPtO6x)

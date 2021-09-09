@@ -116,7 +116,7 @@ applyBeanPostProcessorsBeforeInitialization方法，这个方法的内部就是�
 
 ### 小结:一下这个包装方法wrapIfNecessary
 
-```````````
+```````````text
 1）、获取当前bean的所有增强器（通知方法）  Object[]  specificInterceptors
    1、找到候选的所有的增强器（找哪些通知方法是需要切入当前bean方法的）
    2、获取到能在bean使用的增强器。
