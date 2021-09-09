@@ -2,7 +2,7 @@
 
 ![socket模型.png](https://i.loli.net/2021/05/15/WmeNOnD4iVfYlQc.png)
 
-建立连接后，数据的传输就不再是单向的，而是双向的，这也是TCP的一个显著特性。
+建立连接后，数据的传输就不再是单向的，而是双向的，这也是TCP的一个显著特性。(**全双工**)
 
 ### TCP三次握手
 
@@ -10,7 +10,7 @@
 
 - 创建套接字
 
-````
+````text
 
 int socket(int domain, int type, int protocol)
 
@@ -21,11 +21,9 @@ int socket(int domain, int type, int protocol)
 
 - bind:把套接字和套接字地址绑定，标记该套接字
 
-
 - listen:通过listen函数，将原来套接字转换为被动套接字，告诉操作系统内核，监听指定地址端口的请求
 
-````
-
+````text
 int listen (int socketfd, int backlog)
 
 1. 第一个参数是套接字描述符
@@ -36,8 +34,7 @@ int listen (int socketfd, int backlog)
 
 - accept: 客户端连接请求到达，服务器端应答成功，建立连接，这个时候操作系统内核把这个事件通知到应用程序，并让应用程序感知到这个连接。
 
-````
-
+````text
 int accept(int listensockfd, struct sockaddr *cliaddr, socklen_t *addrlen)
 
 1. 第一个参数 listensockfd 是套接字，可以叫它为 listen 套接字，因为这就是前面通过 bind，listen 一系列操作而得到的套接字
@@ -52,7 +49,7 @@ int accept(int listensockfd, struct sockaddr *cliaddr, socklen_t *addrlen)
 
 - 创建套接字
 
-```
+```shell
 
 int socket(int domain, int type, int protocol)
 
@@ -60,13 +57,10 @@ int socket(int domain, int type, int protocol)
 
 - connect:客户端和服务端建立连接，通过connect完成
 
-````
-
-
+````shell
 int connect(int sockfd, const struct sockaddr *servaddr, socklen_t addrlen)
 
-
-1. sockfd 是连接套接字，通过前面讲述的 socket 函数创建
+1. sockfd 是连接套接字, 通过前面讲述的 socket 函数创建
 
 2. *servaddr 代表指向套接字地址结构的指针
 
@@ -76,45 +70,49 @@ int connect(int sockfd, const struct sockaddr *servaddr, socklen_t addrlen)
 
 客户在调用函数 connect 前不必非得调用 bind 函数，因为如果需要的话，内核会确定源 IP 地址，并按照一定的算法选择一个临时端口作为源端口。
 
-### connect 函数触发了TCP 三次握手
+------
+## connect 函数触发了TCP 三次握手
 
-#### 握手失败
+### 握手失败
 
-1. 三次握手无法建立，客户端发出的SYN包没有任何响应，于是返回TIMEOUT错。--ip写错
+- 三次握手无法建立，客户端发出的`SYN包`没有任何响应，于是返回TIMEOUT错。--ip写错
 
-2. 客户端收到了RST(复位)回答，这时客户端会立即返回CONNECTION REFUSED
-   错误。这种情况比较常见于客户端发送连接请求时的请求端口写错，因为RST是TCP在发送错误时发生的一种TCP分节。产生RET三个条件：目的地为某端口的SYN
-   到达，然而该端口上没有正在监听的服务器；TCP想取消一个已有连接；TCP接受到一个根本不存在的连接上的分节。--端口错误
+- 客户端收到了RST(复位)回答，这时客户端会立即返回CONNECTION REFUSED 错误。这种情况比较常见于客户端发送连接请求时的请 求端口写错，因为RST是TCP在发送错误时发生的一种TCP分节。
+  产生RET三个条件：
+  - 目的地为某端口的SYN 到达，然而该端口上没有正在监听的服务器；
+  - TCP想取消一个已有连接；
+  - TCP接受到一个根本不存在的连接上的分节。--端口错误
 
-3. 客户端发出的SYN包在网路上引起"destination unreachable”，即目的不可达错误。 --客户端和服务端路由不通
+- 客户端发出的SYN包在网路上引起`destination unreachable`，即目的不可达错误。 --客户端和服务端路由不通
 
-#### 握手成功
+### 握手成功
 
-- 客户端connect阻塞，服务端accept阻塞
+- 客户端`connect`阻塞，服务端`accept`阻塞
 
 - 操作系统内核网路协议栈进行三次握手
 
-1. 客户端协议栈向服务器端发送SYN包，并告诉服务端当前发送序列号j, 客户端 进入 SYNC_SENT状态；
+1. 客户端协议栈向服务器端发送`SYN包`，并告诉服务端当前发送`序列号j`, 客户端 进入 `SYNC_SENT`状态；
 
-2. 服务端协议栈收到这个包之后，和客户端进行ACK应答，应答值为j+1,表示对SYN 包j的确认，同时服务器也发送一个SYN包，告诉客户端当前我的发送序列号为k,服务器端进入SYNC_RCVD 状态
+2. 服务端协议栈收到这个包之后，和客户端进行`ACK应答`，应答值为j+1,表示对SYN 包j的确认，同时服务器也发送一个`SYN包`，告诉客户端当前我的发送 `序列号为k`,服务器端进入`SYNC_RCVD 状态`
 
-3. 客户端收到ACK之后，使得应用程序从connect调用返回，表示客户端导服务端的单向连接建立成功，客户端的状态为ESTABLISHED,同时客户端也会对服务器端的SYN包进行应答，应答数据为k+1
+3. 客户端收到`ACK`之后，使得应用程序`从connect调用返回`，表示客户端导服务端的单向连接建立成功，客户端的状态为`ESTABLISHED`,同时客户端也会对服务器端的`SYN包`进行应答，应答数据为k+1
 
-4. 应答包到达服务器端后，服务器端协议栈使得accept阻塞调用返回，这个时候服务器端到客户单的单向连接也建立成功，服务器端也进入ESTABLISHED状态
+4. 应答包到达服务器端后，服务器端协议栈使得accept阻塞调用返回，这个时候服务器端到客户单的单向连接也建立成功，服务器端也进入`ESTABLISHED`状态
 
-#### 为什么需要三次握手
+### 为什么需要三次握手
 
-- 第一次和第二次握手：客户端可以确认 客户端发送和客户端接受能力，以及服务端的收接受和发送能力
+- 第一次和第二次握手：客户端可以确认 客户端发送和客户端接受能力，以及服务端的接受能力
 
 - 此时服务端，只能确认服务端的接受能力，不能确认服务端的发送能力
 
 - 所以第三次握手，服务端收到客户端握手后，确认了服务端的发送能力，以及客户端的接收能力
 
+------
 ### 套接字读写
 
 #### 发送数据
 
-````
+````shell
 
 ssize_t write (int socketfd, const void *buffer, size_t size)
 ssize_t send (int socketfd, const void *buffer, size_t size, int flags)
@@ -122,11 +120,11 @@ ssize_t sendmsg(int sockfd, const struct msghdr *msg, int flags)
 
 ````
 
-- 第一个函数是常见的文件写函数，如果把 socketfd 换成文件描述符，就是普通的文件写入。
+- 第一个函数是常见的文件写函数，如果把 `socketfd` 换成文件描述符，就是普通的文件写入。
 
 - 如果想指定选项，发送带外数据，就需要使用第二个带 flag 的函数。所谓带外数据，是一种基于 TCP 协议的紧急数据，用于客户端 - 服务器在特定场景下的紧急处理。
 
-- 如果想指定多重缓冲区传输数据，就需要使用第三个函数，以结构体 msghdr 的方式发送数据。
+- 如果想指定多重缓冲区传输数据，就需要使用第三个函数，以结构体 `msghdr` 的方式发送数据。
 
 #### 发送缓冲区
 
@@ -138,53 +136,55 @@ ssize_t sendmsg(int sockfd, const struct msghdr *msg, int flags)
 
 #### 读取数据
 
-````
+````shell
 
 ssize_t read (int socketfd, void *buffer, size_t size)
 
 ````
 
-read 函数要求操作系统内核从套接字描述字socketfd读取多少个字节，并将结果存储到buffer中。返回值告诉实际读取的字节数。如果返回为0，表示EOF(end-of-file),这在网络中表示对端发送了FIN包，要处理断连情况；
+- read 函数要求操作系统内核从套接字描述字`socketfd`读取多少个字节，并将结果存储到`buffer`中。返回值告诉实际读取的字节数。如果返回为0，表示EOF(end-of-file),这在网络中表示对端发送了FIN包，要处理断连情况；
 
-如果返回值为-1，表示出错。
+- 如果返回值为-1，表示出错。
 
-### 四次挥手： TIME_WAIT 详解
+--------
+
+### 四次挥手: TIME_WAIT 详解
 
 ![四次挥手.png](https://i.loli.net/2021/05/15/bD9Jtj1LKFdB4SZ.png)
 
-- TIME_WAIT 停留持续时间是固定的，是最长分节生命期MSL(maximum segment lifetime)的两倍，2MSL. TCP_TIME_WAIT_LEN 值为60秒，linux
+- `TIME_WAIT` 停留持续时间是固定的，是最长生命期MSL(maximum segment lifetime)的两倍，2MSL. TCP_TIME_WAIT_LEN 值为60秒，linux
   系统停留在TIME_WAIT的时间为固定的60s
 
-- 只有发起连接终止的一方会进入TIME_WAIT状态。
+- 只有发起连接终止的一方会进入`TIME_WAIT状态`。
 
 - TCP是双向的，因此关闭是双向的；
 
-1. 主动关闭方应用调用close函数，该端TCP发送一个FIN包，表示需要关闭连接，之后主动关闭方进入FIN_WAIT_1状态
+------
 
-2. 接收到FIN包的对端执行被动关闭，这个FIN由TCPx协议处理。
-   TCP协议栈为FIN包插入一个文件结束符EOF到接收缓冲区中，应用程序可以通过read调用来感知这个FIN包。这个EOF会被放在已经排队等候的其他已接收的数据之后，这意味接收端要处理这种异常，表示EOF之后无
-   额外数据到达。被动关闭方进入CLOSE_WAIT状态
+- 主动关闭方应用调用close函数，该端TCP发送一个`FIN包`，表示需要关闭连接，之后主动关闭方进入`FIN_WAIT_1状态`
 
-3. 被动关闭方将读到这个EOF，应用程序也调用close关闭它的套接字，这导致它的TCP也发送一个FIN包。 被动关闭方进入LAST_ACK
+- 接收到FIN包的对端执行被动关闭，这个FIN由TCPx协议处理.TCP协议栈为FIN包插入一个文件结束符EOF到接收缓冲区中，应用程序可以通过read调用来感知这个FIN包。这个EOF会被放在已经排队等候的其他已接收的数据之后，这意味接收端要处理这种异常，表示EOF之后无
+  额外数据到达。被动关闭方进入`CLOSE_WAIT状态`
 
-4. 主动关闭方接收到对方的FIN包，并确认这个FIN包。主动关闭方进入TIME_WAIT状态，而接收到ACK的被动关闭方进入CLOSED状态。经过2MSL时间之后，主动关闭方也进入CLOSED状态。
+- 被动关闭方将读到这个EOF，应用程序也调用close关闭它的套接字，这导致它的TCP也发送一个FIN包。 被动关闭方进入`LAST_ACK`
 
-#### 为什么有TIME_WAIT状态
+- 主动关闭方接收到对方的FIN包，并确认这个FIN包。主动关闭方进入`TIME_WAIT`状态，而接收到ACK的被动关闭方进入CLOSED状态。经过2MSL时间之后，主动关闭方也进入CLOSED状态。
 
-1. 确保最后的ACK能让被动关闭方接收，从而帮助其正常关闭。
+### 为什么有TIME_WAIT状态
+
+#### 原因一: 确保最后的ACK能让被动关闭方接收，从而帮助其正常关闭。
 
 假设报文传输出错，需要重传。如果主机1 的 ACK 报文没有传输成功，那么主机2 就会重新发送FIN报文。 如果主机1没有维护TIME_WAIT
 状态，直接进入CLOSED状态，它就会失去当前状态上下文，只能回复一个RET操作，从而导致被动关闭方出现错误 现在主机1处于TIME_WAIT的状态，可以在接收到FIN报文之后，重新发送一个ACK 报文，使得主机2进入正常的CLOSED
 状态
 
-2. 相同地址的连接 和 报文迷走 有关,问了让旧连接的重复分节在网络中自然迷失
+#### 原因二: 相同地址的连接 和 报文迷走 有关,问了让旧连接的重复分节在网络中自然迷失
 
-经过2MSL时间，让两个方向上的分组都被丢弃，使得原来连接的分组在网路中都自然消失，再出现的分组都是新化身所产生的。
-2MSL的时间都是从主机1接收到FIN后发送ACK开始计时，如果在TIME_WAIT时间内，因为主机1的ACK没有传输到主机2，主机1又接收到了主机2重发的FIN报文，那么2MSL将重新计时。
+经过2MSL时间，让两个方向上的分组都被丢弃，使得原来连接的分组在网路中都自然消失，再出现的分组都是新化身所产生的.2MSL的时间都是从主机1接收到FIN后发送ACK开始计时，如果在TIME_WAIT时间内，因为主机1的ACK没有传输到主机2，主机1又接收到了主机2重发的FIN报文，那么2MSL将重新计时。
 
-3. MSL RFC793协议规定为2分钟，linux 实际设置为30秒
+MSL RFC793协议规定为2分钟，linux 实际设置为30秒
 
-#### TIME_WAIT危害
+### TIME_WAIT危害
 
 - 内存资源占用
 
@@ -192,13 +192,11 @@ read 函数要求操作系统内核从套接字描述字socketfd读取多少个�
 
 #### 优化TIME_WAIT
 
-- 调低 TCP_TIMEWAIT_LEN,重新编译
+- 调低 `TCP_TIMEWAIT_LEN,`重新编译
 
-- SO_LINGER 设置：设置调用close或者shutdown 关闭连接时的行为
+- `SO_LINGER` 设置：设置调用close或者shutdown 关闭连接时的行为
 
-- SO_LINGER
-
-- net.ipv4.tcp_tw_reuse：客户端与服务端主机时间不同步，客户端发送的消息会直接被拒绝
+- `net.ipv4.tcp_tw_reuse`：客户端与服务端主机时间不同步，客户端发送的消息会直接被拒绝
 
 ##### setsockopt 设置SO_REUSEADDR ，解决端口复用，告诉内核即使TIME_WAIT状态的套接字，也可以继续使用它作为新的套集字使用
 
@@ -206,7 +204,7 @@ read 函数要求操作系统内核从套接字描述字socketfd读取多少个�
 
 - close
 
-````
+````shell
 int close(int sockfd)
 ````
 
