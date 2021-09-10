@@ -1,7 +1,6 @@
 ### kafka
 
 - 消息引擎系统
-
 - 分布式流处理平台
 
 ### 版本演进
@@ -22,24 +21,24 @@
 
 [![g8o9YQ.md.png](https://z3.ax1x.com/2021/05/08/g8o9YQ.md.png)](https://imgtu.com/i/g8o9YQ)
 
-- Producer ：消息生产者，就是向 kafka broker 发消息的客户端；
-- Consumer ：消息消费者，向 kafka broker 取消息的客户端；
-- Consumer Group （CG）：消费者组，由多个 consumer 组成。消费者组内每个消费者负责消费不同分区的数据，一个分区只能由一个组内消费者消费；消费者组之间互不影响。所有的消费者都属于某个消费者组，即消费者组是逻辑上的一个订阅者。
-- Broker ：一台 kafka 服务器就是一个 broker。一个集群由多个 broker 组成。一个broker可以容纳多个 topic。
-- Topic ：可以理解为一个队列，生产者和消费者面向的都是一个 topic；
-- Partition：为了实现扩展性，一个非常大的 topic 可以分布到多个 broker（即服务器）上，一个 topic 可以分为多个 partition，每个 partition 是一个有序的队列；
-- Replica：副本，为保证集群中的某个节点发生故障时，该节点上的 partition 数据不丢失，且 kafka 仍然能够继续工作，kafka 提供了副本机制，一个 topic 的每个分区都有若干个副本，一个 leader 和若干个 follower。
-- leader：每个分区多个副本的“主”，生产者发送数据的对象，以及消费者消费数据的对 象都是 leader。
-- follower：每个分区多个副本中的“从”，实时从 leader 中同步数据，保持和 leader 数据的同步。leader 发生故障时，某个 follower 会成为新的 leader 。
+- `Producer` ：消息生产者，就是向 kafka broker 发消息的客户端；
+- `Consumer` ：消息消费者，向 kafka broker 取消息的客户端；
+- `Consumer Group （CG）`：消费者组，由多个 consumer 组成。`消费者组内每个消费者负责消费不同分区的数据，一个分区只能由一个组内消费者消费`；消费者组之间互不影响。所有的消费者都属于某个消费者组，即消费者组是逻辑上的一个订阅者。
+- `Broker` ：一台 kafka 服务器就是一个 broker。一个集群由多个 broker 组成。一个broker可以容纳多个 topic。
+- `Topic` ：可以理解为一个队列，生产者和消费者面向的都是一个 topic；
+- `Partition`：为了实现扩展性，一个非常大的 topic 可以分布到多个 broker（即服务器）上，一个 topic 可以分为多个 partition，每个 **partition 是一个有序的队列**；
+- `Replica`：副本，为保证集群中的某个节点发生故障时，该节点上的 partition 数据不丢失，且 kafka 仍然能够继续工作，kafka 提供了副本机制，一个 topic 的每个分区都有若干个副本，一个 leader 和若干个 follower。
+- `leader`：__每个分区多个副本的“主”，生产者发送数据的对象，以及消费者消费数据的对 象都是 leader。__
+- `follower`：每个分区多个副本中的“从”，实时从 leader 中同步数据，保持和 leader 数据的同步。leader 发生故障时，某个 follower 会成为新的 leader 。
 
 
 ### 消息格式
 
-- kafka有两个消息格式，v1 和 v2(0.11.0.0版本引入)
+- kafka有两种消息格式，v1 和 v2(0.11.0.0版本引入)
 
 #### 消息集合（message set）
 
-一个消息集合包含若干条日志项（record item）,日志项是封装消息的地方。kafka底层消息日志由一系列消息集合日志项组成。
+- 一个消息集合包含若干条日志项（record item）,日志项是封装消息的地方。kafka底层消息日志由一系列消息集合日志项组成。
 
 #### 消息
 
