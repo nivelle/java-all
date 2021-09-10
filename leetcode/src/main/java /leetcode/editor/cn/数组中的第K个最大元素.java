@@ -18,21 +18,23 @@
 // 👍 1118 👎 0
 
 
+import java.util.PriorityQueue;
+
 /**
  * 数组中的第K个最大元素
  */
 //leetcode submit region begin(Prohibit modification and deletion)
 class 数组中的第K个最大元素 {
-//    public int findKthLargest(int[] nums, int k) {
-//        PriorityQueue<Integer> heap = new PriorityQueue<>((n1, n2) -> (n1 - n2));
-//        for (int n : nums) {
-//            heap.add(n);
-//            if (heap.size() > k) {
-//                heap.poll();
-//            }
-//        }
-//        return heap.poll();
-//    }
+    public int findKthLargest(int[] nums, int k) {
+        PriorityQueue<Integer> heap = new PriorityQueue<>((n1, n2) -> (n1 - n2));
+        for (int n : nums) {
+            heap.add(n);
+            if (heap.size() > k) {
+                heap.poll();
+            }
+        }
+        return heap.poll();
+    }
 
 
     //快速排序
