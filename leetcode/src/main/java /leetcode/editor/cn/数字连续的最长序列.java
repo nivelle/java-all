@@ -34,7 +34,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 //leetcode submit region begin(Prohibit modification and deletion)
-class Solution {
+class 数字连续的最长序列 {
     public int longestConsecutive(int[] nums) {
         Set<Integer> num_set = new HashSet<Integer>();
         for (int num : nums) {
