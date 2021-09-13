@@ -58,7 +58,7 @@ public class LeetCodeTest {
      * @return
      */
     public static int maxLongSubArray(int[] array){
-
+        return 0;
     }
 
 
