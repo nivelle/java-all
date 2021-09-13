@@ -37,7 +37,9 @@ public class BaseTest {
 
         System.out.println(Float.NaN!=2);
         System.out.println(Float.NaN==Float.NaN);
-
+        String[] al = new String[5];
+        al[4] = "2";
+        System.out.println(al);
     }
 
 

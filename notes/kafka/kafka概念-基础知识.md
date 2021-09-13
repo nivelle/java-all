@@ -27,7 +27,7 @@
 - `Broker` ：一台 kafka 服务器就是一个 broker。一个集群由多个 broker 组成。一个broker可以容纳多个 topic。
 - `Topic` ：可以理解为一个队列，生产者和消费者面向的都是一个 topic；
 - `Partition`：为了实现扩展性，一个非常大的 topic 可以分布到多个 broker（即服务器）上，一个 topic 可以分为多个 partition，每个 **partition 是一个有序的队列**；
-- `Replica`：副本，为保证集群中的某个节点发生故障时，该节点上的 partition 数据不丢失，且 kafka 仍然能够继续工作，kafka 提供了副本机制，一个 topic 的每个分区都有若干个副本，一个 leader 和若干个 follower。
+- `Replica`：副本，为保证集群中的某个节点发生故障时，该节点上的 partition 数据不丢失，且 kafka 仍然能够继续工作，kafka 提供了副本机制，一个 topic 的 __每个分区都有若干个副本，一个 leader 和若干个 follower__。
 - `leader`：__每个分区多个副本的“主”，生产者发送数据的对象，以及消费者消费数据的对 象都是 leader。__
 - `follower`：每个分区多个副本中的“从”，实时从 leader 中同步数据，保持和 leader 数据的同步。leader 发生故障时，某个 follower 会成为新的 leader 。
 
@@ -38,9 +38,9 @@
 
 #### 消息集合（message set）
 
-- 一个消息集合包含若干条日志项（record item）,日志项是封装消息的地方。kafka底层消息日志由一系列消息集合日志项组成。
+- 一个消息集合包含若干条`日志项（record item）`,日志项是封装消息的地方。kafka底层消息日志由一系列消息集合日志项组成。
 
-#### 消息
+### 消息
 
 ### 消息压缩
 
@@ -62,7 +62,7 @@ compression.type
 
 - broker 端和producer 端指定了不一样的压缩算法，会导致CPU飙升
 
-- broker 端发生消息转换，为了兼容旧版本消息。会丧失 ZERO_COPY 能力
+- broker 端发生消息转换，为了兼容旧版本消息。会丧失 `ZERO_COPY` 能力
 
 - broker 端为了对消息进行校验，每个压缩过的消息集合在broker端写入的时都要发生解压缩操作
 
@@ -72,27 +72,28 @@ compression.type
 2. kafka 2.1.0 之前，支持3种算法 GZIP、Snappy和LZ4 ; 从 2.1.0 开始，开始支持 Zstandard算法
 3. 吞吐量： LZ4> Snappy>zstd和GZIP;压缩比：zstd>LZ4>GZIP>Snappy ;带宽：zstd最少，Snappy最多
 
-### 无消息丢失配置
+----
+## 无消息丢失配置
 
-#### kafka只对"已提交"的消息做有限度的持久化保证。
+### kafka只对"已提交"的消息做有限度的持久化保证。
 
-- 已提交的消息： 当Kafka的若干个Broker成功地接收到一条消息并写入到日志文件后，broker 才会认为生产者这条消息已成功提交
+- `已提交的消息`： 当Kafka的若干个Broker成功地接收到一条消息并写入到日志文件后，broker 才会认为生产者这条消息已成功提交
 
-- 有限度的持久化保证：Kafka不丢消息有一定的前提条件，若N个broker 则消息至少保存在一个broker上。
+- `有限度的持久化保证`：Kafka不丢消息有一定的前提条件，若N个broker 则消息至少保存在一个broker上。
 
-#### 生产者丢失数据：
+### 生产者丢失数据：
 
 - Producer 永远要使用带有回调通知的发送API,也就是说不要使用producer.send(msg),而使用producer.send(msg,callback). 从callback(回调)里获取消息提交结果，或者失败原因
 
-#### 消费者丢失数据：
+### 消费者丢失数据：
 
 - 维持先消费消息，再更新位移的顺序。
 
-- 如果是多线程异步处理消费消息，Consumer 程序不要开启自动提交位移，而是要应用程序手动提交位移。
+- 如果是多线程异步处理消费消息，`Consumer 程序不要开启自动提交位移，而是要应用程序手动提交位移`。
 
 ----
 
-### 无消息丢失配置最佳实践
+## 无消息丢失配置最佳实践
 
 1. 不要使用 producer.send(msg),而要使用 producer.send(msg,callback). 一定要使用带有回调通知的send方法
 
@@ -109,25 +110,25 @@ compression.type
 6. 设置 **min.insync.replicas>1** : 依然是broker端参数，控制的是消息至少要被写入到多少个副本才算是"已提交"。 设置成大于1可以提升消息持久性。在实际环境不要使用默认值1
 
 7. 确保 **replication.factor > min.insync.replication**
-   如果两者相等，那么只要有一个副本挂机，整个分区就无法工作了，我们不仅要改善消息的持久性，防止消息丢失，还要在不降低可用性的基础上完成。推荐设置replication.factor=min.sync.replicas+1.
+   如果两者相等，那么只要有一个副本挂机，整个分区就无法工作了，我们不仅要改善消息的持久性，防止消息丢失，还要在不降低可用性的基础上完成。推荐设置**replication.factor=min.sync.replicas+1.**
 
 8. 确保消息消费完成再提交. consumer 端 有个参数 **enable.auto.commit** ,最好把它设置成false,并采用手动提交位移的方式。这对于单Consumer 多线程处理的场景而言是至关重要的。
 
 ---
 
-### 拦截器
+## 拦截器
 
 拦截器可以用于包括客户端监控、端到端系统性能检测、消息审计等多种功能在内的场景。
 
-#### kafka 生产者拦截器
+### kafka 生产者拦截器
 
 生产者拦截器允许你在发送消息前以及消息提交成功后植入你的拦截器逻辑
 
-#### 拦截器配置
+### 拦截器配置
 
 - 拦截器接口: org.apache.kafka.clients.producer.ProducerInterceptor
 
-````
+````java
 
 Properties props = new Properties();
 List<String> interceptors = new ArrayList<>();
@@ -137,12 +138,12 @@ props.put(ProducerConfig.INTERCEPTOR_CLASSES_CONFIG, interceptors);
 
 ````
 
-- onSend() : 该方法会在消息发送之前被调用，如果你想在发送之前对消息做出修改，这个方法是唯一机会
+- `onSend()` : 该方法会在消息发送之前被调用，如果你想在发送之前对消息做出修改，这个方法是唯一机会
 
-- onAcknowledgement():该方法会在消息成功提交或者发送失败后被调用。onAcknowledgement 的调用要早于 callback 的调用。 这个方法和onSend
+- `onAcknowledgement()`:该方法会在消息成功提交或者发送失败后被调用。onAcknowledgement 的调用要早于 callback 的调用。 这个方法和onSend
   不是在同一个线程中被调用的，因此如果你在这两个方法中调用了某个共享可变对象，一定要保证线程安全。这个方法处在Producer 发送的 主路径中，所以最好不要放一些太重的逻辑，否则会造成Producer TPS直线下降。
 
-#### kafka 消费者拦截器
+### kafka 消费者拦截器
 
 消费者拦截器支持在消息消费前以及在提交位移后编写特定逻辑
 
