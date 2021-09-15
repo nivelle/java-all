@@ -1,10 +1,10 @@
-### 消息分区
+## 消息分区
 
-#### 结构：
+### 结构：
 
 - kafka 消息组织方式是三级结构： 主题-分区-消息
 
-#### 作用：
+### 作用：
 
 - 提供负载能力，提高系统的伸缩性。
 
@@ -12,29 +12,28 @@
 
 - 可以通过增加新的节点来增加整个系统的吞吐量
 
-#### 分区策略
+### 分区策略
 
-- 自定义分区策略：partitioner.calss = full Qualified Name
+- __自定义分区策略：__ partitioner.calss = full Qualified Name
 
-- 轮询策略（round-robin）: kafka 默认提供的分区策略，能保证消息最大限度第被平均分配到所有分区上，默认情况的最合理
+- __轮询策略（round-robin）:__ kafka 默认提供的分区策略，能保证消息最大限度第被平均分配到所有分区上，默认情况的最合理
 
-- 随机策略（randomness）：随机策略是老版本生产者使用的分区策略，在新版本中已经改为轮询
+- __随机策略（randomness）:__ 随机策略是老版本生产者使用的分区策略，在新版本中已经改为轮询
 
 ##### kafka默认分区策略：
 
-- 如果指定了partition就直接发送到该分区;
-- 如果没有指定分区但是指定了key，就按照key的hash值选择分区;
+- 如果**指定了partition**就直接发送到该分区;
+- 如果没有指定分区但是指定了key，就按照**key的hash值选择分区**;
 - 如果partition和key都没有指定就使用轮询策略:
     - 而且如果key不为null，那么计算得到的分区号会是所有分区中的任意一个；
     - 如果key为null并且有可用分区时，那么计算得到的分区号仅为可用分区中的任意一个
 
-````
-
+````java
 List<PartitionInfo> partitions = cluster.partitionsForTopic(topic);
 return ThreadLocalRandom.current().nextInt(partitions.size());
 ````
 
-- 按消息键保序策略：kafka允许为每条消息定义消息键，简称为key. kafka同一个key的所有消息都进入到相同的分区里面，由于每个分区下的消息处理都是有顺序的，故这个策略被成为按消息键保序策略
+- __按消息键保序策略：__ kafka允许为每条消息定义消息键，简称为key. kafka同一个key的所有消息都进入到相同的分区里面，由于每个分区下的消息处理都是有顺序的，故这个策略被成为按消息键保序策略
 
 ### java生产者选择TCP连接
 
@@ -44,17 +43,14 @@ return ThreadLocalRandom.current().nextInt(partitions.size());
 
 #### 创建TCP连接的时机
 
-- 创建KafkaProducer 实例时，生产者应用会在后台创建并启动一个名为Sender 线程，该Sender线程开始运行时首先会创建与Broker的连接； bootstrap.servers
+- 创建KafkaProducer 实例时，生产者应用会在后台创建并启动一个名为 **Sender 线程**，该Sender线程开始运行时首先会创建与Broker的连接；**bootstrap.servers**
   仅需配置部分broker机器即刻，producer 会自动向某一台Broker发送METADATA 请求，获取集群所有信息
 
 - 更新元数据时
 
-````
-1. 当producer 尝试给一个不存在的主题送消息时，Broker会告诉Producer说这个主题不存在。此时Producer会发送METADATA请求给kafka集群，去尝试获取最新的元数据信息
+  - 当producer 尝试给一个不存在的主题送消息时，Broker会告诉Producer说这个主题不存在。此时Producer会发送METADATA请求给kafka集群，去尝试获取最新的元数据信息
 
-2. producer 通过 metadata.max.age.ms 参数定期地去更新元数据信息。该参数默认值是5分钟，也就是不管集群是否有变化，producer每5分钟都会轻质刷新一次元数据以保证它是最及时的数据
-
-````
+  - producer 通过 metadata.max.age.ms 参数定期地去更新元数据信息。该参数默认值是5分钟，也就是不管集群是否有变化，producer每5分钟都会轻质刷新一次元数据以保证它是最及时的数据
 
 - 发送消息时
 
@@ -89,19 +85,19 @@ props.put("enable.idempotence",true)
 
 #### 幂等性特征：
 
-1. 以空间换时间，在broker 多保存一些字段，当Producer发送了相同字段值的消息后，broker 能够自动知晓这些消息已经重复了， 于是自动 "丢弃”；
+- 以空间换时间，在broker 多保存一些字段，当Producer发送了相同字段值的消息后，broker 能够自动知晓这些消息已经重复了， 于是自动 "丢弃”；
 
-2. 仅仅能保证某个主题的一个分区上不出现重复性消息，无法实现多个分区的幂等性
+- 仅仅能保证某个主题的一个分区上不出现重复性消息，无法实现多个分区的幂等性
 
-3. 只能实现单会话上的幂等性，不能实现跨会话的幂等性，当重启了producer 的进程之后，这种幂等性就丧失了
+- 只能实现单会话上的幂等性，不能实现跨会话的幂等性，当重启了producer 的进程之后，这种幂等性就丧失了
 
 #### 实现逻辑
 
 - 区分produce 会话: produce 每次启动后，首先向broker申请一个全局唯一的 PID ,用来标识本次会话。
 
-- 消息检测：message v2 版本增加了 sequence number 字段，producer 每发一批消息，seq 就加1. broker 在内存维护(pid,seq)映射，收到消息后检测seq.如果：
+- 消息检测：message v2 版本增加了 `sequence number` 字段，producer 每发一批消息，seq 就加1. broker 在内存维护 __(pid,seq)映射__，收到消息后检测seq.如果：
 
-````
+````text
 new_seq = old_seq + 1 ;正常消息
 new_seq <= old_seq;//消息重复
 new_seq > old_seq + 1 ;//消息丢失
@@ -110,38 +106,36 @@ new_seq > old_seq + 1 ;//消息丢失
 
 - producer 重试： producer 在收到明确的消息的丢失或者ack,或者超时后未收到ack,要进行重试
 
-### 事务(0.11版本引入)
+---
+## 事务(0.11版本引入)
 
-#### producer事务使用：
+### producer事务使用：
 
-````
+````text
 props.put("enable.idempotence",true)
 
 设置producer端参数 transactional.id 最好为其设置一个有意义的名字
 
 ````
 
-#### producer事务特征：
+### producer事务特征：
 
-1. 主要是在 read committed 隔离级别上做事情
+- 主要是在 read committed 隔离级别上做事情
 
-2. 保证多条消息原子性的写入到目标分区，同时也能保证Consumer 只能看到事务成功提交的消息
+- 保证多条消息原子性的写入到目标分区，同时也能保证Consumer 只能看到事务成功提交的消息
 
-3. 事务型producer 的显著特征是调用了一些事务型API ,如 initTransaction 、beginTransaction、committedTransaction和 abortTransaction
+- 事务型producer 的显著特征是调用了一些事务型API ,如 initTransaction 、beginTransaction、committedTransaction和 abortTransaction
    分别对应事务初始化、事务开始、事务提交、事务终止
 
-4. producer 事务即使写入失败，kafka 也会把它们写入到底层日志中，consumer还是会看到这些消息，因此consumer端，读取事务型producer发送的消息需要设置 isolation.level 参数即可：
+- producer 事务即使写入失败，kafka 也会把它们写入到底层日志中，consumer还是会看到这些消息，因此consumer端，读取事务型producer发送的消息需要设置 __isolation.level__ 参数即可：
+  - read_uncommitted:默认值,表明consumer能够读取到kafka写入的任何消息，不论事务型producer 提交事务还是终止事务，其写入的消息都可以读取。
+  - read_committed:表明Consumer 只会读取事务型producer 成功提交事务写入的消息。也能看到非事务型producer写入的所有消息
 
-````
-1. read_uncommitted:默认值,表明consumer能够读取到kafka写入的任何消息，不论事务型producer 提交事务还是终止事务，其写入的消息都可以读取。
 
-2. read_committed:表明Consumer 只会读取事务型producer 成功提交事务写入的消息。也能看到非事务型producer写入的所有消息
 
-````
+### 实现原理 [简书：架构禅话](https://www.jianshu.com/p/f77ade3f41fd)
 
-#### 实现原理 [简书：架构禅话](https://www.jianshu.com/p/f77ade3f41fd)
-
-##### producer
+#### producer
 
 1. 为producer指定固定的 transactionalId，可以穿越producer的多次会话(producer 重启/断线重连)，持续标识 producer的身份；
 
@@ -149,7 +143,7 @@ props.put("enable.idempotence",true)
 
 3. producer遵从幂等消息的行为，并在发送的recordBatch中增加事务 transactionalId 和epoch
 
-##### 事务协调器(transaction coordinator)
+#### 事务协调器(transaction coordinator)
 
 1. 引入事务协调器，以两阶段提交的方式，实现消息的事务提交
 
@@ -159,17 +153,17 @@ props.put("enable.idempotence",true)
 
 4. 每个broker 都会启动一个事务协调器，使用hash(transactionalId)确定producer对应的事务协调器，使得整个集群的负载均衡
 
-##### broker
+#### broker
 
 1. broker处理在事务协调器的commit/abort控制消息。把控制消息像正常消息一样写入topic(和正常消息交织在一起，用来确认事务提交的日志偏移)，并向前推进消息提交偏移(hw)
 
-##### 组协调器
+#### 组协调器
 
 1. 如果在事务过程中，提交了消费偏移，组协调器在offset log 中写入事务消费偏移
 
 2. 当事务提交时，在off set 中写入事务offset确认消息
 
-##### consumer
+#### consumer
 
 consumer过滤未提交消息和事务控制消息，使这些消息对用户不可见
 

@@ -60,11 +60,11 @@ $> bin/kafka-server-start.sh config/server.properties
 
 - 自动提交: 如果是自动提交，则会不停的写位移信息，此时需要利用compact策略来删除位移主题中的过期消息。专门的后台线程定期地巡检待compact的主题，看看是否存在满足条件的可删除数据。 这个后台线程叫：log cleaner.
 
-### coordinator
+## coordinator
 
-- 所有broker在启动时，都会创建和开启相应的coordinator 组件，也就是说，所有的broker都有各自的coordinator组件。
+- 所有broker在启动时，都会创建和开启相应的 coordinator 组件，也就是说，所有的broker都有各自的coordinator组件。
 
-#### 为 consumer group 确定coordinator所在broker的方式：
+### 为 consumer group 确定coordinator所在broker的方式：
 
 - 确定由位移主题的那个分区保存该group数据：
 
