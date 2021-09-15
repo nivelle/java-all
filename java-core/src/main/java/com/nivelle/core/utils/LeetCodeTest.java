@@ -16,7 +16,7 @@ public class LeetCodeTest {
     }
 
     /**
-     *  有一个字符串它的构成是词+空格的组合，如“北京 杭州 杭州 北京”， 要求输入一个匹配模式（简单的以字符来写），
+     * 有一个字符串它的构成是词+空格的组合，如“北京 杭州 杭州 北京”， 要求输入一个匹配模式（简单的以字符来写），
      * 比如 aabb,来判断该字符串是否符合该模式， 举个例子：
      * <p>
      * pattern = "abba", str="北京 杭州 杭州 北京" 返回 ture
@@ -51,15 +51,5 @@ public class LeetCodeTest {
         }
         return true;
     }
-
-    /**
-     *
-     * @param array
-     * @return
-     */
-    public static int maxLongSubArray(int[] array){
-        return 0;
-    }
-
 
 }
