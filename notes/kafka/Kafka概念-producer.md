@@ -179,35 +179,35 @@ consumer过滤未提交消息和事务控制消息，使这些消息对用户不
 
 2. broker 给consumer的BatchRecord消息中，会包含以列表，指明那些是“abort”事务consumer丢弃abort事务的消息即可
 
-#### 事务消息处理流程
+## 事务消息处理流程
 
-[![r4H2xf.png](https://s3.ax1x.com/2020/12/27/r4H2xf.png)](https://imgchr.com/i/r4H2xf)
+![kafka事务](../images/kafka事务.png)
 
-1. 查找事务协调器 ：findCoordinatorRequest
+### 1.查找事务协调器 ：findCoordinatorRequest
 
-事务协调器是分配pid和管理事务的核心，producer首先对任何一个broker发送FindCoordinatorRequest,发现自己的事务协调器。
+- 事务协调器是分配pid和管理事务的核心，producer首先对任何一个broker发送FindCoordinatorRequest,发现自己的事务协调器。
 
-2. 申请pid:initPidRequest
+### 2.申请pid:initPidRequest
 
-producer向事务协调器发送initPidRequest,申请pid;
+- producer向事务协调器发送initPidRequest,申请pid;
 
-- 2.1 当指定了transactional.id时，事务协调器为producer分区pid，并更新epoch，把(tid,pid)的映射关系写入事务日志。 同时清理tid任何未完成的事务，丢弃未提交的消息
+#### 2.1 当指定了transactional.id时，事务协调器为producer分区pid，并更新epoch，把(tid,pid)的映射关系写入事务日志。 同时清理tid任何未完成的事务，丢弃未提交的消息
 
-3. 启动事务
+### 3. 启动事务
 
-启动事务是producer的本地操作，促使producer更新内部状态，不会和事务协调器发生关系。事务协调器自动启动事务，始终处在一个接一个的事务处理状态机中。
+- 启动事务是producer的本地操作，促使producer更新内部状态，不会和事务协调器发生关系。事务协调器自动启动事务，始终处在一个接一个的事务处理状态机中。
 
-4. consumer-transform-produce 事务循环
+### 4.consumer-transform-produce 事务循环
 
-- 4.1 注册partition: addPartitionsToTxnRequest
+#### 4.1 注册partition: addPartitionsToTxnRequest
 
-  对于每一个要在事务中写消息的topic分区，produce 应当在第一次发消息前，向事务处理器注册分区
+  - 对于每一个要在事务中写消息的topic分区，produce 应当在第一次发消息前，向事务处理器注册分区
 
     - 4.1.1 事务处理器把事务关联的分区写入事务日志：在提交或者终止事务时，事务协调器需要这些信息，控制事务涉及的所有分区leader完成事务提交或者终止
 
-- 4.2 写消息 produceRequest
+#### 4.2 写消息 produceRequest
 
-    - 4.2.1 producer 向分区leader写消息，消息中包含tid,pid,epoch,seq
+- 4.2.1 producer 向分区leader写消息，消息中包含tid,pid,epoch,seq
 
 - 4.3.1 提交消息偏移： addOffsetCommitsToTxnRequest
 
@@ -217,7 +217,7 @@ producer向事务协调器发送initPidRequest,申请pid;
 
     - 4.4.1 producer 向组协调器发送TxnOffsetCommitRequest,组协调器把偏移信息写入偏移日志。但是，要一直等到事务提交后，这个偏移才生效，对外部可见。
 
-5. 提交或者终止事务
+#### 5. 提交或者终止事务
 
 - 5.1 endTxnRequest
 
@@ -243,10 +243,8 @@ producer向事务协调器发送initPidRequest,申请pid;
 
 #### 我们要认识到，虽然kafka事务消息提供了多个消息原子写的保证，但它不保证原子读。
 
-````
-1）事务向topic_a和topic_b两个分区写入消息，在事务提交后的某个时刻，topic_a的全部副本失效。这时topic_b中的消息可以正常消费，但topic_a中的消息就丢失了。
+- 事务向topic_a和topic_b两个分区写入消息，在事务提交后的某个时刻，topic_a的全部副本失效。这时topic_b中的消息可以正常消费，但topic_a中的消息就丢失了。
 
-2）假如consumer只消费了topic_a，没有消费topic_b，这样也不能读到完整的事务消息。
+- 假如consumer只消费了topic_a，没有消费topic_b，这样也不能读到完整的事务消息。
 
-3）典型的kafka stream应用从多个topic消费，然后向一个或多个topic写。在一次故障后，kafka stream应用重新开始处理流数据，由于从多个topic读到的数据之间不存在稳定的顺序(即便只有一个topic，从多个分区读到的数据之间也没有稳定的顺序)，那么两次处理输出的结果就可能会不一样。
-````
+- 典型的kafka stream应用从多个topic消费，然后向一个或多个topic写。在一次故障后，kafka stream应用重新开始处理流数据，由于从多个topic读到的数据之间不存在稳定的顺序(即便只有一个topic，从多个分区读到的数据之间也没有稳定的顺序)，那么两次处理输出的结果就可能会不一样。
