@@ -1,4 +1,4 @@
-package com.nivelle.core.javacore.lang.invoke;
+package com.nivelle.core.javacore.lang;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;

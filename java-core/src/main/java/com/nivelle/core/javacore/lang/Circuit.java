@@ -1,4 +1,4 @@
-package com.nivelle.core.javacore.lang.invoke;
+package com.nivelle.core.javacore.lang;
 
 /**
  * TODO:DOCUMENT ME!

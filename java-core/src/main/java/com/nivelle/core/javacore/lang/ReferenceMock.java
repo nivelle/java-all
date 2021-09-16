@@ -1,4 +1,4 @@
-package com.nivelle.core.javacore.lang.ref;
+package com.nivelle.core.javacore.lang;
 
 import java.lang.ref.*;
 import java.util.Objects;

@@ -3,7 +3,7 @@ package com.nivelle.core.javacore.concurrent.atom;
 import java.util.concurrent.atomic.AtomicStampedReference;
 
 /**
- * AtomicStampedReference
+ * AtomicStampedReference 解决 ABA问题
  *
  * @author nivelle
  * @date 2020/04/13
