@@ -26,9 +26,7 @@ public class ObjectMock {
         Object object = new Object();
         System.err.println("object默认toString()方法: 类名+@+hashCode的无符号16进制:" + object.toString());
         /**
-         * public final native Class<?> getClass()
-         *
-         * ## 返回当前运行时对象的Class对象，final不允许复写的native方法
+         * public final native Class<?> getClass() //返回当前运行时对象的Class对象，final不允许复写的native方法
          */
         Class classInstance = object.getClass();
         System.out.println("object默认的getClass方法:" + classInstance.getName());
@@ -62,20 +60,19 @@ public class ObjectMock {
          *     }
          */
         System.out.println("Object默认equals方法比较两个对象的内存地址:" + object.equals(object1));
-        System.out.println("Object默认equals方法比较两个对象的内存地址:" + object.equals(object));
 
         /**
-         *  ## Object类的clone方法是一个protected的native方法。
-         *  protected native Object clone() throws CloneNotSupportedException;
          *
-         *  创建并返回当前对象的一份拷贝。一般情况下,对于任何对象 x,表达式 x.clone() != x 为true，x.clone().getClass() == x.getClass() 也为true。
+         *  protected native Object clone() throws CloneNotSupportedException;//Object类的clone方法是一个protected的native方法。
          *
-         *  由于Object本身没有实现Cloneable接口，所以不重写clone方法并且进行调用的话会发生CloneNotSupportedException异常。
+         *  创建并返回当前对象的一份拷贝。一般情况下,对于任何对象 x,表达式 x.clone() != x 为 true，x.clone().getClass() == x.getClass() 也为true。
+         *
+         *  由于Object本身没有实现Cloneable接口，所以不重写clone方法并且进行调用的话会发生 CloneNotSupportedException 异常。
          */
 
 
         /**
-         * ## notify方法是一个native方法，并且也是final的，不允许子类重写。
+         * ## notify方法 是一个native方法，并且也是final的，不允许子类重写。
          *
          * 1. 唤醒一个在此对象监视器上等待的线程(监视器相当于就是锁的概念)。如果所有的线程都在此对象上等待，那么只会选择一个线程。选择是任意性的，并在对实现做出决定时发生。一个线程在对象监视器上等待可以调用wait方法。
          *
@@ -91,7 +88,7 @@ public class ObjectMock {
          *
          * ## 一次只能有一个线程拥有对象的监视器。如果当前线程没有持有对象监视器调用次方法就会抛出: @throws  IllegalMonitorStateException  if the current thread is not the owner of this object's monitor.
          *
-         * 也就是 因为notify只能在拥有对象监视器的所有者线程中调用，否则会抛出IllegalMonitorStateException异常
+         * 也就是 因为notify只能在拥有对象监视器的所有者线程中调用，否则会抛出 IllegalMonitorStateException异常
          */
         try {
             object.notify();
@@ -125,11 +122,13 @@ public class ObjectMock {
              *
              * 4. 时间到了参数设置的超时时间。如果timeout参数为0,则不会超时,会一直进行等待
              *
-             * ## 持有监视器的线程调用wait让出CPU后进入该监视器的等待队列，线程处于阻塞状态，当当前持有监视器的线程调用notify()然后唤醒等待线程；该线程以常规方式与其他线程竞争，以获得在该对象上同步的权利；一旦获得对该对象的控制权，该对象上的所有其同步声明都将被恢复到以前的状态，这就是调用wait方法时的情况。然后，线程T从wait方法的调用中返回。所以，从wait方法返回时，该对象和线程T的同步状态与调用wait方法时的情况完全相同。
+             * ## 持有监视器的线程调用wait让出CPU后进 **线程进入该监视器的等待队列**，**线程处于阻塞状态**，当当前持有监视器的线程调用notify()然后唤醒等待线程；
+             * 该线程以常规方式与其他线程竞争，以获得在该对象上同步的权利；一旦获得对该对象的控制权，该对象上的所有其同步声明都将被恢复到以前的状态，这就是调用wait方法时的情况。
+             * 然后，线程T从wait方法的调用中返回。所以，从wait方法返回时，该对象和线程T的同步状态与调用wait方法时的情况完全相同。
              */
-            //object.wait();
-            //object.wait(12, 123);
-            //object.wait(13);
+            object.wait();
+            object.wait(12, 123);
+            object.wait(13);
         } catch (Exception e) {
             System.out.println(e);
         }

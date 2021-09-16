@@ -31,8 +31,7 @@ public class EnumMock {
 
 
         /**
-         * 1. 枚举类型实际上会被编译成一个对应的类，这个类继承了 Enum 类，Enum 有 name 和 ordinal 两个实例变量，
-         * 在构造方法中需要传递,name(),toString(),ordinal().compareTo(), equlas()方法都是由Enum类根据其实例变量name和ordinal实现的。
+         * 1. 枚举类型实际上会被编译成一个对应的类，这个类继承了 Enum 类，Enum 有 name 和 ordinal 两个实例变量，在构造方法中需要传递,name(),toString(),ordinal().compareTo(), equlas()方法都是由Enum类根据其实例变量name和ordinal实现的。
          *
          * 2. values()和valueOf()是编译器给每个枚举类型自动添加的方法
          *
@@ -40,7 +39,7 @@ public class EnumMock {
          *
          * 4. 枚举值实际是个静态变量,也是final的，不能被修改。
          *
-         * 5. 一般枚举变量会转换为对应的类变量，在switch语句中，枚举值会被转换为对应的ordinal值。可以看出，枚举类型本质上也是类，但由于编译器做了很多事情，因此它的使用更为简单和安全。
+         * 5. 一般枚举变量会转换为对应的类变量，在switch语句中，枚举值会被转换为对应的 ordinal 值。可以看出，枚举类型本质上也是类，但由于编译器做了很多事情，因此它的使用更为简单和安全。
          *
          */
 
