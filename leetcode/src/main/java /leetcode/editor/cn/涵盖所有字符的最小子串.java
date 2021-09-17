@@ -48,9 +48,9 @@
 
 
 //leetcode submit region begin(Prohibit modification and deletion)
-class Solution {
+class 涵盖所有字符的最小子串 {
     public String minWindow(String s, String t) {
-
+return "";
     }
 }
 //leetcode submit region end(Prohibit modification and deletion)
