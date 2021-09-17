@@ -1,37 +1,37 @@
-### tomcat 模型
+## tomcat 模型
 
-#### 组件1：Acceptor 线程组。用于接受新连接，并将新连接封装,选择一个 Poller 将新连接添加到 Poller 的事件队列中
+### 组件1: Acceptor 线程组。
 
-##### public abstract class AbstractEndpoint<S,U>
+- 用于接受新连接，并将新连接封装,选择一个 Poller 将新连接添加到 Poller 的事件队列中
 
-1. initServerSocket():通过 ServerSocketChannel.open() 打开一个 ServerSocket,默认绑定到 8080 端口,默认的连接等待队列长度是 100,当超过 100
+#### Endpoint类: public abstract class AbstractEndpoint<S,U> //终端
+
+- **initServerSocket():** 通过 ServerSocketChannel.open() 打开一个 ServerSocket,默认绑定到 8080 端口,默认的连接等待队列长度是 100,当超过 100
    个时会拒绝服务。我们可以通过配置 conf/server.xml 中 Connector 的 acceptCount 属性对其进行定制
 
-2. createExecutor(): 用于创建 Worker线程池。默认会启动 10(minSpareThreads:核心线程数【corePoolSize】)个 Worker 线程，Tomcat 处理请求过程中，Woker 最多不超过
-   200(maxThreads:最大线程数【maximumPoolSize】) 个。我们可以通过配置 conf/server.xml 中 Connector 的 minSpareThreads 和 maxThreads
+- **createExecutor():** 用于创建 Worker线程池。默认会启动 10(minSpareThreads:核心线程数【corePoolSize】)个 Worker 线程，Tomcat 处理请求过程中，Worker 最多不超过
+   200(maxThreads:最大线程数【maximumPoolSize】) 个。我们可以通过配置 `conf/server.xml` 中 Connector 的 **minSpareThreads 和 maxThreads**
    对这两个属性进行定制。
 
-3. Pollor 用于检测已就绪的 Socket。 默认最多不超过 2 个，Math.min(2,Runtime.getRuntime().availableProcessors());。我们可以通过配置
-   pollerThreadCount 来定制。//仅在NioEndpoint中存在，在Nio2Endpoint和AprEndpoint中不存在
+- **Poller方法用于检测已就绪的 Socket**。默认最多不超过 2 个`Math.min(2,Runtime.getRuntime().availableProcessors())`;。我们可以通过配置
+   pollerThreadCount 来定制。//**仅在NioEndpoint中存在，在Nio2Endpoint和AprEndpoint中不存在**
 
-4. Acceptor 用于接受新连接。默认是1个。我们可以通过配置 acceptorThreadCount 对其进行定制。
+- **Acceptor 用于接受新连接**。默认是1个。我们可以通过配置 acceptorThreadCount 对其进行定制。
 
 ![Acceptor](https://s1.ax1x.com/2020/07/04/Nv7KOA.png)
 
-1. Acceptor 在启动后会阻塞在 serverSocketAccept.accept(); 方法处,当有新连接到达时,该方法返回一个 SocketChannel.
+1. Acceptor 在启动后会阻塞在 `serverSocketAccept.accept()` 方法处,当有新连接到达时,该方法返回一个 SocketChannel.
 
 2. 配置完Socket以后将Socket封装到NioChannel中,并注册到Poller,值的一提的是，我们一开始就启动了多个Poller线程,注册的时候,连接是公平的分配到每个 Poller 的. NioEndpoint 维护了一个
    Poller 数组，当一个连接分配给 pollers[index] 时，下一个连接就会分配给 pollers[(index+1)%pollers.length].
 
 3. addEvent() 方法会将 Socket 添加到该 Poller 的 PollerEvent 队列中。到此 Acceptor 的任务就完成了。
+---
+### 启动方法: public abstract void startInternal() throws Exception;
 
-##### public abstract void startInternal() throws Exception;
+##### 子类实现一:NioEndpoint
 
-##### startInternal()方法
-
-##### 子类实现:NioEndpoint
-
-```
+```shell
 public void startInternal() throws Exception {
         if (!running) {
             running = true;
@@ -64,9 +64,9 @@ public void startInternal() throws Exception {
 
 ```
 
-##### 子类实现:Nio2Endpoint
+##### 子类实现二:Nio2Endpoint
 
-```
+```shell
 public void startInternal() throws Exception {
         if (!running) {
             allClosed = false;
@@ -91,9 +91,9 @@ public void startInternal() throws Exception {
 
 ```
 
-##### 子类实现:AprEndpoint
+##### 子类实现三:AprEndpoint
 
-```
+```shell
 public void startInternal() throws Exception {
 
         if (!running) {
@@ -123,9 +123,12 @@ public void startInternal() throws Exception {
     }
 ```
 
-#### startAcceptorThread() //创建并启动acceptor线程
 
-```
+-----
+
+#### startAcceptorThread() //创建并启动acceptor线程，AprEndpoint实现
+
+```shell
 protected void startAcceptorThread() {
         acceptor = new Acceptor<>(this);
         String threadName = getName() + "-Acceptor";
@@ -138,11 +141,9 @@ protected void startAcceptorThread() {
 
 ```
 
-#### bind()方法
+#### bind()方法 //子类实现：NioEndpoint
 
-- 子类实现：NioEndpoint
-
-```
+```shell
 public void bind() throws Exception {
         initServerSocket();
 
@@ -156,9 +157,9 @@ public void bind() throws Exception {
 
 ```
 
-- 子类实现：initServerSocket()
+-  initServerSocket()
 
-```
+```shell
 protected void initServerSocket() throws Exception {
         if (!getUseInheritedChannel()) {
             serverSock = ServerSocketChannel.open();
@@ -180,9 +181,9 @@ protected void initServerSocket() throws Exception {
     
 ```
 
-- 子类实现:Nio2Endpoint
+#### bind()方法 //子类实现：Nio2Endpoint
 
-````
+````shell
 public void bind() throws Exception {
 
         // Create worker collection
@@ -200,20 +201,19 @@ public void bind() throws Exception {
         serverSock = AsynchronousServerSocketChannel.open(threadGroup);
         socketProperties.setProperties(serverSock);
         InetSocketAddress addr = new InetSocketAddress(getAddress(), getPortWithOffset());
-        //绑定端口同时设置 acceptCount
+        ##绑定端口同时设置 acceptCount
         serverSock.bind(addr, getAcceptCount());
 
         // Initialize SSL if needed
         initialiseSsl();
     }
  ````   
+#### bind()方法 //子类实现：AprEndpoint
 
-##### 子类实现:AprEndpoint
-
-```
+```shell
 public void bind() throws Exception {
 
-        // Create the root APR memory pool
+        // Create the root APR memory pool,APR 内存池
         try {
             rootPool = Pool.create(0);
         } catch (UnsatisfiedLinkError e) {
@@ -311,10 +311,11 @@ public void bind() throws Exception {
         }
     }
 ```
+----
 
-#### 用于创建 Worker线程池
+### createExecutor() // 用于创建 Worker线程池
 
-```
+```shell
 public void createExecutor() {
         internalExecutor = true;
         TaskQueue taskqueue = new TaskQueue();
@@ -325,27 +326,28 @@ public void createExecutor() {
 
 ```
 
-#### protected abstract U serverSocketAccept() throws Exception;
+ 
+### serverSocketAccept() //用于等待链接
 
-- NioEndpoint
+#### NioEndpoint实现
 
-```
+```shell
  protected SocketChannel serverSocketAccept() throws Exception {
         return serverSock.accept();
     }
 ```    
 
-- Nio2Endpoint
+#### Nio2Endpoint实现
 
-```
+```shell
 protected AsynchronousSocketChannel serverSocketAccept() throws Exception {
         return serverSock.accept().get();
     }
 ```    
 
-- AprEndpoint
+#### AprEndpoint实现
 
-```
+```shell
 protected Long serverSocketAccept() throws Exception {
         long socket = Socket.accept(serverSock);
         if (log.isDebugEnabled()) {
@@ -359,26 +361,27 @@ protected Long serverSocketAccept() throws Exception {
     }
     
 ```
+----
 
-### Poller 线程组。用于监听 Socket 事件，当 Socket 可读或可写等等时，将 Socket 封装一下添加到 worker 线程池的任务队列中。
+### Poller 线程组。
+
+- 用于监听 Socket 事件，当 Socket 可读或可写等等时，将 Socket 封装一下添加到 worker 线程池的任务队列中。
 
 ![Poller](https://s1.ax1x.com/2020/07/04/NxBSXQ.png)
 
-1) selector.select(1000)。当 Poller 启动后因为 selector 中并没有已注册的 Channel，所以当执行到该方法时只能阻塞。所有的 Poller 共用一个 Selector，其实现类是
+- selector.select(1000)。当 Poller 启动后因为 selector 中并没有已注册的 Channel，所以当执行到该方法时只能阻塞。所有的 Poller 共用一个 Selector，其实现类是
    sun.nio.ch.EPollSelectorImpl
 
-2) events() 方法会将通过 addEvent() 方法添加到事件队列中的 Socket 注册到 EPollSelectorImpl，当 Socket 可读时，Poller 才对其进行处理
+- events() 方法会将通过 addEvent() 方法添加到事件队列中的 Socket 注册到 EPollSelectorImpl，当 Socket 可读时，Poller 才对其进行处理
 
-3) createSocketProcessor() 方法将 Socket 封装到 SocketProcessor 中，SocketProcessor 实现了 Runnable 接口。worker 线程通过调用其 run() 方法来对
-   Socket 进行处理。
+- createSocketProcessor() 方法将 Socket 封装到 SocketProcessor 中，SocketProcessor 实现了 Runnable 接口。worker 线程通过调用其 run() 方法来对 Socket 进行处理。
 
-4) execute(SocketProcessor) 方法将 SocketProcessor 提交到线程池，放入线程池的 workQueue 中。workQueue 是 BlockingQueue 的实例。到此 Poller
+- execute(SocketProcessor) 方法将 SocketProcessor 提交到线程池，放入线程池的 workQueue 中。workQueue 是 BlockingQueue 的实例。到此 Poller
    的任务就完成了。
+   
+#### acceptor run() 方法 NioEndpoint实现
 
-
-- NioEndpoint
-
-```
+```html
 public void run() {
             // Loop until destroy() is called
             while (true) {
@@ -441,35 +444,44 @@ public void run() {
         
 ```
 
-#### protected abstract SocketProcessorBase<S> createSocketProcessor(SocketWrapperBase<S> socketWrapper, SocketEvent event);
+----
 
-- NioEndpoint
+### 创建 SocketSocketProcessor 内部类
 
-```
+protected abstract SocketProcessorBase<S> createSocketProcessor(SocketWrapperBase<S> socketWrapper, SocketEvent event);
+
+#### NioEndpoint子类实现
+
+```xml
 protected SocketProcessorBase<NioChannel> createSocketProcessor(SocketWrapperBase<NioChannel> socketWrapper, SocketEvent event) {
         return new SocketProcessor(socketWrapper, event);
     }
 ```
 
-- Nio2Endpoint
+#### Nio2Endpoint子类实现
 
-```
+```xml
 protected SocketProcessorBase<Nio2Channel> createSocketProcessor(SocketWrapperBase<Nio2Channel> socketWrapper, SocketEvent event) {
         return new SocketProcessor(socketWrapper, event);
     }
- ```
-
-- aprEndPoint
-
 ```
+
+#### aprEndPoint子类实现
+
+```xml
 protected SocketProcessorBase<Long> createSocketProcessor(SocketWrapperBase<Long> socketWrapper, SocketEvent event) {
         return new SocketProcessor(socketWrapper, event);
     }
 ```
 
-#### public boolean processSocket(SocketWrapperBase<S> socketWrapper, SocketEvent event, boolean dispatch)
 
-```
+----
+
+### 抽象类 AbstractEndpoint
+
+- public boolean processSocket(SocketWrapperBase<S> socketWrapper, SocketEvent event, boolean dispatch)
+
+```shell
 public boolean processSocket(SocketWrapperBase<S> socketWrapper,
             SocketEvent event, boolean dispatch) {
         try {
@@ -507,27 +519,24 @@ public boolean processSocket(SocketWrapperBase<S> socketWrapper,
 
 ```
 
+----
+
 ### worker 线程组。用于对请求进行处理，包括分析请求报文并创建 Request 对象，调用容器的 pipeline 进行处理
 
-1）worker 线程被创建以后就执行 ThreadPoolExecutor 的 runWorker() 方法，试图从 workQueue 中取待处理任务，但是一开始 workQueue 是空的，所以 worker 线程会阻塞在
-workQueue.take() 方法。
+- worker 线程被创建以后就执行 ThreadPoolExecutor 的 runWorker() 方法，试图从 workQueue 中取待处理任务，但是一开始 workQueue 是空的，所以 worker 线程会阻塞在 workQueue.take() 方法;
 
-2）当新任务添加到 workQueue后，workQueue.take() 方法会返回一个 Runnable，通常是 SocketProcessor,然后 worker 线程调用 SocketProcessor 的 run() 方法对
-Socket 进行处理。
+- 当新任务添加到 workQueue后，workQueue.take() 方法会返回一个 Runnable，通常是 SocketProcessor,然后 worker 线程调用 SocketProcessor 的 run() 方法对
+Socket 进行处理;
 
-3）createProcessor() 会创建一个 Http11Processor, 它用来解析 Socket，将 Socket 中的内容封装到 Request 中。注意这个 Request 是临时使用的一个类，它的全类名是
-org.apache.coyote.Request，
+- createProcessor() 会创建一个 Http11Processor, 它用来解析 Socket，将 Socket 中的内容封装到 Request 中。注意这个 Request 是临时使用的一个类，它的全类名是`org.apache.coyote.Request`;
 
-4）postParseRequest() 方法封装一下 Request，并处理一下映射关系(从 URL 映射到相应的 Host、Context、Wrapper)。
+- postParseRequest() 方法封装一下 Request，并处理一下映射关系(从 URL 映射到相应的 Host、Context、Wrapper)。
 
-5）CoyoteAdapter 将 Rquest 提交给 Container 处理之前，并将 org.apache.coyote.Request 封装到 org.apache.catalina.connector.Request，传递给
-Container 处理的 Request 是 org.apache.catalina.connector.Request。
+- CoyoteAdapter 将 Request 提交给 Container 处理之前，并将 org.apache.coyote.Request 封装到 org.apache.catalina.connector.Request，传递给 Container 处理的 Request 是 org.apache.catalina.connector.Request。
 
-6）connector.getService().getMapper().map()，用来在 Mapper 中查询 URL 的映射关系。映射关系会保留到 org.apache.catalina.connector.Request
-中，Container 处理阶段 request.getHost() 是使用的就是这个阶段查询到的映射主机， 以此类推 request.getContext()、request.getWrapper() 都是。
+- connector.getService().getMapper().map()，用来在 Mapper 中查询 URL 的映射关系。映射关系会保留到 org.apache.catalina.connector.Request 中，Container 处理阶段 request.getHost() 是使用的就是这个阶段查询到的映射主机， 以此类推 request.getContext()、request.getWrapper() 都是。
 
-7）connector.getService().getContainer().getPipeline().getFirst().invoke() 会将请求传递到 Container 处理，当然了 Container 处理也是在
-Worker 线程中执行的，但是这是一个相对独立的模块。
+- connector.getService().getContainer().getPipeline().getFirst().invoke() 会将请求传递到 Container 处理，当然了 Container 处理也是在 Worker 线程中执行的，但是这是一个相对独立的模块。
 
 ### Container
 
@@ -541,7 +550,7 @@ Worker 线程中执行的，但是这是一个相对独立的模块。
 
 #### public abstract class AbstractJsseEndpoint<S,U> extends AbstractEndpoint<S,U>
 
-```
+```java
 protected boolean setSocketOptions(SocketChannel socket) {
         NioSocketWrapper socketWrapper = null;
         try {
