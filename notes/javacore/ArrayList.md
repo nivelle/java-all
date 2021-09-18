@@ -64,7 +64,7 @@ private int size;
 
 ####（4）elementData
  
-- 真正存放元素的地方,使用transient是为了不序列化这个字段。
+- **真正存放元素的地方,使用 _transient_ 是为了不序列化这个字段。**
 
 - 至于没有使用private修饰,后面注释是写的“为了简化嵌套类的访问”。
 
@@ -95,7 +95,7 @@ public ArrayList(int initialCapacity) {
 
 ### ArrayList()构造方法
  
-不传初始容量，初始化为DEFAULTCAPACITY_EMPTY_ELEMENTDATA空数组，会在添加第一个元素的时候扩容为默认的大小，即10。
+- 不传初始容量，初始化为`DEFAULTCAPACITY_EMPTY_ELEMENTDATA`空数组，会在添加第一个元素的时候扩容为默认的大小，即10。
 
 ```java
 public ArrayList() {
@@ -111,13 +111,13 @@ public ArrayList() {
  
 ```java
 /**
-* 把传入集合的元素初始化到ArrayList中
-*/
+ * 把传入集合的元素初始化到ArrayList中
+ */
 public ArrayList(Collection<? extends E> c) {
     // 集合转数组
     elementData = c.toArray();
     if ((size = elementData.length) != 0) {
-        // 检查c.toArray()返回的是不是Object[]类型,如果不是，重新拷贝成Object[].class类型
+        // 检查c.toArray()返回的是不是Object[]类型,如果不是,重新拷贝成Object[].class类型
         if (elementData.getClass() != Object[].class)
             elementData = Arrays.copyOf(elementData, size, Object[].class);
     } else {
@@ -127,7 +127,7 @@ public ArrayList(Collection<? extends E> c) {
 }
 ```
 
-#### 为什么`c.toArray();`返回的有可能不是Object[]类型呢？请看下面的代码：
+### 为什么`c.toArray();`返回的有可能不是Object[]类型呢？请看下面的代码：
 
 ```java
 public class ArrayTest {
@@ -148,8 +148,7 @@ class Son extends Father {}
 
 class MyList extends ArrayList<String> {
     /**
-     * 子类重写父类的方法，返回值可以不一样
-     * 但这里只能用数组类型，换成Object就不行
+     * 子类重写父类的方法，返回值可以不一样;但这里只能用数组类型，换成Object就不行
      * 应该算是java本身的bug
      */
     @Override
@@ -162,7 +161,7 @@ class MyList extends ArrayList<String> {
 ------
 ### add(E e)方法
 
-添加元素到末尾，平均时间复杂度为O(1)。
+- 添加元素到末尾，平均时间复杂度为O(1)。
 
 ```java
 public boolean add(E e) {
@@ -215,9 +214,9 @@ private void grow(int minCapacity) {
 
 - （2）如果elementData等于DEFAULTCAPACITY_EMPTY_ELEMENTDATA则初始化容量大小为DEFAULT_CAPACITY；
 
-- （3）新容量是老容量的1.5倍（oldCapacity + (oldCapacity >> 1)），如果加了这么多容量发现比需要的容量还小，则以需要的容量为准；
+- （3）**新容量是老容量的1.5倍（oldCapacity + (oldCapacity >> 1)），如果加了这么多容量发现比需要的容量还小，则以需要的容量为准**；
 
-- （4）创建新容量的数组并把老数组拷贝到新数组；
+- （4）__创建新容量的数组并把老数组拷贝到新数组;__
 
 ----
 ### add(int index, E element)方法
@@ -499,15 +498,17 @@ public boolean removeAll(Collection<?> c) {
 
 - （6）ArrayList从中间删除元素比较慢，因为要搬移元素，平均时间复杂度为O(n)；
 
-- （7）ArrayList支持求并集，调用addAll(Collection<? extends E> c)方法即可；
+- （7）__ArrayList支持求并集，调用addAll(Collection<? extends E> c)方法即可；__
 
-- （8）ArrayList支持求交集，调用retainAll(Collection<? extends E> c)方法即可；
+- （8）__ArrayList支持求交集，调用retainAll(Collection<? extends E> c)方法即可；__
 
 - （7）ArrayList支持求单向差集，调用removeAll(Collection<? extends E> c)方法即可；
 
-## 彩蛋
+## 重点
 
 -  _elementData设置成了transient，那ArrayList是怎么把元素序列化的呢？_
+
+- 类内部实现了一个writeObject/readObject方法
 
 ```java
 private void writeObject(java.io.ObjectOutputStream s)
@@ -558,12 +559,12 @@ private void readObject(java.io.ObjectInputStream s)
 }
 ```
 
-查看writeObject()方法可知，先调用s.defaultWriteObject()方法，再把size写入到流中，再把元素一个一个的写入到流中。
+- 查看writeObject()方法可知，先调用s.defaultWriteObject()方法，再把size写入到流中，再把元素一个一个的写入到流中。
 
-一般地，只要实现了Serializable接口即可自动序列化，writeObject()和readObject()是为了自己控制序列化的方式，这两个方法必须声明为private，在java.io.ObjectStreamClass#getPrivateMethod()方法中通过反射获取到writeObject()这个方法。
+- 一般地，只要实现了Serializable接口即可自动序列化，**writeObject()和readObject()是为了自己控制序列化的方式，这两个方法必须声明为private**，在java.io.ObjectStreamClass#getPrivateMethod()方法中通过反射获取到writeObject()这个方法。
 
-在ArrayList的writeObject()方法中先调用了s.defaultWriteObject()方法，这个方法是写入非static非transient的属性，在ArrayList中也就是size属性。同样地，在readObject()方法中先调用了s.defaultReadObject()方法解析出了size属性。
+- 在ArrayList的writeObject()方法中先调用了s.defaultWriteObject()方法，这个方法是写入非static非transient的属性，在ArrayList中也就是size属性。同样地，在readObject()方法中先调用了s.defaultReadObject()方法解析出了size属性。
 
-elementData定义为transient的优势，自己根据size序列化真实的元素，而不是根据数组的长度序列化元素，减少了空间占用。
+__elementData定义为transient的优势，自己根据size序列化真实的元素，而不是根据数组的长度序列化元素，减少了空间占用__
 
 ---

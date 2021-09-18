@@ -1,9 +1,3 @@
-🖕欢迎关注我的公众号“彤哥读源码”，查看更多源码系列文章, 与彤哥一起畅游源码的海洋。 
-
-（手机横屏看源码更方便）
-
----
-
 ## 问题
 
 （1）StampedLock是什么？
@@ -14,13 +8,13 @@
 
 （4）StampedLock与ReentrantReadWriteLock的对比？
 
-## 简介
+### 简介
 
-StampedLock是java8中新增的类，它是一个更加高效的读写锁的实现，而且它不是基于AQS来实现的，它的内部自成一片逻辑，让我们一起来学习吧。
+`StampedLock是java8中新增的类，它是一个更加高效的读写锁的实现`，而且它不是基于AQS来实现的，它的内部自成一片逻辑，让我们一起来学习吧。
 
-StampedLock具有三种模式：写模式、读模式、乐观读模式。
+- StampedLock具有三种模式：写模式、读模式、乐观读模式。
 
-ReentrantReadWriteLock中的读和写都是一种悲观锁的体现，StampedLock加入了一种新的模式——乐观读，它是指当乐观读时假定没有其它线程修改数据，读取完成后再检查下版本号有没有变化，没有变化就读取成功了，这种模式更适用于读多写少的场景。
+- ReentrantReadWriteLock中的读和写都是一种悲观锁的体现，StampedLock加入了一种新的模式——乐观读，它是指当乐观读时假定没有其它线程修改数据，读取完成后再检查下版本号有没有变化，没有变化就读取成功了，这种模式更适用于读多写少的场景。
 
 ## 使用方法
 
@@ -195,8 +189,6 @@ public long writeLock() {
 到底我们猜测的对不对呢，走着瞧^^
 
 我们接着来分析acquireWrite()方法：
-
-（手机横屏看源码更方便）
 
 ```java
 private long acquireWrite(boolean interruptible, long deadline) {
@@ -766,7 +758,7 @@ StampedLock的源码解析到这里就差不多了，让我们来总结一下：
 
 （7）StampedLock不能实现条件锁；
 
-## 彩蛋
+## 重点
 
 StampedLock与ReentrantReadWriteLock的对比？
 
@@ -802,40 +794,5 @@ StampedLock与ReentrantReadWriteLock的对比？
 
 （15）前者无法实现条件锁，后者可以实现条件锁；
 
-差不多就这么多吧，如果你还能想到，也欢迎补充哦^^当然，能顺手点下小广告就更完美了^^
 
-## 推荐阅读
 
-1、[死磕 java同步系列之开篇](https://mp.weixin.qq.com/s/gdQpO7kqnWT41gFd4vXTlQ)
-
-2、[死磕 java魔法类之Unsafe解析](https://mp.weixin.qq.com/s/0s-u-MysppIaIHVrshp9fA)
-
-3、[死磕 java同步系列之JMM（Java Memory Model）](https://mp.weixin.qq.com/s/jownTN--npu3o8B4c3sbeA)
-
-4、[死磕 java同步系列之volatile解析](https://mp.weixin.qq.com/s/TROZ4BhcDImwHvhAl_I_6w)
-
-5、[死磕 java同步系列之synchronized解析](https://mp.weixin.qq.com/s/RT7VreIh9PU03HhE3WSLjg)
-
-6、[死磕 java同步系列之自己动手写一个锁Lock](https://mp.weixin.qq.com/s/1RU5jh7UcXGtKlae8tusVA)
-
-7、[死磕 java同步系列之AQS起篇](https://mp.weixin.qq.com/s/nAqgec8GscULz6DkkYFINg)
-
-8、[死磕 java同步系列之ReentrantLock源码解析（一）——公平锁、非公平锁](https://mp.weixin.qq.com/s/52Ib23kbmqqkWAZtlZF-zA)
-
-9、[死磕 java同步系列之ReentrantLock源码解析（二）——条件锁](https://mp.weixin.qq.com/s/iipAVWynBUZazhSvBwMB5g)
-
-10、[死磕 java同步系列之ReentrantLock VS synchronized](https://mp.weixin.qq.com/s/o8ZFXDoKhj237SsrqGeJPQ)
-
-11、[死磕 java同步系列之ReentrantReadWriteLock源码解析](https://mp.weixin.qq.com/s/aOQwZ0S8at-64xIXo8fLfA)
-
-12、[死磕 java同步系列之Semaphore源码解析](https://mp.weixin.qq.com/s/ft0_PU7Tgz7920yKy-xisQ)
-
-13、[死磕 java同步系列之CountDownLatch源码解析](https://mp.weixin.qq.com/s/QHFXKVybKz_iwgC8reGfPQ)
-
-14、[死磕 java同步系列之AQS终篇](https://mp.weixin.qq.com/s/PFnaU8vZ7orcfTA_fGngXA)
-
----
-
-欢迎关注我的公众号“彤哥读源码”，查看更多源码系列文章, 与彤哥一起畅游源码的海洋。
-
-![qrcode](https://gitee.com/alan-tang-tt/yuan/raw/master/死磕%20java集合系列/resource/qrcode_ss.jpg)

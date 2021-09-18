@@ -1,5 +1,3 @@
-
-
 ---
 
 ## 概览
@@ -14,13 +12,13 @@
 
 ## List
 
-List中的元素是有序的、可重复的，主要实现方式有动态数组和链表。
+- List中的元素是有序的、可重复的，主要实现方式有动态数组和链表。
 
 ![qrcode](https://gitee.com/alan-tang-tt/yuan/raw/master/死磕%20java集合系列/resource/List.png)
 
-java中提供的List的实现主要有ArrayList、LinkedList、CopyOnWriteArrayList，另外还有两个古老的类Vector和Stack。
+- java中提供的List的实现主要有: `ArrayList、LinkedList、CopyOnWriteArrayList`,另外还有两个古老的类Vector和Stack。
 
-关于List相关的问题主要有：
+### 关于List相关的问题主要有：
 
 （1）ArrayList和LinkedList有什么区别？
 
