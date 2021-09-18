@@ -744,13 +744,13 @@ StampedLock中的队列是一种变异的CLH队列，图解如下：
 
 StampedLock的源码解析到这里就差不多了，让我们来总结一下：
 
-（1）StampedLock也是一种读写锁，它不是基于AQS实现的；
+（1）**StampedLock也是一种读写锁，它不是基于AQS实现的；**
 
 （2）StampedLock相较于ReentrantReadWriteLock多了一种乐观读的模式，以及读锁转化为写锁的方法；
 
 （3）StampedLock的state存储的是版本号，确切地说是高24位存储的是版本号，写锁的释放会增加其版本号，读锁不会；
 
-（4）StampedLock的低7位存储的读锁被获取的次数，第8位存储的是写锁被获取的次数；
+（4）**StampedLock的低7位存储的读锁被获取的次数，第8位存储的是写锁被获取的次数；**
 
 （5）StampedLock不是可重入锁，因为只有第8位标识写锁被获取了，并不能重复获取；
 
