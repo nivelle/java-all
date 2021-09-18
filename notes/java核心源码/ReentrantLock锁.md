@@ -1,4 +1,3 @@
-
 ## 问题
 
 （1）条件锁是什么？
@@ -7,17 +6,17 @@
 
 （3）条件锁的await()是在其它线程signal()的时候唤醒的吗？
 
-## 简介
+## 原理
 
-条件锁，是指在获取锁之后发现当前业务场景自己无法处理，而需要等待某个条件的出现才可以继续处理时使用的一种锁。
+- 条件锁，是指在获取锁之后发现当前业务场景自己无法处理，而需要等待某个条件的出现才可以继续处理时使用的一种锁。
 
 比如，在阻塞队列中，当队列中没有元素的时候是无法弹出一个元素的，这时候就需要阻塞在条件notEmpty上，等待其它线程往里面放入一个元素后，唤醒这个条件notEmpty，当前线程才可以继续去做“弹出一个元素”的行为。
 
-注意，这里的条件，必须是**在获取锁之后去等待**，对应到ReentrantLock的条件锁，就是获取锁之后才能调用condition.await()方法。
+- 这里的条件，必须是**在获取锁之后去等待**，对应到ReentrantLock的条件锁，就是获取锁之后才能调用condition.await()方法。
 
-在java中，条件锁的实现都在AQS的ConditionObject类中，ConditionObject实现了Condition接口，下面我们通过一个例子来进入到条件锁的学习中。
+在java中，条件锁的实现都在AQS的`ConditionObject`类中，ConditionObject实现了Condition接口，下面我们通过一个例子来进入到条件锁的学习中。
 
-## 使用示例
+### 使用示例
 
 ```java
 public class ReentrantLockTest {
@@ -62,6 +61,8 @@ public class ReentrantLockTest {
 
 上面的代码很简单，一个线程等待条件，另一个线程通知条件已成立，后面的数字代表代码实际运行的顺序，如果你能把这个顺序看懂基本条件锁掌握得差不多了。
 
+-----
+
 ## 源码分析
 
 ### ConditionObject的主要属性
@@ -75,11 +76,11 @@ public class ConditionObject implements Condition, java.io.Serializable {
 }
 ```
 
-可以看到条件锁中也维护了一个队列，为了和AQS的队列区分，我这里称为条件队列，firstWaiter是队列的头节点，lastWaiter是队列的尾节点，它们是干什么的呢？接着看。
+- __条件队列:__ 可以看到条件锁中也维护了一个队列，为了和AQS的队列区分，我这里称为条件队列，firstWaiter是队列的头节点，lastWaiter是队列的尾节点。
 
 ### lock.newCondition()方法
 
-新建一个条件锁。
+- 新建一个条件锁。
 
 ```java
 // ReentrantLock.newCondition()
@@ -94,11 +95,11 @@ final ConditionObject newCondition() {
 public ConditionObject() { }
 ```
 
-新建一个条件锁最后就是调用的AQS中的ConditionObject类来实例化条件锁。
+- 新建一个条件锁最后就是调用的AQS中的ConditionObject类来实例化条件锁。
 
 ### condition.await()方法
 
-condition.await()方法，表明现在要等待条件的出现。
+- condition.await()方法，表明现在要等待条件的出现。
 
 ```java
 // AbstractQueuedSynchronizer.ConditionObject.await()
@@ -117,16 +118,16 @@ public final void await() throws InterruptedException {
         // 阻塞当前线程
         LockSupport.park(this);
         
-        // 上面部分是调用await()时释放自己占有的锁，并阻塞自己等待条件的出现
+        // 重点:上面部分是调用await()时释放自己占有的锁，并阻塞自己等待条件的出现
         // *************************分界线*************************  //
-        // 下面部分是条件已经出现，尝试去获取锁
+        // 重点:下面部分是条件已经出现，尝试去获取锁
         
         if ((interruptMode = checkInterruptWhileWaiting(node)) != 0)
             break;
     }
     
     // 尝试获取锁，注意第二个参数，这是上一章分析过的方法
-    // 如果没获取到会再次阻塞（这个方法这里就不贴出来了，有兴趣的翻翻上一章的内容）
+    // 如果没获取到会再次阻塞
     if (acquireQueued(node, savedState) && interruptMode != THROW_IE)
         interruptMode = REINTERRUPT;
     // 清除取消的节点
@@ -192,35 +193,34 @@ final boolean isOnSyncQueue(Node node) {
 }
 ```
 
-这里有几个难理解的点：
+### 这里有几个难理解的点：
 
-（1）Condition的队列和AQS的队列不完全一样；
+#### Condition的队列和AQS的队列不完全一样；
 
-    AQS的队列头节点是不存在任何值的，是一个虚节点；
+- AQS的队列头节点是不存在任何值的，是一个虚节点；
 
-    Condition的队列头节点是存储着实实在在的元素值的，是真实节点。
+- Condition的队列头节点是存储着实实在在的元素值的，是真实节点。
 
-（2）各种等待状态（waitStatus）的变化；
+#### 各种等待状态（waitStatus）的变化；
 
-    首先，在条件队列中，新建节点的初始等待状态是CONDITION（-2）；
+- 首先，在条件队列中，新建节点的初始等待状态是CONDITION（-2）；
 
-    其次，移到AQS的队列中时等待状态会更改为0（AQS队列节点的初始等待状态为0）；
+- 其次，移到AQS的队列中时等待状态会更改为0（AQS队列节点的初始等待状态为0）；
 
-    然后，在AQS的队列中如果需要阻塞，会把它上一个节点的等待状态设置为SIGNAL（-1）；
+- 然后，在AQS的队列中如果需要阻塞，会把它上一个节点的等待状态设置为SIGNAL（-1）；
 
-    最后，不管在Condition队列还是AQS队列中，已取消的节点的等待状态都会设置为CANCELLED（1）；
+- 最后，不管在Condition队列还是AQS队列中，已取消的节点的等待状态都会设置为CANCELLED（1）；
 
-    另外，后面我们在共享锁的时候还会讲到另外一种等待状态叫PROPAGATE（-3）。
+- 另外，后面我们在共享锁的时候还会讲到另外一种等待状态叫PROPAGATE（-3）。
 
-（3）相似的名称；
+#### 相似的名称；
 
-    AQS中下一个节点是next，上一个节点是prev；
+- AQS中下一个节点是next，上一个节点是prev；也就是双向链表
 
-    Condition中下一个节点是nextWaiter，没有上一个节点。
+- Condition中下一个节点是nextWaiter，没有上一个节点。条件队列是个单向列表
 
-如果弄明白了这几个点，看懂上面的代码还是轻松加愉快的，如果没弄明白，彤哥这里指出来了，希望您回头再看看上面的代码。
 
-下面总结一下await()方法的大致流程：
+### 下面总结一下await()方法的大致流程：
 
 （1）新建一个节点加入到条件队列中去；
 
@@ -228,13 +228,13 @@ final boolean isOnSyncQueue(Node node) {
 
 （3）阻塞当前线程，并等待条件的出现；
 
-（4）条件已出现（此时节点已经移到AQS的队列中），尝试获取锁；
+（4）条件已出现（此时节点已经移到AQS的队列中),尝试获取锁；
 
 也就是说await()方法内部其实是`先释放锁->等待条件->再次获取锁`的过程。
 
 ### condition.signal()方法
 
-condition.signal()方法通知条件已经出现。
+- condition.signal()方法通知条件已经出现。
 
 ```java
 // AbstractQueuedSynchronizer.ConditionObject.signal
@@ -287,21 +287,18 @@ final boolean transferForSignal(Node node) {
 }
 ```
 
-signal()方法的大致流程为：
+#### signal()方法的大致流程为：
 
-（1）从条件队列的头节点开始寻找一个非取消状态的节点；
+- 从条件队列的头节点开始寻找一个非取消状态的节点；
 
-（2）把它从条件队列移到AQS队列；
+- 把它从条件队列移到AQS队列；
+  
+- 且只移动一个节点；
 
-（3）且只移动一个节点；
+**注意:** 这里调用signal()方法后并不会真正唤醒一个节点，那么，唤醒一个节点是在啥时候呢？
 
-注意，这里调用signal()方法后并不会真正唤醒一个节点，那么，唤醒一个节点是在啥时候呢？
+- signal()方法后，最终会执行`lock.unlock()`方法，此时才会真正唤醒一个节点，唤醒的这个节点如果曾经是条件节点的话又会继续执行await()方法“分界线”下面的代码。
 
-还记得开头例子吗？倒回去再好好看看，signal()方法后，最终会执行lock.unlock()方法，此时才会真正唤醒一个节点，唤醒的这个节点如果曾经是条件节点的话又会继续执行await()方法“分界线”下面的代码。
-
-结束了，仔细体会下^^
-
-如果非要用一个图来表示的话，我想下面这个图可以大致表示一下（这里是用时序图画的，但是实际并不能算作一个真正的时序图哈，了解就好）：
 
 ![ReentrantLock](https://gitee.com/alan-tang-tt/yuan/raw/master/死磕%20java同步系列/resource/condition.png)
 
@@ -321,17 +318,17 @@ signal()方法的大致流程为：
 
 （7）ReentrantLock中的条件锁是通过AQS的ConditionObject内部类实现的；
 
-（8）await()和signal()方法都必须在获取锁之后释放锁之前使用；
+（8）**await()和signal()方法都必须在获取锁之后释放锁之前使用**；
 
 （9）await()方法会新建一个节点放到条件队列中，接着完全释放锁，然后阻塞当前线程并等待条件的出现；
 
 （10）signal()方法会寻找条件队列中第一个可用节点移到AQS队列中；
 
-（11）在调用signal()方法的线程调用unlock()方法才真正唤醒阻塞在条件上的节点（此时节点已经在AQS队列中）；
+（11）**在调用signal()方法的线程调用unlock()方法才真正唤醒阻塞在条件上的节点（此时节点已经在AQS队列中）**；
 
 （12）之后该节点会再次尝试获取锁，后面的逻辑与lock()的逻辑基本一致了。
 
-## 彩蛋
+## 重点
 
 为什么java有自带的关键字synchronized了还需要实现一个ReentrantLock呢？
 
