@@ -1,8 +1,3 @@
-🖕欢迎关注我的公众号“彤哥读源码”，查看更多源码系列文章, 与彤哥一起畅游源码的海洋。 
-
-（手机横屏看源码更方便）
-
----
 
 ## 问题
 
@@ -14,19 +9,17 @@
 
 ## 简介
 
-LongAdder是java8中新增的原子类，在多线程环境中，它比AtomicLong性能要高出不少，特别是写多的场景。
-
-它是怎么实现的呢？让我们一起来学习吧。
+- LongAdder是java8中新增的原子类，在多线程环境中，它比AtomicLong性能要高出不少，特别是写多的场景。
 
 ## 原理
 
-LongAdder的原理是，在最初无竞争时，只更新base的值，当有多线程竞争时通过分段的思想，让不同的线程更新不同的段，最后把这些段相加就得到了完整的LongAdder存储的值。
+- LongAdder的原理是，在最初无竞争时，只更新base的值，当有多线程竞争时通过分段的思想，让不同的线程更新不同的段，最后把这些段相加就得到了完整的LongAdder存储的值。
 
 ![LongAdder](https://gitee.com/alan-tang-tt/yuan/raw/master/死磕%20java并发包/resource/LongAdder1.png)
 
 ## 源码分析
 
-LongAdder继承自Striped64抽象类，Striped64中定义了Cell内部类和各重要属性。
+- LongAdder继承自Striped64抽象类，Striped64中定义了Cell内部类和各重要属性。
 
 ### 主要内部类
 

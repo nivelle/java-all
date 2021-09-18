@@ -11,7 +11,7 @@ static final class Node {
         /** waitStatus value to indicate thread has cancelled */
         //等待状态标识:线程已经取消
         static final int CANCELLED =  1;
-        /** waitStatus value to indicate successor's thread needs unparking */
+        /** waitStatus value to indicate successor's【继承】 thread needs unparking */
         //等待状态标识:后继节点需要唤醒时，当前节点状态为-1
         static final int SIGNAL    = -1;
         /** waitStatus value to indicate thread is waiting on condition */
@@ -113,9 +113,9 @@ private volatile int state;
 
 ```
 
-#### 抽象方法
+### 抽象方法
 
-- 模版方法设计模式
+#### 模版方法设计模式
 
 ````java
     //互斥模式下使用:尝试获取锁
@@ -154,9 +154,9 @@ static final class NonfairSync extends Sync
 static final class FairSync extends Sync 
 ```
 
-### 公平锁实现
+## 公平锁实现
 
-##### ReentrantLock.lock()
+#### ReentrantLock.lock()
 
 ```java
 public void lock() {
@@ -165,7 +165,7 @@ public void lock() {
 }
 ```
 
-##### FairSync.lock()//静态内部类,公平锁的实现
+#### FairSync.lock()//静态内部类,公平锁的实现
 
 ```JAVA
 final void lock() {
@@ -179,12 +179,13 @@ public final void acquire(int arg) {
          //首先尝试获取锁,获取失败就放到等待队列
         // addWaiter()这里传入的节点模式为独占模式;arg默认为1  与操作 前面获取成功则不需要再检查后面的入队方法
         if (!tryAcquire(arg) && acquireQueued(addWaiter(Node.EXCLUSIVE), arg)){
+            //阻塞住当前现场
             selfInterrupt();
         }
     }
 ```
 
-##### ReentrantLock.FairSync.tryAcquire() 
+#### ReentrantLock.FairSync.tryAcquire() 
 
 - 公平锁抽象类FairSync尝试使用cas获取锁
 
@@ -223,9 +224,13 @@ protected final boolean tryAcquire(int acquires) {
 }
 ```
 
-##### AbstractQueuedSynchronizer.addWaiter()
+#### AbstractQueuedSynchronizer.addWaiter()
 
-- 调用这个方法，说明上面tryAcquire(int acquires)尝试获取锁方法失败了,可能已经有别的线程占有了锁；加入等待队列
+- 调用这个方法，说明上面 __tryAcquire(int acquires)尝试获取锁方法失败了__ ,
+  
+- 可能已经有别的线程占有了锁,**加入等待队列**
+
+- 加入等待队列，从后往前指向；加入等待队列可能因为并发导致失败，则需要enq()方法不断重试
 
 ```java
 private Node addWaiter(Node mode) {//mode= Node.EXCLUSIVE
@@ -252,9 +257,11 @@ private Node addWaiter(Node mode) {//mode= Node.EXCLUSIVE
 
 ```
 
-##### AbstractQueuedSynchronizer.enq() 
+#### AbstractQueuedSynchronizer.enq() 
 
-- 循环尝试加入到尾巴节点，直到成功;尾巴节点为null或者多个节点争着加入到CLH同步队列
+- 循环尝试加入到尾巴节点，直到成功;
+  
+- 尾巴节点为null或者多个节点争着加入到**CLH同步队列**
 
 ```JAVA
 private Node enq(final Node node) {
@@ -264,7 +271,7 @@ private Node enq(final Node node) {
             // 如果尾节点为null,说明还未初始化
             if (t == null) {
                 //头节点理论上代表获取锁的线程,它不属于队列。所以head节点的thread=null,状态初始为0,
-                //然后有后继节点尝试获取锁的时候则被设置为-1(-1 代表后记节点需要被唤醒;shouldParkAfterFailedAcquire()方法里)
+                //然后有后继节点尝试获取锁的时候则被设置为-1(-1 代表后继节点需要被唤醒;shouldParkAfterFailedAcquire()方法里)
                 //初始化头节点和尾节点(new Node()方法可见,head 是不包含线程的假节点),第一次进入这个方法的时候初始化了等待队列，第二次自旋循环才能跳出
                 //没有获得锁的线程，在队列为空的时候首先初始化队列,head=tail
                 if (compareAndSetHead(new Node())){
@@ -287,7 +294,9 @@ private Node enq(final Node node) {
 
 ##### AbstractQueuedSynchronizer.acquireQueued() 
 
-- 调用上面的 addWaiter()方法**包括enq()方法**成功使得新节点已经成功入队,下面这个方法是尝试让当前节点来获取锁的(arg=1)
+- 调用上面的 addWaiter()方法**包括enq()方法**成功使得新节点已经成功入队,
+  
+- 这个方法是再次一个机会,如果前继节点是head,则自旋尝试让当前节点来获取锁的(arg=1)，如果获取失败就阻塞
 
 ```java
 final boolean acquireQueued(final Node node, int arg) {
@@ -303,14 +312,16 @@ final boolean acquireQueued(final Node node, int arg) {
                 //如果当前节点的前一个节点为head节点,则说明轮到自己获取锁了
                 //调用ReentrantLock.FairSync.tryAcquire()方法再次尝试获取锁
                 if (p == head && tryAcquire(arg)) {
-                    //重新设置头节点,断开原来头节点 尝试获取锁成功,这里同时只会有一个线程在执行,所以不需要CAS更新;将当前节点设置为新的头节点
+                    //重新设置头节点,断开原来头节点 尝试获取锁成功,这里同时只会有一个线程在执行,所以不需要CAS更新;
+                    //将当前节点设置为新的头节点
                     setHead(node);
                     //并把节点从链表中删除,已经获取锁了
                     p.next = null; // help GC
                     failed = false;//未失败
                     return interrupted;
                 }
-                //只有在前置节点设置为-1时才调用parkAndCheckInterrupt方法是否需要阻塞, parkAndCheckInterrupt是真正的阻塞方法，唤醒后的线程重新执行上面的for循环
+                //只有在前置节点设置为-1时才调用parkAndCheckInterrupt方法是否需要阻塞, 
+                //parkAndCheckInterrupt是真正的阻塞方法,唤醒后的线程重新执行上面的for循环
                 if (shouldParkAfterFailedAcquire(p, node) && parkAndCheckInterrupt()){
                     interrupted = true;//中断了
                 }
@@ -330,7 +341,9 @@ final boolean acquireQueued(final Node node, int arg) {
 
 - 非head的下一个节点,继续阻塞
 
-- 这个方法在 acquireQueued 方法循环里使用第一次调用,如果前置节点不为SIGNAL（-1）则会把它设置为-1,会把前一个节点的等待状态设置为SIGNAL,并返回false, 第二次调用才会返回true
+- 这个方法在 acquireQueued 方法循环里使用第一次调用,如果前置节点不为SIGNAL（-1）则会把它设置为-1,会把前一个节点的等待状态设置为SIGNAL,并返回false,
+  
+- 第二次调用才会返回true
 
 ```java
 private static boolean shouldParkAfterFailedAcquire(Node pred, Node node) {
@@ -387,9 +400,9 @@ private final boolean parkAndCheckInterrupt() {
 
 -------------------
 
-### 非公平锁实现
+## 非公平锁实现
 
-##### ReentrantLock.lock()
+###  ReentrantLock.lock()
 
 ```java
 public void lock() {
@@ -397,7 +410,7 @@ public void lock() {
     }
 ```
 
-##### ReentrantLock.NonfairSync.lock()
+### ReentrantLock.NonfairSync.lock()
 
 - 这个方法在公平锁模式下直接调用的 acquire(1)
 
@@ -411,7 +424,7 @@ final void lock() {
 }
 ````
 
-##### ReentrantLock.NonfairSync.tryAcquire()
+### ReentrantLock.NonfairSync.tryAcquire()
 
 ```java
 protected final boolean tryAcquire(int acquires) {
@@ -419,7 +432,7 @@ protected final boolean tryAcquire(int acquires) {
 }
 ```
 
-##### ReentrantLock.Sync.nonfairTryAcquire()
+#### ReentrantLock.Sync.nonfairTryAcquire()
 
 ```java
 final boolean nonfairTryAcquire(int acquires) {
