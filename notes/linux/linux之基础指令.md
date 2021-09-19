@@ -3,8 +3,8 @@
 #### 1. exit 退出(root账号前面是#不受限制)
 
 #### 2.目录结构
+```shell
 
-```
 1. / : 根目录位于目录结构的最顶层，用斜线（/）表示，类似于Windows操作系统的“C:\“，包含Fedora操作系统中所有的目录和文件。根目录是所有用户共享的目录
 
 2. /root: 超级用户root的主目录
@@ -288,7 +288,8 @@ PID (进程唯一id,名字收可以重复) TTY (终端,当前为虚拟终端) TI
 
 - ps -eLf //LWP :轻量级进程-线程
 
-```
+```shell
+
  uid:有效用户
  ppid:父进程
  cmd:启动命令
@@ -297,7 +298,8 @@ PID (进程唯一id,名字收可以重复) TTY (终端,当前为虚拟终端) TI
 
 - pstree //进程树
 
-```
+```shell
+
 systemd─┬─AliYunDun───23*[{AliYunDun}]
         ├─AliYunDunUpdate───3*[{AliYunDunUpdate}]
         ├─2*[agetty]
@@ -534,7 +536,7 @@ ping基于ICMP的协议开发，ICMP又是基于IP协议的控制协议，也叫
 
 网卡列表
 
-````
+````shell
 
 [root@jessy ~]# ifconfig
 eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500

@@ -4,7 +4,7 @@
 
 - 查看及调整虚拟机参数
 
-```
+```shell
 jinfo -flag 参数名 进程ID
 ```
 
@@ -12,7 +12,7 @@ jinfo -flag 参数名 进程ID
 
 - jmap 来查看堆内存初始化配置信息以及堆内存的使用情况 及生成堆快照
 
-```
+```shell
 jmap -dump 8299
 
 jmap -histo:live 8299|more
@@ -22,7 +22,7 @@ jmap -dump:file=./heap.hprof 8299
 
 ### jstack
 
-```
+```shell
 jstack pid 命令查看线程的堆栈信息;
 
 每个线程堆栈的信息中，都可以查看到线程 ID、线程的状态（wait、sleep、running 等状态）以及是否持有锁等
@@ -32,7 +32,7 @@ jstack pid 命令查看线程的堆栈信息;
 - -m 同时打印java和本地(native)线程栈信息，m是mixed mode的简写
 - -l 打印锁的额外信息
 
-```
+```shell
 jstack -l 9233
 2020-07-25 23:13:06
 Full thread dump Java HotSpot(TM) 64-Bit Server VM (25.191-b12 mixed mode):
@@ -88,7 +88,7 @@ JNI global references: 1082
 
 ##### 查看进程ID
 
-```
+```shell
 -q：只显示java进程的pid
 -m：输出传递给main方法的参数，在嵌入式jvm上可能是null
 -l：输出应用程序main class的完整package名 或者 应用程序的jar文件完整路径名
@@ -97,7 +97,7 @@ JNI global references: 1082
 
 ##### 例子：
 
-````
+````shell
 jps -l
 321 
 2451 org.jetbrains.jps.cmdline.Launcher
