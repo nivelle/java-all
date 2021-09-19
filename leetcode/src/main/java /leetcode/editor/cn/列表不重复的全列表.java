@@ -35,7 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 //leetcode submit region begin(Prohibit modification and deletion)
-class 返回不重复的全列表 {
+class 列表不重复的全列表 {
     List<List<Integer>> res = new ArrayList<>();
 
 

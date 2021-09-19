@@ -27,7 +27,7 @@ import leetcode.editor.cn.base.ListNode;
  * ListNode(int x) { val = x; }
  * }
  */
-class 返回数组倒数第k个节点 {
+class 数组倒数第k个节点 {
     public ListNode getKthFromEnd(ListNode head, int k) {
         if (head == null) {
             return null;

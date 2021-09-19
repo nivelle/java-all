@@ -1,61 +1,60 @@
-//定义一个函数，输入一个链表的头节点，反转该链表并输出反转后链表的头节点。 
+//翻转一棵二叉树。 
 //
-// 
+// 示例： 
 //
-// 示例: 
+// 输入： 
 //
-// 输入: 1->2->3->4->5->NULL
-//输出: 5->4->3->2->1->NULL 
+//      4
+//   /   \
+//  2     7
+// / \   / \
+//1   3 6   9 
 //
-// 
+// 输出： 
 //
-// 限制： 
+//      4
+//   /   \
+//  7     2
+// / \   / \
+//9   6 3   1 
 //
-// 0 <= 节点个数 <= 5000 
+// 备注: 
+//这个问题是受到 Max Howell 的 原问题 启发的 ： 
 //
-// 
-//
-// 注意：本题与主站 206 题相同：https://leetcode-cn.com/problems/reverse-linked-list/ 
-// Related Topics 链表 
-// 👍 243 👎 0
+// 谷歌：我们90％的工程师使用您编写的软件(Homebrew)，但是您却无法在面试时在白板上写出翻转二叉树这道题，这太糟糕了。 
+// Related Topics 树 深度优先搜索 广度优先搜索 二叉树 
+// 👍 904 👎 0
 
 
 //leetcode submit region begin(Prohibit modification and deletion)
 
+import leetcode.editor.cn.base.TreeNode;
+
 /**
- * Definition for singly-linked list.
- * public class ListNode {
+ * Definition for a binary tree node.
+ * public class TreeNode {
  * int val;
- * ListNode next;
- * ListNode(int x) { val = x; }
+ * TreeNode left;
+ * TreeNode right;
+ * TreeNode() {}
+ * TreeNode(int val) { this.val = val; }
+ * TreeNode(int val, TreeNode left, TreeNode right) {
+ * this.val = val;
+ * this.left = left;
+ * this.right = right;
+ * }
  * }
  */
-
-import leetcode.editor.cn.base.ListNode;
-
-/**
- * 反转链表
- */
 class 二叉树反转 {
-    public ListNode reverseList(ListNode head) {
+    public TreeNode invertTree(TreeNode root) {
+        if (root == null) return null;
+        TreeNode tmp = root.left;
+        root.left = root.right;
+        root.right = tmp;
 
-        if (head == null) {
-            return null;
-        }
-        ListNode cur = head;
-        //新列表 的表头
-        ListNode pre = null;
-        while (cur != null) {
-            //临时指针，暂存下一个节点
-            ListNode tmp = cur.next;
-            //交换指针
-            cur.next = pre;
-            //交换位置
-            pre = cur;
-            //后移
-            cur = tmp;
-        }
-        return pre;
+        invertTree(root.left);
+        invertTree(root.right);
+        return root;
     }
 }
 //leetcode submit region end(Prohibit modification and deletion)

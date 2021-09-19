@@ -50,7 +50,7 @@
 
 
 //leetcode submit region begin(Prohibit modification and deletion)
-class 判断整数是否为回文整数 {
+class 整数是否为回文整数 {
     public boolean isPalindrome(int x) {
         //负数和10、100、1000 这样的数一定不是回文数，但是0是回文数
         if (x < 0 || x % 10 == 0 && x != 0) {

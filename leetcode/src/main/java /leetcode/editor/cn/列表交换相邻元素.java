@@ -55,7 +55,7 @@ import leetcode.editor.cn.base.ListNode;
  * ListNode(int val, ListNode next) { this.val = val; this.next = next; }
  * }
  */
-class 默认交换链表相邻元素 {
+class 列表交换相邻元素 {
     //跌打解法
     class Solution {
         public ListNode swapPairs(ListNode head){

@@ -42,7 +42,7 @@ import leetcode.editor.cn.base.ListNode;
  * ListNode(int x) { val = x; }
  * }
  */
-class 删除链表指定节点值 {
+class 列表删除指定节点值 {
     public ListNode deleteNode(ListNode head, int val) {
         if (head == null) {
             return null;

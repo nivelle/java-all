@@ -55,7 +55,7 @@ import leetcode.editor.cn.base.ListNode;
  * ListNode(int val, ListNode next) { this.val = val; this.next = next; }
  * }
  */
-class 链表形式整数求和 {
+class 列表形式整数求和 {
     public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
 
         ListNode dummy = new ListNode(0);

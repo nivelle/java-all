@@ -67,7 +67,7 @@ import leetcode.editor.cn.base.TreeNode;
  * }
  * }
  */
-class 判断两颗二叉树是否有相同子结构 {
+class 二叉树之判断两颗是否有相同子结构 {
     public boolean isSubtree(TreeNode root, TreeNode subRoot) {
         if (root == null && subRoot == null) return true;
         if (root == null || subRoot == null) return false;
