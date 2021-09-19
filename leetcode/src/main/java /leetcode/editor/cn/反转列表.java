@@ -53,12 +53,13 @@ import leetcode.editor.cn.base.ListNode;
  */
 public class 反转列表 {
     public ListNode reverseList(ListNode head) {
+        //前继节点,默认是head的前继节点
         ListNode prev = null;
         ListNode cur = head;
         while (cur != null) {
-            //记录原后继节点:cur.next
+            //记录原后继节点:cur.next;防止丢失
             ListNode temp = cur.next;
-            //反转指向,指向原前继节点
+            //反转指向,指向原前继节点,
             cur.next = prev;
             //后移prev(也就是prev指向cur的值)
             prev = cur;
