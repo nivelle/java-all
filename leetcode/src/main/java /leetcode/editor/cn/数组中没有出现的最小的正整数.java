@@ -37,7 +37,7 @@ package leetcode.editor.cn;//给你一个未排序的整数数组 nums ，请你
 
 
 //leetcode submit region begin(Prohibit modification and deletion)
-class 没有出现的最小的正整数 {
+class 数组中没有出现的最小的正整数 {
     public int firstMissingPositive(int[] nums) {
  return 0;
     }
