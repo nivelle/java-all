@@ -37,7 +37,7 @@ import leetcode.editor.cn.base.TreeNode;
  * }
  * }
  */
-class Solution {
+class 查找二叉树最大深度 {
     public int maxDepth(TreeNode root) {
         if (root == null) return 0;
         int leftDepth = maxDepth(root.left);

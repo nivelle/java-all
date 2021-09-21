@@ -27,7 +27,7 @@ import leetcode.editor.cn.base.ListNode;
  * ListNode(int x) { val = x; }
  * }
  */
-class 数组倒数第k个节点 {
+class 数组倒数第k个节点删除 {
     public ListNode getKthFromEnd(ListNode head, int k) {
         if (head == null) {
             return null;
@@ -40,7 +40,7 @@ class 数组倒数第k个节点 {
             //fast先走到 正数第k个位置
             fast = fast.next;
         }
-        //fast和slow一起再往前走，fast走到尾的时候，slow正好到达倒数k,比 slow快k个位移
+        //fast和slow一起再往前走，fast走到尾的时候，slow正好到达倒数k,比slow快k个位移
         while (fast != null) {
             fast = fast.next;
             slow = slow.next;

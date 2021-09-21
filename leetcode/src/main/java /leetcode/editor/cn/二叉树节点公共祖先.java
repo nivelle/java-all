@@ -48,7 +48,7 @@ import leetcode.editor.cn.base.TreeNode;
  * }
  */
 
-class 指定二叉树节点公共祖先 {
+class 二叉树节点公共祖先 {
     public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
         if (root.val > p.val && root.val > q.val) {
             //根节点比左右节点都大

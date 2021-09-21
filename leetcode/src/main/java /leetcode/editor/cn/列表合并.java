@@ -30,15 +30,17 @@ import leetcode.editor.cn.base.ListNode;
 /**
  *  合并两个有序链表
  */
-class 链表合并 {
+class 列表合并 {
     public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
         ListNode dummy = new ListNode(0);
         //当前指针
         ListNode cur = dummy;
-
+        //列表长度一样的情况
         while (l1 != null && l2 != null) {
             if (l1.val < l2.val) {
+                //满足条件的节点 加入到当前节点
                 cur.next = l1;
+                //满足条件的节点后移
                 l1 = l1.next;
             } else {
                 cur.next = l2;
