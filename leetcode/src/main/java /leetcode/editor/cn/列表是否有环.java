@@ -78,7 +78,7 @@ public class 列表是否有环 {
         ListNode fast = head.next;
         //快慢指针:快指针先进入环,慢指针后进入,因为环,快指针会和慢指针相遇
         while (slow != fast) {
-            //快慢指针不相等的时候，如果fast为空或者fast.next为空，则不可能为环
+            //快慢指针不相等的时候，如果fast为空或者fast.next为空,则不可能为环
             if (fast == null || fast.next == null) {
                 return false;
             }

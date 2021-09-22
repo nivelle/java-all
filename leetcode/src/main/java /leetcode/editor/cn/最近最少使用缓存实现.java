@@ -126,9 +126,9 @@ class DoubleLinkedList {
         tail.prev = head;
     }
 
-    //双向列表，添加元素：涉及新加入链表节点的前后指向，和 原来头节点和头节点下一个节点的指向
+    //头插法：双向列表，添加元素：涉及新加入链表节点的前后指向，和 原来头节点和头节点下一个节点的指向
     public void addFirst(Node node) {
-        //新节点放在head 之后，正向链接
+        //新节点放在head 之后,正向链接
         node.next = head.next;
         node.prev = head;
         //逆向链接
