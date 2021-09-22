@@ -29,6 +29,8 @@
 // 👍 241 👎 0
 
 
+import java.util.Deque;
+import java.util.LinkedList;
 import java.util.Stack;
 
 //leetcode submit region begin(Prohibit modification and deletion)
@@ -59,10 +61,12 @@ class 两个栈实现队列 {
         return outStack.peek();
     }
 
+    // 入栈和出栈
     public boolean empty() {
         return inStack.isEmpty() && outStack.isEmpty();
     }
 
+    //数据从入栈到出栈队列
     private void in2out() {
         while (!inStack.isEmpty()) {
             outStack.push(inStack.pop());
