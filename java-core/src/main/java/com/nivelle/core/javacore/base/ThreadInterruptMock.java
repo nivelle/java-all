@@ -1,4 +1,4 @@
-package com.nivelle.core.javacore.javabase;
+package com.nivelle.core.javacore.base;
 
 /**
  * 线程中断测试

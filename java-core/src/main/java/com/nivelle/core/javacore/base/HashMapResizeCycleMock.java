@@ -1,4 +1,4 @@
-package com.nivelle.core.javacore.javabase;
+package com.nivelle.core.javacore.base;
 
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicInteger;

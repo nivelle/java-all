@@ -1,4 +1,4 @@
-package com.nivelle.core.javacore.javabase;
+package com.nivelle.core.javacore.base;
 
 import java.util.concurrent.Executors;
 

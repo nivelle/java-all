@@ -1,4 +1,4 @@
-package com.nivelle.core.javacore.javabase;
+package com.nivelle.core.javacore.base;
 
 /**
  * 并发问题导致的可见性问题,这里的可见性指的是共享变量的可见性问题

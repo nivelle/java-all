@@ -5,7 +5,7 @@ import java.util.*;
 /**
  * LinkedHashMap
  * <p>
- * LinkedHashMap内部维护了一个双向链表,能保证元素按插入的顺序迭代,也能以访问顺序迭代,可以用来实现LRU缓存策略。
+ * LinkedHashMap内部维护了一个 双向链表 ,能保证元素按插入的顺序迭代,也能以 访问顺序迭代 ,可以用来实现LRU缓存策略。
  *
  * @author nivelle
  * @date 2019/06/16
@@ -16,7 +16,7 @@ public class LinkedHashMapMock {
         /**
          * 继承自HashMap,区别与HashMap,链表是双向列表
          *
-         *  accessOrder 代表迭代顺序，默认按插入顺序迭代(afterNodeAccess:在put已经存的元素或者get时调用)
+         *  accessOrder 代表迭代顺序,默认按插入顺序迭代(afterNodeAccess:在put已经存的元素或者get时调用)
          *  1. true  代表按访问顺序存迭代，最近访问的在前
          *  2. false 代表按插入顺序存储迭代,默认值,先插的在前
          */
@@ -41,7 +41,7 @@ public class LinkedHashMapMock {
         Iterator<Integer> iterator = linkedHashMap1.keySet().iterator();
         try {
             /**
-             * accessOrder=true 时，get()操作会将访问节点放到队列末尾,导致modCount++,继续遍历就会导致：ConcurrentModificationException
+             * accessOrder=true 时，get()操作会将访问节点放到队列末尾,导致modCount++,继续遍历就会导致: ConcurrentModificationException
              */
             while (iterator.hasNext()) {
                 int x = iterator.next();
@@ -87,6 +87,7 @@ public class LinkedHashMapMock {
          * （4）默认removeEldestEntry()方法返回false，也就是不删除元素。
          *
          *
+         *
          * // 删除一个HashMap节点后-》双向链表删除这个节点:
          *
          *  ```
@@ -107,7 +108,9 @@ public class LinkedHashMapMock {
          *
          *  ```
          *
-         * //afterNodeAccess(Node e)方法 //在节点访问之后被调用,主要在put()已经存在的元素或get()时被调用,如果accessOrder为true,调用这个方法把访问到的节点移动到双向链表的末尾。
+         * //afterNodeAccess(Node e)方法
+         * //在节点访问之后被调用,主要在put()已经存在的元素或get()时被调用
+         * // 如果accessOrder为true,调用这个方法把访问到的节点移动到双向链表的末尾。
          *
          * ```
          * void afterNodeAccess(Node<K,V> e) { // move node to last
