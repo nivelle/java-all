@@ -58,13 +58,13 @@ package leetcode.editor.cn;//运用你所掌握的数据结构，设计和实现
 import java.util.HashMap;
 
 //leetcode submit region begin(Prohibit modification and deletion)
-public class 最近最少使用缓存实现 {
+public class LRU缓存实现 {
     HashMap<Integer, Node> map;
     DoubleLinkedList cache;
     //容量
     int cap;
 
-    public 最近最少使用缓存实现(int capacity) {
+    public LRU缓存实现(int capacity) {
         map = new HashMap<>();
         //双向列表
         cache = new DoubleLinkedList();
@@ -74,7 +74,6 @@ public class 最近最少使用缓存实现 {
     //添加方法
     public void put(int key, int val) {
         Node newNode = new Node(key, val);
-
         if (map.containsKey(key)) {
             //从双向列表删除
             cache.delete(map.get(key));
@@ -101,11 +100,9 @@ public class 最近最少使用缓存实现 {
         if (!map.containsKey(key)) {
             return -1;
         }
-
         int val = map.get(key).val;
         //如果存在，使用过之后,则再添加一次
         put(key, val);
-
         return val;
     }
 }
