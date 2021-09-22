@@ -78,7 +78,7 @@ import java.util.Stack;
  */
 class 二叉树的中序遍历 {
     public List<Integer> inorderTraversal(TreeNode root) {
-        //return inorderTraversal1(root);
+        inorderTraversal1(root);
 
         return inorderTraversal2(root);
     }
@@ -91,6 +91,8 @@ class 二叉树的中序遍历 {
         dfs(root);
         return res;
     }
+
+    //递归遍历二叉树
     private void dfs(TreeNode root) {
         if (root == null) {
             return;
@@ -108,11 +110,14 @@ class 二叉树的中序遍历 {
         Stack<TreeNode> stack = new Stack<>();
         stack.push(root);
         while (!stack.empty()) {
+            //根节点弹出
             TreeNode node = stack.pop();
             if (node != null) {
                 if (node.right != null) {
+                    //右节点压入
                     stack.push(node.right);
                 }
+                //当前根节点压入
                 stack.push(node);
                 //标记 null的下一个为left
                 stack.push(null);
@@ -121,7 +126,7 @@ class 二叉树的中序遍历 {
                     stack.push(node.left);
                 }
             } else {
-                //这里实在 stack.pop()判断为空后 又取的一个值
+                //这里是在: stack.pop()判断为空后 又取的一个值
                 TreeNode saveNode = stack.pop();
                 res.add(saveNode.val);
             }

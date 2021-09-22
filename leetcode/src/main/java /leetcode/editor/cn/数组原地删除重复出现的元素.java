@@ -56,16 +56,21 @@
 
 
 //leetcode submit region begin(Prohibit modification and deletion)
-class 原地删除数组重复出现的元素 {
-    public int removeDuplicates(int[] nums) {
+class 数组原地删除重复出现的元素 {
+    public static int removeDuplicates(int[] nums) {
         int count = 1;
         for (int i = 1; i < nums.length; i++) {
-            if (nums[i] !=nums[i - 1]) {
+            if (nums[i - 1] != nums[i]) {
                 //后面的数和count 指针指向的数不相等，就将后面的数向count位置移动 ，相等则不动
-               nums[count++] = nums[i];
+                nums[count++] = nums[i];
             }
         }
         return count;
+    }
+
+    public static void main(String[] args) {
+        int out = removeDuplicates(new int[]{1,2,2,3});
+        System.out.println(out);
     }
 }
 //leetcode submit region end(Prohibit modification and deletion)
