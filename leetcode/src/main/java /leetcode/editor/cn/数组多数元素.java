@@ -32,14 +32,17 @@
 //leetcode submit region begin(Prohibit modification and deletion)
 class 数组多数元素 {
     public int majorityElement(int[] nums) {
-        if (nums == null || nums.length == 0) return 0;
-
+        if (nums == null || nums.length == 0) {return 0;}
+        //出现次数最多的元素
         int mainNum = 0;
+        //出现次数最多的次数
         int count = 0;
         for (int i = 0; i < nums.length; i++) {
+            //如果次数为0,则默认第i个元素为主要元素
             if (count == 0) {
                 mainNum = nums[i];
             }
+            //如果新元素与当前主要元素相同，则计数+1；否则-1
             if (mainNum == nums[i]) {
                 count++;
             } else {

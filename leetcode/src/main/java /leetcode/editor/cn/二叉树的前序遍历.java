@@ -98,6 +98,7 @@ class 二叉树的前序遍历 {
         dfs(root.right);
     }
 
+    //迭代实现
     private List<Integer> dfs2(TreeNode root) {
         if (root == null) {
             return res;
@@ -105,7 +106,7 @@ class 二叉树的前序遍历 {
         Stack<TreeNode> stack = new Stack<>();
         stack.push(root);
         while (!stack.isEmpty()) {
-            //相对跟节点
+            //跟节点
             TreeNode node = stack.pop();
             if (node != null) {
                 if (node.right != null) {//先放右节点，后弹出
@@ -114,8 +115,10 @@ class 二叉树的前序遍历 {
                 if (node.left != null) {//再放左节点，先弹出
                     stack.push(node.left);
                 }
-                stack.push(node);//把相对跟节点放回去
-                stack.push(null);//放一个空节点，第二次过来的时候跳到else路径，再就是left,最后right
+                //把相对跟节点放回去
+                stack.push(node);
+                //放一个空节点，第二次过来的时候跳到else路径，再就是left,最后right
+                stack.push(null);
             } else {
                 res.add(stack.pop().val);
             }

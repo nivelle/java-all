@@ -41,9 +41,11 @@
  */
 class 数组有序合并 {
     public void merge(int[] nums1, int m, int[] nums2, int n) {
-        //数组下标最大值
+        //数组1下标最大值
         int i = m - 1;
+        //数组2下标最大值
         int j = n - 1;
+        //合并后数组最大下标值
         int k = m + n - 1;
         //从尾部开始,是子数组中最大的值开始遍历,判断完后下标前移，较小下标不动
         while (i >= 0 && j >= 0) {

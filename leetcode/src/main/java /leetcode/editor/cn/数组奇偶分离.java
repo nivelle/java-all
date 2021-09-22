@@ -25,7 +25,7 @@ class 数组奇偶分离 {
 
     public int[] exchange(int[] nums){
         return insertOrderArray(nums);
-    };
+    }
 
     public int[] twoPtrExchange(int[] nums) {
 
