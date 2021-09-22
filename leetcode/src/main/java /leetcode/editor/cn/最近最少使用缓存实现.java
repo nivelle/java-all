@@ -103,7 +103,7 @@ public class 最近最少使用缓存实现 {
         }
 
         int val = map.get(key).val;
-        //如果存在，则再添加一次
+        //如果存在，使用过之后,则再添加一次
         put(key, val);
 
         return val;
