@@ -32,30 +32,41 @@
 import java.util.Stack;
 
 //leetcode submit region begin(Prohibit modification and deletion)
-class CQueue {
-    Stack<Integer> stack1;
-    Stack<Integer> stack2;
+class 两个栈实现队列 {
+    Deque<Integer> inStack;
+    Deque<Integer> outStack;
 
-    public CQueue() {
-        stack1 = new Stack();
-        stack2 = new Stack();
+    public 两个栈实现队列() {
+        inStack = new LinkedList<Integer>();
+        outStack = new LinkedList<Integer>();
     }
 
-    public void appendTail(int value) {
-        stack1.push(value);
+    public void push(int x) {
+        inStack.push(x);
     }
 
-    public int deleteHead() {
-        if (stack1.isEmpty()) {
-            return -1;
+    public int pop() {
+        if (outStack.isEmpty()) {
+            in2out();
         }
-        if (!stack2.isEmpty()) {
-            return stack2.pop();
+        return outStack.pop();
+    }
+
+    public int peek() {
+        if (outStack.isEmpty()) {
+            in2out();
         }
-        while (!stack1.isEmpty()) {
-            stack2.push(stack1.pop());
+        return outStack.peek();
+    }
+
+    public boolean empty() {
+        return inStack.isEmpty() && outStack.isEmpty();
+    }
+
+    private void in2out() {
+        while (!inStack.isEmpty()) {
+            outStack.push(inStack.pop());
         }
-        return stack2.pop();
     }
 }
 
