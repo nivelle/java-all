@@ -70,7 +70,9 @@ class 列表形式整数求和 {
                 sum = sum + l2.val;
                 l2 = l2.next;
             }
+            //取余作为当前元素的下一个元素
             cur.next = new ListNode(sum % 10);
+            //sum元素取整
             sum = sum / 10;
             cur = cur.next;
         }
@@ -78,6 +80,32 @@ class 列表形式整数求和 {
             cur.next = new ListNode(1);
         }
         return dummy.next;
+    }
+    //栈实现
+    public ListNode addTwoNumbers2(ListNode l1, ListNode l2) {
+        Deque<Integer> stack1 = new LinkedList<Integer>();
+        Deque<Integer> stack2 = new LinkedList<Integer>();
+        while (l1 != null) {
+            stack1.push(l1.val);
+            l1 = l1.next;
+        }
+        while (l2 != null) {
+            stack2.push(l2.val);
+            l2 = l2.next;
+        }
+        int carry = 0;
+        ListNode ans = null;
+        while (!stack1.isEmpty() || !stack2.isEmpty() || carry != 0) {
+            int a = stack1.isEmpty() ? 0 : stack1.pop();
+            int b = stack2.isEmpty() ? 0 : stack2.pop();
+            int cur = a + b + carry;
+            carry = cur / 10;
+            cur %= 10;
+            ListNode curnode = new ListNode(cur);
+            curnode.next = ans;
+            ans = curnode;
+        }
+        return ans;
     }
 }
 //leetcode submit region end(Prohibit modification and deletion)
