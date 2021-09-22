@@ -54,6 +54,7 @@ class 数组最长递增子序列 {
             return 0;
         }
         int[] dp = new int[nums.length];
+        //以首位为默认的最小递增子序列
         dp[0] = 1;
         int maxans = 1;
         for (int i = 1; i < nums.length; i++) {
