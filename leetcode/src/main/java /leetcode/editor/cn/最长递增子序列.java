@@ -58,8 +58,7 @@ class 最长递增子序列 {
         dp[0] = 1;
         int maxans = 1;
         for (int i = 1; i < nums.length; i++) {
-            //初始化都定义为1，即以该位数字为子序列至少为1
-            //最优子结构
+            //初始化都定义为1,即以该位数字为子序列至少为1 最优子结构
             dp[i] = 1;
             for (int j = 0; j < i; j++) {
                 if (nums[i] > nums[j]) {
