@@ -59,25 +59,26 @@ class 最长回文子串 {
             dp[i][i] = true;
         }
         char[] charArray = s.toCharArray();
-        //递推开始，先枚举子串长度
+        //递推开始,先枚举子串长度,从2开始
+        //L:子串长度
         for (int L = 2; L <= len; L++) {
             //枚举左边界，左边届的上限可以宽松一些
             for (int i = 0; i < len; i++) {
-                //由L和i可以确定右边界，即 j-i+1=L
+                //由L和i可以确定右边界:即 j-i+1=L
                 int j = L + i - 1;
                 //如果右边界越界，就可以退出当前循环
                 if (j >= len) {
                     break;
                 }
-                //如果左右边界不相等，则标记为false
+                //如果左右边界不相等,则标记为false
                 if (charArray[i] != charArray[j]) {
                     dp[i][j] = false;
                 } else {
-                    //小于3 为 2或者1时,charArray[i] == charArray[j]
+                    //长度:为2或者1时,charArray[i] == charArray[j],也就是仅仅两个字符串相等，或者三个字符串，两边相等
                     if (j - i < 3) {
                         dp[i][j] = true;
                     } else {
-                        //否则位移
+                        //否则位移，左边界加一，右边界减一
                         dp[i][j] = dp[i + 1][j - 1];
                     }
                 }
