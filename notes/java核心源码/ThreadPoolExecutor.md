@@ -14,7 +14,7 @@ JDK中的关于**并行执行任务的框架**主要有两个 Executor框架 和
 对于Executor框架而言，最核心的就是ThreadPoolExecutor类。JDK提供的四大默认线程池就是由此类提供支持。
 
 -----------
-## 1. ThreadPoolExecutor的继承关系
+## 1. ThreadPoolExecutor 的继承关系
 
 ![ThreadPoolExecutor的继承关系图](https://gitee.com/alan-tang-tt/yuan/raw/master/%E6%AD%BB%E7%A3%95%20java%E5%B9%B6%E5%8F%91%E5%8C%85/resource/%E7%BA%BF%E7%A8%8B%E6%B1%A0/1.1%E7%BB%A7%E6%89%BF%E5%9B%BE.png)
 
@@ -974,7 +974,7 @@ private void processWorkerExit(Worker w, boolean completedAbruptly) {
 
 - (3)SynchronousQuene：一个不存储元素的阻塞队列，每个插入操作必须等到另一个线程调用移除操作，否则插入操作一直处于阻塞状态，吞吐量通常要高于(2)
 
-- (4)priorityBlockingQuene：具有优先级的无界阻塞队列；
+- (4)PriorityBlockingQuene：具有优先级的无界阻塞队列；
 
 ## 拒绝策略
 

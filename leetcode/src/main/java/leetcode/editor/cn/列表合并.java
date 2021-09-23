@@ -32,9 +32,8 @@ import leetcode.editor.cn.base.ListNode;
  */
 class 列表合并 {
     public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
-        ListNode dummy = new ListNode(0);
         //当前指针
-        ListNode cur = dummy;
+        ListNode cur = new ListNode(0);
         //列表长度一样的情况
         while (l1 != null && l2 != null) {
             if (l1.val < l2.val) {
@@ -55,7 +54,7 @@ class 列表合并 {
         } else {
             cur.next = l2;
         }
-        return dummy.next;
+        return cur.next;
     }
 }
 //leetcode submit region end(Prohibit modification and deletion)

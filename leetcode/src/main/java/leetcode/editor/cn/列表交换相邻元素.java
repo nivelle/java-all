@@ -59,27 +59,25 @@ class 列表交换相邻元素 {
     //迭代解法
     public ListNode swapPairs1(ListNode head) {
         // 已有的链表加一个头部 head node
-        ListNode resultHead = new ListNode();
-        resultHead.next = head;
+        ListNode tmp = new ListNode();
+        tmp.next = head;
 
         // curNode 遍历链表时用
-        ListNode curNode = resultHead;
+        ListNode cur = tmp;
 
         // 开始遍历链表
-        while (curNode != null && curNode.next != null && curNode.next.next != null) {
-            ListNode f = curNode;
-            ListNode s = curNode.next;
+        while (cur != null && cur.next != null && cur.next.next != null) {
+            ListNode f = cur;
+            ListNode s = cur.next;
             ListNode t = s.next;
-
             // 两两交换链表结点
             f.next = t;
             s.next = t.next;
             t.next = s;
-
             // 标杆位后移2位
-            curNode = curNode.next.next;
+            cur = cur.next.next;
         }
-        return resultHead.next;
+        return tmp.next;
     }
 
     //递归解法
