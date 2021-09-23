@@ -48,18 +48,21 @@
 
 
 //leetcode submit region begin(Prohibit modification and deletion)
-class 整数数组按升序排列 {
+class 搜索旋转排序数组 {
     public int search(int[] nums, int target) {
         int len = nums.length;
-        int left = 0, right = len - 1;
+        int left = 0;
+        int right = len - 1;
         while (left <= right) {
             int mid = (left + right) / 2;
             if (nums[mid] == target) {
                 return mid;
-            } else if (nums[mid] < nums[right]) {//右边有序
+            } else if (nums[mid] < nums[right]) {//边界值判断:右边有序
                 if (nums[mid] < target && target <= nums[right]) {
+                    //目标值在右侧
                     left = mid + 1;
                 } else {
+                    //目标值在左侧
                     right = mid - 1;
                 }
 
