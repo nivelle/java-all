@@ -31,7 +31,6 @@
 
 import java.util.Deque;
 import java.util.LinkedList;
-import java.util.Stack;
 
 //leetcode submit region begin(Prohibit modification and deletion)
 class 两个栈实现队列 {

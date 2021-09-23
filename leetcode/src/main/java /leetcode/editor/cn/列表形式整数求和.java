@@ -45,6 +45,9 @@
 
 import leetcode.editor.cn.base.ListNode;
 
+import java.util.Deque;
+import java.util.LinkedList;
+
 /**
  * Definition for singly-linked list.
  * public class ListNode {
@@ -94,6 +97,7 @@ class 列表形式整数求和 {
             l2 = l2.next;
         }
         int carry = 0;
+        //结果节点
         ListNode ans = null;
         while (!stack1.isEmpty() || !stack2.isEmpty() || carry != 0) {
             int a = stack1.isEmpty() ? 0 : stack1.pop();
