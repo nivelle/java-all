@@ -66,7 +66,7 @@ public class LRU缓存实现 {
 
     public LRU缓存实现(int capacity) {
         map = new HashMap<>();
-        //双向列表
+        //双向列表，用来实现最近最少使用
         cache = new DoubleLinkedList();
         cap = capacity;
     }
@@ -75,7 +75,7 @@ public class LRU缓存实现 {
     public void put(int key, int val) {
         Node newNode = new Node(key, val);
         if (map.containsKey(key)) {
-            //从双向列表删除
+            //从双向列表删除，然后添加到头节点
             cache.delete(map.get(key));
             //然后再加到头部
             cache.addFirst(newNode);

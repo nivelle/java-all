@@ -48,10 +48,11 @@ import leetcode.editor.cn.base.TreeNode;
 class 二叉树反转 {
     public TreeNode invertTree(TreeNode root) {
         if (root == null) return null;
+        //左右节点互换
         TreeNode tmp = root.left;
         root.left = root.right;
         root.right = tmp;
-
+        //递归调用
         invertTree(root.left);
         invertTree(root.right);
         return root;
