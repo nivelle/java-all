@@ -1,4 +1,4 @@
-//给定一个二叉树，判断它是否是高度平衡的二叉树。 
+package leetcode.editor.cn;//给定一个二叉树，判断它是否是高度平衡的二叉树。
 //
 // 本题中，一棵高度平衡二叉树定义为： 
 //
@@ -69,11 +69,14 @@ class 二叉树是否是平衡树 {
         if (root == null) {
             return 0;
         }
+        //递归调用左右节点
         int leftHeight = height(root.left);
         int rightHeight = height(root.right);
+        //左右节点高度差大于1则不是
         if (leftHeight == -1 || rightHeight == -1 || Math.abs(leftHeight - rightHeight) > 1) {
             return -1;
         } else {
+            //取左右高度的最大值+1
             return Math.max(leftHeight, rightHeight) + 1;
         }
     }
