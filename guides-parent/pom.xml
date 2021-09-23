@@ -26,7 +26,6 @@
         <module>../spring-all</module>
         <module>../middleware</module>
         <module>../java-core</module>
-        <module>../leetcode</module>
         <module>../notes</module>
     </modules>
 
