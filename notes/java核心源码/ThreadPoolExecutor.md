@@ -788,6 +788,7 @@ private void processWorkerExit(Worker w, boolean completedAbruptly) {
         
         //添加一个worker
         //只要worker是completedAbruptly突然终止的，或者线程数量小于要维护的数量，就新添一个worker线程，即使是shutdown状态
+        //重点:有异常时 旧的worker会被删除（GC回收），再创建新的Worker， 即有异常时 旧worker不可能再执行新的任务
         addWorker(null, false);
     }
 }
