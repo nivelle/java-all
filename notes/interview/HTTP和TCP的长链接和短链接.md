@@ -19,20 +19,20 @@
 更节省资源，效率更高（RPC比http高效的原因）
 
 ### RPC比HTTP请求快的原因
-- (1)http使用http协议，rpc使用tcp协议，比http少了 __应用层，表示层，会话层，这3层__
-- (2)rpc使用长连接，当网络通信使用tcp协议时，在真正的读写操作前，需要完成3次握手，来建立连接。当读写完成时，需要四次握手来释放连接，每个连接的建立和释放都是需要资源和时间的，所以长连接比短连接
+- http使用http协议，rpc使用tcp协议，比http少了 __应用层，表示层，会话层，这3层__
+- rpc使用长连接，当网络通信使用tcp协议时，在真正的读写操作前，需要完成3次握手，来建立连接。当读写完成时，需要四次握手来释放连接，每个连接的建立和释放都是需要资源和时间的，所以长连接比短连接
 更节省资源，效率更高
 
 ### 长连接和短连接的优点和缺点
 
-- （1）长连接，可以省去较多的tpc建立和关闭操作，减少资源的浪费，节约时间。长连接多用于操作频繁，点对点的通讯，而且连接数不能太多。数据库的连接就是使用长连接，如果用短连接频繁通讯会造成socke错误
+- 长连接，可以省去较多的tpc建立和关闭操作，减少资源的浪费，节约时间。长连接多用于操作频繁，点对点的通讯，而且连接数不能太多。数据库的连接就是使用长连接，如果用短连接频繁通讯会造成socke错误
 ，而且频繁的Socket创建和销毁也是对资源的消耗比较大。
 
-- （2）短连接，短连接对于服务器来说管理较为简单，存在的连接都是有用的连接，不需要额外的控制手段，web网站一般使用短连接，因为长连接对服务端来说会消耗一定资源，而像WEB网站这么频繁的成千上万甚至上亿客户端的连接用短连接会更省一些资源，如果用长连接，而且同时有成千上万的用户，如果每个用户都占用一个连接的，对资源消耗过大
+- 短连接，短连接对于服务器来说管理较为简单，存在的连接都是有用的连接，不需要额外的控制手段，web网站一般使用短连接，因为长连接对服务端来说会消耗一定资源，而像WEB网站这么频繁的成千上万甚至上亿客户端的连接用短连接会更省一些资源，如果用长连接，而且同时有成千上万的用户，如果每个用户都占用一个连接的，对资源消耗过大
 
 ### 11. tcp的keep-alive和http人Keep-alive
 
-- （1)Tcp的keep-alive是检查当前tcp是否存活，表现就是当一个连接在一段时间没有数据传输是，一方会发一个心跳包，果对方有回包则表明当前连接有效，继续监控。 这个“一段时间”可以设置。
-    WinHttp库的设置： WINHTTP_OPTION_WEB_SOCKET_KEEPALIVE_INTERVAL
-    Sets the interval, in milliseconds, to send a keep-alive packet over the connection. The default interval is 30000 (30 seconds). The minimum interval is 15000 (15 seconds). Using WinHttpSetOption to set a value lower than 15000 will return with ERROR_INVALID_PARAMETER
-- （2）http的Keep-alive是让一个tcp连接活久点。在浏览器设置  
+- Tcp的keep-alive是检查当前tcp是否存活，表现就是当一个连接在一段时间没有数据传输是，一方会发一个心跳包，果对方有回包则表明当前连接有效，继续监控。 这个“一段时间”可以设置。
+    WinHttp库的设置: `WINHTTP_OPTION_WEB_SOCKET_KEEPALIVE_INTERVAL`
+    __Sets the interval, in milliseconds, to send a keep-alive packet over the connection. The default interval is 30000 (30 seconds). The minimum interval is 15000 (15 seconds). Using WinHttpSetOption to set a value lower than 15000 will return with ERROR_INVALID_PARAMETER__
+- http的Keep-alive是让一个tcp连接活久点。在浏览器设置  
