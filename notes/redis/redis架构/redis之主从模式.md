@@ -38,7 +38,7 @@ CLUSTER MEET<IP><PORT>
 
 8.节点会继续使用redisServer结构来保存服务器的状态,使用redisClient结构来保存客户端的状态,至于那些只有在集群模式下才会用到的数据,节点将他们保存到了cluster.h/clusterNode结构,cluster.h/clusterLink结构,以及cluster.h/clusterState结构里面.
 
-#### 集群同步
+## 集群同步
 
 - redis中,用户可以通过执行 replicaof(redis 5.0之前使用slaveof)命令,让一个服务去复制(replicate)另一个服务器,我们称呼被复制的服务器为主服务器(master)
   ,而对主服务器进行复制的服务器被称为从服务器(slave)
