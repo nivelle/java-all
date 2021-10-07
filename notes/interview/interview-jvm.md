@@ -301,72 +301,77 @@ jmap -dump:format=b,file=D:/demo.hprof pid
 
 ### 分析 YGC
 
-大多数情况下，新创建的对象都会在新生代的 Eden 区中分配，当 Eden 区没有足够的空间分配时，虚拟机将会发生一次 Minor GC，也就是 YGC。频繁发生 YGC 也是会对性能造成影响的。
+- 大多数情况下，新创建的对象都会在新生代的 Eden 区中分配，当 Eden 区没有足够的空间分配时，虚拟机将会发生一次 Minor GC，也就是 YGC。频繁发生 YGC 也是会对性能造成影响的。
 
-分析年轻代对象增长速率。
+- 分析年轻代对象增长速率。
+
 每5秒执行一次，执行10次，然后观察这50秒内 eden 区增加的趋势，即可知道年轻代对象增长的速率。
-
+````shell
 jstat -gc pid 5000 10
-Copy to clipboardErrorCopied
-思路：如果 eden 区增长很快，那么发生 YGC 的频率也会很高，说明 Eden 区太小了，可以调大 Eden 区（调整 -Xmn 参数），然后再次进行测试，看小是否减少了 YGC 回收频率。
+````
+- 思路：如果 eden 区增长很快，那么发生 YGC 的频率也会很高，说明 Eden 区太小了，可以调大 Eden 区（调整 -Xmn 参数），然后再次进行测试，看小是否减少了 YGC 回收频率。
 
-另外如果 YGC 后，存活的对象超过了 Survivor 的 50%，则会进入老年代。
+- 另外如果 YGC 后，存活的对象超过了 Survivor 的 50%，则会进入老年代。
 
-我们的调优思路是尽量减少对象进入老年代，以减少发生 FGC 的频率。所以通过调整 Eden 区的大小，减少了对象进入老年代的频率。
+- 我们的调优思路是尽量减少对象进入老年代，以减少发生 FGC 的频率。所以通过调整 Eden 区的大小，减少了对象进入老年代的频率。
 
-参数调优
+### 参数调优
+
 第三个方面，如何进行参数调优。一般情况下，参数用默认的就好了，但是某些场景还是要进行参数调优的。
 
 调优思路如下：
 
-第一步肯定是看下到底配置了哪些参数：jinfo -flags pid。
+- 第一步肯定是看下到底配置了哪些参数：`jinfo -flags pid`。
 
-然后看下 Java 的版本，Java 7 和 Java 8 差别有点大的，Java 8 取消了永久区，新增了 metaspace 区，具体对 垃圾回收的影响，放到后面分享。查看 Java 版本的命令：jinfo -sysprops pid。
+- 然后看下 Java 的版本，Java 7 和 Java 8 差别有点大的，Java 8 取消了永久区，新增了 metaspace 区，具体对 垃圾回收的影响，放到后面分享。查看 Java 版本的命令：jinfo -sysprops pid。
 
-一般设置-Xms=-Xmx，这样可以获得固定大小的堆内存，减少GC的次数和耗时，可以使得堆相对稳定。
+- 一般设置-Xms=-Xmx，这样可以获得固定大小的堆内存，减少GC的次数和耗时，可以使得堆相对稳定。
 
--Xmn 设置新生代的大小，太小会增加 YGC，太大会减小老年代大小，一般设置为整个堆的1/4到1/3。
+- -Xmn 设置新生代的大小，太小会增加 YGC，太大会减小老年代大小，一般设置为整个堆的1/4到1/3。
 
-设置-XX:+DisableExplicitGC禁止系统System.gc()，防止手动误触发FGC造成问题。
+- 设置 `-XX:+DisableExplicitGC`禁止系统System.gc()，防止手动误触发FGC造成问题。
 
-八、阿里一面：什么情况下触发垃圾回收？
-一般就分为 Minor GC 和 Full GC 两种情况。
+---
+## 八、阿里一面：什么情况下触发垃圾回收？
 
-🎯年轻代发生垃圾回收的时机（Minor GC）
+### 一般就分为 Minor GC 和 Full GC 两种情况。
 
-当 Eden 区没有足够空间分配时
-🎯整堆触发垃圾回收的时机 （FULL GC）
+- 年轻代发生垃圾回收的时机（Minor GC） 当 Eden 区没有足够空间分配时
+- 整堆触发垃圾回收的时机 （FULL GC）
+  - 当年轻代晋升到老年代的对象大小比目前老年代剩余的空间大小还要大时。
+  - 当老年代的空间使用率超过某阈值时
+  - 当元空间不足时（JDK1.7永久代不足）
+  - 调用 System.gc() 时，系统建议执行 Full GC，但是不必然执行。
 
-当年轻代晋升到老年代的对象大小比目前老年代剩余的空间大小还要大时。
-当老年代的空间使用率超过某阈值时
-当元空间不足时（JDK1.7永久代不足）
-调用 System.gc() 时，系统建议执行 Full GC，但是不必然执行。
+-----
+## 九、美团一面：有在⼯作时间中使⽤过 jstat, jmap, mat⼯具吗？ 能给⼀个实际的例⼦说明⼀下吗？
 
-
-九、美团一面：有在⼯作时间中使⽤过 jstat, jmap, mat⼯具吗？ 能给⼀个实际的例⼦说明⼀下吗？
-
-
-真碰到这种面试题，即使没有在生产环境使用过这些工具排查问题，也不要惊慌。把这些基本操作记住，面试就不慌。
+![java排查工具.png](https://i.loli.net/2021/10/07/WmCaduDniZ83J9F.png)
 
 出现 OOM 问题后，先得找到是哪个 Java 应用程序出问题了。也就是需要找到进程 id 才行。
 
-（1）找进程 id
+###（1）找进程 id
+
 有两种方式找进程 id
 
-（1）使用 top 命令列出当前的进程列表。
+- 使用 top 命令列出当前的进程列表。
+````shell
 top -c
-Copy to clipboardErrorCopied
+````
 CPU 和 内存占用率排在最前面的就是占用最高的。里面包含了进程 id 信息。
 
-（2）使用 ps 命令找 Java 相关的应用程序。
+- 使用 ps 命令找 Java 相关的应用程序。
+````shell
 ps -ef | grep <关键字>
-Copy to clipboardErrorCopied
-（2）jstat 命令
+````
+###（2）jstat 命令
 评估内存使用及GC压力情况
+````shell
 jstat -gc pid
-Copy to clipboardErrorCopied
+````
 会打印一堆信息，可以先初步看下 内存的使用情况和 GC 压力情况。另外有时候 dump 文件会非常大，可以先通过命令来排查，这样效率会高效点。
 
+````text
 S0C: 第一个Survivor大小（kb）
 S1C: 第二个Survivor大小
 S0U: 第一个Survivor区的使用大小
@@ -384,54 +389,54 @@ YGCT: YoungGC时间（s）
 FGC: FullGC次数
 FGCT: FullGC时间（s）
 GCT: 总的GC时间（s）
-Copy to clipboardErrorCopied
+````
 可以指定时间间隔打印jvm的各部分空间占用，以及gc数据。命令如下：
-
+````shell
 jstat -gcutil {pid} {timeinterval}
-Copy to clipboardErrorCopied
-（3）jstack 命令
-当应用程序占用 CPU 很高，但是又没有发生 OOM，就可以通过 jstack 命令来看下到底哪里出问题了。
+````
+###（3）jstack 命令
 
+- 当应用程序占用 CPU 很高，但是又没有发生 OOM，就可以通过 jstack 命令来看下到底哪里出问题了。
+````shell
 ps -mp <pid> -o THREAD,tid,time 定位到具体线程。
 printf “%x\n” <pid>，把线程 pid 转为16进制，比如 0xf58
 jstack <pid> | grep -A 10 0xf58 查看线程的堆栈日志
-Copy to clipboardErrorCopied
-通过 jstack 命令可以迅速排查出来死锁问题或死循环的问题。
+````
+- 通过 jstack 命令可以迅速排查出来死锁问题或死循环的问题。
 
-（4）jmap 命令
-jmap 一般就是用来生成堆栈文件（dump 文件），然后把 dump 文件导入到可视化分析工具中，分析一把。比如jvisualvm 工具， MAT 工具。
+###（4）jmap 命令
 
+- jmap 一般就是用来生成堆栈文件（dump 文件），然后把 dump 文件导入到可视化分析工具中，分析一把。比如jvisualvm 工具， MAT 工具。
+````shell
 jmap -dump:format=b,file=D:/demo.hprof <pid>
-Copy to clipboardErrorCopied
+````
 另外生产环境一般会配置内存溢出后自动打 dump 文件的命令：
 
+````shell
 -XX:+PrintGCDetails -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=D:\jvm.dump
-Copy to clipboardErrorCopied
+````
 其他：
-
+````shell
 jmap -histo pid 查看实例个数以及占用内存信息。
 
 jmap -heap pid 查看堆的使用情况。
+````
+###（5）MAT 工具
 
-（5）MAT 工具
+- 分析 dump 文件的专业工具，查找内存泄露以及查看内存消耗情况，可以查看每个类的使用情况以及内存占用情况，从而分析问题。
 
-分析 dump 文件的专业工具，查找内存泄露以及查看内存消耗情况，可以查看每个类的使用情况以及内存占用情况，从而分析问题。
+- eclipse 插件安装下这个工具就可以使用了。
 
-eclipse 插件安装下这个工具就可以使用了。
+- MAT 插件会给出一份可疑的分析报告，结合源代码稍加分析就可以快速定位是哪段代码出问题了。
 
-MAT 插件会给出一份可疑的分析报告，结合源代码稍加分析就可以快速定位是哪段代码出问题了。
+### 十、增加 Eden 区，Minor GC 的间隔变长了，会不会导致 Minor GC 的时间增加？
 
-十、增加 Eden 区，Minor GC 的间隔变长了，会不会导致 Minor GC 的时间增加？
-之前技术交流群有同学提问：
+- 增加 Eden 区，Minor GC 的间隔变长了，会不会导致 Minor GC 的时间增加？
 
-增加 Eden 区，Minor GC 的间隔变长了，会不会导致 Minor GC 的时间增加？
+- 可能你会有这样的疑问，扩容 Eden 区虽然可以减少 Minor GC 的次数，但不会增加单次 Minor GC 的时间吗？
 
-看到极客时间的一篇文章，分享给大家：
+- 单次 Minor GC 时间是由两部分组成：__T1（扫描新生代）和 T2（复制存活对象）__ 。假设一个对象在 Eden 区的存活时间为 500ms，Minor GC 的时间间隔是 300ms，那么正常情况下，Minor GC 的时间为 ：T1+T2。当我们增大新生代空间，Minor GC 的时间间隔可能会扩大到 600ms，此时一个存活 500ms 的对象就会在 Eden 区中被回收掉，此时就不存在复制存活对象了，所以再发生 Minor GC 的时间为：两次扫描新生代，即 2T1。
 
-可能你会有这样的疑问，扩容 Eden 区虽然可以减少 Minor GC 的次数，但不会增加单次 Minor GC 的时间吗？
+- 扩容后，Minor GC 时增加了 T1，但省去了 T2 的时间。通常在虚拟机中，复制对象的成本要远高于扫描成本。
 
-单次 Minor GC 时间是由两部分组成：T1（扫描新生代）和 T2（复制存活对象）。假设一个对象在 Eden 区的存活时间为 500ms，Minor GC 的时间间隔是 300ms，那么正常情况下，Minor GC 的时间为 ：T1+T2。当我们增大新生代空间，Minor GC 的时间间隔可能会扩大到 600ms，此时一个存活 500ms 的对象就会在 Eden 区中被回收掉，此时就不存在复制存活对象了，所以再发生 Minor GC 的时间为：两次扫描新生代，即 2T1。
-
-可见，扩容后，Minor GC 时增加了 T1，但省去了 T2 的时间。通常在虚拟机中，复制对象的成本要远高于扫描成本。
-
-如果在堆内存中存在较多的长期存活的对象，此时增加年轻代空间，反而会增加 Minor GC 的时间。如果堆中的短期对象很多，那么扩容新生代，单次 Minor GC 时间不会显著增加。因此，单次 Minor GC 时间更多取决于 GC 后存活对象的数量，而非 Eden 区的大小。
+- 如果在堆内存中存在较多的长期存活的对象，此时增加年轻代空间，反而会增加 Minor GC 的时间。如果堆中的短期对象很多，那么扩容新生代，单次 Minor GC 时间不会显著增加。因此，单次 Minor GC 时间更多取决于 GC 后存活对象的数量，而非 Eden 区的大小。
