@@ -86,33 +86,29 @@ CLUSTER MEET<IP><PORT>
 
 [![ydkoOe.md.jpg](https://z3.ax1x.com/2021/02/09/ydkoOe.md.jpg)](https://imgtu.com/i/ydkoOe)
 
-1. 主库的所有写命令除了传播给从库之外，都会在这个**repl_backlog_buffer**中记录一份，缓存起来，只有预先缓存了这些命令，当从库断连后，从库重新发送: psync $master_runid
-   $offset，主库才能通过$offset在repl_backlog_buffer中找到从库断开的位置，只发送$offset之后的增量数据给从库即可。
-
-
-1.1 repl_backlog_buffer 是一个环形缓冲区，主库会记录自己写到的位置，从库则会记录自己已经读到的位置。
-
-1.2 当主从库断连后，replication buffer丢失, repl_backlog_buffer仍然存在，主库会把断连期间收到的写操作命令，写入 repl_backlog_buffer 这个缓冲区。当主从库重新建立连接后，主库只用把repl_backlog_buffer中位于 master_repl_offset 和 slave_repl_offset 之间的命令操作通过replication buffer同步给从库就行。
+-  主库的所有写命令除了传播给从库之外，都会在这个**repl_backlog_buffer**中记录一份，缓存起来，只有预先缓存了这些命令，当从库断连后，从库重新发送: `psync $master_runid
+   $offset`，主库才能通过$offset在`repl_backlog_buffer`中找到从库断开的位置，只发送$offset之后的增量数据给从库即可。
+   - `repl_backlog_buffer 是一个环形缓冲区`，主库会记录自己写到的位置，从库则会记录自己已经读到的位置。
+   - 当主从库断连后，replication buffer丢失, repl_backlog_buffer仍然存在，主库会把断连期间收到的写操作命令，写入 repl_backlog_buffer 这个缓冲区。当主从库重新建立连接后，主库只用把repl_backlog_buffer中位于 master_repl_offset 和 slave_repl_offset 之间的命令操作通过`replication buffer`同步给从库就行。
    replication buffer其实就相当于一个发送缓冲区，用于缓存将要发给从库的命令，而repl_backlog_buffer相当于一个备份，当主从库断开连接，replication buffer丢失后，主库仍然可以将需要发送给从库的名录记录到repl_back_log中，用于后续同步
 
-2. 主从库的连接恢复之后，从库首先会给主库发送 psync 命令，并把自己当前的 slave_repl_offset 发给主库，主库会判断自己的 master_repl_offset 和 slave_repl_offset 之间的差距
+- 主从库的连接恢复之后，从库首先会给主库发送 psync 命令，并把自己当前的 slave_repl_offset 发给主库，主库会判断自己的 master_repl_offset 和 slave_repl_offset 之间的差距
 
-- 因为 repl_backlog_buffer 是一个环形缓冲区，所以在缓冲区写满后，主库会继续写入，此时，就会覆盖掉之前写入的操作。如果从库的读取速度比较慢，就有可能导致从库还未读取的操作被主库新写的操作覆盖了，这会导致主从库间的数据不一致。
+  - 因为 repl_backlog_buffer 是一个环形缓冲区，所以在缓冲区写满后，主库会继续写入，此时，就会覆盖掉之前写入的操作。如果从库的读取速度比较慢，就有可能导致从库还未读取的操作被主库新写的操作覆盖了，这会导致主从库间的数据不一致。
 
-2.1 缓冲空间的计算公式是：缓冲空间大小 = 主库写入命令速度 * 操作大小 - 主从库间网络传输命令速度 * 操作大小。
+  - 缓冲空间的计算公式是：缓冲空间大小 = 主库写入命令速度 * 操作大小 - 主从库间网络传输命令速度 * 操作大小。
 
-2.2 在实际应用中，考虑到可能存在一些突发的请求压力，我们通常需要把这个缓冲空间扩大一倍，即 repl_backlog_size = 缓冲空间大小 * 2，这也就是 repl_backlog_size 的最终值。
-
-
-#### repl_backlog_buffer
+  - 在实际应用中，考虑到可能存在一些突发的请求压力，我们通常需要把这个缓冲空间扩大一倍，即 __repl_backlog_size = 缓冲空间大小 * 2，这也就是 repl_backlog_size 的最终值__。
+ ---   
+### repl_backlog_buffer
 
 它是为了从库断开之后，如何找到主从差异数据而设计的环形缓冲区，从而避免全量同步带来的性能开销。如果从库断开时间太久，repl_backlog_buffer环形缓冲区被主库的写命令覆盖了，那么从库连上主库后只能乖乖地进行一次全量同步，所以repl_backlog_buffer配置尽量大一些，可以降低主从断开后全量同步的概率。
 而在repl_backlog_buffer中找主从差异的数据后，如何发给从库呢？这就用到了replication buffer。
 
 
-#### replication buffer
+### replication buffer
 
-Redis和客户端通信也好，和从库通信也好，Redis都需要给分配一个 内存buffer进行数据交互，客户端是一个client，从库也是一个client，
+Redis和客户端通信也好，和从库通信也好，Redis都需要给分配一个 __内存buffer__ 进行数据交互，客户端是一个client，从库也是一个client，
 我们每个client连上Redis后，Redis都会分配一个client buffer，所有数据交互都是通过这个buffer进行的:Redis先把数据写到这个buffer中，然后再把buffer中的数据发到client socket中再通过网络发送出去，这样就完成了数据交互。
 所以主从在增量同步时，从库作为一个client，也会分配一个buffer，只不过这个buffer专门用来传播用户的写命令到从库，保证主从数据一致，我们通常把它叫做replication buffer
 
@@ -124,9 +120,9 @@ Redis和客户端通信也好，和从库通信也好，Redis都需要给分配�
 
 ### 主从库复制为什么不用AOF
 
-1.RDB文件内容是经过压缩的二进制数据（不同数据类型数据做了针对性优化），文件很小。而AOF文件记录的是每一次写操作的命令，写操作越多文件会变得很大，其中还包括很多对同一个key的多次冗余操作。
+- RDB文件内容是经过压缩的二进制数据（不同数据类型数据做了针对性优化），文件很小。而AOF文件记录的是每一次写操作的命令，写操作越多文件会变得很大，其中还包括很多对同一个key的多次冗余操作。
 
-在主从全量数据同步时，传输RDB文件可以尽量降低对主库机器网络带宽的消耗，从库在加载RDB文件时，一是文件小，读取整个文件的速度会很快，二是因为RDB文件存储的都是二进制数据，从库直接按照RDB协议解析还原数据即可，速度会非常快，而AOF需要依次重放每个写命令，这个过程会经历冗长的处理逻辑，恢复速度相比RDB会慢得多，所以使用RDB进行主从全量同步的成本最低。
+在主从全量数据同步时，传输RDB文件可以尽量降低对主库机器网络带宽的消耗，从库在加载RDB文件时，**一是文件小**，读取整个文件的速度会很快，二是因为**RDB文件存储的都是二进制数据**，从库直接按照RDB协议解析还原数据即可，速度会非常快，而AOF需要依次重放每个写命令，这个过程会经历冗长的处理逻辑，恢复速度相比RDB会慢得多，所以使用RDB进行主从全量同步的成本最低。
 
-2.假设要使用AOF做全量同步，意味着必须打开AOF功能，打开AOF就要选择文件刷盘的策略，选择不当会严重影响Redis性能。而RDB只有在需要定时备份和主从全量同步数据时才会触发生成一次快照。而在很多丢失数据不敏感的业务场景，其实是不需要开启AOF的。
+- 假设要使用AOF做全量同步，意味着必须**打开AOF功能**，打开AOF就要选择文件刷盘的策略，选择不当会严重影响Redis性能。而RDB只有在需要定时备份和主从全量同步数据时才会触发生成一次快照。而在很多丢失数据不敏感的业务场景，其实是不需要开启AOF的。
 
