@@ -21,7 +21,7 @@ public class ParseJsonToExcel {
 
 
     public static void main(String[] args) {
-        String path = "/Users/nivellefu/IdeaProjects/java-guides/java-core/src/main/resources/userRank.txt";
+        String path = "/Users/nivellefu/IdeaProjects/java-guides/java-core/src/main/resources/rank.txt";
         List<UserRankData> list = getData(path);
         System.out.println(list.size());
         System.out.println(list.get(0));
@@ -42,7 +42,7 @@ public class ParseJsonToExcel {
             resultList.add(result);
         }
         ExcelWriter writer = ExcelUtil.getWriter("/Users/nivellefu/IdeaProjects/java-guides/java-core/src/main/resources/guangda.xlsx");
-        writer.merge(8, "光大银行前3千排名");
+        writer.merge(8, "光大银行前5千排名");
         writer.write(resultList, true);
         writer.close();
     }
