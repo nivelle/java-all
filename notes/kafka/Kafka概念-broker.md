@@ -28,7 +28,7 @@
 
 - **retention.bytes**:规定了要为该Topic预留多大的磁盘空间。
 
- ```` 
+```` 
 $> export KAFKA_HEAP_OPTS=--Xms6g  --Xmx6g
 $> export KAFKA_JVM_PERFORMANCE_OPTS= -server -XX:+UseG1GC -XX:MaxGCPauseMillis=20 -XX:InitiatingHeapOccupancyPercent=35 -XX:+ExplicitGCInvokesConcurrent -Djava.awt.headless=true
 $> bin/kafka-server-start.sh config/server.properties
