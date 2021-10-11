@@ -56,6 +56,7 @@ public class MyParamsConverter implements Converter<String, Date> {
 
     /**
      * Spring MVC通过反射机制对目标处理方法签名进行分析，将请求消息绑定到处理方法入参中核心部件是DataBinder。数据绑定一般流程：
+     *
      *  1. 将ServletRequest对象及处理方法入参对象实例传给DateBinder。
      *
      *  2. DataBinder调用转配在Spring Web上下文中的ConversionService进行数据类型转换、数据格式化等工作，将ServletRequest中的消息填充到入参对象中。
