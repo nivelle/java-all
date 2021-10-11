@@ -1,6 +1,6 @@
 一、系统架构
 
-
+![](https://images2018.cnblogs.com/blog/1228818/201804/1228818-20180402125111282-1966599087.png)
 
 
 注意：应该是每一个 RegionServer 就只有一个 HLog，而不是一个 Region 有一个 HLog。
@@ -69,7 +69,7 @@ HLog文件就是一个普通的Hadoop Sequence File， Sequence File的value是k
 二、物理存储
 1、整体的物理结构
 
-
+![](https://images2018.cnblogs.com/blog/1228818/201804/1228818-20180402130346713-706113248.png)
 1、Table 中的所有行都按照 RowKsey 的字典序排列。
 
 2、Table 在行的方向上分割为多个 HRegion。
@@ -83,7 +83,7 @@ HLog文件就是一个普通的Hadoop Sequence File， Sequence File的value是k
 2、StoreFile 和 HFile 结构
 StoreFile 以 HFile 格式保存在 HDFS 上，请看下图 HFile 的数据组织格式：
 
-
+![](https://images2018.cnblogs.com/blog/1228818/201804/1228818-20180402130705469-345782346.png)
 
 首先 HFile 文件是不定长的，长度固定的只有其中的两块：Trailer 和 FileInfo。
 
@@ -117,7 +117,7 @@ Data Block 是 HBase I/O 的基本单元，为了提高效率，HRegionServer �
 
 HFile 里面的每个 KeyValue 对就是一个简单的 byte 数组。但是这个 byte 数组里面包含了很多项，并且有固定的结构。我们来看看里面的具体结构：
 
-
+![](https://images2018.cnblogs.com/blog/1228818/201804/1228818-20180402131032937-1735316959.png)
 
 开始是两个固定长度的数值，分别表示 Key 的长度和 Value 的长度。紧接着是 Key，开始是 固定长度的数值，表示 RowKey 的长度，紧接着是 RowKey，然后是固定长度的数值，表示 Family 的长度，然后是 Family，接着是 Qualifier，然后是两个固定长度的数值，表示 Time Stamp 和 Key Type（Put/Delete）。Value 部分没有这么复杂的结构，就是纯粹的二进制数据了。
 
@@ -150,7 +150,7 @@ HLog 文件就是一个普通的 Hadoop Sequence File（序列化文件）：
 在 HBase-0.96 版本以前，HBase 有两个特殊的表，分别是-ROOT-表和.META.表，其中-ROOT的位置存储在 ZooKeeper 中，-ROOT-本身存储了.META. Table 的 RegionInfo 信息，并且-ROOT不会分裂，只有一个 Region。而.META.表可以被切分成多个 Region。读取的流程如下图所示：
 
 
-
+![](https://images2018.cnblogs.com/blog/1228818/201804/1228818-20180402182523717-793135327.png)
 详细步骤：
 
 第 1 步：Client 请求 ZooKeeper 获得-ROOT-所在的 RegionServer 地址
@@ -166,7 +166,7 @@ HLog 文件就是一个普通的 Hadoop Sequence File（序列化文件）：
 2、新的 Region 寻址方式
 如上面的计算，2 层结构其实完全能满足业务的需求，因此 0.96 版本以后将-ROOT-表去掉了。 如下图所示：
 
-
+![](https://images2018.cnblogs.com/blog/1228818/201804/1228818-20180402182723566-1452396869.png)
 
 访问路径变成了 3 步：
 
