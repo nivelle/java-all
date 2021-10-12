@@ -3,7 +3,7 @@
 ![](https://images2018.cnblogs.com/blog/1228818/201804/1228818-20180402125111282-1966599087.png)
 
 
-注意：应该是每一个 RegionServer 就只有一个 HLog，而不是一个 Region 有一个 HLog。
+- 注意：应该是每一个 RegionServer 就只有一个 HLog，而不是一个 Region 有一个 HLog。
 
 从HBase的架构图上可以看出，HBase中的组件包括Client、Zookeeper、HMaster、HRegionServer、HRegion、Store、MemStore、StoreFile、HFile、HLog等，接下来介绍他们的作用。
 
