@@ -71,16 +71,61 @@ controller会给集群中所有Broker(包括它自己所在的Broker)机器发�
 
 - Controller 触发场景有 3 种：集群启动时；/controller 节点被删除时；/controller 节点数据变更时。
 
-### Controller的作用
+-----
+## Controller的作用
 
-#### 成员管理
+### 一 选举Leader和ISR
 
-- 成员数量管理，主要体现在新增成员和移除现有成员
+- 控制器从ZK的/brokers/topics加载一个topic所有分区的所有副本，从分区副本列表中选出一个作为该分区的leader，并将该分区对应所有副本置于ISR列表，其他分区类似；其他topic的所有分区也类似。
 
-- 单个成员管理，单个broker的数据变更
+### 二 同步元数据信息包括broker和分区的元数据信息
 
-#### 主题管理
+- 控制器架子ZK的/brokers/ids以及上一个步骤得到的topic下各分区leader和ISR将这些元数据信息同步到集群每个broker。
 
-- 主题创建/变更/删除
+- 通过下面所阐述的监控机制当有broker或者分区发生变更时及时更新到集群保证集群每一台broker缓存的是最新元数据。
 
-#### 操作元数据
+### 三 broker增删监听与处理
+
+#### 3.1 broker加入的监听和处理
+
+控制器启动时就起一个监视器监视ZK/brokers/ids/子节点。当存在broker启动加入集群后都会在ZK/brokers/ids/增加一个子节点brokerId，控制器的监视器发现这种变化后，控制器开始执行broker加入的相关流程并更新元数据信息到集群。
+
+#### 3.2 broker崩溃的监听与处理
+
+控制器启动时就起一个监视器监视ZK/brokers/ids/子节点。当一个broker崩溃时，该broker与ZK的会话失效导致ZK会删除该子节点，控制器的监视器发现这种变化后，控制器开始执行broker删除的相关流程并更新元数据信息到集群。
+
+### 四 topic变化监听与处理
+
+#### 4.1 topic创建的监听与处理
+
+控制器启动时就起一个监视器监视ZK/brokers/topics/子节点。当通过脚本或者请求创建一个topic后，该topic对应的所有分区及其副本都会写入该目录下的一个子节点。控制器的监视器发现这种变化后，控制器开始执行topic创建的相关流程包括leader选举和ISR并同步元数据信息到集群；且新增一个监视器监视ZK/brokers/topics/<新增topic子节点内容>防止该topic内容变化。
+
+#### 4.2 topic删除的监听与处理
+
+控制器启动时就起一个监视器监视ZK/admin/delete_topics/子节点。当通过脚本或者请求删除一个topic后，该topic会写入该目录下的一个子节点。控制器的监视器发现这种变化后，控制器开始执行topic删除的相关流程包括通知该topic所有分区的所有副本停止运行；通知所有分区所有副本删除数据；删除ZK/admin/delete_topics/<待删除topic子节点>。
+
+### 五 分区变化监听与变化处理
+
+#### 5.1 分区重分配监听与处理
+
+- 分区重分配通过KAFKA管理员脚本执行完成一个topic下分区的副本重新分配broker。
+
+- 控制器启动时就起一个监视器监视ZK/admin/reassign_part/子节点。当通过脚本执行分区重分配后会在该目录增加一个子节点，子节点内容是按照一定格式构建的重分配方案，控制器的监视器发现这种变化后，控制器开始执行分区重分配相关流程如同步元数据信息。
+
+#### 5.2 分区扩展监听与处理
+
+- 如上面4.1 所述当创建一个topic后，控制器会增加一个监视器监视ZK/brokers/topics/<新增topic子节点内容>防止该topic内容变化。当通过脚本执行分扩展后会在该目录增加新的分区目录。控制器的监视器发现这种变化后，控制器开始执行分区扩展相应流程如选举leader和ISR并同步。
+
+### 六 broker优雅退出
+
+- 相比较broker机器直接宕机或强制kill，通过脚本或kill -9 关闭一个broker我们称为broker优雅退出。即将关闭的broker向控制器发送退出请求后一直阻塞。
+
+- 控制器接收到请求后，执行leader重选举和ISR后响应broker。broker接收后退出。
+
+- 这个比较特殊，不依赖ZK，直接通过broker和控制器RPC通信即可完成。
+
+### 控制器fail-over
+
+- 集群在开始时集群中第一个broker通过在ZK/controller注册子节点brokerId使得自己成为该集群的控制器，其他broker虽然没有争取到控制器资格，但是都会起一个监视器监视ZK/controller以及向/controller_EPOCH注册子节点。
+
+- 如果控制器所在broker退出、崩溃或与ZK会话失效则ZK会删除/controller内该子节点，各个broker的监视器发现这种变化后，每个broker开始竞争直到有一个竞争成为新的控制器，并向/controller注册子节点，以及向/controller_EPOCH注册子节点。
