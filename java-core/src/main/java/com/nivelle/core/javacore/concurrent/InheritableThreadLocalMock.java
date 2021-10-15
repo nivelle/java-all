@@ -61,7 +61,7 @@ public  class InheritableThreadLocalMock {
          * get数据，线程名：pool-1-thread-1，数据为：InheritableThreadLocalMock.Person(age=18)
          * get数据，线程名：pool-1-thread-2，数据为：InheritableThreadLocalMock.Person(age=100)
          */
-        //线程在init初始化的时候，才会去同步一份最新数据过来。
+        //原因: 线程在init初始化的时候，才会去同步一份最新数据过来。
     }
 
     @Test
@@ -74,7 +74,7 @@ public  class InheritableThreadLocalMock {
         THREAD_LOCAL_1.set(newPerson); // 给线程重新绑定值
         THREAD_POOL_1.execute(() -> getAndPrintData_1());
         TimeUnit.SECONDS.sleep(2);
-        //线程在init初始化的时候，才会去同步一份最新数据过来。
+        //线程在init初始化的时候，才会去同步一份最新数据过来,执行过程中不会更新threadLocal中的值
     }
 
 
