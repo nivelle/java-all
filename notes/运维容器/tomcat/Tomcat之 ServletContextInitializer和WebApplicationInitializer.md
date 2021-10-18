@@ -10,7 +10,7 @@
 
 4. 可以配合 `@HandleTypes 注解`，通过指定Class，容器会把所有的指定类的子类作为方法onStartup 的参数Set<Class<?>> c传递进来
 
-### SpringServletContainerInitializer 它是Spring提供的ServletContainerInitializer的实现类
+#### SpringServletContainerInitializer 它是Spring提供的ServletContainerInitializer的实现类
 
 ```java
 public void onStartup(@Nullable Set<Class<?>> webAppInitializerClasses, ServletContext servletContext)throws ServletException {
@@ -52,17 +52,17 @@ public void onStartup(@Nullable Set<Class<?>> webAppInitializerClasses, ServletC
 
 ### WebApplicationInitializer
 
-1. WebApplicationInitializer是Spring提供的接口，和ServletContainerInitializer没有直接关系，但是和它有间接关系
+- WebApplicationInitializer是Spring提供的接口，和ServletContainerInitializer没有直接关系，但是和它有间接关系
 
-2. WebApplicationInitializer在SpringServletContainerInitializer中实例化后被调用。
+- WebApplicationInitializer在SpringServletContainerInitializer中实例化后被调用。
 
-3. SpringServletContainerInitializer实现了servlet容器提供的接口带了个头，接下来的事可以交由 spring自己定义的WebApplicationInitializer
+- SpringServletContainerInitializer实现了servlet容器提供的接口带了个头，接下来的事可以交由 spring自己定义的WebApplicationInitializer
 
 #### ServletContextInitializerBeans 实例表示一个从ListableBeanFactory bean容器中获得的ServletContextInitializer实例的集合。这个集合中的每个元素来自容器中定义的每个如下类型的bean
 
-- ServletContextInitializer bean:具体可能以ServletRegistrationBean/FilterRegistrationBean/EventListenerRegistrationBean的形式存在
+- ServletContextInitializer bean:具体可能以`ServletRegistrationBean/FilterRegistrationBean/EventListenerRegistrationBean`的形式存在
 
-- Servlet/Filter/EventListener bean:这些 bean直接以Servlet/Filter/EventListener bean的形式存在
+- Servlet/Filter/EventListener bean:这些 bean直接以`Servlet/Filter/EventListener` bean的形式存在
 
 **所有这些bean最终都会以 ServletContextInitializer 形式在随后Servlet容器启动阶段ServletContext创建后应用于初始化ServletContext**
 
@@ -94,7 +94,6 @@ SpringApplication.run()
   => EmbeddedWebApplicationContext.refresh()
   => onRefresh()
   => createEmbeddedServletContainer()
-
 
 ```
 

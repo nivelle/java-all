@@ -6,7 +6,7 @@
 
 - **maxThreads**:默认200，最大工作线程，同时处理请求。并发数（determines the maximum number of simultaneous[同时] requests that can be handled）
 
-```xml
+```text
 请求处理线程的最大数量。默认值是200（Tomcat7和8都是的）。如果该Connector绑定了Executor，这个值会被忽略，因为该Connector将使用绑定的Executor，而不是内置的线程池来执行任务。
 
         
@@ -21,7 +21,7 @@ JVM中默认情况下在创建新线程时会分配大小为1M的线程栈，所
 - **acceptCount**:默认100,连接超过 maxThreads后,依然可以接收请求，到达acceptCount后 connection refused;(The maximum queue length for incoming
 connection requests when all possible request processing threads are in use)
 
-```xml
+```text
 maxThreads：tomcat起动的最大线程数，即同时处理的任务个数，默认值为200
 acceptCount：当调用HTTP请求数达到tomcat的最大线程数时，还有新的HTTP请求到来，这时tomcat会将该请求放在等待队列中，这个acceptCount就是指能够接受的最大等待数，默认100。如果等待队列也被放满了，这个时候再来新的请求就会被tomcat拒绝（connection refused）
 

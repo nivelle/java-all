@@ -44,7 +44,7 @@ public final synchronized void init() throws LifecycleException {
 
 #### standardService
 
-```
+```java
 protected void initInternal() throws LifecycleException {
 
         super.initInternal();
@@ -79,7 +79,7 @@ protected void initInternal() throws LifecycleException {
 
 #### 注册项目：registerContext
 
-```
+```java
 private void registerContext(Context context) {
         //the context path for this web application 获取应用路径
         String contextPath = context.getPath();
@@ -117,7 +117,7 @@ private void registerContext(Context context) {
 
 ##### 项目映射：prepareWrapperMappingInfo(Context context ,Wrapper wrapper, List<WrapperMappingInfo> wrappers)
 
-```
+```java
 private void prepareWrapperMappingInfo(Context context, Wrapper wrapper,
             List<WrapperMappingInfo> wrappers) {
         String wrapperName = wrapper.getName();
