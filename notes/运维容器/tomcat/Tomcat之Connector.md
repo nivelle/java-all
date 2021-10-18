@@ -58,7 +58,7 @@ public Connector(String protocol) {
 
 #### createRequest
 
-```
+```java
  /**
      * Create (or allocate) and return a Request object suitable for
      * specifying the contents of a Request to the responsible Container.
@@ -73,7 +73,7 @@ public Connector(String protocol) {
 
 #### createResponse
 
-```
+```java
     /**
      * Create (or allocate) and return a Response object suitable for
      * receiving the contents of a Response from the responsible Container.
@@ -93,7 +93,7 @@ public Connector(String protocol) {
 
 #### initInternal 初始化函数
 
-```
+```java
 protected void initInternal() throws LifecycleException {
 
         super.initInternal();
@@ -137,8 +137,7 @@ protected void initInternal() throws LifecycleException {
 
 #### startInternal 开始化函数
 
-```
-
+```java
  protected void startInternal() throws LifecycleException {
         // Validate settings before starting
         if (getPortWithOffset() < 0) {
@@ -159,7 +158,7 @@ protected void initInternal() throws LifecycleException {
 
 - init()
 
-```
+```java
 public void init() throws Exception {
         if (getLog().isInfoEnabled()) {
             getLog().info(sm.getString("abstractProtocolHandler.init", getName()));
@@ -188,7 +187,7 @@ public void init() throws Exception {
 
 - start()
 
-```
+```java
  public void start() throws Exception {
         if (getLog().isInfoEnabled()) {
             getLog().info(sm.getString("abstractProtocolHandler.start", getName()));
@@ -213,7 +212,7 @@ public void init() throws Exception {
 
 - init()方法
 
-```
+```java
 public final void init() throws Exception {
         if (bindOnInit) {
             bindWithCleanup();
@@ -246,7 +245,7 @@ public final void init() throws Exception {
 
 3) NioEndpoint
 
-```
+```java
 public final void start() throws Exception {
         if (bindState == BindState.UNBOUND) {
             bindWithCleanup();

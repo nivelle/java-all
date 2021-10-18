@@ -31,7 +31,7 @@
 
 ##### 子类实现一:NioEndpoint
 
-```shell
+```java
 public void startInternal() throws Exception {
         if (!running) {
             running = true;
@@ -66,7 +66,7 @@ public void startInternal() throws Exception {
 
 ##### 子类实现二:Nio2Endpoint
 
-```shell
+```java
 public void startInternal() throws Exception {
         if (!running) {
             allClosed = false;
@@ -128,7 +128,7 @@ public void startInternal() throws Exception {
 
 #### startAcceptorThread() //创建并启动acceptor线程，AprEndpoint实现
 
-```shell
+```java
 protected void startAcceptorThread() {
         acceptor = new Acceptor<>(this);
         String threadName = getName() + "-Acceptor";
@@ -143,7 +143,7 @@ protected void startAcceptorThread() {
 
 #### bind()方法 //子类实现：NioEndpoint
 
-```shell
+```java
 public void bind() throws Exception {
         initServerSocket();
 
@@ -159,7 +159,7 @@ public void bind() throws Exception {
 
 -  initServerSocket()
 
-```shell
+```java
 protected void initServerSocket() throws Exception {
         if (!getUseInheritedChannel()) {
             serverSock = ServerSocketChannel.open();
@@ -183,7 +183,7 @@ protected void initServerSocket() throws Exception {
 
 #### bind()方法 //子类实现：Nio2Endpoint
 
-````shell
+````java
 public void bind() throws Exception {
 
         // Create worker collection
@@ -210,7 +210,7 @@ public void bind() throws Exception {
  ````   
 #### bind()方法 //子类实现：AprEndpoint
 
-```shell
+```java
 public void bind() throws Exception {
 
         // Create the root APR memory pool,APR 内存池
@@ -315,7 +315,7 @@ public void bind() throws Exception {
 
 ### createExecutor() // 用于创建 Worker线程池
 
-```shell
+```java
 public void createExecutor() {
         internalExecutor = true;
         TaskQueue taskqueue = new TaskQueue();
@@ -331,7 +331,7 @@ public void createExecutor() {
 
 #### NioEndpoint实现
 
-```shell
+```java
  protected SocketChannel serverSocketAccept() throws Exception {
         return serverSock.accept();
     }
@@ -339,7 +339,7 @@ public void createExecutor() {
 
 #### Nio2Endpoint实现
 
-```shell
+```java
 protected AsynchronousSocketChannel serverSocketAccept() throws Exception {
         return serverSock.accept().get();
     }
@@ -347,7 +347,7 @@ protected AsynchronousSocketChannel serverSocketAccept() throws Exception {
 
 #### AprEndpoint实现
 
-```shell
+```java
 protected Long serverSocketAccept() throws Exception {
         long socket = Socket.accept(serverSock);
         if (log.isDebugEnabled()) {
@@ -381,7 +381,7 @@ protected Long serverSocketAccept() throws Exception {
    
 #### acceptor run() 方法 NioEndpoint实现
 
-```html
+```java
 public void run() {
             // Loop until destroy() is called
             while (true) {
@@ -448,11 +448,12 @@ public void run() {
 
 ### 创建 SocketSocketProcessor 内部类
 
+````java
 protected abstract SocketProcessorBase<S> createSocketProcessor(SocketWrapperBase<S> socketWrapper, SocketEvent event);
-
+````
 #### NioEndpoint子类实现
 
-```xml
+```java
 protected SocketProcessorBase<NioChannel> createSocketProcessor(SocketWrapperBase<NioChannel> socketWrapper, SocketEvent event) {
         return new SocketProcessor(socketWrapper, event);
     }
@@ -460,7 +461,7 @@ protected SocketProcessorBase<NioChannel> createSocketProcessor(SocketWrapperBas
 
 #### Nio2Endpoint子类实现
 
-```xml
+```java
 protected SocketProcessorBase<Nio2Channel> createSocketProcessor(SocketWrapperBase<Nio2Channel> socketWrapper, SocketEvent event) {
         return new SocketProcessor(socketWrapper, event);
     }
@@ -468,7 +469,7 @@ protected SocketProcessorBase<Nio2Channel> createSocketProcessor(SocketWrapperBa
 
 #### aprEndPoint子类实现
 
-```xml
+```java
 protected SocketProcessorBase<Long> createSocketProcessor(SocketWrapperBase<Long> socketWrapper, SocketEvent event) {
         return new SocketProcessor(socketWrapper, event);
     }
@@ -481,7 +482,7 @@ protected SocketProcessorBase<Long> createSocketProcessor(SocketWrapperBase<Long
 
 - public boolean processSocket(SocketWrapperBase<S> socketWrapper, SocketEvent event, boolean dispatch)
 
-```shell
+```java
 public boolean processSocket(SocketWrapperBase<S> socketWrapper,
             SocketEvent event, boolean dispatch) {
         try {
@@ -532,7 +533,7 @@ Socket 进行处理;
 
 - postParseRequest() 方法封装一下 Request，并处理一下映射关系(从 URL 映射到相应的 Host、Context、Wrapper)。
 
-- CoyoteAdapter 将 Request 提交给 Container 处理之前，并将 org.apache.coyote.Request 封装到 org.apache.catalina.connector.Request，传递给 Container 处理的 Request 是 org.apache.catalina.connector.Request。
+- CoyoteAdapter 将 Request 提交给 Container 处理之前，并将 org.apache.coyote.Request 封装到 `org.apache.catalina.connector.Request`，传递给 Container 处理的 Request 是 `org.apache.catalina.connector.Request`。
 
 - connector.getService().getMapper().map()，用来在 Mapper 中查询 URL 的映射关系。映射关系会保留到 org.apache.catalina.connector.Request 中，Container 处理阶段 request.getHost() 是使用的就是这个阶段查询到的映射主机,以此类推 request.getContext()、request.getWrapper() 都是。
 
@@ -550,7 +551,7 @@ Socket 进行处理;
 
 ----
 
-```shell
+```java
 protected boolean setSocketOptions(SocketChannel socket) {
         NioSocketWrapper socketWrapper = null;
         try {

@@ -22,7 +22,7 @@ ContainerBase、StandardServer、StandardService、WebappLoader、Connector、St
 
 #### standardServer -> initInternal
 
-```
+```java
 public final synchronized void init() throws LifecycleException {
         if (!state.equals(LifecycleState.NEW)) {
             invalidTransition(Lifecycle.BEFORE_INIT_EVENT);

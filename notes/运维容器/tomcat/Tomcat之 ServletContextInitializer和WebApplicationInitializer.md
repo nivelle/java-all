@@ -1,14 +1,14 @@
 ### ServletContainerInitializer(SCI)
 
-1. ServletContainerInitializer是servlet3.0规范中引入的接口，能够让web应用程序在servlet容器启动后做一些自定义的操作
+- ServletContainerInitializer是servlet3.0规范中引入的接口，能够让web应用程序在servlet容器启动后做一些自定义的操作
 
-2. ServletContainerInitializer
+- ServletContainerInitializer
    基于服务提供者接口（SPI）概念，因此你需要在你的jar包目录下添加META-INF/services/javax.servlet.ServletContainerInitializer文件，内容就是ServletContainerInitializer实现类的全限定名。
 
 3. ServletContainerInitializer#onStartup方法由Servlet容器调用(必须至少支持Servlet 3.0版本)。我们在这个方法中通过编程的方式去注册Servlet Filter
    Listener等组件，代替web.xml
 
-4. 可以配合 @HandleTypes 注解，通过指定Class，容器会把所有的指定类的子类作为方法onStartup 的参数Set<Class<?>> c传递进来
+4. 可以配合 `@HandleTypes 注解`，通过指定Class，容器会把所有的指定类的子类作为方法onStartup 的参数Set<Class<?>> c传递进来
 
 ### SpringServletContainerInitializer 它是Spring提供的ServletContainerInitializer的实现类
 

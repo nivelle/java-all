@@ -198,7 +198,7 @@ public SocketState process(SocketWrapperBase<?> socketWrapper, SocketEvent statu
 
 #### public abstract class AbstractProtocol<S> implements ProtocolHandler,MBeanRegistration
 
-```
+```java
  public SocketState process(SocketWrapperBase<S> wrapper, SocketEvent status) {
             if (getLog().isDebugEnabled()) {
                 getLog().debug(sm.getString("abstractConnectionHandler.process",wrapper.getSocket(), status));
