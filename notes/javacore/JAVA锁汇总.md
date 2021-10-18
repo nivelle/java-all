@@ -113,7 +113,7 @@ Java SDK 并发包通过 Lock 和 Condition 两个接口来实现管程，其中
 
 synchronized 没有办法解决。原因是 synchronized 申请资源的时候，如果申请不到，线程直接进入阻塞状态了，而线程进入阻塞状态，释放不了线程已经占有的资源
 
-````
+````java
 
 // 支持中断的API:能够响应中断
 void lockInterruptibly() throws InterruptedException;
