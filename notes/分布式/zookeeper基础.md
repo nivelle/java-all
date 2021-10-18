@@ -166,4 +166,4 @@ ZXID设计：高32位代表了Leader周期epoch的编号，每当选举产生一
 
 ### 内容来自《从Paxos到Zookeeper分布式一致性原理与实践》 作者：倪超
 
-![](https://img-blog.csdn.net/20171022225034882?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvbHVvbmFucWlu/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center)
+![](../images/zk工作流程.png)
