@@ -82,6 +82,7 @@ public class ActivityServiceImpl implements ActivityService {
             ActivityService activityService = (ActivityService) AopContext.currentProxy();
             activityService.requiredCommitted(activityPvEntity.getId());
 
+
         }
         //抛出一个非受检异常
         this.throwAException();
