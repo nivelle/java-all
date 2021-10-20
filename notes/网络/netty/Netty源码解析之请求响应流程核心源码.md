@@ -21,7 +21,7 @@
 
 - 绑定
 
-````
+````java
  private ChannelFuture doBind(final SocketAddress localAddress) {
         //1.创建一个ServerSocketChannel
         //2.初始化
@@ -68,7 +68,7 @@
 
 - 绑定->初始化和注册
 
-````
+````java
 final ChannelFuture initAndRegister() {
         Channel channel = null;
         try {
@@ -113,7 +113,7 @@ final ChannelFuture initAndRegister() {
 
 - 初始化和注册操作->初始化逻辑
 
-````
+````java
 void init(Channel channel) {
         setChannelOptions(channel, options0().entrySet().toArray(newOptionArray(0)), logger);
         setAttributes(channel, attrs0().entrySet().toArray(newAttrArray(0)));
@@ -150,7 +150,7 @@ void init(Channel channel) {
 
 - 初始化和注册操作->注册详情1
 
-```
+```java
  public final void register(EventLoop eventLoop, final ChannelPromise promise) {
             if (eventLoop == null) {
                 throw new NullPointerException("eventLoop");
@@ -191,7 +191,7 @@ void init(Channel channel) {
 
 - 初始化和注册操作->注册详情2：eventLoop.execute
 
-``````
+``````java
 private void execute(Runnable task, boolean immediate) {
         boolean inEventLoop = this.inEventLoop();
         // 把 register 这个task 放到NioEventLoop里面的queue里面
@@ -225,7 +225,7 @@ private void execute(Runnable task, boolean immediate) {
 
 - 初始化和注册操作->注册详情3
 
-````
+````java
  protected void doRegister() throws Exception {
         boolean selected = false;
         for (;;) {
@@ -257,7 +257,7 @@ private void execute(Runnable task, boolean immediate) {
 
 - 绑定详情1：AbstractBootstrap -> doBind0
 
-````
+````java
  private static void doBind0(final ChannelFuture regFuture, final Channel channel,final SocketAddress localAddress, final ChannelPromise promise) {
 
         // This method is invoked before channelRegistered() is triggered.  Give user handlers a chance to set up
@@ -278,8 +278,7 @@ private void execute(Runnable task, boolean immediate) {
 
 - 绑定详情2：DefaultChannelPipeline -> bind
 
-````
-
+````java
 public final void bind(final SocketAddress localAddress, final ChannelPromise promise) {
             assertEventLoop();
 
@@ -326,7 +325,7 @@ public final void bind(final SocketAddress localAddress, final ChannelPromise pr
 
 - 绑定详情3： NioServerSocketChannel
 
-````
+````java
  protected void doBind(SocketAddress localAddress) throws Exception {
         if (PlatformDependent.javaVersion() >= 7) {
             javaChannel().bind(localAddress, config.getBacklog());
@@ -339,7 +338,7 @@ public final void bind(final SocketAddress localAddress, final ChannelPromise pr
 
 - 绑定详情4：channelActive(ChannelHandlerContext ctx)
 
-````
+````java
  public void channelActive(ChannelHandlerContext ctx) {
             //继续传播
             ctx.fireChannelActive();
@@ -389,7 +388,7 @@ protected void doBeginRead() throws Exception {
 
 - NioEventLoop 核心事件处理类
 
-````
+````java
  protected void run() {
         for (;;) {
             try {
@@ -461,7 +460,7 @@ protected void doBeginRead() throws Exception {
 
 - 处理创建连接事件1：
 
-````
+````java
 private void processSelectedKeys() {
         if (selectedKeys != null) {
             //不用JDK的selector.selectedKeys(),性能更好(1%~2%),垃圾回收更少
@@ -474,7 +473,7 @@ private void processSelectedKeys() {
 
 - 处理创建连接事件2：
 
-````
+````java
 private void processSelectedKeysOptimized() {
         for (int i = 0; i < selectedKeys.size; ++i) {
             final SelectionKey k = selectedKeys.keys[i];
@@ -507,7 +506,7 @@ private void processSelectedKeysOptimized() {
 
 - 处理创建连接事件3：
 
-````
+````java
 private void processSelectedKey(SelectionKey k, AbstractNioChannel ch) {
         final AbstractNioChannel.NioUnsafe unsafe = ch.unsafe();
         if (!k.isValid()) {
@@ -569,7 +568,7 @@ private void processSelectedKey(SelectionKey k, AbstractNioChannel ch) {
 
 - 处理创建连接事件4：AbstractNioMessageChannel->read()
 
-````
+````java
  //初始化操作
  public void read() {
              assert eventLoop().inEventLoop();
@@ -651,7 +650,7 @@ private void processSelectedKey(SelectionKey k, AbstractNioChannel ch) {
 
 - 处理创建连接事件5 -> doReadMessages
 
-````
+````java
 protected int doReadMessages(List<Object> buf) throws Exception {
         //接受新连接创建SocketChannel
         SocketChannel ch = SocketUtils.accept(javaChannel());
@@ -678,7 +677,7 @@ protected int doReadMessages(List<Object> buf) throws Exception {
 
 - 处理创建连接事件6： accept(final ServerSocketChannel serverSocketChannel)
 
-````
+````java
 public static SocketChannel accept(final ServerSocketChannel serverSocketChannel) throws IOException {
         try {
             return AccessController.doPrivileged(new PrivilegedExceptionAction<SocketChannel>() {
@@ -697,7 +696,7 @@ public static SocketChannel accept(final ServerSocketChannel serverSocketChannel
 
 - 处理创建连接事件7： ServerBootstrapAcceptor->channelRead ;//AbstractNioMessageChannel->read() -> pipeline.fireChannelRead()
 
-````
+````java
  public void channelRead(ChannelHandlerContext ctx, Object msg) {
             final Channel child = (Channel) msg;
 
@@ -724,7 +723,7 @@ public static SocketChannel accept(final ServerSocketChannel serverSocketChannel
 
 - 处理创建连接事件8：
 
-````
+````java
  public final void register(EventLoop eventLoop, final ChannelPromise promise) {
             if (eventLoop == null) {
                 throw new NullPointerException("eventLoop");
@@ -766,7 +765,7 @@ public static SocketChannel accept(final ServerSocketChannel serverSocketChannel
 
 #### 处理创建连接事件9：AbstractChannel->register0(ChannelPromise promise)
 
-``````
+``````java
  private void register0(ChannelPromise promise) {
             try {
                 // check if the channel is still open as it could be closed in the mean time when the register
@@ -810,7 +809,7 @@ public static SocketChannel accept(final ServerSocketChannel serverSocketChannel
 
 #### 创建连接事件10：
 
-````
+````java
  protected void doRegister() throws Exception {
         boolean selected = false;
         for (;;) {
@@ -855,7 +854,7 @@ public static SocketChannel accept(final ServerSocketChannel serverSocketChannel
 
 - 接收数据详情1：AbstractNioByteChannel->read()
 
-````
+````java
  public final void read() {
             final ChannelConfig config = config();
             if (shouldBreakReadReady(config)) {
@@ -923,7 +922,7 @@ public static SocketChannel accept(final ServerSocketChannel serverSocketChannel
 
 - 接收数据详情2：NioSocketChannel->read()
 
-````
+````java
   protected int doReadBytes(ByteBuf byteBuf) throws Exception {
         final RecvByteBufAllocator.Handle allocHandle = unsafe().recvBufAllocHandle();
         allocHandle.attemptedBytesRead(byteBuf.writableBytes());
@@ -933,7 +932,7 @@ public static SocketChannel accept(final ServerSocketChannel serverSocketChannel
 
 - 接收数据详情3：AbstractByteBuf ->writeBytes()
 
-````
+````java
  public int writeBytes(ScatteringByteChannel in, int length) throws IOException {
         ensureWritable(length);
         // -1 : EOF 正常关闭，IO Exception 表示读数据是被关闭
@@ -947,7 +946,7 @@ public static SocketChannel accept(final ServerSocketChannel serverSocketChannel
 
 - 接收数据详情4：UnPooledDirectByteBuf ->setBytes()
 
-````
+````java
  public int setBytes(int index, ScatteringByteChannel in, int length) throws IOException {
         ensureAccessible();
         ByteBuffer tmpBuf = internalNioBuffer();
@@ -990,7 +989,7 @@ public static SocketChannel accept(final ServerSocketChannel serverSocketChannel
 
 - 业务处理详情1： AbstractNioMessageChannel->pipeline.fireChannelRead
 
-````
+````java
 public final ChannelPipeline fireChannelRead(Object msg) {
         //从Head开始
         AbstractChannelHandlerContext.invokeChannelRead(head, msg);
@@ -1000,7 +999,7 @@ public final ChannelPipeline fireChannelRead(Object msg) {
 
 - 业务处理详情2：
 
-````
+````java
 static void invokeChannelRead(final AbstractChannelHandlerContext next, Object msg) {
         final Object m = next.pipeline.touch(ObjectUtil.checkNotNull(msg, "msg"), next);
         //NioEventLoop
@@ -1023,7 +1022,7 @@ static void invokeChannelRead(final AbstractChannelHandlerContext next, Object m
 
 - 业务处理详情3：
 
-````
+````java
 public void channelRead(ChannelHandlerContext ctx, Object msg) {
             //继续在pipleline上传播
             ctx.fireChannelRead(msg);
@@ -1032,7 +1031,7 @@ public void channelRead(ChannelHandlerContext ctx, Object msg) {
 
 - 业务处理详情4：传播处理
 
-````
+````java
 public ChannelHandlerContext fireChannelRead(final Object msg) {
         invokeChannelRead(findContextInbound(MASK_CHANNEL_READ), msg);
         return this;
@@ -1083,7 +1082,7 @@ public ChannelHandlerContext fireChannelRead(final Object msg) {
 
 - 写数据详情1：write
 
-````
+````java
  private void write(Object msg, boolean flush, ChannelPromise promise) {
         ObjectUtil.checkNotNull(msg, "msg");
         try {
@@ -1130,7 +1129,7 @@ public ChannelHandlerContext fireChannelRead(final Object msg) {
 
 - 写数据详情2：ChannelPipeline写数据
 
-````
+````java
 public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) {
             unsafe.write(msg, promise);
         }
@@ -1169,7 +1168,7 @@ public final void write(Object msg, ChannelPromise promise) {
 
 - 发送数据详情3： addMessage()
 
-````
+````java
 public void addMessage(Object msg, int size, ChannelPromise promise) {
         //构建一个消息，放在 linkedList 队列尾部
         Entry entry = Entry.newInstance(msg, size, total(msg), promise);
@@ -1194,8 +1193,7 @@ public void addMessage(Object msg, int size, ChannelPromise promise) {
 
 - 发送数据详情4： incrementPendingOutboundBytes()
 
-````
-
+````java
 private void incrementPendingOutboundBytes(long size, boolean invokeLater) {
         if (size == 0) {
             return;
@@ -1213,7 +1211,7 @@ private void incrementPendingOutboundBytes(long size, boolean invokeLater) {
 
 - 发送数据详情1：flush
 
-````
+````java
 public ChannelHandlerContext flush() {
         //找下一级的handler
         final AbstractChannelHandlerContext next = findContextOutbound(MASK_FLUSH);
@@ -1236,7 +1234,7 @@ public ChannelHandlerContext flush() {
 
 - 发送数据详情2： invokeFlush0
 
-````
+````java
  private void invokeFlush0() {
         try {
             ((ChannelOutboundHandler) handler()).flush(this);
@@ -1248,7 +1246,7 @@ public ChannelHandlerContext flush() {
 
 - 发送数据详情3：flush
 
-````
+````java
 public final void flush() {
             assertEventLoop();
 
@@ -1266,8 +1264,7 @@ public final void flush() {
 
 - 发送数据详情4： addFlush
 
-````
- 
+````java
 public void addFlush() {
         // There is no need to process all entries if there was already a flush before and no new messages
         // where added in the meantime.
@@ -1299,7 +1296,7 @@ public void addFlush() {
 
 - 发送数据详情5： flush0()
 
-````
+````java
   protected void flush0() {
             if (inFlush0) {
                 // Avoid re-entrance
@@ -1360,7 +1357,7 @@ public void addFlush() {
 
 - 发送数据详情6： doWrite(outboundBuffer)
 
-````
+````java
  protected void doWrite(ChannelOutboundBuffer in) throws Exception {
         SocketChannel ch = javaChannel();
          // 有数据要写，且能写入，最多尝试16次
@@ -1434,8 +1431,7 @@ public void addFlush() {
 
 - 发送数据详情7： adjustMaxBytesPerGatheringWrite((int) attemptedBytes, (int) localWrittenBytes,maxBytesPerGatheringWrite);
 
-````
-
+````java
 private void adjustMaxBytesPerGatheringWrite(int attempted, int written, int oldMaxBytesPerGatheringWrite) {
         // By default we track the SO_SNDBUF when ever it is explicitly set. However some OSes may dynamically change
         // SO_SNDBUF (and other characteristics that determine how much data can be written at once) so we should try
@@ -1472,7 +1468,7 @@ private void adjustMaxBytesPerGatheringWrite(int attempted, int written, int old
 
 - 关闭连接详情1：相应读事件
 
-````
+````java
  public final void read() {
             final ChannelConfig config = config();
             if (shouldBreakReadReady(config)) {
@@ -1540,7 +1536,7 @@ private void adjustMaxBytesPerGatheringWrite(int attempted, int written, int old
 
 - 关闭连接详情2：closeOnRead(ChannelPipeline pipeline)
 
-````
+````java
  private void closeOnRead(ChannelPipeline pipeline) {
             //判断input是否关闭
             if (!isInputShutdown0()) {
@@ -1560,7 +1556,7 @@ private void adjustMaxBytesPerGatheringWrite(int attempted, int written, int old
 
 - 关闭连接详情3：close(final ChannelPromise promise)
 
-````
+````java
 public final void close(final ChannelPromise promise) {
             assertEventLoop();
 
@@ -1568,7 +1564,9 @@ public final void close(final ChannelPromise promise) {
             close(promise, closedChannelException, closedChannelException, false);
         }
 
+````
 
+````java
 private void close(final ChannelPromise promise, final Throwable cause,
                            final ClosedChannelException closeCause, final boolean notify) {
             if (!promise.setUncancellable()) {
@@ -1655,7 +1653,7 @@ private void close(final ChannelPromise promise, final Throwable cause,
 
 - 关闭连接详情4：NioScoketChannel()->doClose0
 
-````
+````java
 protected void doClose() throws Exception {
         super.doClose();
          //jdk 
@@ -1676,7 +1674,7 @@ public final void close() throws IOException {
 
 - 关闭连接详情8:fireChannelInactiveAndDeregister
 
-````
+````java
  private void deregister(final ChannelPromise promise, final boolean fireChannelInactive) {
             if (!promise.setUncancellable()) {
                 return;
@@ -1727,7 +1725,7 @@ public final void close() throws IOException {
 
 - doDeregister()
 
-````
+````java
  void cancel(SelectionKey key) {
         //没有特殊情况（配置so linger）,下面这个cancel :实际没有"执行"，因为在关闭channel 的时候执行过了
         key.cancel();
@@ -1763,8 +1761,7 @@ public final void close() throws IOException {
 //@param quietPeriod the quiet period as described in the documentation //@param timeout the maximum amount of time to
 wait until the executor is {@linkplain #shutdown()}regardless if a task was submitted during the quiet period
 
-````
-
+````java
 public Future<?> shutdownGracefully(long quietPeriod, long timeout, TimeUnit unit) {
         if (quietPeriod < 0) {
             throw new IllegalArgumentException("quietPeriod: " + quietPeriod + " (expected >= 0)");
@@ -1828,7 +1825,7 @@ public Future<?> shutdownGracefully(long quietPeriod, long timeout, TimeUnit uni
 
 - 服务关闭详情2： 在EventLoop run()方法中判断关闭状态是否是关闭
 
-````
+````java
 private void closeAll() {
         //去除canceled的key
         selectAgain();
@@ -1856,7 +1853,7 @@ private void closeAll() {
 
 - 服务关闭详情3：confirmShutdown()
 
-````
+````java
   protected boolean confirmShutdown() {
         if (!isShuttingDown()) {
             return false;
@@ -1916,7 +1913,7 @@ private void closeAll() {
 
 - 服务关闭详情4：cancelScheduledTasks()
 
-````
+````java
 //cancel 掉所有的Scheduled的tasks
 protected void cancelScheduledTasks() {
         assert inEventLoop();
@@ -1934,6 +1931,5 @@ protected void cancelScheduledTasks() {
 
         scheduledTaskQueue.clearIgnoringIndexes();
     }
-
 
 ````
