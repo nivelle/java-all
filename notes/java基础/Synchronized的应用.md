@@ -58,33 +58,39 @@ synchronized (lock) {
 // do something
 }
 ````
-情况一：只有 Thread#1 会进入临界区；
+- 情况一：只有 Thread#1 会进入临界区；
 
-情况二：Thread#1 和 Thread#2 交替进入临界区,竞争不激 烈；
+- 情况二：Thread#1 和 Thread#2 交替进入临界区,竞争不激 烈；
 
-情况三：Thread#1/Thread#2/Thread3… 同时进入临界区， 竞争激烈
+- 情况三：Thread#1/Thread#2/Thread3… 同时进入临界区， 竞争激烈
 
-偏向锁
-此时当 Thread#1 进入临界区时，JVM 会将 lockObject 的 对象头 Mark Word 的锁标志位设为“01”，同时会用 CAS 操 作把 Thread#1 的线程 ID 记录到 Mark Word 中，此时进 入偏向模式。所谓“偏向”，指的是这个锁会偏向于 Thread#1， 若接下来没有其他线程进入临界区，则 Thread#1 再出入 临界区无需再执行任何同步操作。也就是说，若只有 Thread#1 会进入临界区，实际上只有 Thread#1 初次进入 临界区时需要执行 CAS 操作，以后再出入临界区都不会有 同步操作带来的开销。
+#### 偏向锁
 
-轻量级锁
-偏向锁的场景太过于理想化，更多的时候是 Thread#2 也 会尝试进入临界区， 如果 Thread#2 也进入临界区但是 Thread#1 还没有执行完同步代码块时，会暂停 Thread#1 并且升级到轻量级锁。Thread#2 通过自旋再次尝试以轻量 级锁的方式来获取锁
+- 此时当 Thread#1 进入临界区时，JVM 会将 lockObject 的 对象头 Mark Word 的锁标志位设为“01”，同时会用 CAS 操 作把 Thread#1 的线程 ID 记录到 Mark Word 中，此时进 入偏向模式。所谓“偏向”，指的是这个锁会偏向于 Thread#1， 若接下来没有其他线程进入临界区，则 Thread#1 再出入 临界区无需再执行任何同步操作。也就是说，若只有 Thread#1 会进入临界区，实际上只有 Thread#1 初次进入 临界区时需要执行 CAS 操作，以后再出入临界区都不会有 同步操作带来的开销。
 
-重量级锁
+#### 轻量级锁
+
+- 偏向锁的场景太过于理想化，更多的时候是 Thread#2 也 会尝试进入临界区， 如果 Thread#2 也进入临界区但是 Thread#1 还没有执行完同步代码块时，会暂停 Thread#1 并且升级到轻量级锁。Thread#2 通过自旋再次尝试以轻量 级锁的方式来获取锁
+
+#### 重量级锁
+
 如果 Thread#1 和 Thread#2 正常交替执行，那么轻量级锁 基本能够满足锁的需求。但是如果 Thread#1 和 Thread#2 同时进入临界区，那么轻量级锁就会膨胀为重量级锁，意 味着 Thread#1 线程获得了重量级锁的情况下，Thread#2 就会被阻塞
 
 ### Synchronized 结合 Java Object 对象中的 wait,notify,notifyAll 
 
-前面我们在讲 synchronized 的时候，发现被阻塞的线程什 么时候被唤醒，取决于获得锁的线程什么时候执行完同步 代码块并且释放锁。那怎么做到显示控制呢？我们就需要 借 助 一 个 信 号 机 制 ： 在 Object 对 象 中 ， 提 供 了 wait/notify/notifyall，可以用于控制线程的状态
+- 前面我们在讲 synchronized 的时候，发现被阻塞的线程什 么时候被唤醒，取决于获得锁的线程什么时候执行完同步 代码块并且释放锁。那怎么做到显示控制呢？我们就需要 借 助 一 个 信 号 机 制 ： 在 Object 对 象 中 ， 提 供 了 wait/notify/notifyall，可以用于控制线程的状态
 
-wait/notify/notifyall 基本概念
-wait：表示持有对象锁的线程 A 准备释放对象锁权限，释 放 cpu 资源并进入等待状态。
+#### wait/notify/notifyall 基本概念
 
-notify：表示持有对象锁的线程 A 准备释放对象锁权限，通 知 jvm 唤 醒 某 个 竞 争 该 对 象 锁 的 线 程 X 。 线 程 A synchronized 代码执行结束并且释放了锁之后，线程 X 直 接获得对象锁权限，其他竞争线程继续等待(即使线程 X 同 步完毕，释放对象锁，其他竞争线程仍然等待，直至有新 的 notify ,notifyAll 被调用)。
+- wait：表示持有对象锁的线程 A 准备释放对象锁权限，释 放 cpu 资源并进入等待状态。
 
-notifyAll：notifyall 和 notify 的区别在于，notifyAll 会唤醒 所有竞争同一个对象锁的所有线程，当已经获得锁的线程 A 释放锁之后，所有被唤醒的线程都有可能获得对象锁权 限
+- notify：表示持有对象锁的线程 A 准备释放对象锁权限，通 知 jvm 唤 醒 某 个 竞 争 该 对 象 锁 的 线 程 X 。 线 程 A synchronized 代码执行结束并且释放了锁之后，线程 X 直 接获得对象锁权限，其他竞争线程继续等待(即使线程 X 同 步完毕，释放对象锁，其他竞争线程仍然等待，直至有新 的 notify ,notifyAll 被调用)。
 
-需要注意的是：三个方法都必须在 synchronized 同步关键 字 所 限 定 的 作 用 域 中 调 用 ， 否 则 会 报 错 java.lang.IllegalMonitorStateException ，意思是因为没有 同步，所以线程对对象锁的状态是不确定的，不能调用这 些方法。 另外，通过同步机制来确保线程从 wait 方法返回时能够感 知到感知到 notify 线程对变量做出的修改
+-  notifyAll：notifyall 和 notify 的区别在于，notifyAll 会唤醒 所有竞争同一个对象锁的所有线程，当已经获得锁的线程 A 释放锁之后，所有被唤醒的线程都有可能获得对象锁权 限
+
+需要注意的是：三个方法都必须在 synchronized 同步关键字所限定的作用域中调用,否则会报错 `java.lang.IllegalMonitorStateException` ，意思是因为没有 同步，所以线程对对象锁的状态是不确定的，不能调用这 些方法。 
+
+另外，通过同步机制来确保线程从 wait 方法返回时能够感 知到感知到 notify 线程对变量做出的修改
 
 ### wait/notify 的基本原理
 
