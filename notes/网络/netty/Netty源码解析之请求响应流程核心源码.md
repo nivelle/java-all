@@ -2,22 +2,24 @@
 
 ### 启动服务(创建 OP_ACCEPT 事件监听)
 
-#### 1. 用户线程
+#### 1. work thread 用户线程
 
-1. 创建selector
-2. 创建server socket channel
-3. 初始化 server socket channel
-4. 给server socket channel 从boss group 中选择一个NioEventLoop
+-  创建selector
+-  创建server socket channel
+-  初始化 server socket channel
+-  给server socket channel 从boss group 中选择一个NioEventLoop
 
 #### 2. boss thread 线程
 
-1. 将server socket channel 注册到选择的 NioEventLoop 的 selector
-2. 绑定地址启动
-3. 注册接受连接事件(OP_ACCEPT)到selector上
+- 将server socket channel 注册到选择的 NioEventLoop 的 selector
+- 绑定地址启动
+- 注册接受连接事件(OP_ACCEPT)到selector上
 
-#### 核心源码
+----
 
-#### 绑定
+## 核心源码
+
+### 绑定
 
 - 绑定
 
@@ -370,7 +372,7 @@ protected void doBeginRead() throws Exception {
 ````
 
 -----
-
+----
 ### 构建连接(也就是对OP_ACCEPT事件的处理，然后在workerEventLoop创建OP_READ事件监听)
 
 #### 1. boss thread 线程
