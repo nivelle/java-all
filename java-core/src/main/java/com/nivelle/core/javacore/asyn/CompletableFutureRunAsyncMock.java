@@ -29,7 +29,7 @@ public class CompletableFutureRunAsyncMock {
                 } catch (Exception e) {
 
                 }
-                System.out.println("run over.....");
+                System.out.println("子线程执行:run over.....");
             }
         });
         //默认是ForkJoinPool.commonPool()线程池来执行任务

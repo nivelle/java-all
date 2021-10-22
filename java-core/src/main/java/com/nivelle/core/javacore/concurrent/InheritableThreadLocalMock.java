@@ -125,10 +125,18 @@ public  class InheritableThreadLocalMock {
     }
 
 
-    @Setter
+
     @ToString
-    private static class Person {
+    private  class Person {
         private Integer age = 18;
+
+        public Integer getAge() {
+            return age;
+        }
+
+        public void setAge(Integer age) {
+            this.age = age;
+        }
     }
 
 }
