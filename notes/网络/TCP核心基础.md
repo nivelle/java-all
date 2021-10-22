@@ -71,6 +71,8 @@ int connect(int sockfd, const struct sockaddr *servaddr, socklen_t addrlen)
 客户在调用函数 connect 前不必非得调用 bind 函数，因为如果需要的话，内核会确定源 IP 地址，并按照一定的算法选择一个临时端口作为源端口。
 
 ------
+
+
 ## connect 函数触发了TCP 三次握手
 
 ### 握手失败
