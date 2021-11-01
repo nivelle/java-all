@@ -241,7 +241,7 @@ Requested bean is currently in creation: Is there an unresolvable circular refer
 
 果然出现了循环依赖。
 
-注意：这种循环依赖问题是无法解决的，因为它没有用缓存，每次都会生成一个新对象
+**注意：这种循环依赖问题是无法解决的，因为它没有用缓存，每次都会生成一个新对象**
 
 ### 构造器注入
 
