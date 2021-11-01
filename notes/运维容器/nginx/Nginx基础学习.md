@@ -185,11 +185,12 @@ http {
     
 根目录设置:
 
- location / {
+ location ^～ /data { //以data开头的请求
     root /home/barret/test/;
     
     主页设置:
-    index /html/index.html /php/index.php;   
+    index /html/index.html /php/index.php; 
+  
 }
 
 ```
