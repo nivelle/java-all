@@ -76,7 +76,8 @@ spring中出现循环依赖主要有以下场景：
 
 ![](https://pic1.zhimg.com/80/v2-6fd43ded717a9c31b0a9abae0234db9b_1440w.jpg?source=1940ef5c)
 
-#### 单例的setter注入
+### 单例的setter注入
+
 这种注入方式应该是spring用的最多的，代码如下：
 
 ````java
@@ -116,7 +117,7 @@ public class TestService2 {
 
 #### 细心的朋友可能会发现在这种场景中第二级缓存作用不大。那么问题来了，为什么要用第二级缓存呢？
 
-试想一下，如果出现以下这种情况，我们要如何处理？
+- 试想一下，如果出现以下这种情况，我们要如何处理？
 
 ````java
 
@@ -166,11 +167,11 @@ TestService1注入到TestService3又需要从第三级缓存中获取实例，�
 
 ![](https://pic3.zhimg.com/80/v2-c55cc2c87d4ae9e10605c69672c183b9_1440w.jpg?source=1940ef5c)
 
-还有个问题，第三级缓存中为什么要添加ObjectFactory对象，直接保存实例对象不行吗？
+### 还有个问题，第三级缓存中为什么要添加ObjectFactory对象，直接保存实例对象不行吗？
 
-答：不行，因为假如你想对添加到三级缓存中的实例对象进行增强，直接用实例对象是行不通的
+- 答：不行，因为假如你想对添加到三级缓存中的实例对象进行增强，直接用实例对象是行不通的
 
-### 针对这种场景spring是怎么做的呢？
+#### 针对这种场景spring是怎么做的呢？
 
 答案就在AbstractAutowireCapableBeanFactory类doCreateBean方法的这段代码中：
 
