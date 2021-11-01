@@ -1,779 +1,409 @@
-老生常谈，循环依赖！顾名思义嘛，就是你依赖我，我依赖你，然后就造成了循环依赖了！由于A中注入B，B中注入A导致的吗？
+### 1. 循环依赖现象
 
-看起来没毛病，然而，却没有说清楚问题！甚至会让你觉得你是不清楚spring的循环依赖的！
+最近项目组的一个同事遇到了一个问题，问我的意见，一下子引起的我的兴趣，因为这个问题我也是第一次遇到。平时自认为对spring循环依赖问题还是比较了解的，直到遇到这个和后面的几个问题后，重新刷新了我的认识。我们先看看当时出问题的代码片段：@Service
 
-那么，spring的循环依赖到底是啥玩意？
-
-来看个循环依赖注入失败的例子：
-
-bean1: userService
-
-复制代码
-@Service
-public class LoginServiceImpl implements LoginService {
-
-//    @Resource
-private UserService userService;
-
-    public LoginServiceImpl() {
-        // 无参构造器是给默认创建的bean使用的
-    }
+````java
+public class TestService1 {
 
     @Autowired
-    public LoginServiceImpl(UserService userService) {
-        this.userService = userService;
-    }
+    private TestService2 testService2;
 
-    public void setUserService(UserService userService) {
-        this.userService = userService;
-    }
-
-    public Integer login(UserInfo userInfo) {
-        System.out.println("login...");
-        return 0;
-    }
-
-    public void logAction(String userId, String action) throws Exception {
-        UserInfo userInfo = userService.getUser(userId);
-        System.out.println("logged..." + userInfo + ",action: " + action);
+    @Async
+    public void test1() {
     }
 }
-复制代码
-bean2: loginService
 
-复制代码
 @Service
-public class UserServiceImpl implements UserService {
+public class TestService2 {
 
-//    @Resource
-private LoginService loginService;
+    @Autowired
+    private TestService1 testService1;
 
-    public UserServiceImpl() {
-        // 无参构造器是给默认创建的bean使用的
-    }
-//    @Autowired
-public UserServiceImpl(LoginService loginService) {
-this.loginService = loginService;
+    public void test2() {
+    }   
 }
-@Autowired
-public void setLoginService(LoginService loginService) {
-this.loginService = loginService;
-}
+````
+这两段代码中定义了两个Service类：TestService1和TestService2，在TestService1中注入了TestService2的实例，同时在TestService2中注入了TestService1的实例，这里构成了循环依赖。
 
-    public Integer addUser(UserInfo userInfo) throws Exception {
-        userInfo.setId("111");
-        System.out.println("user added. " + userInfo);
-        // 登录
-        loginService.login(userInfo);
-        return 1;
-    }
 
-    public UserInfo getUser(String id) throws Exception {
-        UserInfo userInfo = null;
-        if("111".equals(id)) {
-            userInfo = new UserInfo();
-            userInfo.setId(id);
-            userInfo.setAge(22);
-            userInfo.setName("mocking");
-            return userInfo;
-        }
-        throw new Exception("err:" + ErrorCodeEnum.API_CALL_ERROR.getCode() + "," + ErrorCodeEnum.API_CALL_ERROR.getErrMsg());
+只不过，这不是普通的循环依赖，因为TestService1的test1方法上加了一个@Async注解。
+
+大家猜猜程序启动后运行结果会怎样？
+````java
+org.springframework.beans.factory.BeanCurrentlyInCreationException: Error creating bean with name 'testService1': Bean with name 'testService1' has been injected into other beans [testService2] in its raw version as part of a circular reference, but has eventually been wrapped. This means that said other beans do not use the final version of the bean. This is often the result of over-eager type matching - consider using 'getBeanNamesOfType' with the 'allowEagerInit' flag turned off, for example.报错了。。。原因是出现了循环依赖。
+
+````
+
+「不科学呀，spring不是号称能解决循环依赖问题吗，怎么还会出现？」
+
+如果把上面的代码稍微调整一下：
+
+```java
+@Service
+public class TestService1 {
+
+    @Autowired
+    private TestService2 testService2;
+
+    public void test1() {
     }
 }
-复制代码
-然后再建一个测试类，来测试以上代码！
+```
 
-复制代码
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:applicationContext.xml"})
-public class UserServiceTest {
+把TestService1的test1方法上的@Async注解去掉，TestService1和TestService2都需要注入对方的实例，同样构成了循环依赖。
 
-    @Resource
-    private UserService userService;
+但是重新启动项目，发现它能够正常运行。这又是为什么？带着这两个问题，让我们一起开始spring循环依赖的探秘之旅。
 
-    @Test
-    public void testAddUserForLoopDI() throws Exception {
-        UserInfo userInfo = new UserInfo();
-        userInfo.setId("12");
-        userInfo.setAddress("sdfds");
-        userService.addUser(userInfo);
-        System.out.println("ok");
+### 2.什么是循环依赖？
+
+循环依赖：说白是一个或多个对象实例之间存在直接或间接的依赖关系，这种依赖关系构成了构成一个环形调用。
+
+- 第一种情况：自己依赖自己的直接依赖
+
+![](https://pica.zhimg.com/80/v2-e612cf8345d62525e317d5f3ad4ec81e_1440w.jpg?source=1940ef5c)
+
+- 第二种情况：两个对象之间的直接依赖
+
+![](https://pica.zhimg.com/50/v2-a426f1c897402e708f3781581211008f_720w.jpg?source=1940ef5c)
+
+- 第三种情况：多个对象之间的间接依赖
+
+![](https://pic3.zhimg.com/50/v2-bcebb8d592050450c95f1a02ca8c182c_720w.jpg?source=1940ef5c)
+
+### 3.循环依赖的N种场景
+
+spring中出现循环依赖主要有以下场景：
+
+![](https://pic1.zhimg.com/80/v2-6fd43ded717a9c31b0a9abae0234db9b_1440w.jpg?source=1940ef5c)
+
+#### 单例的setter注入
+这种注入方式应该是spring用的最多的，代码如下：
+
+````java
+
+@Service
+public class TestService1 {
+
+    @Autowired
+    private TestService2 testService2;
+
+    public void test1() {
     }
 }
-复制代码
-applicationContext.xml 中只要开启扫描即可！
 
-    <context:annotation-config/>
-    <context:component-scan base-package="com.xx"></context:component-scan>
+@Service
+public class TestService2 {
 
+    @Autowired
+    private TestService1 testService1;
 
-如上例子运行，就可以得到一个循环依赖的失败错误了！
-
-不过，你不一定能运行进来，因为如例子还要依赖于一个事实，那就 loginService 要在 userService 之前被扫描到，而不同的jvm上，可能spring得到的扫描顺序不一致，如果想要100%失败，则换成两个类都是构造器注入就可以了！
-
-错误堆栈样例如下：（Is there an unresolvable circular reference?）
-
-
-复制代码
-java.lang.IllegalStateException: Failed to load ApplicationContext
-at org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate.loadContext(DefaultCacheAwareContextLoaderDelegate.java:124)
-at org.springframework.test.context.support.DefaultTestContext.getApplicationContext(DefaultTestContext.java:83)
-at org.springframework.test.context.support.DependencyInjectionTestExecutionListener.injectDependencies(DependencyInjectionTestExecutionListener.java:117)
-at org.springframework.test.context.support.DependencyInjectionTestExecutionListener.prepareTestInstance(DependencyInjectionTestExecutionListener.java:83)
-at org.springframework.test.context.TestContextManager.prepareTestInstance(TestContextManager.java:230)
-at org.springframework.test.context.junit4.SpringJUnit4ClassRunner.createTest(SpringJUnit4ClassRunner.java:228)
-at org.springframework.test.context.junit4.SpringJUnit4ClassRunner$1.runReflectiveCall(SpringJUnit4ClassRunner.java:287)
-at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
-at org.springframework.test.context.junit4.SpringJUnit4ClassRunner.methodBlock(SpringJUnit4ClassRunner.java:289)
-at org.springframework.test.context.junit4.SpringJUnit4ClassRunner.runChild(SpringJUnit4ClassRunner.java:247)
-at org.springframework.test.context.junit4.SpringJUnit4ClassRunner.runChild(SpringJUnit4ClassRunner.java:94)
-at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290)
-at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71)
-at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288)
-at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58)
-at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268)
-at org.springframework.test.context.junit4.statements.RunBeforeTestClassCallbacks.evaluate(RunBeforeTestClassCallbacks.java:61)
-at org.springframework.test.context.junit4.statements.RunAfterTestClassCallbacks.evaluate(RunAfterTestClassCallbacks.java:70)
-at org.junit.runners.ParentRunner.run(ParentRunner.java:363)
-at org.springframework.test.context.junit4.SpringJUnit4ClassRunner.run(SpringJUnit4ClassRunner.java:191)
-at org.junit.runner.JUnitCore.run(JUnitCore.java:137)
-at com.intellij.junit4.JUnit4IdeaTestRunner.startRunnerWithArgs(JUnit4IdeaTestRunner.java:68)
-at com.intellij.rt.execution.junit.IdeaTestRunner$Repeater.startRunnerWithArgs(IdeaTestRunner.java:47)
-at com.intellij.rt.execution.junit.JUnitStarter.prepareStreamsAndStart(JUnitStarter.java:242)
-at com.intellij.rt.execution.junit.JUnitStarter.main(JUnitStarter.java:70)
-Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'loginService' defined in class path resource [applicationContext.xml]: Cannot resolve reference to bean 'userService' while setting constructor argument; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'userService' defined in class path resource [applicationContext.xml]: Cannot resolve reference to bean 'loginService' while setting bean property 'loginService'; nested exception is org.springframework.beans.factory.BeanCurrentlyInCreationException: Error creating bean with name 'loginService': Requested bean is currently in creation: Is there an unresolvable circular reference?
-at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveReference(BeanDefinitionValueResolver.java:359)
-at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveValueIfNecessary(BeanDefinitionValueResolver.java:108)
-at org.springframework.beans.factory.support.ConstructorResolver.resolveConstructorArguments(ConstructorResolver.java:648)
-at org.springframework.beans.factory.support.ConstructorResolver.autowireConstructor(ConstructorResolver.java:145)
-at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.autowireConstructor(AbstractAutowireCapableBeanFactory.java:1198)
-at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1100)
-at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:511)
-at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:481)
-at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject(AbstractBeanFactory.java:312)
-at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:230)
-at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:308)
-at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:197)
-at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:761)
-at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:867)
-at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:543)
-at org.springframework.test.context.support.AbstractGenericContextLoader.loadContext(AbstractGenericContextLoader.java:128)
-at org.springframework.test.context.support.AbstractGenericContextLoader.loadContext(AbstractGenericContextLoader.java:60)
-at org.springframework.test.context.support.AbstractDelegatingSmartContextLoader.delegateLoading(AbstractDelegatingSmartContextLoader.java:281)
-at org.springframework.test.context.support.AbstractDelegatingSmartContextLoader.loadContext(AbstractDelegatingSmartContextLoader.java:249)
-at org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate.loadContextInternal(DefaultCacheAwareContextLoaderDelegate.java:98)
-at org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate.loadContext(DefaultCacheAwareContextLoaderDelegate.java:116)
-... 24 more
-Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'userService' defined in class path resource [applicationContext.xml]: Cannot resolve reference to bean 'loginService' while setting bean property 'loginService'; nested exception is org.springframework.beans.factory.BeanCurrentlyInCreationException: Error creating bean with name 'loginService': Requested bean is currently in creation: Is there an unresolvable circular reference?
-at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveReference(BeanDefinitionValueResolver.java:359)
-at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveValueIfNecessary(BeanDefinitionValueResolver.java:108)
-at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyPropertyValues(AbstractAutowireCapableBeanFactory.java:1534)
-at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1281)
-at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:551)
-at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:481)
-at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject(AbstractBeanFactory.java:312)
-at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:230)
-at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:308)
-at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:197)
-at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveReference(BeanDefinitionValueResolver.java:351)
-... 44 more
-Caused by: org.springframework.beans.factory.BeanCurrentlyInCreationException: Error creating bean with name 'loginService': Requested bean is currently in creation: Is there an unresolvable circular reference?
-at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.beforeSingletonCreation(DefaultSingletonBeanRegistry.java:347)
-at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:223)
-at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:308)
-at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:197)
-at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveReference(BeanDefinitionValueResolver.java:351)
-... 54 more
-
-java.lang.IllegalStateException: Failed to load ApplicationContext
-
-    at org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate.loadContext(DefaultCacheAwareContextLoaderDelegate.java:124)
-    at org.springframework.test.context.support.DefaultTestContext.getApplicationContext(DefaultTestContext.java:83)
-    at org.springframework.test.context.support.DependencyInjectionTestExecutionListener.injectDependencies(DependencyInjectionTestExecutionListener.java:117)
-    at org.springframework.test.context.support.DependencyInjectionTestExecutionListener.prepareTestInstance(DependencyInjectionTestExecutionListener.java:83)
-    at org.springframework.test.context.TestContextManager.prepareTestInstance(TestContextManager.java:230)
-    at org.springframework.test.context.junit4.SpringJUnit4ClassRunner.createTest(SpringJUnit4ClassRunner.java:228)
-    at org.springframework.test.context.junit4.SpringJUnit4ClassRunner$1.runReflectiveCall(SpringJUnit4ClassRunner.java:287)
-    at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
-    at org.springframework.test.context.junit4.SpringJUnit4ClassRunner.methodBlock(SpringJUnit4ClassRunner.java:289)
-    at org.springframework.test.context.junit4.SpringJUnit4ClassRunner.runChild(SpringJUnit4ClassRunner.java:247)
-    at org.springframework.test.context.junit4.SpringJUnit4ClassRunner.runChild(SpringJUnit4ClassRunner.java:94)
-    at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290)
-    at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71)
-    at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288)
-    at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58)
-    at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268)
-    at org.springframework.test.context.junit4.statements.RunBeforeTestClassCallbacks.evaluate(RunBeforeTestClassCallbacks.java:61)
-    at org.springframework.test.context.junit4.statements.RunAfterTestClassCallbacks.evaluate(RunAfterTestClassCallbacks.java:70)
-    at org.junit.runners.ParentRunner.run(ParentRunner.java:363)
-    at org.springframework.test.context.junit4.SpringJUnit4ClassRunner.run(SpringJUnit4ClassRunner.java:191)
-    at org.junit.runner.JUnitCore.run(JUnitCore.java:137)
-    at com.intellij.junit4.JUnit4IdeaTestRunner.startRunnerWithArgs(JUnit4IdeaTestRunner.java:68)
-    at com.intellij.rt.execution.junit.IdeaTestRunner$Repeater.startRunnerWithArgs(IdeaTestRunner.java:47)
-    at com.intellij.rt.execution.junit.JUnitStarter.prepareStreamsAndStart(JUnitStarter.java:242)
-    at com.intellij.rt.execution.junit.JUnitStarter.main(JUnitStarter.java:70)
-Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'loginService' defined in class path resource [applicationContext.xml]: Cannot resolve reference to bean 'userService' while setting constructor argument; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'userService' defined in class path resource [applicationContext.xml]: Cannot resolve reference to bean 'loginService' while setting bean property 'loginService'; nested exception is org.springframework.beans.factory.BeanCurrentlyInCreationException: Error creating bean with name 'loginService': Requested bean is currently in creation: Is there an unresolvable circular reference?
-at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveReference(BeanDefinitionValueResolver.java:359)
-at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveValueIfNecessary(BeanDefinitionValueResolver.java:108)
-at org.springframework.beans.factory.support.ConstructorResolver.resolveConstructorArguments(ConstructorResolver.java:648)
-at org.springframework.beans.factory.support.ConstructorResolver.autowireConstructor(ConstructorResolver.java:145)
-at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.autowireConstructor(AbstractAutowireCapableBeanFactory.java:1198)
-at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1100)
-at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:511)
-at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:481)
-at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject(AbstractBeanFactory.java:312)
-at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:230)
-at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:308)
-at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:197)
-at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:761)
-at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:867)
-at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:543)
-at org.springframework.test.context.support.AbstractGenericContextLoader.loadContext(AbstractGenericContextLoader.java:128)
-at org.springframework.test.context.support.AbstractGenericContextLoader.loadContext(AbstractGenericContextLoader.java:60)
-at org.springframework.test.context.support.AbstractDelegatingSmartContextLoader.delegateLoading(AbstractDelegatingSmartContextLoader.java:281)
-at org.springframework.test.context.support.AbstractDelegatingSmartContextLoader.loadContext(AbstractDelegatingSmartContextLoader.java:249)
-at org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate.loadContextInternal(DefaultCacheAwareContextLoaderDelegate.java:98)
-at org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate.loadContext(DefaultCacheAwareContextLoaderDelegate.java:116)
-... 24 more
-Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'userService' defined in class path resource [applicationContext.xml]: Cannot resolve reference to bean 'loginService' while setting bean property 'loginService'; nested exception is org.springframework.beans.factory.BeanCurrentlyInCreationException: Error creating bean with name 'loginService': Requested bean is currently in creation: Is there an unresolvable circular reference?
-at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveReference(BeanDefinitionValueResolver.java:359)
-at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveValueIfNecessary(BeanDefinitionValueResolver.java:108)
-at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyPropertyValues(AbstractAutowireCapableBeanFactory.java:1534)
-at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1281)
-at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:551)
-at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:481)
-at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject(AbstractBeanFactory.java:312)
-at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:230)
-at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:308)
-at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:197)
-at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveReference(BeanDefinitionValueResolver.java:351)
-... 44 more
-Caused by: org.springframework.beans.factory.BeanCurrentlyInCreationException: Error creating bean with name 'loginService': Requested bean is currently in creation: Is there an unresolvable circular reference?
-at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.beforeSingletonCreation(DefaultSingletonBeanRegistry.java:347)
-at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:223)
-at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:308)
-at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:197)
-at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveReference(BeanDefinitionValueResolver.java:351)
-... 54 more
-复制代码
-好了，看完效果，是时候来分析下问题了。
-
-1. 为什么会出现问题？
-
-因为加载流程如下：
-
-1. 首先加载 loginService, 然后构造器被调用，然后发现依赖了 userService;
-2. 依赖注入，先去加载 userService，加载userService后，需要对其属性进行依赖注入，然后发现了 loginService 需要被注入；
-3. 当去加载 loginService 的时候，发现 loginService 正在创建中，所以这个实例只能认为创建失败了，否则将会导致更多未知问题；
-4. 同理，多个构造器互相注入失败问题更严重；
-
-2. 循环依赖失败是不是只要 ABA 就一定会导致失败？（注： 非单例对象一定不会导致循环依赖）
-
-1. 按正常说是这样的，但是spring已经解决这个问题了；
-2. spring 解决方案为，只为单例提供解决方案也只能为单例解决问题；
-3. 创建A单例时，放入缓存，然后依赖注入B；
-4. 依赖注入B时，发现需要依赖注入A，然后去加载A，此时从缓存中发现A正在加载中，于是直接从缓存得到A，完成自身的依赖注入；
-5. B依赖完成后，返回给A，A再把B注入到自身域中；
-6. B中的A也自然而然的完成了初始化动作；
-
-其中，构造器注入的单例的循环依赖是无法解决的，因为在构造器注入时，本身的实例无法生成；如果强行使用，将导致不安全的发布，从而导致各种未知的问题！
-3. 源码如何实现？
-   1. 首先，我们来看下什么情况下会抛出循环依赖异常？
-
-复制代码
-// 只有单例的创建会存在循环依赖问题
-// org.springframework.beans.factory.support.DefaultSingletonBeanRegistry
-
-    /** Set of registered singletons, containing the bean names in registration order */
-    private final Set<String> registeredSingletons = new LinkedHashSet<String>(256);
-
-    /** Names of beans that are currently in creation */
-    private final Set<String> singletonsCurrentlyInCreation =
-            Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>(16));
-
-    /** Names of beans currently excluded from in creation checks */
-    private final Set<String> inCreationCheckExclusions =
-            Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>(16));
-
-    protected void beforeSingletonCreation(String beanName) {
-        if (!this.inCreationCheckExclusions.contains(beanName) && !this.singletonsCurrentlyInCreation.add(beanName)) {
-            throw new BeanCurrentlyInCreationException(beanName);
-        }
+    public void test2() {
     }
-
-复制代码
-从上面的代码可以看出，抛出循环依赖问题会抛出有两种前提:
-
-1. 没有包含在创建检查的排除列表中；
-
-2. 没有被排除，则检查是不是第一次被调用创建，如果单例不是第一次被调用创建，则不能再创建了（否则就不是单例了）；
-
-所以，避免循环依赖有个出口，那就是提前把单例放到检查排除列表中！
-
-那么什么时候会被加入到创建检查排除列表？
-
-复制代码
-public void setCurrentlyInCreation(String beanName, boolean inCreation) {
-Assert.notNull(beanName, "Bean name must not be null");
-if (!inCreation) {
-this.inCreationCheckExclusions.add(beanName);
 }
-else {
-this.inCreationCheckExclusions.remove(beanName);
-}
-}
+````
 
-复制代码
-具体如何设置呢？其实普通的使用不会用到这个功能，只会在一些增强点作这些工作。
+#### spring内部有三级缓存：
 
+- singletonObjects 一级缓存，用于保存实例化、注入、初始化完成的bean实例
+  
+- earlySingletonObjects 二级缓存，用于保存实例化完成的bean实例
+  
+- singletonFactories 三级缓存，用于保存bean创建工厂，以便于后面扩展有机会创建代理对象。
 
+下面用一张图告诉你，spring是如何解决循环依赖的：
 
-所以，spring 如何避免循环依赖失败？
+![](https://pica.zhimg.com/80/v2-1e7bd042df73e47bb951e70b298c96ca_1440w.jpg?source=1940ef5c)
 
+#### 细心的朋友可能会发现在这种场景中第二级缓存作用不大。那么问题来了，为什么要用第二级缓存呢？
 
+试想一下，如果出现以下这种情况，我们要如何处理？
 
-复制代码
-// org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean()
+````java
 
-    /**
-     * Actually create the specified bean. Pre-creation processing has already happened
-     * at this point, e.g. checking {@code postProcessBeforeInstantiation} callbacks.
-     * <p>Differentiates between default bean instantiation, use of a
-     * factory method, and autowiring a constructor.
-     * @param beanName the name of the bean
-     * @param mbd the merged bean definition for the bean
-     * @param args explicit arguments to use for constructor or factory method invocation
-     * @return a new instance of the bean
-     * @throws BeanCreationException if the bean could not be created
-     * @see #instantiateBean
-     * @see #instantiateUsingFactoryMethod
-     * @see #autowireConstructor
-     */
-    protected Object doCreateBean(final String beanName, final RootBeanDefinition mbd, final Object[] args)
-            throws BeanCreationException {
+@Service
+public class TestService1 {
 
-        // 第一步，创建bean实例
-        // Instantiate the bean.
-        BeanWrapper instanceWrapper = null;
-        if (mbd.isSingleton()) {
-            instanceWrapper = this.factoryBeanInstanceCache.remove(beanName);
-        }
-        if (instanceWrapper == null) {
-            instanceWrapper = createBeanInstance(beanName, mbd, args);
-        }
-        final Object bean = (instanceWrapper != null ? instanceWrapper.getWrappedInstance() : null);
-        Class<?> beanType = (instanceWrapper != null ? instanceWrapper.getWrappedClass() : null);
-        mbd.resolvedTargetType = beanType;
+    @Autowired
+    private TestService2 testService2;
+    @Autowired
+    private TestService3 testService3;
 
-        // Allow post-processors to modify the merged bean definition.
-        synchronized (mbd.postProcessingLock) {
-            if (!mbd.postProcessed) {
-                try {
-                    applyMergedBeanDefinitionPostProcessors(mbd, beanType, beanName);
-                }
-                catch (Throwable ex) {
-                    throw new BeanCreationException(mbd.getResourceDescription(), beanName,
-                            "Post-processing of merged bean definition failed", ex);
-                }
-                mbd.postProcessed = true;
-            }
-        }
-
-        // 对于提前暴露的bean, 将它加入单例缓存中，从而使后续的依赖调用时，可以将此实例返回
-        // Eagerly cache singletons to be able to resolve circular references
-        // even when triggered by lifecycle interfaces like BeanFactoryAware.
-        boolean earlySingletonExposure = (mbd.isSingleton() && this.allowCircularReferences &&
-                isSingletonCurrentlyInCreation(beanName));
-        if (earlySingletonExposure) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Eagerly caching bean '" + beanName +
-                        "' to allow for resolving potential circular references");
-            }
-            // 针对提前暴露的 singleton, 添加一个 获取实例 工厂，以备后续获取实例时使用
-            addSingletonFactory(beanName, new ObjectFactory<Object>() {
-                @Override
-                public Object getObject() throws BeansException {
-                    return getEarlyBeanReference(beanName, mbd, bean);
-                }
-            });
-        }
-
-        // 第二步，初始化实例，完成依赖注入等工作
-        // Initialize the bean instance.
-        Object exposedObject = bean;
-        try {
-            populateBean(beanName, mbd, instanceWrapper);
-            if (exposedObject != null) {
-                exposedObject = initializeBean(beanName, exposedObject, mbd);
-            }
-        }
-        catch (Throwable ex) {
-            if (ex instanceof BeanCreationException && beanName.equals(((BeanCreationException) ex).getBeanName())) {
-                throw (BeanCreationException) ex;
-            }
-            else {
-                throw new BeanCreationException(
-                        mbd.getResourceDescription(), beanName, "Initialization of bean failed", ex);
-            }
-        }
-
-        if (earlySingletonExposure) {
-            Object earlySingletonReference = getSingleton(beanName, false);
-            if (earlySingletonReference != null) {
-                if (exposedObject == bean) {
-                    exposedObject = earlySingletonReference;
-                }
-                else if (!this.allowRawInjectionDespiteWrapping && hasDependentBean(beanName)) {
-                    String[] dependentBeans = getDependentBeans(beanName);
-                    Set<String> actualDependentBeans = new LinkedHashSet<String>(dependentBeans.length);
-                    for (String dependentBean : dependentBeans) {
-                        if (!removeSingletonIfCreatedForTypeCheckOnly(dependentBean)) {
-                            actualDependentBeans.add(dependentBean);
-                        }
-                    }
-                    if (!actualDependentBeans.isEmpty()) {
-                        throw new BeanCurrentlyInCreationException(beanName,
-                                "Bean with name '" + beanName + "' has been injected into other beans [" +
-                                StringUtils.collectionToCommaDelimitedString(actualDependentBeans) +
-                                "] in its raw version as part of a circular reference, but has eventually been " +
-                                "wrapped. This means that said other beans do not use the final version of the " +
-                                "bean. This is often the result of over-eager type matching - consider using " +
-                                "'getBeanNamesOfType' with the 'allowEagerInit' flag turned off, for example.");
-                    }
-                }
-            }
-        }
-
-        // 第三步，对外暴露bean，如 singleton 入 容器中注册实例
-        // Register bean as disposable.
-        try {
-            registerDisposableBeanIfNecessary(beanName, bean, mbd);
-        }
-        catch (BeanDefinitionValidationException ex) {
-            throw new BeanCreationException(
-                    mbd.getResourceDescription(), beanName, "Invalid destruction signature", ex);
-        }
-
-        return exposedObject;
+    public void test1() {
     }
-复制代码
-
-
-而在获取 singleton 时，会先尝试从工厂中获取！
-
-复制代码
-// org.springframework.beans.factory.support.DefaultSingletonBeanRegistry
-protected Object getSingleton(String beanName, boolean allowEarlyReference) {
-Object singletonObject = this.singletonObjects.get(beanName);
-// 针对正在创建中的 singleton, 将其放入 earlySingletonObjects
-if (singletonObject == null && isSingletonCurrentlyInCreation(beanName)) {
-synchronized (this.singletonObjects) {
-singletonObject = this.earlySingletonObjects.get(beanName);
-if (singletonObject == null && allowEarlyReference) {
-ObjectFactory<?> singletonFactory = this.singletonFactories.get(beanName);
-if (singletonFactory != null) {
-// 将 singleton 实例从工厂中取出后，存入 提前暴露的缓存中，交将创建工厂删除，避免后续反复从中获取 singleton
-singletonObject = singletonFactory.getObject();
-this.earlySingletonObjects.put(beanName, singletonObject);
-this.singletonFactories.remove(beanName);
-}
-}
-}
-}
-return (singletonObject != NULL_OBJECT ? singletonObject : null);
 }
 
-    // org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.getEarlyBeanReference()
-    protected Object getEarlyBeanReference(String beanName, RootBeanDefinition mbd, Object bean) {
-        Object exposedObject = bean;
-        if (bean != null && !mbd.isSynthetic() && hasInstantiationAwareBeanPostProcessors()) {
-            for (BeanPostProcessor bp : getBeanPostProcessors()) {
-                if (bp instanceof SmartInstantiationAwareBeanPostProcessor) {
-                    SmartInstantiationAwareBeanPostProcessor ibp = (SmartInstantiationAwareBeanPostProcessor) bp;
-                    exposedObject = ibp.getEarlyBeanReference(exposedObject, beanName);
-                    if (exposedObject == null) {
-                        return null;
-                    }
-                }
-            }
-        }
-        return exposedObject;
+@Service
+public class TestService2 {
+
+    @Autowired
+    private TestService1 testService1;
+
+    public void test2() {
     }
-复制代码
+}
 
+@Service
+public class TestService3 {
 
-在获取bean实例时，会先尝试从缓存中直接获取，失败再进行真实的创建：
+    @Autowired
+    private TestService1 testService1;
 
-复制代码
-// org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean()
-// 会先尝试从单例缓存中获取bean，获取不到再进行创建
-/**
-* Return an instance, which may be shared or independent, of the specified bean.
-* @param name the name of the bean to retrieve
-* @param requiredType the required type of the bean to retrieve
-* @param args arguments to use when creating a bean instance using explicit arguments
-* (only applied when creating a new instance as opposed to retrieving an existing one)
-* @param typeCheckOnly whether the instance is obtained for a type check,
-* not for actual use
-* @return an instance of the bean
-* @throws BeansException if the bean could not be created
-*/
-@SuppressWarnings("unchecked")
-protected <T> T doGetBean(
-final String name, final Class<T> requiredType, final Object[] args, boolean typeCheckOnly)
-throws BeansException {
-
-        final String beanName = transformedBeanName(name);
-        Object bean;
-
-        // 先从缓存获取，失败则进行创建
-        // Eagerly check singleton cache for manually registered singletons.
-        Object sharedInstance = getSingleton(beanName);
-        if (sharedInstance != null && args == null) {
-            if (logger.isDebugEnabled()) {
-                if (isSingletonCurrentlyInCreation(beanName)) {
-                    logger.debug("Returning eagerly cached instance of singleton bean '" + beanName +
-                            "' that is not fully initialized yet - a consequence of a circular reference");
-                }
-                else {
-                    logger.debug("Returning cached instance of singleton bean '" + beanName + "'");
-                }
-            }
-            bean = getObjectForBeanInstance(sharedInstance, name, beanName, null);
-        }
-
-        else {
-            // Fail if we're already creating this bean instance:
-            // We're assumably within a circular reference.
-            if (isPrototypeCurrentlyInCreation(beanName)) {
-                throw new BeanCurrentlyInCreationException(beanName);
-            }
-
-            // Check if bean definition exists in this factory.
-            BeanFactory parentBeanFactory = getParentBeanFactory();
-            if (parentBeanFactory != null && !containsBeanDefinition(beanName)) {
-                // Not found -> check parent.
-                String nameToLookup = originalBeanName(name);
-                if (args != null) {
-                    // Delegation to parent with explicit args.
-                    return (T) parentBeanFactory.getBean(nameToLookup, args);
-                }
-                else {
-                    // No args -> delegate to standard getBean method.
-                    return parentBeanFactory.getBean(nameToLookup, requiredType);
-                }
-            }
-
-            if (!typeCheckOnly) {
-                markBeanAsCreated(beanName);
-            }
-
-            try {
-                final RootBeanDefinition mbd = getMergedLocalBeanDefinition(beanName);
-                checkMergedBeanDefinition(mbd, beanName, args);
-
-                // Guarantee initialization of beans that the current bean depends on.
-                String[] dependsOn = mbd.getDependsOn();
-                if (dependsOn != null) {
-                    for (String dep : dependsOn) {
-                        if (isDependent(beanName, dep)) {
-                            throw new BeanCreationException(mbd.getResourceDescription(), beanName,
-                                    "Circular depends-on relationship between '" + beanName + "' and '" + dep + "'");
-                        }
-                        registerDependentBean(dep, beanName);
-                        getBean(dep);
-                    }
-                }
-
-                // Create bean instance.
-                if (mbd.isSingleton()) {
-                    // 此时根据对象工厂，创建bean，创建时检测依赖情况
-                    sharedInstance = getSingleton(beanName, new ObjectFactory<Object>() {
-                        @Override
-                        public Object getObject() throws BeansException {
-                            try {
-                                return createBean(beanName, mbd, args);
-                            }
-                            catch (BeansException ex) {
-                                // Explicitly remove instance from singleton cache: It might have been put there
-                                // eagerly by the creation process, to allow for circular reference resolution.
-                                // Also remove any beans that received a temporary reference to the bean.
-                                destroySingleton(beanName);
-                                throw ex;
-                            }
-                        }
-                    });
-                    bean = getObjectForBeanInstance(sharedInstance, name, beanName, mbd);
-                }
-
-                else if (mbd.isPrototype()) {
-                    // It's a prototype -> create a new instance.
-                    Object prototypeInstance = null;
-                    try {
-                        beforePrototypeCreation(beanName);
-                        prototypeInstance = createBean(beanName, mbd, args);
-                    }
-                    finally {
-                        afterPrototypeCreation(beanName);
-                    }
-                    bean = getObjectForBeanInstance(prototypeInstance, name, beanName, mbd);
-                }
-
-                else {
-                    String scopeName = mbd.getScope();
-                    final Scope scope = this.scopes.get(scopeName);
-                    if (scope == null) {
-                        throw new IllegalStateException("No Scope registered for scope name '" + scopeName + "'");
-                    }
-                    try {
-                        Object scopedInstance = scope.get(beanName, new ObjectFactory<Object>() {
-                            @Override
-                            public Object getObject() throws BeansException {
-                                beforePrototypeCreation(beanName);
-                                try {
-                                    return createBean(beanName, mbd, args);
-                                }
-                                finally {
-                                    afterPrototypeCreation(beanName);
-                                }
-                            }
-                        });
-                        bean = getObjectForBeanInstance(scopedInstance, name, beanName, mbd);
-                    }
-                    catch (IllegalStateException ex) {
-                        throw new BeanCreationException(beanName,
-                                "Scope '" + scopeName + "' is not active for the current thread; consider " +
-                                "defining a scoped proxy for this bean if you intend to refer to it from a singleton",
-                                ex);
-                    }
-                }
-            }
-            catch (BeansException ex) {
-                cleanupAfterBeanCreationFailure(beanName);
-                throw ex;
-            }
-        }
-
-        // Check if required type matches the type of the actual bean instance.
-        if (requiredType != null && bean != null && !requiredType.isAssignableFrom(bean.getClass())) {
-            try {
-                return getTypeConverter().convertIfNecessary(bean, requiredType);
-            }
-            catch (TypeMismatchException ex) {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Failed to convert bean '" + name + "' to required type '" +
-                            ClassUtils.getQualifiedName(requiredType) + "'", ex);
-                }
-                throw new BeanNotOfRequiredTypeException(name, requiredType, bean.getClass());
-            }
-        }
-        return (T) bean;
+    public void test3() {
     }
+}
 
-    // org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton()
-    // 进行 singleton 创建时，做安全检查，成功后放入缓存中
-    /**
-     * Return the (raw) singleton object registered under the given name,
-     * creating and registering a new one if none registered yet.
-     * @param beanName the name of the bean
-     * @param singletonFactory the ObjectFactory to lazily create the singleton
-     * with, if necessary
-     * @return the registered singleton object
-     */
-    public Object getSingleton(String beanName, ObjectFactory<?> singletonFactory) {
-        Assert.notNull(beanName, "'beanName' must not be null");
-        synchronized (this.singletonObjects) {
-            Object singletonObject = this.singletonObjects.get(beanName);
-            if (singletonObject == null) {
-                if (this.singletonsCurrentlyInDestruction) {
-                    throw new BeanCreationNotAllowedException(beanName,
-                            "Singleton bean creation not allowed while singletons of this factory are in destruction " +
-                            "(Do not request a bean from a BeanFactory in a destroy method implementation!)");
-                }
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Creating shared instance of singleton bean '" + beanName + "'");
-                }
-                // 创建前检查，循环依赖失败在此时检测到，即单例只能被创建一次
-                beforeSingletonCreation(beanName);
-                boolean newSingleton = false;
-                boolean recordSuppressedExceptions = (this.suppressedExceptions == null);
-                if (recordSuppressedExceptions) {
-                    this.suppressedExceptions = new LinkedHashSet<Exception>();
-                }
-                try {
-                    // createBean()
-                    singletonObject = singletonFactory.getObject();
-                    newSingleton = true;
-                }
-                catch (IllegalStateException ex) {
-                    // Has the singleton object implicitly appeared in the meantime ->
-                    // if yes, proceed with it since the exception indicates that state.
-                    singletonObject = this.singletonObjects.get(beanName);
-                    if (singletonObject == null) {
-                        throw ex;
-                    }
-                }
-                catch (BeanCreationException ex) {
-                    if (recordSuppressedExceptions) {
-                        for (Exception suppressedException : this.suppressedExceptions) {
-                            ex.addRelatedCause(suppressedException);
-                        }
-                    }
-                    throw ex;
-                }
-                finally {
-                    if (recordSuppressedExceptions) {
-                        this.suppressedExceptions = null;
-                    }
-                    // 最后，清除正在创建的标识
-                    afterSingletonCreation(beanName);
-                }
-                // 单例创建成功，则将其加入到缓存中，并清理之前的标记
-                if (newSingleton) {
-                    addSingleton(beanName, singletonObject);
-                }
-            }
-            return (singletonObject != NULL_OBJECT ? singletonObject : null);
-        }
+````
+假设不用第二级缓存，TestService1注入到TestService3的流程如图：
+
+![](https://pic2.zhimg.com/80/v2-891e97c67099ff30191aadadb5593ec1_1440w.jpg?source=1940ef5c)
+
+
+TestService1注入到TestService3又需要从第三级缓存中获取实例，而第三级缓存里保存的并非真正的实例对象，而是ObjectFactory对象。说白了，两次从三级缓存中获取都是ObjectFactory对象，而通过它创建的实例对象每次可能都不一样的。
+
+### 这样不是有问题？
+
+- 为了解决这个问题，spring引入的第二级缓存。上面图1其实TestService1对象的实例已经被添加到第二级缓存中了，而在TestService1注入到TestService3时，只用从第二级缓存中获取该对象即可。
+
+![](https://pic3.zhimg.com/80/v2-c55cc2c87d4ae9e10605c69672c183b9_1440w.jpg?source=1940ef5c)
+
+还有个问题，第三级缓存中为什么要添加ObjectFactory对象，直接保存实例对象不行吗？
+
+答：不行，因为假如你想对添加到三级缓存中的实例对象进行增强，直接用实例对象是行不通的
+
+### 针对这种场景spring是怎么做的呢？
+
+答案就在AbstractAutowireCapableBeanFactory类doCreateBean方法的这段代码中：
+
+![](https://pic1.zhimg.com/80/v2-208d2d5d61ec773a66ad76415835e476_1440w.jpg?source=1940ef5c)
+
+它定义了一个匿名内部类，通过getEarlyBeanReference方法获取代理对象，其实底层是通过AbstractAutoProxyCreator类的getEarlyBeanReference生成代理对象。
+
+### 多例的setter注入
+
+这种注入方法偶然会有，特别是在多线程的场景下，具体代码如下：
+
+````java
+
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@Service
+public class TestService1 {
+
+    @Autowired
+    private TestService2 testService2;
+
+    public void test1() {
     }
-    
-    /**
-     * Add the given singleton object to the singleton cache of this factory.
-     * <p>To be called for eager registration of singletons.
-     * @param beanName the name of the bean
-     * @param singletonObject the singleton object
-     */
-    protected void addSingleton(String beanName, Object singletonObject) {
-        synchronized (this.singletonObjects) {
-            this.singletonObjects.put(beanName, (singletonObject != null ? singletonObject : NULL_OBJECT));
-            this.singletonFactories.remove(beanName);
-            this.earlySingletonObjects.remove(beanName);
-            this.registeredSingletons.add(beanName);
-        }
+}
+
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@Service
+public class TestService2 {
+
+    @Autowired
+    private TestService1 testService1;
+
+    public void test2() {
     }
-复制代码
+}
+
+````
+很多人说这种情况spring容器启动会报错，其实是不对的，我非常负责任的告诉你程序能够正常启动。
+
+为什么呢？其实在AbstractApplicationContext类的refresh方法中告诉了我们答案，它会调用finishBeanFactoryInitialization方法，该方法的作用是为了spring容器启动的时候提前初始化一些bean。该方法的内部又调用了preInstantiateSingletons方法
+
+![](https://pic2.zhimg.com/80/v2-9b845b9441c4ae8955ec5ad5ad7d7075_1440w.jpg?source=1940ef5c)
+
+标红的地方明显能够看出：非抽象、单例 并且非懒加载的类才能被提前初始bean。
+
+而多例即SCOPE_PROTOTYPE类型的类，非单例，不会被提前初始化bean，所以程序能够正常启动。
+
+#### 如何让他提前初始化bean呢？
+
+只需要再定义一个单例的类，在它里面注入TestService1
+
+````java
+@Service
+public class TestService3 {
+
+    @Autowired
+    private TestService1 testService1;
+}
+
+````
+
+重新启动程序，执行结果：
+
+````java
+Requested bean is currently in creation: Is there an unresolvable circular reference?
+
+````
+
+果然出现了循环依赖。
+
+注意：这种循环依赖问题是无法解决的，因为它没有用缓存，每次都会生成一个新对象
+
+### 构造器注入
+
+这种注入方式现在其实用的已经非常少了，但是我们还是有必要了解一下，看看如下代码：
+
+````java
+@Service
+public class TestService1 {
+
+    public TestService1(TestService2 testService2) {
+    }
+}
+
+@Service
+public class TestService2 {
+
+    public TestService2(TestService1 testService1) {
+    }
+}
+
+````
+运行结果：
+
+````java
+Requested bean is currently in creation: Is there an unresolvable circular reference?
+
+````
+#### 出现了循环依赖，为什么呢？
+
+![](https://pic1.zhimg.com/50/v2-dde88ca1902e833fc317ccfa20d7a211_720w.jpg?source=1940ef5c)
+
+从图中的流程看出构造器注入没能添加到三级缓存，也没有使用缓存，所以也无法解决循环依赖问题。
+
+### 单例的代理对象setter注入
+
+这种注入方式其实也比较常用，比如平时使用：@Async注解的场景，会通过AOP自动生成代理对象。
+
+我那位同事的问题也是这种情况。
+
+````java
+@Service
+public class TestService1 {
+
+    @Autowired
+    private TestService2 testService2;
+
+    @Async
+    public void test1() {
+    }
+}
+
+@Service
+public class TestService2 {
+
+    @Autowired
+    private TestService1 testService1;
+
+    public void test2() {
+    }
+}
+
+````
+从前面得知程序启动会报错，出现了循环依赖：
+
+为什么会循环依赖呢？
+
+答案就在下面这张图中：
+
+![](https://pic2.zhimg.com/80/v2-1e9f8712bc891ccb81b1ce81db29ced1_1440w.jpg?source=1940ef5c)
+
+说白了，bean初始化完成之后，后面还有一步去检查：第二级缓存 和 原始对象 是否相等。由于它对前面流程来说无关紧要，所以前面的流程图中省略了，但是在这里是关键点，我们重点说说：
+
+![](https://pica.zhimg.com/80/v2-4a329e749fa117afe9964b044570f595_1440w.jpg?source=1940ef5c)
+
+那位同事的问题正好是走到这段代码，发现第二级缓存 和 原始对象不相等，所以抛出了循环依赖的异常。
+
+如果这时候把TestService1改个名字，改成：TestService6，其他的都不变。
+
+````java
+@Service
+public class TestService6 {
+
+    @Autowired
+    private TestService2 testService2;
+
+    @Async
+    public void test1() {
+    }
+}
+
+````
+
+再重新启动一下程序，神奇般的好了。what？ 这又是为什么？
+
+__这就要从spring的bean加载顺序说起了，默认情况下，spring是按照文件完整路径递归查找的，按路径+文件名排序，排在前面的先加载。__
+
+所以TestService1比TestService2先加载，而改了文件名称之后，TestService2比TestService6先加载。为什么TestService2比TestService6先加载就没问题呢？
+
+答案在下面这张图中：
+
+![](https://pic2.zhimg.com/80/v2-00615a909fca5a663baab77f7102a281_1440w.jpg?source=1940ef5c)
+
+这种情况testService6中其实第二级缓存是空的，不需要跟原始对象判断，所以不会抛出循环依赖。
 
 
-如上代码，说明了bean的创建过程，我们主要看 singleton。
+### DependsOn循环依赖
 
-1. 尝试从缓存中获取bean，可能是提前暴露的，也可能是已经完全初始化好的；（提前暴露解决循环依赖）
+还有一种有些特殊的场景，比如我们需要在实例化Bean A之前，先实例化Bean B，这个时候就可以使用@DependsOn注解。
 
-2. 如果获取不到，则进行一次完整的初始化，通过 对象工厂的 getObject() 进行对象创建；
+````java
 
-3. 创建前，先将正在创建中标识写入，从而防止后续又有进行创建动作；（抛出创建异常）
+@DependsOn(value = "testService2")
+@Service
+public class TestService1 {
 
-4. 创建好 singleton 后，将多余标识删除，并将 singleton 放入缓存，以待下次直接使用；
+    @Autowired
+    private TestService2 testService2;
 
+    public void test1() {
+    }
+}
 
+@DependsOn(value = "testService1")
+@Service
+public class TestService2 {
 
-最后，我们用一个示意图描述下整个过程：
+    @Autowired
+    private TestService1 testService1;
 
+    public void test2() {
+    }
+}
+````
 
+程序启动之后，执行结果：
 
+```java
+Circular depends-on relationship between 'testService2' and 'testService1'
+```
+这个例子中本来如果TestService1和TestService2都没有加@DependsOn注解是没问题的，反而加了这个注解会出现循环依赖问题。
 
+这又是为什么？
 
-思考题：
+答案在AbstractBeanFactory类的doGetBean方法的这段代码中：
 
-      依赖注入使代码更简单和灵活，可以自动查找关联关系！当发现有依赖时，相当于递归生成里层bean实例！而每个bean的创建都经过n层方法的调用；
+![](https://pic2.zhimg.com/80/v2-025a5c291e8356065691fbb73903edf6_1440w.jpg?source=1940ef5c)
 
-      那么请问，在创建bean时有没有可能导致栈溢出？？
+它会检查dependsOn的实例有没有循环依赖，如果有循环依赖则抛异常。
+
+### 4.出现循环依赖如何解决？
+项目中如果出现循环依赖问题，说明是spring默认无法解决的循环依赖，要看项目的打印日志，属于哪种循环依赖。目前包含下面几种情况：
+
+![](https://pic1.zhimg.com/50/v2-85b44d9fdb16b78e9af3690b929cbff2_720w.jpg?source=1940ef5c)
+
+生成代理对象产生的循环依赖这类循环依赖问题解决方法很多主要有：
+
+- 使用@Lazy注解，延迟加载
+  
+- 使用@DependsOn注解，指定加载先后关系修改文件名称，改变循环依赖类的加载顺序
+  
+- 使用@DependsOn产生的循环依赖这类循环依赖问题要找到@DependsOn注解循环依赖的地方，迫使它不循环依赖就可以解决问题。
+  
+- 多例循环依赖这类循环依赖问题可以通过把bean改成单例的解决。
+  
+- 构造器循环依赖这类循环依赖问题可以通过使用@Lazy注解解决。
+
