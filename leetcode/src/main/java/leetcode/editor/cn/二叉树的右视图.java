@@ -40,6 +40,7 @@ import java.util.List;
  * }
  */
 class 二叉树的右视图 {
+    //二叉树的右视图表示仅从右方向查看树时可见的节点。
     public List<Integer> rightSideView(TreeNode root) {
         // DFS（Deep First Search）深度优先搜索。
 
