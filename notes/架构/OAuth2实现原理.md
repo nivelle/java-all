@@ -1,4 +1,4 @@
-### 1 OAuth2解决什么问题的？
+## 1 OAuth2解决什么问题的？
 举个栗子先。小明在QQ空间积攒了多年的照片，想挑选一些照片来打印出来。然后小明在找到一家提供在线打印并且包邮的网站）。
 
 那么现在问题来了，小明有两个方案来得到打印的服务。
@@ -50,13 +50,13 @@
 #### 3.1 作为Resource server
 在一般情况下，Resource server提供 Authorization server服务，主要提供两类接口：
 
-- 授权接口：接受Client的授权请求，引导用户到Resource server完成登陆授权的过程。
-- 获取访问令牌接口：使用授权接口提供的许可凭据来颁发Resource owner的访问令牌给Client，或者由Client更新过期的访问令牌。
+- **授权接口**：接受Client的授权请求，引导用户到Resource server完成登陆授权的过程。
+- **获取访问令牌接口**：使用授权接口提供的许可凭据来颁发Resource owner的访问令牌给Client，或者由Client更新过期的访问令牌。
 
 除此之外，还需要提供一个第三方应用程序注册管理的服务。通常情况下会为注册完成的第三方应用程序分配两个成对出现的重要参数：
 
-client_id：第三方应用程序的一个标识id，这个信息通常是公开的信息，用来区分哪一个第三方应用程序。
-client_secret：第三方应用程序的私钥信息，这个信息是私密的信息，不允许在OAuth2流程中传递的，用于安全方面的检测和加密。
+- client_id：第三方应用程序的一个标识id，这个信息通常是公开的信息，用来区分哪一个第三方应用程序。
+- client_secret：第三方应用程序的私钥信息，这个信息是私密的信息，不允许在OAuth2流程中传递的，用于安全方面的检测和加密。
 
 #### 3.2 作为Client
 在Client取得client_id和client_secret之后。使用这些信息来发起`授权请求、获取access_token请求`和`消费受保护的资源`。
@@ -85,9 +85,9 @@ client_secret：第三方应用程序的私钥信息，这个信息是私密的�
 - 用户标识（比如小明）；
 - 客户端能访问资源所有者的哪些资源以及其相应的权限。
 
-有了这三类信息，那么资源服务器（Resouce Server）就可以区分出来是哪个第三方应用（Client）要访问哪个用户（Resource Owner）的哪些资源（以及有没有权限）。
+**有了这三类信息，那么资源服务器（Resouce Server）就可以区分出来是哪个第三方应用（Client）要访问哪个用户（Resource Owner）的哪些资源（以及有没有权限)**
 
-### OAuth2的4种授权许可
+## OAuth2的4种授权许可
 
 上一小节介绍了OAuth2的授权流程，除了访问令牌之外，还有一个重要的概念授权许可（Authorization Grant）。
 
@@ -298,6 +298,7 @@ URI Query Parameter.
 Authorization Request Header Field.
 Form-Encoded Body Parameter.
 #### 7.1 URI Query Parameter
+
 这种使用途径应该是最常见的一种方式，非常简单，比如：
 
 ````shell
@@ -311,34 +312,38 @@ Host: server.example.com
 
 因为在HTTP应用层协议中，专门有定义一个授权使用的Request Header，所以也可以使用这种方式：
 
+````shell
 GET /resource HTTP/1.1
 Host: server.example.com
 Authorization: Bearer mF_9.B5f-4.1JqM
-
+````
 其中"Bearer "是固定的在access_token前面的头部信息。
 
-7.3 Form-Encoded Body Parameter
+#### 7.3 Form-Encoded Body Parameter
+
 使用Request Body这种方式，有一个额外的要求，就是Request Header的"Content-Type"必须是固定的“application/x-www-form-urlencoded”，此外还有一个限制就是不可以使用GET访问，这个好理解，毕竟GET请求是不能携带Request Body的。
 
+````shell
 POST /resource HTTP/1.1
 Host: server.example.com
 Content-Type: application/x-www-form-urlencoded
 
 access_token=mF_9.B5f-4.1JqM
-
-8 OAuth2的安全问题
-在OAuth2早期的时候爆发过不少相关的安全方面的漏洞，其实仔细分析后会发现大都都是没有严格遵循OAuth2的安全相关的指导造成的，相关的漏洞事件百度以下就有了。
+````
+### OAuth2的安全问题
+- 在OAuth2早期的时候爆发过不少相关的安全方面的漏洞，其实仔细分析后会发现大都都是没有严格遵循OAuth2的安全相关的指导造成的，相关的漏洞事件百度以下就有了。
 
 其实OAuth2在设计之初是已经做了很多安全方面的考虑，并且在RFC6749中加入了一些安全方面的规范指导。比如
 
-要求Authorization server进行有效的Client验证；
-client_serect,access_token,refresh_token,code等敏感信息的安全存储（不得泄露给第三方）、传输通道的安全性（TSL的要求）；
-维持refresh_token和第三方应用的绑定，刷新失效机制；
-维持Authorization Code和第三方应用的绑定，这也是state参数为什么是推荐的一点，以防止CSRF；
-保证上述各种令牌信息的不可猜测行，以防止被猜测得到；
-安全无小事，这方面是要靠各方面（开放平台，第三方开发者）共同防范的。如QQ互联的OAuth2 API中，state参数是强制必选的参数，授权接口是基于HTTPS的加密通道等；同时作为第三方开发者在使用消费这些服务的时候也应该遵循其相关的安全规范。
+- 要求Authorization server进行有效的Client验证；
+- client_serect,access_token,refresh_token,code等敏感信息的安全存储（不得泄露给第三方）、传输通道的安全性（TSL的要求）；
+- 维持refresh_token和第三方应用的绑定，刷新失效机制；
+- 维持Authorization Code和第三方应用的绑定，这也是state参数为什么是推荐的一点，以防止CSRF；
+- 保证上述各种令牌信息的不可猜测行，以防止被猜测得到；
+- 安全无小事，这方面是要靠各方面（开放平台，第三方开发者）共同防范的。如QQ互联的OAuth2 API中，state参数是强制必选的参数，授权接口是基于HTTPS的加密通道等；同时作为第三方开发者在使用消费这些服务的时候也应该遵循其相关的安全规范。
 
-9 总结 & 参考 & 案例
+## 9 总结 & 参考 & 案例
+
 OAuth2是一种授权标准框架，用来解决的是第三方服务在无需用户提供账号密码的情况下访问用户的私有资源的一套流程规范。与其配套的还有其他相关的规范，都可以到https://oauth.net/2/去延伸阅读和了解。
 
 相关参考：

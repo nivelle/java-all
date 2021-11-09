@@ -1,4 +1,4 @@
-package com.nivelle.core.springcirference;
+package com.nivelle.spring.springcore.springcirference;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
