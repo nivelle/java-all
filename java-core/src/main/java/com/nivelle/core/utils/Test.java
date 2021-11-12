@@ -24,5 +24,10 @@ public class Test {
         System.out.println(Long.toBinaryString(id));
 
         System.out.println("110001001110010110111010111111001010100101001010000000000000".length());
+
+        Object a = 1;
+        System.out.println((Integer) a);
+
+        // 国旅。 天翼 。 版本（2天）
     }
 }
