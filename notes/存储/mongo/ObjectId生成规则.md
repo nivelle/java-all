@@ -49,7 +49,17 @@ MongoDB可以通过自身的服务来产生objectId，也可以通过客户端�
 ````java
 构建objectId 
 
- 1 public class ObjectId implements Comparable<ObjectId> , java.io.Serializable { 2 final int _time; 3     final int _machine; 4     final int _inc; 5 boolean _new; 6  7 public ObjectId(){ 8         _time = (int) (System.currentTimeMillis() / 1000); 9         _machine = _genmachine;10         _inc = _nextInc.getAndIncrement();11         _new = true;12 }13 ……14 }
+ public class ObjectId implements Comparable<ObjectId> , java.io.Serializable { 
+          final int _time; 
+          final int _machine;
+          final int _inc; 
+          boolean _new; 
+          public ObjectId(){ 
+              _time = (int) (System.currentTimeMillis() / 1000); 
+              _machine = _genmachine;        
+              _inc = _nextInc.getAndIncrement();       
+              _new = true;}
+    }
 
 ````
 1)     _time
@@ -64,9 +74,7 @@ MongoDB可以通过自身的服务来产生objectId，也可以通过客户端�
 ![](https://pic002.cnblogs.com/images/2011/83478/2011091823185322.png)
 图4 本地调试时的网络接口部分信息
 
-
-
-复制代码
+````java
 1 private static final int _genmachine;
 2 static {
 3 try {
@@ -102,8 +110,7 @@ MongoDB可以通过自身的服务来产生objectId，也可以通过客户端�
 33         throw new RuntimeException( ioe );
 34     }
 35 }
-复制代码
-
+````
 3)    _inc
 
 自增数是通过AtomicInteger的getAndIncrement()方法获取，它能保证每次得到的值是一个递增并不重复的值。
