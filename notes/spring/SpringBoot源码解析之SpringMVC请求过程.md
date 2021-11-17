@@ -13,8 +13,7 @@
             - S socket = wrapper.getSocket();
 
             - Processor processor = connections.get(socket);
-
-  ```
+```text
    1. 创建一个Processor Http11Processor ： processor = getProtocol().createProcessor() Http11Processor 对象创建 :
 
      （1). 新建 coyote request,response 对象 , 这是 Tomcat 使用的对请求/响应的建模类型 ;
@@ -23,7 +22,7 @@
      
    2. processor.service(SocketWrapperBase<?> socketWrapper)
    
-  ```
+```
 
 ###### # 请求处理 : coyote.Request => HttpServletRequest
 
