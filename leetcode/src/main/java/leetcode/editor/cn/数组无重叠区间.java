@@ -39,6 +39,9 @@
 // Related Topics 贪心 数组 动态规划 排序 👍 535 👎 0
 
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
+
 //leetcode submit region begin(Prohibit modification and deletion)
 class 数组无重叠区间 {
     public int eraseOverlapIntervals(int[][] intervals) {
