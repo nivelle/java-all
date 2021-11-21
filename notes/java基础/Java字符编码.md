@@ -85,7 +85,3 @@ GB2312或GB2312-80是中国国家标准简体中文字符集，全称《信息�
 - Content-Encoding：WEB服务器表明自己使用了什么压缩方法（gzip，deflate）压缩响应中的对象。例如：Content-Encoding：gzip
 
 - Content-Language：WEB服务器告诉浏览器自己响应的对象的语言。
-
-
-
-
