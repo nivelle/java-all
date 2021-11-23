@@ -67,7 +67,7 @@ public class ParseJsonToExcel {
             resultList.add(result);
         }
         ExcelWriter writer = ExcelUtil.getWriter("/Users/nivellefu/IdeaProjects/java-guides/java-core/src/main/resources/booknews.xlsx");
-        writer.merge(8, "书讯邀请码2021-11-17 :23:00至2021-11-19 19:11:00");
+        writer.merge(8, "书讯邀请码2021-11-22 00:00:00至2021-11-23 23:11:00");
         writer.write(resultList, true);
         writer.close();
     }
