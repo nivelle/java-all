@@ -51,7 +51,7 @@ class 反转指定位移的链表位置 {
         dummy.next = head;
         ListNode p1 = dummy;
         ListNode p2 = head;
-
+        //到达 m节点处
         for (int i = 0; i < m - 1; i++) {
             p1 = p1.next;
             p2 = p2.next;
