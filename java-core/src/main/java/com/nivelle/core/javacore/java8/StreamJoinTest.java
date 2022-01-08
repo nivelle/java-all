@@ -1,5 +1,7 @@
 package com.nivelle.core.javacore.java8;
 
+import com.google.common.base.Joiner;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,6 +25,8 @@ public class StreamJoinTest {
         List<String> list = Arrays.asList("A", "B", "C");
         String string = list.stream().collect(Collectors.joining("-"));
         System.out.println("拼接后的字符串：" + string);
+
+
     }
 
 }
